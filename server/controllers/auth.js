@@ -61,6 +61,8 @@ exports.logout = async (req, res, next) => {
 				.status(204)
 				.cookie('refreshToken', '', {
 					httpOnly: true,
+					sameSite: 'None',
+					secure: true,
 					maxAge: 0,
 				})
 				.send()
@@ -74,6 +76,8 @@ exports.logout = async (req, res, next) => {
 			.status(204)
 			.cookie('refreshToken', '', {
 				httpOnly: true,
+				sameSite: 'None',
+				secure: true,
 				maxAge: 0,
 			})
 			.send()
@@ -82,6 +86,8 @@ exports.logout = async (req, res, next) => {
 			.status(204)
 			.cookie('refreshToken', '', {
 				httpOnly: true,
+				sameSite: 'None',
+				secure: true,
 				maxAge: 0,
 			})
 			.send()
@@ -206,6 +212,8 @@ const sendToken = async (user, statusCode, res) => {
 
 	res.cookie('refreshToken', refreshToken, {
 		httpOnly: true,
+		sameSite: 'None',
+		secure: true,
 		maxAge: process.env.COOKIE_REFRESH_TOKEN_EXPIRE,
 	})
 
