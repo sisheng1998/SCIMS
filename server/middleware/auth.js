@@ -2,22 +2,21 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const ErrorResponse = require('../utils/errorResponse')
 
-exports.protect = async (req, res, next) => {
-	let token
-
-	if (
-		req.headers.authorization &&
-		req.headers.authorization.startsWith('Bearer')
-	) {
-		token = req.headers.authorization.split(' ')[1]
-	}
-
-	if (!token) {
-		return next(new ErrorResponse('Unauthorized to access.', 401))
-	}
-
+exports.auth = async (req, res, next) => {
 	try {
-		const decoded = jwt.verify(token, process.env.JWT_SECRET)
+		const authHeader = req.headers['authorization']
+
+		if (!authHeader) {
+			return next(new ErrorResponse('Unauthorized to access.', 401))
+		}
+
+		const accessToken = authHeader.split(' ')[1]
+
+		if (!accessToken) {
+			return next(new ErrorResponse('Unauthorized to access.', 401))
+		}
+
+		const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_TOKEN_SECRET)
 
 		const user = await User.findById(decoded.id)
 
@@ -28,7 +27,7 @@ exports.protect = async (req, res, next) => {
 		req.user = user
 
 		next()
-	} catch (error) {
+	} catch (err) {
 		return next(new ErrorResponse('Unauthorized to access.', 401))
 	}
 }

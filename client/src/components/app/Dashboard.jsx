@@ -9,7 +9,7 @@ const Dashboard = () => {
 	const [privateData, setPrivateData] = useState('')
 
 	useEffect(() => {
-		if (!localStorage.getItem('authToken')) {
+		if (!localStorage.getItem('accessToken')) {
 			navigate('/login')
 		}
 
@@ -17,7 +17,7 @@ const Dashboard = () => {
 			const config = {
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+					Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
 				},
 			}
 
@@ -25,21 +25,39 @@ const Dashboard = () => {
 				const { data } = await axios.get('/api/private', config)
 				setPrivateData(data.data)
 			} catch (error) {
-				localStorage.removeItem('authToken')
-				setError('You are not authorized, please login')
+				localStorage.removeItem('accessToken')
+				setError('You are not authorized, please login.')
 			}
 		}
 
 		fetchPrivateData()
 	}, [navigate])
 
-	const logoutHandler = () => {
-		localStorage.removeItem('authToken')
-		navigate('/login')
+	const logoutHandler = async () => {
+		try {
+			await axios.put('/api/auth/logout')
+			localStorage.removeItem('accessToken')
+			navigate('/login')
+		} catch (error) {
+			setError('Unable to logout.')
+		}
+	}
+
+	const refreshHandler = async () => {
+		try {
+			const { data } = await axios.get('/api/auth/refresh-token')
+			localStorage.setItem('accessToken', data.accessToken)
+		} catch (error) {
+			setError('Unable to get new access token.')
+		}
 	}
 
 	return error ? (
-		<span>{error}</span>
+		<div>
+			<div>{error}</div>
+			<button onClick={refreshHandler}>Refresh</button>
+			<button onClick={logoutHandler}>Logout</button>
+		</div>
 	) : (
 		<>
 			<div>{privateData}</div>

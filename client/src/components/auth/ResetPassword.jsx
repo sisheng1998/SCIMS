@@ -45,29 +45,29 @@ const ResetPassword = () => {
 	}
 
 	return (
-		<div className='min-h-screen flex flex-col items-center justify-center p-6'>
+		<div className='flex min-h-screen flex-col items-center justify-center p-6'>
 			<img
-				className='h-12 mx-auto'
+				className='mx-auto h-12'
 				src='/scims-logo.svg'
 				alt='SCIMS Logo'
 				draggable='false'
 			/>
-			<h1 className='text-gray-900 text-center text-4xl font-medium my-6'>
+			<h1 className='my-6 text-center text-4xl font-medium text-gray-900'>
 				Reset Password
 			</h1>
 
-			<div className='bg-white p-8 w-full max-w-md shadow rounded-lg'>
+			<div className='w-full max-w-md rounded-lg bg-white p-8 shadow'>
 				{error && <span>{error}</span>}
 				{success && <span>{success}</span>}
 				<form onSubmit={resetPasswordHandler}>
 					<label
-						className='block text-gray-700 text-sm font-medium mb-2'
+						className='mb-2 block text-sm font-medium text-gray-700'
 						htmlFor='password'
 					>
 						Password
 					</label>
 					<input
-						className='border-gray-300 w-full mb-6 shadow rounded-lg'
+						className='mb-6 w-full rounded-lg border-gray-300 shadow'
 						type='password'
 						id='password'
 						required
@@ -76,13 +76,13 @@ const ResetPassword = () => {
 					/>
 
 					<label
-						className='block text-gray-700 text-sm font-medium mb-2'
+						className='mb-2 block text-sm font-medium text-gray-700'
 						htmlFor='confirmPassword'
 					>
 						Confirm Password
 					</label>
 					<input
-						className='border-gray-300 w-full mb-6 shadow rounded-lg'
+						className='mb-6 w-full rounded-lg border-gray-300 shadow'
 						type='password'
 						id='confirmPassword'
 						required
@@ -91,7 +91,7 @@ const ResetPassword = () => {
 					/>
 
 					<button
-						className='bg-indigo-600 text-white text-center text-xl font-medium tracking-wide w-full p-3 mt-2 rounded-lg transition hover:bg-indigo-700'
+						className='mt-2 w-full rounded-lg bg-indigo-600 p-3 text-center text-xl font-medium tracking-wide text-white transition hover:bg-indigo-700'
 						type='submit'
 					>
 						Reset

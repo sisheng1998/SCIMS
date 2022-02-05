@@ -1,23 +1,33 @@
 require('dotenv').config({ path: './config.env' })
 const cors = require('cors')
+const corsOptions = require('./config/corsOptions')
 const express = require('express')
+const cookieParser = require('cookie-parser')
 const connectDB = require('./config/db')
-const errorHandler = require('./middleware/error')
+const errorHandler = require('./middleware/errorHandler')
+const { auth } = require('./middleware/auth')
+
+const app = express()
 
 // Connect DB
 connectDB()
 
-const app = express()
+// Cross Origin Resource Sharing
+app.use(cors(corsOptions))
 
-app.use(cors())
 app.use(express.json())
-
-app.get('/', (req, res, next) => {
-	res.send('API running')
-})
+app.use(cookieParser())
 
 // Connecting Routes
+app.get('/', (req, res, next) => {
+	res.status(200).send('API running.')
+})
+
+// Public Route
 app.use('/api/auth', require('./routes/auth'))
+
+// Private Route
+app.use(auth)
 app.use('/api/private', require('./routes/private'))
 
 // Error Handler (should be last piece of middleware)
@@ -26,7 +36,7 @@ app.use(errorHandler)
 const PORT = process.env.PORT || 5000
 
 const server = app.listen(PORT, () =>
-	console.log(`Server running on port ${PORT}`)
+	console.log(`Server running on Port ${PORT}`)
 )
 
 process.on('unhandledRejection', (err, promise) => {

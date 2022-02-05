@@ -1,5 +1,6 @@
 const crypto = require('crypto')
 const User = require('../models/User')
+const jwt = require('jsonwebtoken')
 const ErrorResponse = require('../utils/errorResponse')
 const sendEmail = require('../utils/sendEmail')
 
@@ -12,8 +13,6 @@ exports.register = async (req, res, next) => {
 			email,
 			password,
 		})
-
-		sendToken(user, 201, res)
 	} catch (error) {
 		next(error)
 	}
@@ -23,7 +22,7 @@ exports.login = async (req, res, next) => {
 	const { email, password } = req.body
 
 	if (!email || !password) {
-		return next(new ErrorResponse('Please provide an email and password.', 400))
+		return next(new ErrorResponse('Missing value.', 400))
 	}
 
 	try {
@@ -42,6 +41,51 @@ exports.login = async (req, res, next) => {
 		sendToken(user, 200, res)
 	} catch (error) {
 		res.status(500).json({ success: false, error: error.message })
+	}
+}
+
+exports.logout = async (req, res, next) => {
+	// On client side, the accessToken also being deleted
+
+	const refreshToken = req.cookies.refreshToken
+
+	if (!refreshToken) {
+		return next(new ErrorResponse('Refresh token not found.', 204))
+	}
+
+	try {
+		const foundUser = await User.findOne({ refreshToken: refreshToken })
+
+		if (!foundUser) {
+			res
+				.status(204)
+				.cookie('refreshToken', '', {
+					httpOnly: true,
+					maxAge: 0,
+				})
+				.send()
+			return
+		}
+
+		foundUser.refreshToken = undefined
+		await foundUser.save()
+
+		res
+			.status(204)
+			.cookie('refreshToken', '', {
+				httpOnly: true,
+				maxAge: 0,
+			})
+			.send()
+	} catch (error) {
+		res
+			.status(204)
+			.cookie('refreshToken', '', {
+				httpOnly: true,
+				maxAge: 0,
+			})
+			.send()
+		return
 	}
 }
 
@@ -74,7 +118,7 @@ exports.forgotPassword = async (req, res, next) => {
 				text: message,
 			})
 
-			res.status(200).json({ success: true, data: 'Email Sent' })
+			res.status(200).json({ success: true, data: 'Email sent.' })
 		} catch (error) {
 			user.resetPasswordToken = undefined
 			user.resetPasswordExpire = undefined
@@ -101,7 +145,7 @@ exports.resetPassword = async (req, res, next) => {
 		})
 
 		if (!user) {
-			return next(new ErrorResponse('Invalid Reset Token', 400))
+			return next(new ErrorResponse('Invalid reset token.', 400))
 		}
 
 		user.password = req.body.password
@@ -112,14 +156,61 @@ exports.resetPassword = async (req, res, next) => {
 
 		res.status(201).json({
 			success: true,
-			data: 'Password Reset Success',
+			data: 'Password reset success.',
 		})
 	} catch (error) {
 		next(error)
 	}
 }
 
-const sendToken = (user, statusCode, res) => {
-	const token = user.getSignedToken()
-	res.status(statusCode).json({ success: true, token })
+exports.refreshToken = async (req, res, next) => {
+	const refreshToken = req.cookies.refreshToken
+
+	if (!refreshToken) {
+		return next(new ErrorResponse('Invalid refresh token.', 401))
+	}
+
+	try {
+		const foundUser = await User.findOne({ refreshToken: refreshToken })
+
+		if (!foundUser) {
+			return next(new ErrorResponse('User not found.', 403))
+		}
+
+		const decoded = jwt.verify(
+			refreshToken,
+			process.env.JWT_REFRESH_TOKEN_SECRET
+		)
+
+		if (foundUser.email !== decoded.email) {
+			return next(new ErrorResponse('User not found.', 403))
+		}
+
+		const accessToken = foundUser.getAccessToken()
+
+		res.status(200).json({
+			success: true,
+			accessToken: accessToken,
+		})
+	} catch (error) {
+		return next(new ErrorResponse('Invalid refresh token.', 401))
+	}
+}
+
+const sendToken = async (user, statusCode, res) => {
+	const accessToken = user.getAccessToken()
+	const refreshToken = user.getRefreshToken()
+
+	user.refreshToken = refreshToken
+	await user.save()
+
+	res.cookie('refreshToken', refreshToken, {
+		httpOnly: true,
+		maxAge: process.env.COOKIE_REFRESH_TOKEN_EXPIRE,
+	})
+
+	res.status(statusCode).json({
+		success: true,
+		accessToken: accessToken,
+	})
 }

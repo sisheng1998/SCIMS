@@ -7,10 +7,11 @@ const UserSchema = new mongoose.Schema(
 	{
 		name: {
 			type: String,
+			required: true,
 		},
 		email: {
 			type: String,
-			required: [true, 'Please provide an email.'],
+			required: true,
 			unique: true,
 			match: [
 				/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
@@ -19,11 +20,12 @@ const UserSchema = new mongoose.Schema(
 		},
 		password: {
 			type: String,
-			required: [true, 'Please enter a password.'],
+			required: true,
 			select: false,
 		},
 		resetPasswordToken: String,
 		resetPasswordExpire: Date,
+		refreshToken: String,
 	},
 	{ collection: 'users' }
 )
@@ -43,9 +45,15 @@ UserSchema.methods.matchPassword = async function (password) {
 	return await bcrypt.compare(password, this.password)
 }
 
-UserSchema.methods.getSignedToken = function () {
-	return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-		expiresIn: process.env.JWT_EXPIRE_MIN,
+UserSchema.methods.getAccessToken = function () {
+	return jwt.sign({ id: this._id }, process.env.JWT_ACCESS_TOKEN_SECRET, {
+		expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRE,
+	})
+}
+
+UserSchema.methods.getRefreshToken = function () {
+	return jwt.sign({ email: this.email }, process.env.JWT_REFRESH_TOKEN_SECRET, {
+		expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRE,
 	})
 }
 
@@ -58,7 +66,7 @@ UserSchema.methods.getResetPasswordToken = function () {
 		.digest('hex')
 
 	// (60 * 1000) = 1 min
-	this.resetPasswordExpire = Date.now() + process.env.JWT_EXPIRE * (60 * 1000)
+	this.resetPasswordExpire = Date.now() + 30 * (60 * 1000)
 
 	return resetToken
 }

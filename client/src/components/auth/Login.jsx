@@ -10,7 +10,7 @@ const Login = () => {
 	const [error, setError] = useState('')
 
 	useEffect(() => {
-		if (localStorage.getItem('authToken')) {
+		if (localStorage.getItem('accessToken')) {
 			navigate('/')
 		}
 	}, [navigate])
@@ -31,7 +31,7 @@ const Login = () => {
 				config
 			)
 
-			localStorage.setItem('authToken', data.token)
+			localStorage.setItem('accessToken', data.accessToken)
 
 			navigate('/')
 		} catch (error) {
@@ -43,28 +43,28 @@ const Login = () => {
 	}
 
 	return (
-		<div className='min-h-screen flex flex-col items-center justify-center p-6'>
+		<div className='flex min-h-screen flex-col items-center justify-center p-6'>
 			<img
-				className='h-12 mx-auto'
+				className='mx-auto h-12'
 				src='/scims-logo.svg'
 				alt='SCIMS Logo'
 				draggable='false'
 			/>
-			<h1 className='text-gray-900 text-center text-4xl font-medium my-6'>
+			<h1 className='my-6 text-center text-4xl font-medium text-gray-900'>
 				Welcome Back!
 			</h1>
 
-			<div className='bg-white p-8 w-full max-w-md shadow rounded-lg'>
+			<div className='w-full max-w-md rounded-lg bg-white p-8 shadow'>
 				{error && <span>{error}</span>}
 				<form onSubmit={loginHandler}>
 					<label
-						className='block text-gray-700 text-sm font-medium mb-2'
+						className='mb-2 block text-sm font-medium text-gray-700'
 						htmlFor='email'
 					>
 						Email Address
 					</label>
 					<input
-						className='border-gray-300 w-full mb-6 shadow rounded-lg'
+						className='mb-6 w-full rounded-lg border-gray-300 shadow'
 						type='email'
 						id='email'
 						required
@@ -73,13 +73,13 @@ const Login = () => {
 					/>
 
 					<label
-						className='block text-gray-700 text-sm font-medium mb-2'
+						className='mb-2 block text-sm font-medium text-gray-700'
 						htmlFor='password'
 					>
 						Password
 					</label>
 					<input
-						className='border-gray-300 w-full mb-3 shadow rounded-lg'
+						className='mb-3 w-full rounded-lg border-gray-300 shadow'
 						type='password'
 						id='password'
 						required
@@ -89,14 +89,14 @@ const Login = () => {
 					<p className='text-right'>
 						<Link
 							to='/forgot-password'
-							className='font-medium transition text-indigo-600 hover:text-indigo-700'
+							className='font-medium text-indigo-600 transition hover:text-indigo-700'
 						>
 							Forgot Password?
 						</Link>
 					</p>
 
 					<button
-						className='bg-indigo-600 text-white text-center text-xl font-medium tracking-wide w-full p-3 mt-8 rounded-lg transition hover:bg-indigo-700'
+						className='mt-8 w-full rounded-lg bg-indigo-600 p-3 text-center text-xl font-medium tracking-wide text-white transition hover:bg-indigo-700'
 						type='submit'
 					>
 						Login
@@ -104,10 +104,10 @@ const Login = () => {
 				</form>
 			</div>
 
-			<p className='text-gray-700 mt-6'>
+			<p className='mt-6 text-gray-700'>
 				Don't have an account?{' '}
 				<Link
-					className='font-medium transition text-indigo-600 hover:text-indigo-700'
+					className='font-medium text-indigo-600 transition hover:text-indigo-700'
 					to='/register'
 				>
 					Register
