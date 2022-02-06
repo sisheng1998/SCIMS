@@ -4,9 +4,10 @@ const corsOptions = require('./config/corsOptions')
 const credentials = require('./middleware/credentials')
 const express = require('express')
 const cookieParser = require('cookie-parser')
+const mongoose = require('mongoose')
 const connectDB = require('./config/db')
 const errorHandler = require('./middleware/errorHandler')
-const { auth } = require('./middleware/auth')
+const { verifyUser } = require('./middleware/verifyUser')
 const PORT = process.env.PORT || 5000
 
 const app = express()
@@ -32,17 +33,25 @@ app.get('/', (req, res, next) => {
 app.use('/api/auth', require('./routes/auth'))
 
 // Private Route
-app.use(auth)
+app.use(verifyUser)
 app.use('/api/private', require('./routes/private'))
+
+app.all('*', (req, res) => {
+	res.sendStatus(404)
+})
 
 // Error Handler (should be last piece of middleware)
 app.use(errorHandler)
 
-const server = app.listen(PORT, () =>
-	console.log(`Server running on Port ${PORT}`)
-)
+mongoose.connection.once('open', () => {
+	console.log('Connected to MongoDB')
 
-process.on('unhandledRejection', (err, promise) => {
-	console.log(`(Error) ${err}`)
-	server.close(() => process.exit(1))
+	const server = app.listen(PORT, () =>
+		console.log(`Server running on Port ${PORT}`)
+	)
+
+	process.on('unhandledRejection', (err, promise) => {
+		console.log(`(Error) ${err}`)
+		server.close(() => process.exit(1))
+	})
 })

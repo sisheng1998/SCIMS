@@ -1,9 +1,11 @@
 const crypto = require('crypto')
 const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const ROLES_LIST = require('../config/roles_list')
 
-const UserSchema = new mongoose.Schema(
+const UserSchema = new Schema(
 	{
 		name: {
 			type: String,
@@ -13,16 +15,36 @@ const UserSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 			unique: true,
-			match: [
-				/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-				'Please provide a valid email.',
-			],
+		},
+		altEmail: {
+			type: String,
+			required: true,
 		},
 		password: {
 			type: String,
 			required: true,
 			select: false,
 		},
+		isEmailVerified: {
+			type: Boolean,
+			default: false,
+		},
+		roles: [
+			{
+				lab: {
+					type: Schema.Types.ObjectId,
+					ref: 'Lab',
+				},
+				role: {
+					type: Number,
+					default: ROLES_LIST.viewer,
+				},
+				isActive: {
+					type: Boolean,
+					default: false,
+				},
+			},
+		],
 		resetPasswordToken: String,
 		resetPasswordExpire: Date,
 		refreshToken: String,
@@ -46,9 +68,13 @@ UserSchema.methods.matchPassword = async function (password) {
 }
 
 UserSchema.methods.getAccessToken = function () {
-	return jwt.sign({ id: this._id }, process.env.JWT_ACCESS_TOKEN_SECRET, {
-		expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRE,
-	})
+	return jwt.sign(
+		{ id: this._id, roles: this.roles },
+		process.env.JWT_ACCESS_TOKEN_SECRET,
+		{
+			expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRE,
+		}
+	)
 }
 
 UserSchema.methods.getRefreshToken = function () {

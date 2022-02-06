@@ -1,18 +1,45 @@
 const crypto = require('crypto')
 const User = require('../models/User')
+const Lab = require('../models/Lab')
 const jwt = require('jsonwebtoken')
 const ErrorResponse = require('../utils/errorResponse')
 const sendEmail = require('../utils/sendEmail')
 
 exports.register = async (req, res, next) => {
-	const { name, email, password } = req.body
+	const { name, email, altEmail, password, labName } = req.body
+
+	if (!name || !email || !altEmail || !password || !labName) {
+		return next(new ErrorResponse('Missing value for required field.', 400))
+	}
+
+	const duplicate = await User.findOne({ email })
+	if (duplicate) {
+		return next(new ErrorResponse('Email registered.', 409))
+	}
 
 	try {
+		const foundLab = await Lab.findOne({ labName })
+		if (!foundLab) {
+			return next(new ErrorResponse('Lab not found.', 409))
+		}
+
 		const user = await User.create({
 			name,
 			email,
+			altEmail,
 			password,
+			roles: {
+				lab: foundLab._id,
+			},
 		})
+
+		await Lab.updateOne(foundLab, {
+			$push: {
+				labUsers: user._id,
+			},
+		})
+
+		res.status(201).json({ success: true, data: 'New user created.' })
 	} catch (error) {
 		next(error)
 	}
