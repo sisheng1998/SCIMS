@@ -43,77 +43,56 @@ const Login = () => {
 	}
 
 	return (
-		<div className='flex min-h-screen flex-col items-center justify-center p-6'>
-			<img
-				className='mx-auto h-12'
-				src='/scims-logo.svg'
-				alt='SCIMS Logo'
-				draggable='false'
-			/>
-			<h1 className='my-6 text-center text-4xl font-medium text-gray-900'>
-				Welcome Back!
-			</h1>
+		<>
+			<h1 className='my-6 text-center'>Welcome Back!</h1>
 
-			<div className='w-full max-w-md rounded-lg bg-white p-8 shadow'>
+			<div className='auth-card'>
 				{error && <span>{error}</span>}
 				<form onSubmit={loginHandler}>
-					<label
-						className='mb-2 block text-sm font-medium text-gray-700'
-						htmlFor='email'
-					>
-						Email Address
-					</label>
+					<label htmlFor='email'>Email Address</label>
 					<input
-						className='mb-6 w-full rounded-lg border-gray-300 shadow'
+						className='mb-6 w-full'
 						type='email'
 						id='email'
+						placeholder='Enter your email'
 						required
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 					/>
 
-					<label
-						className='mb-2 block text-sm font-medium text-gray-700'
-						htmlFor='password'
-					>
-						Password
-					</label>
+					<label htmlFor='password'>Password</label>
 					<input
-						className='mb-3 w-full rounded-lg border-gray-300 shadow'
+						className='mb-6 w-full'
 						type='password'
 						id='password'
+						placeholder='Enter your password'
 						required
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 					/>
-					<p className='text-right'>
-						<Link
-							to='/forgot-password'
-							className='font-medium text-indigo-600 transition hover:text-indigo-700'
-						>
-							Forgot Password?
-						</Link>
-					</p>
+					<div className='flex items-center justify-between'>
+						<div className='flex items-center'>
+							<input type='checkbox' id='rememberMe' />
+							<label className='mb-0 ml-2 inline' htmlFor='rememberMe'>
+								Remember me
+							</label>
+						</div>
 
-					<button
-						className='mt-8 w-full rounded-lg bg-indigo-600 p-3 text-center text-xl font-medium tracking-wide text-white transition hover:bg-indigo-700'
-						type='submit'
-					>
+						<p className='text-right text-sm'>
+							<Link to='/forgot-password'>Forgot password?</Link>
+						</p>
+					</div>
+
+					<button className='mt-6 w-full' type='submit'>
 						Login
 					</button>
 				</form>
 			</div>
 
-			<p className='mt-6 text-gray-700'>
-				Don't have an account?{' '}
-				<Link
-					className='font-medium text-indigo-600 transition hover:text-indigo-700'
-					to='/register'
-				>
-					Register
-				</Link>
+			<p className='mt-6'>
+				Don't have an account? <Link to='/register'>Register</Link>
 			</p>
-		</div>
+		</>
 	)
 }
 

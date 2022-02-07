@@ -1,40 +1,99 @@
 @tailwind base;
 @tailwind components;
-
-@font-face {
-	font-family: 'Gilroy';
-	src: local('Gilroy Regular'), local('Gilroy-Regular'),
-		url('../public/fonts/Gilroy-Regular.woff2') format('woff2');
-	font-weight: normal;
-	font-style: normal;
-}
-
-@font-face {
-	font-family: 'Gilroy';
-	src: local('Gilroy Regular Italic'), local('Gilroy-RegularItalic'),
-		url('../public/fonts/Gilroy-RegularItalic.woff2') format('woff2');
-	font-weight: normal;
-	font-style: italic;
-}
-
-@font-face {
-	font-family: 'Gilroy';
-	src: local('Gilroy Medium'), local('Gilroy-Medium'),
-		url('../public/fonts/Gilroy-Medium.woff2') format('woff2');
-	font-weight: 500;
-	font-style: normal;
-}
-
-@font-face {
-	font-family: 'Gilroy';
-	src: local('Gilroy Medium Italic'), local('Gilroy-MediumItalic'),
-		url('../public/fonts/Gilroy-MediumItalic.woff2') format('woff2');
-	font-weight: 500;
-	font-style: italic;
-}
-
-html {
-	@apply bg-gray-100 text-gray-700 selection:bg-indigo-600 selection:text-white;
-}
-
 @tailwind utilities;
+
+@layer base {
+	@font-face {
+		font-family: 'Gilroy';
+		src: local('Gilroy Regular'), local('Gilroy-Regular'),
+			url('../public/fonts/Gilroy-Regular.woff2') format('woff2');
+		font-weight: normal;
+		font-style: normal;
+	}
+
+	@font-face {
+		font-family: 'Gilroy';
+		src: local('Gilroy Regular Italic'), local('Gilroy-RegularItalic'),
+			url('../public/fonts/Gilroy-RegularItalic.woff2') format('woff2');
+		font-weight: normal;
+		font-style: italic;
+	}
+
+	@font-face {
+		font-family: 'Gilroy';
+		src: local('Gilroy Medium'), local('Gilroy-Medium'),
+			url('../public/fonts/Gilroy-Medium.woff2') format('woff2');
+		font-weight: 500;
+		font-style: normal;
+	}
+
+	@font-face {
+		font-family: 'Gilroy';
+		src: local('Gilroy Medium Italic'), local('Gilroy-MediumItalic'),
+			url('../public/fonts/Gilroy-MediumItalic.woff2') format('woff2');
+		font-weight: 500;
+		font-style: italic;
+	}
+
+	html {
+		@apply bg-gray-100 text-gray-700 antialiased selection:bg-indigo-600 selection:text-white;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply font-medium text-gray-900;
+	}
+
+	h1 {
+		@apply text-4xl;
+	}
+
+	a {
+		@apply font-medium text-indigo-600 outline-indigo-500 transition hover:text-indigo-700;
+	}
+
+	label {
+		@apply mb-2 block text-sm font-medium;
+	}
+
+	button {
+		@apply rounded-lg bg-indigo-600 py-3 px-4 text-center text-lg font-medium text-white transition hover:bg-indigo-700 hover:shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2;
+	}
+
+	button[type='submit'] {
+		@apply bg-indigo-600 hover:bg-indigo-700;
+	}
+
+	[type='text'],
+	[type='email'],
+	[type='url'],
+	[type='password'],
+	[type='number'],
+	[type='date'],
+	[type='datetime-local'],
+	[type='month'],
+	[type='search'],
+	[type='tel'],
+	[type='time'],
+	[type='week'],
+	[multiple],
+	textarea,
+	select {
+		@apply rounded-lg border-gray-300 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500;
+	}
+
+	[type='checkbox'],
+	[type='radio'] {
+		@apply rounded border-gray-300 text-indigo-600 focus:ring-indigo-500;
+	}
+}
+
+@layer components {
+	.auth-card {
+		@apply w-full max-w-md rounded-lg bg-white p-8 shadow;
+	}
+}
