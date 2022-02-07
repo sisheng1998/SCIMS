@@ -2,6 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
+import ViewPasswordToggle from '../others/ViewPasswordToggle'
 
 const Login = () => {
 	const navigate = useNavigate()
@@ -61,15 +62,19 @@ const Login = () => {
 					/>
 
 					<label htmlFor='password'>Password</label>
-					<input
-						className='mb-6 w-full'
-						type='password'
-						id='password'
-						placeholder='Enter your password'
-						required
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-					/>
+					<div className='relative mb-6'>
+						<input
+							className='w-full'
+							type='password'
+							id='password'
+							placeholder='Enter your password'
+							required
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+						/>
+						<ViewPasswordToggle fieldId='password' />
+					</div>
+
 					<div className='flex items-center justify-between'>
 						<div className='flex items-center'>
 							<input type='checkbox' id='rememberMe' />
@@ -78,12 +83,12 @@ const Login = () => {
 							</label>
 						</div>
 
-						<p className='text-right text-sm'>
-							<Link to='/forgot-password'>Forgot password?</Link>
-						</p>
+						<Link className='text-sm' to='/forgot-password'>
+							Forgot password?
+						</Link>
 					</div>
 
-					<button className='mt-6 w-full' type='submit'>
+					<button className='mt-6 w-full' type='submit' disabled={true}>
 						Login
 					</button>
 				</form>

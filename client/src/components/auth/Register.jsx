@@ -2,6 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
+import StrongPasswordField from '../validations/StrongPasswordField'
 
 const Register = () => {
 	const navigate = useNavigate()
@@ -83,15 +84,7 @@ const Register = () => {
 					/>
 
 					<label htmlFor='password'>Password</label>
-					<input
-						className='mb-6 w-full'
-						type='password'
-						id='password'
-						placeholder='Enter a new password'
-						required
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-					/>
+					<StrongPasswordField password={password} setPassword={setPassword} />
 
 					<label htmlFor='confirmPassword'>Confirm Password</label>
 					<input
@@ -104,7 +97,7 @@ const Register = () => {
 						onChange={(e) => setConfirmPassword(e.target.value)}
 					/>
 
-					<button className='w-full' type='submit'>
+					<button className='w-full' type='submit' disabled={true}>
 						Register
 					</button>
 				</form>

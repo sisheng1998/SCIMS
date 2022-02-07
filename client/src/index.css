@@ -35,6 +35,22 @@
 		font-style: italic;
 	}
 
+	@font-face {
+		font-family: 'Gilroy';
+		src: local('Gilroy Semibold'), local('Gilroy-Semibold'),
+			url('../public/fonts/Gilroy-Semibold.woff2') format('woff2');
+		font-weight: 600;
+		font-style: normal;
+	}
+
+	@font-face {
+		font-family: 'Gilroy';
+		src: local('Gilroy Semibold Italic'), local('Gilroy-SemiboldItalic'),
+			url('../public/fonts/Gilroy-SemiboldItalic.woff2') format('woff2');
+		font-weight: 600;
+		font-style: italic;
+	}
+
 	html {
 		@apply bg-gray-100 text-gray-700 antialiased selection:bg-indigo-600 selection:text-white;
 	}
@@ -53,7 +69,7 @@
 	}
 
 	a {
-		@apply font-medium text-indigo-600 outline-indigo-500 transition hover:text-indigo-700;
+		@apply font-semibold text-indigo-600 outline-indigo-500 transition hover:text-indigo-700;
 	}
 
 	label {
@@ -61,7 +77,7 @@
 	}
 
 	button {
-		@apply rounded-lg bg-indigo-600 py-3 px-4 text-center text-lg font-medium text-white transition hover:bg-indigo-700 hover:shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2;
+		@apply rounded-lg bg-indigo-600 py-3 px-4 text-center text-lg font-semibold text-white transition hover:bg-indigo-700 hover:shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
 	}
 
 	button[type='submit'] {
@@ -95,5 +111,9 @@
 @layer components {
 	.auth-card {
 		@apply w-full max-w-md rounded-lg bg-white p-8 shadow;
+	}
+
+	.required-input-label {
+		@apply after:ml-0.5 after:text-red-600 after:content-["*"];
 	}
 }

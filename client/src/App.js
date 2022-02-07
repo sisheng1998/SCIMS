@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom'
 
 // Routing
-import PrivateRoute from './components/routing/PrivateRoute'
+import PrivateRoute from './components/routes/PrivateRoute'
 
 // Auth
 import Login from './components/auth/Login'
