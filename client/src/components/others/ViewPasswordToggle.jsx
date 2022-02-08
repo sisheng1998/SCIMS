@@ -18,12 +18,12 @@ const ViewPasswordToggle = (props) => {
 		<>
 			{visible ? (
 				<EyeIcon
-					className='absolute top-3 right-3 h-5 w-5 cursor-pointer transition hover:text-indigo-600'
+					className='absolute top-2 right-2 h-7 w-7 cursor-pointer rounded-full p-1 text-gray-400 transition hover:bg-indigo-100 hover:text-indigo-600'
 					onClick={hidePassword}
 				/>
 			) : (
 				<EyeOffIcon
-					className='absolute top-3 right-3 h-5 w-5 cursor-pointer transition hover:text-indigo-600'
+					className='absolute top-2 right-2 h-7 w-7 cursor-pointer rounded-full p-1 text-gray-400 transition hover:bg-indigo-100 hover:text-indigo-600'
 					onClick={viewPassword}
 				/>
 			)}
