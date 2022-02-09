@@ -49,7 +49,7 @@ const Login = () => {
 
 			<div className='auth-card'>
 				{error && <span>{error}</span>}
-				<form onSubmit={loginHandler}>
+				<form onSubmit={loginHandler} spellCheck='false' autoComplete='off'>
 					<label htmlFor='email'>Email Address</label>
 					<input
 						className='mb-6 w-full'

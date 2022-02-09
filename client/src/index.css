@@ -116,4 +116,12 @@
 	.required-input-label {
 		@apply after:ml-0.5 after:text-red-600 after:content-["*"];
 	}
+
+	.input-valid {
+		@apply border-green-600 focus:border-green-500 focus:ring-green-500;
+	}
+
+	.input-invalid {
+		@apply border-red-600 focus:border-red-500 focus:ring-red-500;
+	}
 }
