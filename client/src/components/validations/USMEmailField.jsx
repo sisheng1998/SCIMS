@@ -1,11 +1,24 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const USM_EMAIL_REGEX = /^[A-Za-z]+([.-]?\w+)*@(?:[a-zA-Z]+\.)?usm\.my$/
 
 const USMEmailField = (props) => {
+	const [emailExisted, setEmailExisted] = useState(false)
+
 	useEffect(() => {
 		const result = USM_EMAIL_REGEX.test(props.value)
-		props.setValidated(result)
+
+		if (
+			result &&
+			props.checkExist &&
+			props.existingEmails.some((e) => e.email === props.value)
+		) {
+			setEmailExisted(true)
+			props.setValidated(false)
+		} else {
+			setEmailExisted(false)
+			props.setValidated(result)
+		}
 	}, [props])
 
 	return (
@@ -26,11 +39,13 @@ const USMEmailField = (props) => {
 				{!props.value ? (
 					props.message
 				) : props.validated ? (
-					<span className='text-green-600'>
-						This email will be used to login into your account.
-					</span>
+					<span className='text-green-600'>{props.successMessage}</span>
 				) : (
-					<span className='text-red-600'>Please enter a valid USM email.</span>
+					<span className='text-red-600'>
+						{emailExisted
+							? 'An account with this email already exists.'
+							: 'Please enter a valid USM email.'}
+					</span>
 				)}
 			</p>
 		</div>

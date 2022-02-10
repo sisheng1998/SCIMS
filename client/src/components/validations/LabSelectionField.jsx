@@ -1,6 +1,28 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 
 const LabSelectionField = (props) => {
+	const [labs, setLabs] = useState([])
+
+	useEffect(() => {
+		const fetchLabs = async () => {
+			const config = {
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			}
+
+			try {
+				const { data } = await axios.get('/api/auth/labs', config)
+				setLabs(data.labs)
+			} catch (error) {
+				setLabs([])
+			}
+		}
+
+		fetchLabs()
+	}, [])
+
 	useEffect(() => {
 		props.setValidated(props.value !== '')
 	}, [props])
@@ -19,15 +41,13 @@ const LabSelectionField = (props) => {
 				<option value='' className='text-gray-700'>
 					Select lab
 				</option>
-				<option value='Lab 1' className='text-gray-700'>
-					Lab 1
-				</option>
-				<option value='Lab 2' className='text-gray-700'>
-					Lab 2
-				</option>
-				<option value='Lab 3' className='text-gray-700'>
-					Lab 3
-				</option>
+				{labs.map((lab) => {
+					return (
+						<option key={lab._id} value={lab.labName} className='text-gray-700'>
+							{lab.labName}
+						</option>
+					)
+				})}
 			</select>
 
 			<p className='mt-2 text-xs text-gray-400'>

@@ -20,7 +20,7 @@ exports.register = async (req, res, next) => {
 	try {
 		const foundLab = await Lab.findOne({ labName })
 		if (!foundLab) {
-			return next(new ErrorResponse('Lab not found.', 409))
+			return next(new ErrorResponse('Lab not found.', 404))
 		}
 
 		const user = await User.create({
@@ -227,6 +227,36 @@ exports.refreshToken = async (req, res, next) => {
 		})
 	} catch (error) {
 		return next(new ErrorResponse('Invalid refresh token.', 401))
+	}
+}
+
+exports.labs = (req, res, next) => {
+	try {
+		Lab.find({}, 'labName', (err, data) => {
+			if (!err) {
+				res.status(200).json({
+					success: true,
+					labs: data,
+				})
+			}
+		})
+	} catch (error) {
+		return next(new ErrorResponse('Lab not found.', 404))
+	}
+}
+
+exports.emails = (req, res, next) => {
+	try {
+		User.find({}, 'email', (err, data) => {
+			if (!err) {
+				res.status(200).json({
+					success: true,
+					emails: data,
+				})
+			}
+		})
+	} catch (error) {
+		return next(new ErrorResponse('Email not found.', 404))
 	}
 }
 

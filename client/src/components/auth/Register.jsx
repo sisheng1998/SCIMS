@@ -1,38 +1,53 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Link, useNavigate } from 'react-router-dom'
-import LabSelectionField from '../validations/LabSelectionField'
-import NameField from '../validations/NameField'
+import { Link } from 'react-router-dom'
 import USMEmailField from '../validations/USMEmailField'
-import EmailField from '../validations/EmailField'
 import StrongPasswordField from '../validations/StrongPasswordField'
+import NameField from '../validations/NameField'
+import EmailField from '../validations/EmailField'
+import LabSelectionField from '../validations/LabSelectionField'
 import { ArrowRightIcon, ArrowLeftIcon } from '@heroicons/react/outline'
 
 const Register = () => {
-	const navigate = useNavigate()
-
-	const [name, setName] = useState('')
-	const [lab, setLab] = useState('')
-	const [email, setEmail] = useState('')
-	const [altEmail, setAltEmail] = useState('')
-	const [password, setPassword] = useState('')
-	const [error, setError] = useState('')
-
-	const [allowed, setAllowed] = useState(false)
-	const [labValidated, setLabValidated] = useState(false)
-	const [nameValidated, setNameValidated] = useState(false)
-	const [USMEmailValidated, setUSMEmailValidated] = useState(false)
-	const [emailValidated, setEmailValidated] = useState(false)
-	const [passwordValidated, setPasswordValidated] = useState(false)
-	const [nextStep, setNextStep] = useState(false)
-	const [allowNextStep, setAllowNextStep] = useState(false)
+	const [emails, setEmails] = useState([])
 
 	useEffect(() => {
-		if (localStorage.getItem('accessToken')) {
-			navigate('/')
+		const fetchEmails = async () => {
+			const config = {
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			}
+
+			try {
+				const { data } = await axios.get('/api/auth/emails', config)
+				setEmails(data.emails)
+			} catch (error) {
+				setEmails([])
+			}
 		}
-	}, [navigate])
+
+		fetchEmails()
+	}, [])
+
+	const [email, setEmail] = useState('')
+	const [password, setPassword] = useState('')
+	const [name, setName] = useState('')
+	const [altEmail, setAltEmail] = useState('')
+	const [labName, setLabName] = useState('')
+
+	const [error, setError] = useState('')
+
+	const [USMEmailValidated, setUSMEmailValidated] = useState(false)
+	const [passwordValidated, setPasswordValidated] = useState(false)
+	const [nameValidated, setNameValidated] = useState(false)
+	const [emailValidated, setEmailValidated] = useState(false)
+	const [labValidated, setLabValidated] = useState(false)
+
+	const [allowed, setAllowed] = useState(false)
+	const [nextStep, setNextStep] = useState(false)
+	const [allowNextStep, setAllowNextStep] = useState(false)
 
 	const registerHandler = async (e) => {
 		e.preventDefault()
@@ -46,13 +61,10 @@ const Register = () => {
 		try {
 			const { data } = await axios.post(
 				'/api/auth/register',
-				{ name, email, password },
+				{ name, email, altEmail, password, labName },
 				config
 			)
-
-			localStorage.setItem('accessToken', data.accessToken)
-
-			navigate('/')
+			setError(data.data)
 		} catch (error) {
 			setError(error.response.data.error)
 			setTimeout(() => {
@@ -65,18 +77,18 @@ const Register = () => {
 		setAllowNextStep(USMEmailValidated && passwordValidated)
 
 		setAllowed(
-			labValidated &&
+			USMEmailValidated &&
+				passwordValidated &&
 				nameValidated &&
-				USMEmailValidated &&
 				emailValidated &&
-				passwordValidated
+				labValidated
 		)
 	}, [
-		labValidated,
-		nameValidated,
 		USMEmailValidated,
-		emailValidated,
 		passwordValidated,
+		nameValidated,
+		emailValidated,
+		labValidated,
 	])
 
 	return (
@@ -93,6 +105,9 @@ const Register = () => {
 						</label>
 						<USMEmailField
 							message='Only *@usm.my or *.usm.my are allowed. (Used for Login)'
+							successMessage='This email will be used for Login.'
+							checkExist={true}
+							existingEmails={emails}
 							value={email}
 							setValue={setEmail}
 							validated={USMEmailValidated}
@@ -105,27 +120,31 @@ const Register = () => {
 							setValidated={setPasswordValidated}
 						/>
 
-						<p
-							onClick={() => setNextStep(true)}
-							className={`mt-6 flex items-center justify-end font-semibold text-indigo-600 hover:text-indigo-700 ${
-								allowNextStep
-									? 'cursor-pointer'
-									: 'pointer-events-none opacity-50'
-							}`}
-						>
-							Next
-							<ArrowRightIcon className='ml-1 h-4 w-4' />
-						</p>
+						<div className='mt-6 text-right'>
+							<p
+								onClick={() => setNextStep(true)}
+								className={`inline-flex items-center font-semibold text-indigo-600 transition hover:text-indigo-700 ${
+									allowNextStep
+										? 'cursor-pointer'
+										: 'pointer-events-none opacity-50'
+								}`}
+							>
+								Next
+								<ArrowRightIcon className='ml-1 h-4 w-4' />
+							</p>
+						</div>
 					</div>
 
 					<div className={nextStep ? 'block' : 'hidden'}>
-						<p
-							onClick={() => setNextStep(false)}
-							className='mb-6 flex cursor-pointer items-center justify-start font-semibold text-indigo-600 hover:text-indigo-700'
-						>
-							<ArrowLeftIcon className='mr-1 h-4 w-4' />
-							Previous
-						</p>
+						<div className='mb-7'>
+							<p
+								onClick={() => setNextStep(false)}
+								className='inline-flex cursor-pointer items-center font-semibold text-indigo-600 transition hover:text-indigo-700'
+							>
+								<ArrowLeftIcon className='mr-1 h-4 w-4' />
+								Previous
+							</p>
+						</div>
 
 						<label htmlFor='name' className='required-input-label'>
 							Name
@@ -157,13 +176,13 @@ const Register = () => {
 							Lab
 						</label>
 						<LabSelectionField
-							value={lab}
-							setValue={setLab}
+							value={labName}
+							setValue={setLabName}
 							validated={labValidated}
 							setValidated={setLabValidated}
 						/>
 
-						<button className='mt-6 w-full' type='submit' disabled={!allowed}>
+						<button className='mt-3 w-full' type='submit' disabled={!allowed}>
 							Register
 						</button>
 					</div>
