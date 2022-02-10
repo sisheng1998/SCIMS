@@ -25,7 +25,9 @@ const NameField = (props) => {
 			<p className='mt-2 text-xs text-gray-400'>
 				{!props.value ? (
 					<span>Only alphabets and spaces are allowed.</span>
-				) : props.validated ? null : (
+				) : props.validated ? (
+					<span className='text-green-600'>Looks good!</span>
+				) : (
 					<span className='text-red-600'>Please enter a valid name.</span>
 				)}
 			</p>

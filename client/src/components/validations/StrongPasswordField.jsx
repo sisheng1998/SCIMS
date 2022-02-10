@@ -82,14 +82,16 @@ const StrongPasswordField = (props) => {
 							Strong password is required. (Min. 8 characters with at least 1
 							uppercase, 1 lowercase, 1 number, and 1 symbol)
 						</span>
-					) : strongPassword ? null : (
+					) : strongPassword ? (
+						<span className='text-green-600'>Your password is strong!</span>
+					) : (
 						<span className='text-red-600'>
 							Please enter a strong password.
 						</span>
 					)}
 				</p>
 
-				<div className='mt-4 hidden flex-wrap text-sm peer-focus:flex'>
+				<div className='mt-3 hidden flex-wrap text-sm peer-focus:flex'>
 					<p className='w-full text-gray-500'>Must contain at least:</p>
 					{Object.entries(requirements).map(([key, value]) => {
 						return (
@@ -135,8 +137,10 @@ const StrongPasswordField = (props) => {
 				<p className='mt-2 text-xs text-gray-400'>
 					{!confirmPassword ? (
 						'Both password must be matched.'
-					) : passwordMatch ? null : (
-						<span className='text-red-600'>Password does not match.</span>
+					) : passwordMatch ? (
+						<span className='text-green-600'>Passwords matched!</span>
+					) : (
+						<span className='text-red-600'>Passwords does not match.</span>
 					)}
 				</p>
 			</div>

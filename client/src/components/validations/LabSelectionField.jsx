@@ -31,9 +31,13 @@ const LabSelectionField = (props) => {
 			</select>
 
 			<p className='mt-2 text-xs text-gray-400'>
-				{!props.value
-					? 'The registration request will be sent to the lab owner.'
-					: null}
+				{!props.value ? (
+					'The registration request will be sent to the lab owner.'
+				) : (
+					<span className='text-green-600'>
+						The owner of this lab will receive your registration request.
+					</span>
+				)}
 			</p>
 		</div>
 	)

@@ -25,7 +25,11 @@ const USMEmailField = (props) => {
 			<p className='mt-2 text-xs text-gray-400'>
 				{!props.value ? (
 					props.message
-				) : props.validated ? null : (
+				) : props.validated ? (
+					<span className='text-green-600'>
+						This email will be used to login into your account.
+					</span>
+				) : (
 					<span className='text-red-600'>Please enter a valid USM email.</span>
 				)}
 			</p>

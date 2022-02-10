@@ -7,6 +7,7 @@ import NameField from '../validations/NameField'
 import USMEmailField from '../validations/USMEmailField'
 import EmailField from '../validations/EmailField'
 import StrongPasswordField from '../validations/StrongPasswordField'
+import { ArrowRightIcon, ArrowLeftIcon } from '@heroicons/react/outline'
 
 const Register = () => {
 	const navigate = useNavigate()
@@ -24,6 +25,8 @@ const Register = () => {
 	const [USMEmailValidated, setUSMEmailValidated] = useState(false)
 	const [emailValidated, setEmailValidated] = useState(false)
 	const [passwordValidated, setPasswordValidated] = useState(false)
+	const [nextStep, setNextStep] = useState(false)
+	const [allowNextStep, setAllowNextStep] = useState(false)
 
 	useEffect(() => {
 		if (localStorage.getItem('accessToken')) {
@@ -59,6 +62,8 @@ const Register = () => {
 	}
 
 	useEffect(() => {
+		setAllowNextStep(USMEmailValidated && passwordValidated)
+
 		setAllowed(
 			labValidated &&
 				nameValidated &&
@@ -82,62 +87,86 @@ const Register = () => {
 				{error && <span>{error}</span>}
 
 				<form onSubmit={registerHandler} spellCheck='false' autoComplete='off'>
-					<label htmlFor='labSelection' className='required-input-label'>
-						Lab
-					</label>
-					<LabSelectionField
-						value={lab}
-						setValue={setLab}
-						validated={labValidated}
-						setValidated={setLabValidated}
-					/>
+					<div className={!nextStep ? 'block' : 'hidden'}>
+						<label htmlFor='email' className='required-input-label'>
+							Email Address
+						</label>
+						<USMEmailField
+							message='Only *@usm.my or *.usm.my are allowed. (Used for Login)'
+							value={email}
+							setValue={setEmail}
+							validated={USMEmailValidated}
+							setValidated={setUSMEmailValidated}
+						/>
 
-					<label htmlFor='name' className='required-input-label'>
-						Name
-					</label>
-					<NameField
-						id='name'
-						placeholder='Enter your name'
-						required={true}
-						value={name}
-						setValue={setName}
-						validated={nameValidated}
-						setValidated={setNameValidated}
-					/>
+						<StrongPasswordField
+							password={password}
+							setPassword={setPassword}
+							setValidated={setPasswordValidated}
+						/>
 
-					<label htmlFor='email' className='required-input-label'>
-						Email Address
-					</label>
-					<USMEmailField
-						message='Only *@usm.my or *.usm.my are allowed. (Used for Login)'
-						value={email}
-						setValue={setEmail}
-						validated={USMEmailValidated}
-						setValidated={setUSMEmailValidated}
-					/>
+						<p
+							onClick={() => setNextStep(true)}
+							className={`mt-6 flex items-center justify-end font-semibold text-indigo-600 hover:text-indigo-700 ${
+								allowNextStep
+									? 'cursor-pointer'
+									: 'pointer-events-none opacity-50'
+							}`}
+						>
+							Next
+							<ArrowRightIcon className='ml-1 h-4 w-4' />
+						</p>
+					</div>
 
-					<label htmlFor='altEmail' className='required-input-label'>
-						Alternative Email Address
-					</label>
-					<EmailField
-						id='altEmail'
-						placeholder='Enter your email'
-						message='This email is not used for login purpose.'
-						value={altEmail}
-						setValue={setAltEmail}
-						validated={emailValidated}
-						setValidated={setEmailValidated}
-					/>
+					<div className={nextStep ? 'block' : 'hidden'}>
+						<p
+							onClick={() => setNextStep(false)}
+							className='mb-6 flex cursor-pointer items-center justify-start font-semibold text-indigo-600 hover:text-indigo-700'
+						>
+							<ArrowLeftIcon className='mr-1 h-4 w-4' />
+							Previous
+						</p>
 
-					<StrongPasswordField
-						password={password}
-						setPassword={setPassword}
-						setValidated={setPasswordValidated}
-					/>
+						<label htmlFor='name' className='required-input-label'>
+							Name
+						</label>
+						<NameField
+							id='name'
+							placeholder='Enter your name'
+							required={true}
+							value={name}
+							setValue={setName}
+							validated={nameValidated}
+							setValidated={setNameValidated}
+						/>
 
-					<button className='mt-6 w-full' type='submit' disabled={!allowed}>
-						Register
-					</button>
+						<label htmlFor='altEmail' className='required-input-label'>
+							Alternative Email Address
+						</label>
+						<EmailField
+							id='altEmail'
+							placeholder='Enter your email'
+							message='Personal email is recommended. (Not used for login)'
+							value={altEmail}
+							setValue={setAltEmail}
+							validated={emailValidated}
+							setValidated={setEmailValidated}
+						/>
+
+						<label htmlFor='labSelection' className='required-input-label'>
+							Lab
+						</label>
+						<LabSelectionField
+							value={lab}
+							setValue={setLab}
+							validated={labValidated}
+							setValidated={setLabValidated}
+						/>
+
+						<button className='mt-6 w-full' type='submit' disabled={!allowed}>
+							Register
+						</button>
+					</div>
 				</form>
 			</div>
 
