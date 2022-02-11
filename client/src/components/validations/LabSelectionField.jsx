@@ -55,7 +55,8 @@ const LabSelectionField = (props) => {
 					'The registration request will be sent to the lab owner.'
 				) : (
 					<span className='text-green-600'>
-						The owner of this lab will receive your registration request.
+						The owner of this lab will receive your registration request after
+						your email verified.
 					</span>
 				)}
 			</p>

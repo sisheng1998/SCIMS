@@ -111,7 +111,7 @@ const Register = () => {
 
 			{success ? (
 				<div className='auth-card mt-8 text-center'>
-					<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
+					<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-3 text-green-600' />
 					<h2 className='mt-6 mb-2 text-green-600'>Registration Success!</h2>
 					<p>Your account has been created.</p>
 					<p className='mt-6'>An email has been sent to:</p>
@@ -119,8 +119,8 @@ const Register = () => {
 						{email ? email : 'Your Registered Email Address'}
 					</p>
 					<p className='mt-6'>
-						Kindly click on the verification link provided in the email to
-						activate your account.
+						Kindly check your email and click on the verification link provided
+						to verify your email.
 					</p>
 				</div>
 			) : (
@@ -223,6 +223,9 @@ const Register = () => {
 							<button className='mt-3 w-full' type='submit' disabled={!allowed}>
 								Register
 							</button>
+							<p className='mt-4 text-center text-sm'>
+								Click 'Register' to proceed and verify your email.
+							</p>
 						</div>
 					</form>
 				</div>
