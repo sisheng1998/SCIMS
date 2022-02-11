@@ -16,7 +16,7 @@ const EmailVerification = () => {
 			}
 
 			try {
-				await axios.get(
+				await axios.put(
 					`/api/auth/verify-email/${params.emailVerificationToken}`,
 					config
 				)

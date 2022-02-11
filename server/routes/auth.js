@@ -4,6 +4,7 @@ const router = express.Router()
 const {
 	register,
 	emailVerification,
+	sendEmailVerification,
 	login,
 	logout,
 	forgotPassword,
@@ -14,7 +15,8 @@ const {
 } = require('../controllers/auth')
 
 router.route('/register').post(register)
-router.route('/verify-email/:emailVerificationToken').get(emailVerification)
+router.route('/verify-email/:emailVerificationToken').put(emailVerification)
+router.route('/verify-email').put(sendEmailVerification)
 router.route('/login').post(login)
 router.route('/logout').put(logout)
 router.route('/forgot-password').post(forgotPassword)

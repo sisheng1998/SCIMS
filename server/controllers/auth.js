@@ -43,28 +43,7 @@ exports.register = async (req, res, next) => {
 
 		await user.save()
 
-		const emailVerificationUrl = `${process.env.DOMAIN_NAME}/verify-email/${emailVerificationToken}`
-
-		const message = `
-			<h1>You have registered an account with this email.</h1>
-			<p>Please click the verification link below to verify your email.</p>
-			<a clicktracking=off href=${emailVerificationUrl}>${emailVerificationUrl}</a>
-		`
-
-		try {
-			await sendEmail({
-				to: user.email,
-				subject: '[SCIMS] Email Verification Request',
-				text: message,
-			})
-
-			res.status(201).json({
-				success: true,
-				data: 'New user created and the verification email has been sent.',
-			})
-		} catch (error) {
-			return next(new ErrorResponse('Email could not be sent.', 500))
-		}
+		sendVerificationEmail(user, emailVerificationToken, res, next)
 	} catch (error) {
 		next(error)
 	}
@@ -99,6 +78,27 @@ exports.emailVerification = async (req, res, next) => {
 	}
 }
 
+exports.sendEmailVerification = async (req, res, next) => {
+	const { email } = req.body
+	console.log(email)
+
+	try {
+		const user = await User.findOne({ email })
+
+		if (!user) {
+			return next(new ErrorResponse('User not found.', 404))
+		}
+
+		const emailVerificationToken = user.getEmailVerificationToken()
+
+		await user.save()
+
+		sendVerificationEmail(user, emailVerificationToken, res, next)
+	} catch (error) {
+		next(error)
+	}
+}
+
 exports.login = async (req, res, next) => {
 	const { email, password } = req.body
 
@@ -117,6 +117,10 @@ exports.login = async (req, res, next) => {
 
 		if (!isMatch) {
 			return next(new ErrorResponse('Invalid credentials.', 401))
+		}
+
+		if (!user.isEmailVerified) {
+			return next(new ErrorResponse('Email not verified.', 403))
 		}
 
 		sendToken(user, 200, res)
@@ -333,4 +337,34 @@ const sendToken = async (user, statusCode, res) => {
 		success: true,
 		accessToken: accessToken,
 	})
+}
+
+const sendVerificationEmail = async (
+	user,
+	emailVerificationToken,
+	res,
+	next
+) => {
+	const emailVerificationUrl = `${process.env.DOMAIN_NAME}/verify-email/${emailVerificationToken}`
+
+	const message = `
+			<h1>You have registered an account with this email.</h1>
+			<p>Please click the verification link below to verify your email.</p>
+			<a clicktracking=off href=${emailVerificationUrl}>${emailVerificationUrl}</a>
+		`
+
+	try {
+		await sendEmail({
+			to: user.email,
+			subject: '[SCIMS] Email Verification Request',
+			text: message,
+		})
+
+		res.status(201).json({
+			success: true,
+			data: 'The verification email has been sent.',
+		})
+	} catch (error) {
+		return next(new ErrorResponse('Email could not be sent.', 500))
+	}
 }

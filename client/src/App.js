@@ -15,6 +15,7 @@ import Register from './components/auth/Register'
 import ForgotPassword from './components/auth/ForgotPassword'
 import ResetPassword from './components/auth/ResetPassword'
 import EmailVerification from './components/auth/EmailVerification'
+import SendEmailVerification from './components/auth/SendEmailVerification'
 
 // Application
 import Dashboard from './components/app/Dashboard'
@@ -46,6 +47,11 @@ const App = () => {
 							exact
 							path='/verify-email/:emailVerificationToken'
 							element={<EmailVerification />}
+						/>
+						<Route
+							exact
+							path='/verify-email'
+							element={<SendEmailVerification />}
 						/>
 					</Route>
 
