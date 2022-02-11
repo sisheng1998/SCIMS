@@ -68,6 +68,10 @@
 		@apply text-4xl;
 	}
 
+	h2 {
+		@apply text-3xl;
+	}
+
 	a {
 		@apply font-semibold text-indigo-600 outline-indigo-500 transition hover:text-indigo-700;
 	}

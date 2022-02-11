@@ -47,7 +47,7 @@ exports.register = async (req, res, next) => {
 
 		const message = `
 			<h1>You have registered an account with this email.</h1>
-			<p>Please click the link below to verify your account.</p>
+			<p>Please click the activation link below to verify your account.</p>
 			<a clicktracking=off href=${emailVerificationUrl}>${emailVerificationUrl}</a>
 		`
 
@@ -58,12 +58,13 @@ exports.register = async (req, res, next) => {
 				text: message,
 			})
 
-			res.status(200).json({ success: true, data: 'Email sent.' })
+			res.status(201).json({
+				success: true,
+				data: 'New user created and the verification email has been sent.',
+			})
 		} catch (error) {
 			return next(new ErrorResponse('Email could not be sent.', 500))
 		}
-
-		res.status(201).json({ success: true, data: 'New user created.' })
 	} catch (error) {
 		next(error)
 	}

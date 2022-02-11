@@ -11,6 +11,7 @@ import {
 	ArrowRightIcon,
 	ArrowLeftIcon,
 	ExclamationCircleIcon,
+	CheckIcon,
 } from '@heroicons/react/outline'
 
 const Register = () => {
@@ -104,13 +105,23 @@ const Register = () => {
 
 	return (
 		<>
-			<h1 className='my-6 text-center'>
-				{success ? 'Verify Your Email' : 'Create New Account'}
-			</h1>
+			{success ? null : (
+				<h1 className='my-6 text-center'>Create New Account</h1>
+			)}
 
 			{success ? (
-				<div className='auth-card'>
-					<p>User created!</p>
+				<div className='auth-card mt-8 text-center'>
+					<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
+					<h2 className='mt-6 mb-2 text-green-600'>Registration Success!</h2>
+					<p>Your account has been created.</p>
+					<p className='mt-6'>An email has been sent to:</p>
+					<p className='text-lg font-semibold'>
+						{email ? email : 'Your Registered Email Address'}
+					</p>
+					<p className='mt-6'>
+						Kindly click on the verification link provided in the email to
+						activate your account.
+					</p>
 				</div>
 			) : (
 				<div className='auth-card'>
@@ -217,11 +228,10 @@ const Register = () => {
 				</div>
 			)}
 
-			{success ? null : (
-				<p className='mt-6'>
-					Already have an account? <Link to='/login'>Login</Link>
-				</p>
-			)}
+			<p className='mt-6'>
+				{success ? 'Return to ' : 'Already have an account? '}
+				<Link to='/login'>Login</Link>
+			</p>
 		</>
 	)
 }
