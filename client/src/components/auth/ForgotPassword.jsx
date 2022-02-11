@@ -1,11 +1,16 @@
 import React from 'react'
 import { useState } from 'react'
 import axios from 'axios'
+import { Link } from 'react-router-dom'
+import USMEmailField from '../validations/USMEmailField'
+import { ExclamationCircleIcon, CheckIcon } from '@heroicons/react/outline'
 
 const ForgotPassword = () => {
 	const [email, setEmail] = useState('')
-	const [error, setError] = useState('')
-	const [success, setSuccess] = useState('')
+	const [emailValidated, setEmailValidated] = useState(false)
+
+	const [errorMessage, setErrorMessage] = useState('')
+	const [success, setSuccess] = useState(false)
 
 	const forgotPasswordHandler = async (e) => {
 		e.preventDefault()
@@ -17,52 +22,86 @@ const ForgotPassword = () => {
 		}
 
 		try {
-			const { data } = await axios.post(
-				'/api/auth/forgot-password',
-				{ email },
-				config
-			)
+			await axios.post('/api/auth/forgot-password', { email }, config)
 
-			setSuccess(data.data)
+			setSuccess(true)
 		} catch (error) {
-			setError(error.response.data.error)
-			setEmail('')
+			if (error.response?.status === 404) {
+				setErrorMessage('An account with this email does not exists.')
+			} else {
+				setErrorMessage('Oops. Something went wrong. Please try again later.')
+			}
+
 			setTimeout(() => {
-				setError('')
+				setErrorMessage('')
 			}, 5000)
 		}
 	}
 
 	return (
 		<>
-			<h1 className='my-6 text-center'>Forgot Password?</h1>
-
-			<div className='auth-card'>
-				{error && <span>{error}</span>}
-				{success && <span>{success}</span>}
-				<form onSubmit={forgotPasswordHandler}>
-					<p className='mb-6 text-gray-700'>
-						Please enter the email address you register your account with.
-						<br />
-						We will send you reset password confirmation to this email.
+			{success ? (
+				<div className='auth-card mt-8 text-center'>
+					<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-3 text-green-600' />
+					<h2 className='mt-6 mb-2 text-green-600'>Email Sent!</h2>
+					<p>An email with reset password link has been sent.</p>
+					<p className='mt-6'>The email has been sent to:</p>
+					<p className='text-lg font-semibold'>
+						{email ? email : 'Your Registered Email Address'}
 					</p>
+					<p className='my-6'>
+						Kindly check your email and click on the link provided to reset your
+						password.
+					</p>
+					<p className='text-sm font-medium'>
+						*The link will be valid for 30 minutes only.
+					</p>
+				</div>
+			) : (
+				<>
+					<h1 className='my-6 text-center'>Forgot Password?</h1>
 
-					<label htmlFor='email'>Email Address</label>
-					<input
-						className='mb-6 w-full'
-						type='email'
-						id='email'
-						placeholder='Enter your email'
-						required
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-					/>
+					<div className='auth-card'>
+						{errorMessage && (
+							<p className='mb-6 flex items-center text-sm font-medium text-red-600'>
+								<ExclamationCircleIcon className='mr-1 h-5 w-5 shrink-0' />{' '}
+								{errorMessage}
+							</p>
+						)}
 
-					<button className='w-full' type='submit'>
-						Send
-					</button>
-				</form>
-			</div>
+						<p className='mb-6'>
+							Enter your login email address and we will send you a link to
+							reset your password.
+						</p>
+
+						<form onSubmit={forgotPasswordHandler}>
+							<label htmlFor='email' className='required-input-label'>
+								Email Address
+							</label>
+							<USMEmailField
+								message='Only *@usm.my or *.usm.my are allowed.'
+								successMessage='Looks good!'
+								checkExist={false}
+								value={email}
+								setValue={setEmail}
+								validated={emailValidated}
+								setValidated={setEmailValidated}
+							/>
+
+							<button
+								className='mt-3 w-full'
+								type='submit'
+								disabled={!emailValidated}
+							>
+								Send
+							</button>
+						</form>
+					</div>
+				</>
+			)}
+			<p className='mt-6'>
+				Return to <Link to='/login'>Login</Link>
+			</p>
 		</>
 	)
 }

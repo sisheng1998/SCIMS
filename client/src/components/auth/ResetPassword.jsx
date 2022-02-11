@@ -1,14 +1,18 @@
 import React from 'react'
 import { useState } from 'react'
 import axios from 'axios'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
+import StrongPasswordField from '../validations/StrongPasswordField'
+import { ExclamationCircleIcon, CheckIcon } from '@heroicons/react/outline'
 
 const ResetPassword = () => {
 	const params = useParams()
+
 	const [password, setPassword] = useState('')
-	const [confirmPassword, setConfirmPassword] = useState('')
-	const [error, setError] = useState('')
-	const [success, setSuccess] = useState('')
+	const [passwordValidated, setPasswordValidated] = useState(false)
+
+	const [errorMessage, setErrorMessage] = useState('')
+	const [success, setSuccess] = useState(false)
 
 	const resetPasswordHandler = async (e) => {
 		e.preventDefault()
@@ -19,66 +23,69 @@ const ResetPassword = () => {
 			},
 		}
 
-		if (password !== confirmPassword) {
-			setPassword('')
-			setConfirmPassword('')
-			setTimeout(() => {
-				setError('')
-			}, 5000)
-			return setError('Passwords do not match.')
-		}
-
 		try {
-			const { data } = await axios.put(
+			await axios.put(
 				`/api/auth/reset-password/${params.resetToken}`,
 				{ password },
 				config
 			)
 
-			setSuccess(data.data)
+			setSuccess(true)
 		} catch (error) {
-			setError(error.response.data.error)
+			setErrorMessage('Reset password link expired. Kindly request again.')
+
 			setTimeout(() => {
-				setError('')
+				setErrorMessage('')
 			}, 5000)
 		}
 	}
 
 	return (
 		<>
-			<h1 className='my-6 text-center'>Reset Password</h1>
+			{success ? (
+				<div className='auth-card mt-8 text-center'>
+					<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-3 text-green-600' />
+					<h2 className='mt-6 mb-2 text-green-600'>Password Changed!</h2>
+					<p>Your password has been changed successfully.</p>
 
-			<div className='auth-card'>
-				{error && <span>{error}</span>}
-				{success && <span>{success}</span>}
-				<form onSubmit={resetPasswordHandler}>
-					<label htmlFor='password'>Password</label>
-					<input
-						className='mb-6 w-full'
-						type='password'
-						id='password'
-						placeholder='Enter a new password'
-						required
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-					/>
+					<Link to='/login'>
+						<button className='mt-9 w-full'>Login</button>
+					</Link>
+				</div>
+			) : (
+				<>
+					<h1 className='my-6 text-center'>Reset Your Password</h1>
 
-					<label htmlFor='confirmPassword'>Confirm Password</label>
-					<input
-						className='mb-6 w-full'
-						type='password'
-						id='confirmPassword'
-						placeholder='Retype the new password'
-						required
-						value={confirmPassword}
-						onChange={(e) => setConfirmPassword(e.target.value)}
-					/>
+					<div className='auth-card'>
+						{errorMessage && (
+							<p className='mb-6 flex items-center text-sm font-medium text-red-600'>
+								<ExclamationCircleIcon className='mr-1 h-5 w-5 shrink-0' />{' '}
+								{errorMessage}
+							</p>
+						)}
 
-					<button className='w-full' type='submit'>
-						Reset
-					</button>
-				</form>
-			</div>
+						<form onSubmit={resetPasswordHandler}>
+							<StrongPasswordField
+								password={password}
+								setPassword={setPassword}
+								setValidated={setPasswordValidated}
+							/>
+
+							<button
+								className='mt-3 w-full'
+								type='submit'
+								disabled={!passwordValidated}
+							>
+								Reset Password
+							</button>
+						</form>
+					</div>
+
+					<p className='mt-6'>
+						Return to <Link to='/login'>Login</Link>
+					</p>
+				</>
+			)}
 		</>
 	)
 }

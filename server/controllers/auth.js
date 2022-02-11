@@ -183,7 +183,7 @@ exports.forgotPassword = async (req, res, next) => {
 		const user = await User.findOne({ email })
 
 		if (!user) {
-			return next(new ErrorResponse('Email could not be sent.', 404))
+			return next(new ErrorResponse('User not found.', 404))
 		}
 
 		const resetToken = user.getResetPasswordToken()
@@ -196,6 +196,7 @@ exports.forgotPassword = async (req, res, next) => {
 			<h1>You have requested a password reset.</h1>
 			<p>Please click the link below to reset your password.</p>
 			<a clicktracking=off href=${resetUrl}>${resetUrl}</a>
+			<p>The link will be valid for 30 minutes only.</p>
 		`
 
 		try {
