@@ -25,10 +25,6 @@ const UserSchema = new Schema(
 			required: true,
 			select: false,
 		},
-		isEmailVerified: {
-			type: Boolean,
-			default: false,
-		},
 		roles: [
 			{
 				lab: {
@@ -45,6 +41,11 @@ const UserSchema = new Schema(
 				},
 			},
 		],
+		isEmailVerified: {
+			type: Boolean,
+			default: false,
+		},
+		emailVerificationToken: String,
 		resetPasswordToken: String,
 		resetPasswordExpire: Date,
 		refreshToken: String,
@@ -95,6 +96,17 @@ UserSchema.methods.getResetPasswordToken = function () {
 	this.resetPasswordExpire = Date.now() + 30 * (60 * 1000)
 
 	return resetToken
+}
+
+UserSchema.methods.getEmailVerificationToken = function () {
+	const verificationToken = crypto.randomBytes(20).toString('hex')
+
+	this.emailVerificationToken = crypto
+		.createHash('sha256')
+		.update(verificationToken)
+		.digest('hex')
+
+	return verificationToken
 }
 
 const User = mongoose.model('User', UserSchema)

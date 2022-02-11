@@ -14,6 +14,7 @@ import Login from './components/auth/Login'
 import Register from './components/auth/Register'
 import ForgotPassword from './components/auth/ForgotPassword'
 import ResetPassword from './components/auth/ResetPassword'
+import EmailVerification from './components/auth/EmailVerification'
 
 // Application
 import Dashboard from './components/app/Dashboard'
@@ -40,6 +41,11 @@ const App = () => {
 							exact
 							path='/reset-password/:resetToken'
 							element={<ResetPassword />}
+						/>
+						<Route
+							exact
+							path='/verify-email/:emailVerificationToken'
+							element={<EmailVerification />}
 						/>
 					</Route>
 

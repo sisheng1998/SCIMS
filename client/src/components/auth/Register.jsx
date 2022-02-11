@@ -7,7 +7,11 @@ import StrongPasswordField from '../validations/StrongPasswordField'
 import NameField from '../validations/NameField'
 import EmailField from '../validations/EmailField'
 import LabSelectionField from '../validations/LabSelectionField'
-import { ArrowRightIcon, ArrowLeftIcon } from '@heroicons/react/outline'
+import {
+	ArrowRightIcon,
+	ArrowLeftIcon,
+	ExclamationCircleIcon,
+} from '@heroicons/react/outline'
 
 const Register = () => {
 	const [emails, setEmails] = useState([])
@@ -37,8 +41,6 @@ const Register = () => {
 	const [altEmail, setAltEmail] = useState('')
 	const [labName, setLabName] = useState('')
 
-	const [error, setError] = useState('')
-
 	const [USMEmailValidated, setUSMEmailValidated] = useState(false)
 	const [passwordValidated, setPasswordValidated] = useState(false)
 	const [nameValidated, setNameValidated] = useState(false)
@@ -49,6 +51,9 @@ const Register = () => {
 	const [nextStep, setNextStep] = useState(false)
 	const [allowNextStep, setAllowNextStep] = useState(false)
 
+	const [success, setSuccess] = useState(false)
+	const [errorMessage, setErrorMessage] = useState('')
+
 	const registerHandler = async (e) => {
 		e.preventDefault()
 
@@ -56,19 +61,25 @@ const Register = () => {
 			headers: {
 				'Content-Type': 'application/json',
 			},
+			withCredentials: true,
 		}
 
 		try {
-			const { data } = await axios.post(
+			await axios.post(
 				'/api/auth/register',
 				{ name, email, altEmail, password, labName },
 				config
 			)
-			setError(data.data)
+			setSuccess(true)
 		} catch (error) {
-			setError(error.response.data.error)
+			if (error.response?.status === 409) {
+				setErrorMessage('An account with this email already exists.')
+			} else {
+				setErrorMessage('Oops. Something went wrong. Please try again later.')
+			}
+
 			setTimeout(() => {
-				setError('')
+				setErrorMessage('')
 			}, 5000)
 		}
 	}
@@ -93,105 +104,124 @@ const Register = () => {
 
 	return (
 		<>
-			<h1 className='my-6 text-center'>Create New Account</h1>
+			<h1 className='my-6 text-center'>
+				{success ? 'Verify Your Email' : 'Create New Account'}
+			</h1>
 
-			<div className='auth-card'>
-				{error && <span>{error}</span>}
+			{success ? (
+				<div className='auth-card'>
+					<p>User created!</p>
+				</div>
+			) : (
+				<div className='auth-card'>
+					{errorMessage && (
+						<p className='mb-6 flex items-center text-sm font-medium text-red-600'>
+							<ExclamationCircleIcon className='mr-1 h-5 w-5 shrink-0' />{' '}
+							{errorMessage}
+						</p>
+					)}
 
-				<form onSubmit={registerHandler} spellCheck='false' autoComplete='off'>
-					<div className={!nextStep ? 'block' : 'hidden'}>
-						<label htmlFor='email' className='required-input-label'>
-							Email Address
-						</label>
-						<USMEmailField
-							message='Only *@usm.my or *.usm.my are allowed. (Used for Login)'
-							successMessage='This email will be used for Login.'
-							checkExist={true}
-							existingEmails={emails}
-							value={email}
-							setValue={setEmail}
-							validated={USMEmailValidated}
-							setValidated={setUSMEmailValidated}
-						/>
+					<form
+						onSubmit={registerHandler}
+						spellCheck='false'
+						autoComplete='off'
+					>
+						<div className={!nextStep ? 'block' : 'hidden'}>
+							<label htmlFor='email' className='required-input-label'>
+								Email Address
+							</label>
+							<USMEmailField
+								message='Only *@usm.my or *.usm.my are allowed. (Used for Login)'
+								successMessage='This email will be used for Login.'
+								checkExist={true}
+								existingEmails={emails}
+								value={email}
+								setValue={setEmail}
+								validated={USMEmailValidated}
+								setValidated={setUSMEmailValidated}
+							/>
 
-						<StrongPasswordField
-							password={password}
-							setPassword={setPassword}
-							setValidated={setPasswordValidated}
-						/>
+							<StrongPasswordField
+								password={password}
+								setPassword={setPassword}
+								setValidated={setPasswordValidated}
+							/>
 
-						<div className='mt-6 text-right'>
-							<p
-								onClick={() => setNextStep(true)}
-								className={`inline-flex items-center font-semibold text-indigo-600 transition hover:text-indigo-700 ${
-									allowNextStep
-										? 'cursor-pointer'
-										: 'pointer-events-none opacity-50'
-								}`}
-							>
-								Next
-								<ArrowRightIcon className='ml-1 h-4 w-4' />
-							</p>
+							<div className='mt-6 text-right'>
+								<p
+									onClick={() => setNextStep(true)}
+									className={`inline-flex items-center font-semibold text-indigo-600 transition hover:text-indigo-700 ${
+										allowNextStep
+											? 'cursor-pointer'
+											: 'pointer-events-none opacity-50'
+									}`}
+								>
+									Next
+									<ArrowRightIcon className='ml-1 h-4 w-4' />
+								</p>
+							</div>
 						</div>
-					</div>
 
-					<div className={nextStep ? 'block' : 'hidden'}>
-						<div className='mb-7'>
-							<p
-								onClick={() => setNextStep(false)}
-								className='inline-flex cursor-pointer items-center font-semibold text-indigo-600 transition hover:text-indigo-700'
-							>
-								<ArrowLeftIcon className='mr-1 h-4 w-4' />
-								Previous
-							</p>
+						<div className={nextStep ? 'block' : 'hidden'}>
+							<div className='mb-7'>
+								<p
+									onClick={() => setNextStep(false)}
+									className='inline-flex cursor-pointer items-center font-semibold text-indigo-600 transition hover:text-indigo-700'
+								>
+									<ArrowLeftIcon className='mr-1 h-4 w-4' />
+									Previous
+								</p>
+							</div>
+
+							<label htmlFor='name' className='required-input-label'>
+								Name
+							</label>
+							<NameField
+								id='name'
+								placeholder='Enter your name'
+								required={true}
+								value={name}
+								setValue={setName}
+								validated={nameValidated}
+								setValidated={setNameValidated}
+							/>
+
+							<label htmlFor='altEmail' className='required-input-label'>
+								Alternative Email Address
+							</label>
+							<EmailField
+								id='altEmail'
+								placeholder='Enter your email'
+								message='Personal email is recommended. (Not used for login)'
+								value={altEmail}
+								setValue={setAltEmail}
+								validated={emailValidated}
+								setValidated={setEmailValidated}
+							/>
+
+							<label htmlFor='labSelection' className='required-input-label'>
+								Lab
+							</label>
+							<LabSelectionField
+								value={labName}
+								setValue={setLabName}
+								validated={labValidated}
+								setValidated={setLabValidated}
+							/>
+
+							<button className='mt-3 w-full' type='submit' disabled={!allowed}>
+								Register
+							</button>
 						</div>
+					</form>
+				</div>
+			)}
 
-						<label htmlFor='name' className='required-input-label'>
-							Name
-						</label>
-						<NameField
-							id='name'
-							placeholder='Enter your name'
-							required={true}
-							value={name}
-							setValue={setName}
-							validated={nameValidated}
-							setValidated={setNameValidated}
-						/>
-
-						<label htmlFor='altEmail' className='required-input-label'>
-							Alternative Email Address
-						</label>
-						<EmailField
-							id='altEmail'
-							placeholder='Enter your email'
-							message='Personal email is recommended. (Not used for login)'
-							value={altEmail}
-							setValue={setAltEmail}
-							validated={emailValidated}
-							setValidated={setEmailValidated}
-						/>
-
-						<label htmlFor='labSelection' className='required-input-label'>
-							Lab
-						</label>
-						<LabSelectionField
-							value={labName}
-							setValue={setLabName}
-							validated={labValidated}
-							setValidated={setLabValidated}
-						/>
-
-						<button className='mt-3 w-full' type='submit' disabled={!allowed}>
-							Register
-						</button>
-					</div>
-				</form>
-			</div>
-
-			<p className='mt-6'>
-				Already have an account? <Link to='/login'>Login</Link>
-			</p>
+			{success ? null : (
+				<p className='mt-6'>
+					Already have an account? <Link to='/login'>Login</Link>
+				</p>
+			)}
 		</>
 	)
 }

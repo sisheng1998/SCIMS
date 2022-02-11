@@ -39,7 +39,60 @@ exports.register = async (req, res, next) => {
 			},
 		})
 
+		const emailVerificationToken = user.getEmailVerificationToken()
+
+		await user.save()
+
+		const emailVerificationUrl = `${process.env.DOMAIN_NAME}/verify-email/${emailVerificationToken}`
+
+		const message = `
+			<h1>You have registered an account with this email.</h1>
+			<p>Please click the link below to verify your account.</p>
+			<a clicktracking=off href=${emailVerificationUrl}>${emailVerificationUrl}</a>
+		`
+
+		try {
+			await sendEmail({
+				to: user.email,
+				subject: '[SCIMS] Email Verification Request',
+				text: message,
+			})
+
+			res.status(200).json({ success: true, data: 'Email sent.' })
+		} catch (error) {
+			return next(new ErrorResponse('Email could not be sent.', 500))
+		}
+
 		res.status(201).json({ success: true, data: 'New user created.' })
+	} catch (error) {
+		next(error)
+	}
+}
+
+exports.emailVerification = async (req, res, next) => {
+	const emailVerificationToken = crypto
+		.createHash('sha256')
+		.update(req.params.emailVerificationToken)
+		.digest('hex')
+
+	try {
+		const user = await User.findOne({
+			emailVerificationToken,
+		})
+
+		if (!user) {
+			return next(new ErrorResponse('Invalid email verification token.', 400))
+		}
+
+		user.emailVerificationToken = undefined
+		user.isEmailVerified = true
+
+		await user.save()
+
+		res.status(201).json({
+			success: true,
+			data: 'Account activated.',
+		})
 	} catch (error) {
 		next(error)
 	}
@@ -136,11 +189,11 @@ exports.forgotPassword = async (req, res, next) => {
 
 		await user.save()
 
-		const resetUrl = `http://localhost:3000/reset-password/${resetToken}`
+		const resetUrl = `${process.env.DOMAIN_NAME}/reset-password/${resetToken}`
 
 		const message = `
 			<h1>You have requested a password reset.</h1>
-			<p>Please go to this link to reset your password</p>
+			<p>Please click the link below to reset your password.</p>
 			<a clicktracking=off href=${resetUrl}>${resetUrl}</a>
 		`
 
@@ -178,7 +231,7 @@ exports.resetPassword = async (req, res, next) => {
 		})
 
 		if (!user) {
-			return next(new ErrorResponse('Invalid reset token.', 400))
+			return next(new ErrorResponse('Invalid reset password token.', 400))
 		}
 
 		user.password = req.body.password
@@ -189,7 +242,7 @@ exports.resetPassword = async (req, res, next) => {
 
 		res.status(201).json({
 			success: true,
-			data: 'Password reset success.',
+			data: 'Password reset successful.',
 		})
 	} catch (error) {
 		next(error)
