@@ -12,6 +12,7 @@ const Login = () => {
 
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
+	const [rememberMe, setRememberMe] = useState(false)
 
 	const [emailValidated, setEmailValidated] = useState(false)
 	const [passwordValidated, setPasswordValidated] = useState(false)
@@ -33,7 +34,7 @@ const Login = () => {
 		try {
 			const { data } = await axios.post(
 				'/api/auth/login',
-				{ email, password },
+				{ email, password, rememberMe },
 				config
 			)
 
@@ -100,11 +101,22 @@ const Login = () => {
 						setValidated={setPasswordValidated}
 					/>
 
-					<p className='text-right'>
+					<div className='flex items-center justify-between'>
+						<div className='flex items-center'>
+							<input
+								type='checkbox'
+								id='rememberMe'
+								onClick={() => setRememberMe(!rememberMe)}
+							/>
+							<label className='mb-0 ml-2 inline' htmlFor='rememberMe'>
+								Remember me
+							</label>
+						</div>
+
 						<Link className='text-sm' to='/forgot-password'>
 							Forgot password?
 						</Link>
-					</p>
+					</div>
 
 					<button className='mt-6 w-full' type='submit' disabled={!allowed}>
 						Login

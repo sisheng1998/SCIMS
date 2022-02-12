@@ -46,6 +46,10 @@ const UserSchema = new Schema(
 			type: Boolean,
 			default: false,
 		},
+		rememberMe: {
+			type: Boolean,
+			default: false,
+		},
 		emailVerificationToken: String,
 		resetPasswordToken: String,
 		resetPasswordExpire: Date,

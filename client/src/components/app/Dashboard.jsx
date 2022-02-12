@@ -25,7 +25,7 @@ const Dashboard = () => {
 				isMounted && setPrivateData(data.data)
 				setError('')
 			} catch (error) {
-				setError('You are not authorized, please login.')
+				navigate('/login')
 			}
 		}
 
@@ -35,7 +35,7 @@ const Dashboard = () => {
 			isMounted = false
 			controller.abort()
 		}
-	}, [axiosPrivate])
+	}, [axiosPrivate, navigate])
 
 	const logout = async () => {
 		try {

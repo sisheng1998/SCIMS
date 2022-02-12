@@ -34,7 +34,7 @@ const LoginPasswordField = (props) => {
 	}, [props, state])
 
 	return (
-		<div className='relative mb-3'>
+		<div className='relative mb-6'>
 			<input
 				className={`peer w-full pr-10 ${
 					!props.password

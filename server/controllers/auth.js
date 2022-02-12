@@ -99,7 +99,7 @@ exports.sendEmailVerification = async (req, res, next) => {
 }
 
 exports.login = async (req, res, next) => {
-	const { email, password } = req.body
+	const { email, password, rememberMe } = req.body
 
 	if (!email || !password) {
 		return next(new ErrorResponse('Missing value.', 400))
@@ -122,7 +122,7 @@ exports.login = async (req, res, next) => {
 			return next(new ErrorResponse('Email not verified.', 403))
 		}
 
-		sendToken(user, 200, res)
+		sendToken(user, rememberMe, 200, res)
 	} catch (error) {
 		res.status(500).json({ success: false, error: error.message })
 	}
@@ -318,18 +318,23 @@ exports.emails = (req, res, next) => {
 	}
 }
 
-const sendToken = async (user, statusCode, res) => {
+const sendToken = async (user, rememberMe, statusCode, res) => {
 	const accessToken = user.getAccessToken()
 	const refreshToken = user.getRefreshToken()
 
+	user.rememberMe = rememberMe
 	user.refreshToken = refreshToken
 	await user.save()
+
+	const expiryDate = new Date(
+		Date.now() + Number(process.env.COOKIE_REFRESH_TOKEN_EXPIRE)
+	)
 
 	res.cookie('refreshToken', refreshToken, {
 		httpOnly: true,
 		sameSite: 'None',
 		secure: true,
-		maxAge: process.env.COOKIE_REFRESH_TOKEN_EXPIRE,
+		expires: user.rememberMe ? expiryDate : false,
 	})
 
 	res.status(statusCode).json({
