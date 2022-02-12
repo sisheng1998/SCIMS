@@ -3,34 +3,39 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import AuthContext from '../../context/AuthProvider'
+import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 
 const Dashboard = () => {
-	const { auth, setAuth } = useContext(AuthContext)
-	console.log(auth)
+	const { setAuth } = useContext(AuthContext)
+	const axiosPrivate = useAxiosPrivate()
 	const navigate = useNavigate()
 
 	const [error, setError] = useState('')
 	const [privateData, setPrivateData] = useState('')
 
 	useEffect(() => {
-		const fetchPrivateData = async () => {
-			const config = {
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${auth.accessToken}`,
-				},
-			}
+		let isMounted = true
+		const controller = new AbortController()
 
+		const fetchPrivateData = async () => {
 			try {
-				const { data } = await axios.get('/api/private', config)
-				setPrivateData(data.data)
+				const { data } = await axiosPrivate.get('/api/private', {
+					signal: controller.signal,
+				})
+				isMounted && setPrivateData(data.data)
+				setError('')
 			} catch (error) {
 				setError('You are not authorized, please login.')
 			}
 		}
 
 		fetchPrivateData()
-	}, [auth, navigate])
+
+		return () => {
+			isMounted = false
+			controller.abort()
+		}
+	}, [axiosPrivate])
 
 	const logout = async () => {
 		try {
@@ -42,19 +47,9 @@ const Dashboard = () => {
 		}
 	}
 
-	const refreshHandler = async () => {
-		try {
-			const { data } = await axios.get('/api/auth/refresh-token')
-			localStorage.setItem('accessToken', data.accessToken)
-		} catch (error) {
-			setError('Unable to get new access token.')
-		}
-	}
-
 	return error ? (
 		<div>
 			<div>{error}</div>
-			<button onClick={refreshHandler}>Refresh</button>
 			<button onClick={logout}>Logout</button>
 		</div>
 	) : (

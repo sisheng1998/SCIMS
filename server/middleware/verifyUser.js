@@ -13,7 +13,7 @@ exports.verifyUser = async (req, res, next) => {
 		const accessToken = authHeader.split(' ')[1]
 
 		if (!accessToken) {
-			return next(new ErrorResponse('Unauthorized to access.', 401))
+			return next(new ErrorResponse('Access token not found.', 404))
 		}
 
 		const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_TOKEN_SECRET)
@@ -27,6 +27,6 @@ exports.verifyUser = async (req, res, next) => {
 		req.user = user
 		next()
 	} catch (err) {
-		return next(new ErrorResponse('Unauthorized to access.', 401))
+		return next(new ErrorResponse('Invalid access token.', 403))
 	}
 }
