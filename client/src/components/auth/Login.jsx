@@ -100,18 +100,11 @@ const Login = () => {
 						setValidated={setPasswordValidated}
 					/>
 
-					<div className='flex items-center justify-between'>
-						<div className='flex items-center'>
-							<input type='checkbox' id='rememberMe' />
-							<label className='mb-0 ml-2 inline' htmlFor='rememberMe'>
-								Remember me
-							</label>
-						</div>
-
+					<p className='text-right'>
 						<Link className='text-sm' to='/forgot-password'>
 							Forgot password?
 						</Link>
-					</div>
+					</p>
 
 					<button className='mt-6 w-full' type='submit' disabled={!allowed}>
 						Login
