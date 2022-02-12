@@ -64,7 +64,7 @@ const ForgotPassword = () => {
 					<div className='auth-card'>
 						{errorMessage && (
 							<p className='mb-6 flex items-center text-sm font-medium text-red-600'>
-								<ExclamationCircleIcon className='mr-1 h-5 w-5 shrink-0' />{' '}
+								<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}
 								{errorMessage}
 							</p>
 						)}

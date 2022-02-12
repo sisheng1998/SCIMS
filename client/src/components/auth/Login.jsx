@@ -41,10 +41,11 @@ const Login = () => {
 			if (error.response?.status === 401) {
 				setErrorMessage('Incorrect email or password.')
 			} else if (error.response?.status === 403) {
-				navigate('/verify-email', { state: { email: email } })
+				return navigate('/verify-email', { state: { email: email } })
 			} else {
 				setErrorMessage('Oops. Something went wrong. Please try again later.')
 			}
+
 			setTimeout(() => {
 				setErrorMessage('')
 			}, 5000)
@@ -62,7 +63,7 @@ const Login = () => {
 			<div className='auth-card'>
 				{errorMessage && (
 					<p className='mb-6 flex items-center text-sm font-medium text-red-600'>
-						<ExclamationCircleIcon className='mr-1 h-5 w-5 shrink-0' />{' '}
+						<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}
 						{errorMessage}
 					</p>
 				)}

@@ -80,7 +80,6 @@ exports.emailVerification = async (req, res, next) => {
 
 exports.sendEmailVerification = async (req, res, next) => {
 	const { email } = req.body
-	console.log(email)
 
 	try {
 		const user = await User.findOne({ email })
