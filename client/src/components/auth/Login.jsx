@@ -45,12 +45,12 @@ const Login = () => {
 			} else {
 				setErrorMessage('Oops. Something went wrong. Please try again later.')
 			}
-
-			setTimeout(() => {
-				setErrorMessage('')
-			}, 5000)
 		}
 	}
+
+	useEffect(() => {
+		setErrorMessage('')
+	}, [email, password])
 
 	useEffect(() => {
 		setAllowed(emailValidated && passwordValidated)

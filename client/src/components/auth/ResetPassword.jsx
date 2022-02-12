@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import axios from 'axios'
 import { useParams, Link } from 'react-router-dom'
@@ -33,12 +33,12 @@ const ResetPassword = () => {
 			setSuccess(true)
 		} catch (error) {
 			setErrorMessage('Reset password link expired. Kindly request again.')
-
-			setTimeout(() => {
-				setErrorMessage('')
-			}, 5000)
 		}
 	}
+
+	useEffect(() => {
+		setErrorMessage('')
+	}, [password])
 
 	return (
 		<>

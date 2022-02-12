@@ -30,6 +30,9 @@ const Register = () => {
 				setEmails(data.emails)
 			} catch (error) {
 				setEmails([])
+				if (error.response?.status === 500) {
+					setErrorMessage('Server does not response. Please try again later.')
+				}
 			}
 		}
 
@@ -74,15 +77,17 @@ const Register = () => {
 		} catch (error) {
 			if (error.response?.status === 409) {
 				setErrorMessage('An account with this email already exists.')
+			} else if (error.response?.status === 500) {
+				setErrorMessage('Server does not response. Please try again later.')
 			} else {
 				setErrorMessage('Oops. Something went wrong. Please try again later.')
 			}
-
-			setTimeout(() => {
-				setErrorMessage('')
-			}, 5000)
 		}
 	}
+
+	useEffect(() => {
+		setErrorMessage('')
+	}, [email, password, name, altEmail, labName])
 
 	useEffect(() => {
 		setAllowNextStep(USMEmailValidated && passwordValidated)

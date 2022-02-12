@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
@@ -31,12 +31,12 @@ const ForgotPassword = () => {
 			} else {
 				setErrorMessage('Oops. Something went wrong. Please try again later.')
 			}
-
-			setTimeout(() => {
-				setErrorMessage('')
-			}, 5000)
 		}
 	}
+
+	useEffect(() => {
+		setErrorMessage('')
+	}, [email])
 
 	return (
 		<>

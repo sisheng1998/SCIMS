@@ -23,6 +23,8 @@ const SendEmailVerification = () => {
 	const [errorMessage, setErrorMessage] = useState('')
 
 	const sendEmailHandler = async () => {
+		setErrorMessage('')
+
 		const config = {
 			headers: {
 				'Content-Type': 'application/json',
@@ -33,12 +35,7 @@ const SendEmailVerification = () => {
 			await axios.put('/api/auth/verify-email', { email }, config)
 			setSuccess(true)
 		} catch (error) {
-			console.log(error)
 			setErrorMessage('Oops. Something went wrong. Please try again later.')
-
-			setTimeout(() => {
-				setErrorMessage('')
-			}, 5000)
 		}
 	}
 
