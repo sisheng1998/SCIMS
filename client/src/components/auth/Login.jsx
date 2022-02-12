@@ -106,7 +106,8 @@ const Login = () => {
 							<input
 								type='checkbox'
 								id='rememberMe'
-								onClick={() => setRememberMe(!rememberMe)}
+								onChange={() => setRememberMe(!rememberMe)}
+								checked={rememberMe}
 							/>
 							<label className='mb-0 ml-2 inline' htmlFor='rememberMe'>
 								Remember me

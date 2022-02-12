@@ -258,7 +258,7 @@ exports.refreshToken = async (req, res, next) => {
 	const refreshToken = req.cookies.refreshToken
 
 	if (!refreshToken) {
-		return next(new ErrorResponse('Invalid refresh token.', 401))
+		return res.sendStatus(204)
 	}
 
 	try {
@@ -282,6 +282,7 @@ exports.refreshToken = async (req, res, next) => {
 		res.status(200).json({
 			success: true,
 			accessToken: accessToken,
+			roles: foundUser.roles,
 		})
 	} catch (error) {
 		return next(new ErrorResponse('Invalid refresh token.', 401))
@@ -326,9 +327,10 @@ const sendToken = async (user, rememberMe, statusCode, res) => {
 	user.refreshToken = refreshToken
 	await user.save()
 
-	const expiryDate = new Date(
+	let expiryDate = new Date(
 		Date.now() + Number(process.env.COOKIE_REFRESH_TOKEN_EXPIRE)
 	)
+	expiryDate.setHours(0, 0, 0, 0)
 
 	res.cookie('refreshToken', refreshToken, {
 		httpOnly: true,

@@ -1,14 +1,13 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import AuthContext from '../../context/AuthProvider'
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
+import useLogout from '../../hooks/useLogout'
 
 const Dashboard = () => {
-	const { setAuth } = useContext(AuthContext)
-	const axiosPrivate = useAxiosPrivate()
 	const navigate = useNavigate()
+	const axiosPrivate = useAxiosPrivate()
+	const logout = useLogout()
 
 	const [error, setError] = useState('')
 	const [privateData, setPrivateData] = useState('')
@@ -36,16 +35,6 @@ const Dashboard = () => {
 			controller.abort()
 		}
 	}, [axiosPrivate, navigate])
-
-	const logout = async () => {
-		try {
-			await axios.put('/api/auth/logout')
-			setAuth({})
-			navigate('/login')
-		} catch (error) {
-			setError('Unable to logout.')
-		}
-	}
 
 	return error ? (
 		<div>
