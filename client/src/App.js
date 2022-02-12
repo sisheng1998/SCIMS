@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-	Navigate,
-	BrowserRouter as Router,
-	Routes,
-	Route,
-} from 'react-router-dom'
+import { Navigate, Routes, Route } from 'react-router-dom'
 
 // Routing
 import PrivateRoute from './components/routes/PrivateRoute'
@@ -25,41 +20,33 @@ import AuthLayout from './components/layouts/AuthLayout'
 
 const App = () => {
 	return (
-		<Router>
-			<>
-				<Routes>
-					{/* Private route */}
-					<Route exact path='/' element={<PrivateRoute />}>
-						<Route exact path='/' element={<Dashboard />} />
-					</Route>
+		<Routes>
+			{/* Public route */}
+			<Route element={<AuthLayout />}>
+				<Route exact path='/login' element={<Login />} />
+				<Route exact path='/register' element={<Register />} />
+				<Route exact path='/forgot-password' element={<ForgotPassword />} />
+				<Route
+					exact
+					path='/reset-password/:resetToken'
+					element={<ResetPassword />}
+				/>
+				<Route
+					exact
+					path='/verify-email/:emailVerificationToken'
+					element={<EmailVerification />}
+				/>
+				<Route exact path='/verify-email' element={<SendEmailVerification />} />
+			</Route>
 
-					{/* Public route */}
-					<Route element={<AuthLayout />}>
-						<Route exact path='/login' element={<Login />} />
-						<Route exact path='/register' element={<Register />} />
-						<Route exact path='/forgot-password' element={<ForgotPassword />} />
-						<Route
-							exact
-							path='/reset-password/:resetToken'
-							element={<ResetPassword />}
-						/>
-						<Route
-							exact
-							path='/verify-email/:emailVerificationToken'
-							element={<EmailVerification />}
-						/>
-						<Route
-							exact
-							path='/verify-email'
-							element={<SendEmailVerification />}
-						/>
-					</Route>
+			{/* Private route */}
+			<Route element={<PrivateRoute />}>
+				<Route exact path='/' element={<Dashboard />} />
+			</Route>
 
-					{/* Redirect all to login page */}
-					<Route path='*' element={<Navigate to='/login' />} />
-				</Routes>
-			</>
-		</Router>
+			{/* Redirect all to login page */}
+			<Route path='*' element={<Navigate to='/login' />} />
+		</Routes>
 	)
 }
 

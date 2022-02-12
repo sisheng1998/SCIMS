@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import useAuth from '../../hooks/useAuth'
 import { Link, useNavigate } from 'react-router-dom'
 import USMEmailField from '../validations/USMEmailField'
 import LoginPasswordField from '../validations/LoginPasswordField'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
 
 const Login = () => {
+	const { setAuth } = useAuth()
 	const navigate = useNavigate()
 
 	const [email, setEmail] = useState('')
@@ -24,6 +26,7 @@ const Login = () => {
 		const config = {
 			headers: {
 				'Content-Type': 'application/json',
+				withCredentials: true,
 			},
 		}
 
@@ -34,7 +37,10 @@ const Login = () => {
 				config
 			)
 
-			localStorage.setItem('accessToken', data.accessToken)
+			const accessToken = data.accessToken
+			const roles = data.roles
+
+			setAuth({ email, accessToken, roles })
 
 			navigate('/')
 		} catch (error) {

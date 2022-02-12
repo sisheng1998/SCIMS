@@ -335,6 +335,7 @@ const sendToken = async (user, statusCode, res) => {
 	res.status(statusCode).json({
 		success: true,
 		accessToken: accessToken,
+		roles: user.roles,
 	})
 }
 

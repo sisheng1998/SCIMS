@@ -1,23 +1,23 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import AuthContext from '../../context/AuthProvider'
 
 const Dashboard = () => {
+	const { auth, setAuth } = useContext(AuthContext)
+	console.log(auth)
 	const navigate = useNavigate()
+
 	const [error, setError] = useState('')
 	const [privateData, setPrivateData] = useState('')
 
 	useEffect(() => {
-		if (!localStorage.getItem('accessToken')) {
-			navigate('/login')
-		}
-
 		const fetchPrivateData = async () => {
 			const config = {
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+					Authorization: `Bearer ${auth.accessToken}`,
 				},
 			}
 
@@ -25,18 +25,17 @@ const Dashboard = () => {
 				const { data } = await axios.get('/api/private', config)
 				setPrivateData(data.data)
 			} catch (error) {
-				localStorage.removeItem('accessToken')
 				setError('You are not authorized, please login.')
 			}
 		}
 
 		fetchPrivateData()
-	}, [navigate])
+	}, [auth, navigate])
 
-	const logoutHandler = async () => {
+	const logout = async () => {
 		try {
 			await axios.put('/api/auth/logout')
-			localStorage.removeItem('accessToken')
+			setAuth({})
 			navigate('/login')
 		} catch (error) {
 			setError('Unable to logout.')
@@ -56,12 +55,12 @@ const Dashboard = () => {
 		<div>
 			<div>{error}</div>
 			<button onClick={refreshHandler}>Refresh</button>
-			<button onClick={logoutHandler}>Logout</button>
+			<button onClick={logout}>Logout</button>
 		</div>
 	) : (
 		<>
 			<div>{privateData}</div>
-			<button onClick={logoutHandler}>Logout</button>
+			<button onClick={logout}>Logout</button>
 		</>
 	)
 }
