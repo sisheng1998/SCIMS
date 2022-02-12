@@ -31,7 +31,7 @@ const Register = () => {
 			} catch (error) {
 				setEmails([])
 				if (error.response?.status === 500) {
-					setErrorMessage('Server does not response. Please try again later.')
+					setErrorMessage('Server not responding. Please try again later.')
 				}
 			}
 		}
@@ -78,7 +78,7 @@ const Register = () => {
 			if (error.response?.status === 409) {
 				setErrorMessage('An account with this email already exists.')
 			} else if (error.response?.status === 500) {
-				setErrorMessage('Server does not response. Please try again later.')
+				setErrorMessage('Server not responding. Please try again later.')
 			} else {
 				setErrorMessage('Oops. Something went wrong. Please try again later.')
 			}

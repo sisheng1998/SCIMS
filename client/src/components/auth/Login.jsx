@@ -42,6 +42,8 @@ const Login = () => {
 				setErrorMessage('Incorrect email or password.')
 			} else if (error.response?.status === 403) {
 				return navigate('/verify-email', { state: { email: email } })
+			} else if (error.response?.status === 500) {
+				setErrorMessage('Server not responding. Please try again later.')
 			} else {
 				setErrorMessage('Oops. Something went wrong. Please try again later.')
 			}
