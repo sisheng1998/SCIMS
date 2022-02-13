@@ -106,7 +106,9 @@ exports.login = async (req, res, next) => {
 	}
 
 	try {
-		const user = await User.findOne({ email }).select('+password')
+		const user = await User.findOne({ email })
+			.select('+password')
+			.populate('roles.lab', 'labName')
 
 		if (!user) {
 			return next(new ErrorResponse('Invalid credentials.', 401))
@@ -262,7 +264,9 @@ exports.refreshToken = async (req, res, next) => {
 	}
 
 	try {
-		const foundUser = await User.findOne({ refreshToken: refreshToken })
+		const foundUser = await User.findOne({
+			refreshToken: refreshToken,
+		}).populate('roles.lab', 'labName')
 
 		if (!foundUser) {
 			return next(new ErrorResponse('User not found.', 403))

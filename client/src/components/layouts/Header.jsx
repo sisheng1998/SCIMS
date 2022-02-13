@@ -4,11 +4,11 @@ import LabSelection from './LabSelection'
 
 const Header = () => {
 	return (
-		<header className='flex items-center bg-white p-6 shadow-sm'>
+		<header className='flex items-center border-b border-gray-300 bg-white px-6 py-4 shadow-sm'>
 			<div className='flex items-center'>
-				<Link className='mr-6' to='/'>
+				<Link className='mr-4' to='/'>
 					<img
-						className='h-9'
+						className='h-8'
 						src='/scims-logo.svg'
 						alt='SCIMS Logo'
 						draggable='false'
