@@ -47,7 +47,7 @@ const EmailVerification = () => {
 							lab.
 						</p>
 						<p>
-							You will be able to login into the system after the request is
+							You will be able to interact with the system after your request is
 							approved.
 						</p>
 					</>

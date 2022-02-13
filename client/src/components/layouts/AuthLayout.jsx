@@ -1,7 +1,7 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 
-const AuthLayout = () => {
+const AuthLayout = ({ children }) => {
 	return (
 		<div className='flex min-h-screen flex-col items-center justify-center p-6'>
 			<img
@@ -10,7 +10,7 @@ const AuthLayout = () => {
 				alt='SCIMS Logo'
 				draggable='false'
 			/>
-			<Outlet />
+			{children ? children : <Outlet />}
 		</div>
 	)
 }
