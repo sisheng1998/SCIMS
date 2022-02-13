@@ -6,6 +6,8 @@ import useLogout from '../../hooks/useLogout'
 //import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 import { LogoutIcon } from '@heroicons/react/outline'
 
+// Layouts
+import AppLayout from '../layouts/AppLayout'
 import AuthLayout from '../layouts/AuthLayout'
 
 const Dashboard = () => {
@@ -56,19 +58,21 @@ const Dashboard = () => {
 	}, [axiosPrivate, navigate])*/
 
 	return active ? (
-		<>
-			<h2 className='mt-60 text-center'>You have the access to the system.</h2>
+		<AppLayout>
+			<>
+				<h2 className='mt-6 text-center'>You have the access to the system.</h2>
 
-			<p className='mt-6 text-center'>
-				<span
-					onClick={logout}
-					className='inline-flex cursor-pointer items-center font-semibold text-indigo-600 transition hover:text-indigo-700'
-				>
-					<LogoutIcon className='mr-1 h-5 w-5' />
-					Logout
-				</span>
-			</p>
-		</>
+				<p className='mt-6 text-center'>
+					<span
+						onClick={logout}
+						className='inline-flex cursor-pointer items-center font-semibold text-indigo-600 transition hover:text-indigo-700'
+					>
+						<LogoutIcon className='mr-1 h-5 w-5' />
+						Logout
+					</span>
+				</p>
+			</>
+		</AppLayout>
 	) : active === '' ? null : (
 		<AuthLayout>
 			<div className='auth-card mt-8 text-center'>
