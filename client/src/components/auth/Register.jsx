@@ -146,8 +146,8 @@ const Register = () => {
 								Email Address
 							</label>
 							<USMEmailField
-								message='Only *@usm.my or *.usm.my are allowed. (Used for Login)'
-								successMessage='This email will be used for Login.'
+								message='Only *@usm.my or *.usm.my are allowed. (Used for login)'
+								successMessage='This email will be used for login.'
 								checkExist={true}
 								existingEmails={emails}
 								value={email}
