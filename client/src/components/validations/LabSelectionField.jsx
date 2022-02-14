@@ -43,7 +43,7 @@ const LabSelectionField = (props) => {
 				</option>
 				{labs.map((lab) => {
 					return (
-						<option key={lab._id} value={lab.labName} className='text-gray-700'>
+						<option key={lab._id} value={lab._id} className='text-gray-700'>
 							{lab.labName}
 						</option>
 					)

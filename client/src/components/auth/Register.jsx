@@ -43,7 +43,7 @@ const Register = () => {
 	const [password, setPassword] = useState('')
 	const [name, setName] = useState('')
 	const [altEmail, setAltEmail] = useState('')
-	const [labName, setLabName] = useState('')
+	const [labId, setLabId] = useState('')
 
 	const [USMEmailValidated, setUSMEmailValidated] = useState(false)
 	const [passwordValidated, setPasswordValidated] = useState(false)
@@ -70,7 +70,7 @@ const Register = () => {
 		try {
 			await axios.post(
 				'/api/auth/register',
-				{ name, email, altEmail, password, labName },
+				{ name, email, altEmail, password, labId },
 				config
 			)
 			setSuccess(true)
@@ -87,7 +87,7 @@ const Register = () => {
 
 	useEffect(() => {
 		setErrorMessage('')
-	}, [email, password, name, altEmail, labName])
+	}, [email, password, name, altEmail, labId])
 
 	useEffect(() => {
 		setAllowNextStep(USMEmailValidated && passwordValidated)
@@ -218,8 +218,8 @@ const Register = () => {
 								Lab
 							</label>
 							<LabSelectionField
-								value={labName}
-								setValue={setLabName}
+								value={labId}
+								setValue={setLabId}
 								validated={labValidated}
 								setValidated={setLabValidated}
 							/>

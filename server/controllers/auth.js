@@ -6,9 +6,9 @@ const ErrorResponse = require('../utils/errorResponse')
 const sendEmail = require('../utils/sendEmail')
 
 exports.register = async (req, res, next) => {
-	const { name, email, altEmail, password, labName } = req.body
+	const { name, email, altEmail, password, labId } = req.body
 
-	if (!name || !email || !altEmail || !password || !labName) {
+	if (!name || !email || !altEmail || !password || !labId) {
 		return next(new ErrorResponse('Missing value for required field.', 400))
 	}
 
@@ -18,7 +18,7 @@ exports.register = async (req, res, next) => {
 	}
 
 	try {
-		const foundLab = await Lab.findOne({ labName })
+		const foundLab = await Lab.findById(labId)
 		if (!foundLab) {
 			return next(new ErrorResponse('Lab not found.', 404))
 		}

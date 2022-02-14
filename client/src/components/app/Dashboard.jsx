@@ -32,7 +32,8 @@ const Dashboard = () => {
 			setAuth((prev) => {
 				return {
 					...prev,
-					currentLab: currentRole.lab.labName,
+					currentLabId: currentRole.lab._id,
+					currentLabName: currentRole.lab.labName,
 					currentRole: currentRole.role,
 				}
 			})
