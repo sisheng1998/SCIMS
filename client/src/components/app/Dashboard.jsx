@@ -4,14 +4,14 @@ import useAuth from '../../hooks/useAuth'
 import useLogout from '../../hooks/useLogout'
 //import { useNavigate } from 'react-router-dom'
 //import useAxiosPrivate from '../../hooks/useAxiosPrivate'
-import { LogoutIcon } from '@heroicons/react/outline'
+import { LogoutIcon, ExclamationIcon } from '@heroicons/react/outline'
 
 // Layouts
 import AppLayout from '../layouts/AppLayout'
 import AuthLayout from '../layouts/AuthLayout'
 
 const Dashboard = () => {
-	const { auth } = useAuth()
+	const { auth, setAuth } = useAuth()
 	const logout = useLogout()
 	//const navigate = useNavigate()
 	//const axiosPrivate = useAxiosPrivate()
@@ -29,9 +29,18 @@ const Dashboard = () => {
 		if (!currentRole) {
 			setActive(false)
 		} else {
+			setAuth((prev) => {
+				return {
+					...prev,
+					currentLab: currentRole.lab.labName,
+					currentRole: currentRole.role,
+				}
+			})
 			setActive(true)
 		}
-	}, [auth])
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	/*useEffect(() => {
 		let isMounted = true
@@ -76,8 +85,9 @@ const Dashboard = () => {
 	) : active === '' ? null : (
 		<AuthLayout>
 			<div className='auth-card mt-8 text-center'>
+				<ExclamationIcon className='mx-auto mb-6 h-16 w-16 rounded-full bg-yellow-100 p-2 text-yellow-600' />
 				<p>Your account status:</p>
-				<h2>Pending Approval</h2>
+				<h2 className='text-yellow-600'>Pending Approval</h2>
 				<p className='mt-6'>Kindly wait for the approval from the lab owner.</p>
 			</div>
 

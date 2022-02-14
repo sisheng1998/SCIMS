@@ -106,6 +106,10 @@
 	[type='radio'] {
 		@apply rounded border-gray-300 text-indigo-600 focus:ring-indigo-500;
 	}
+
+	svg path {
+		stroke-width: 1.5;
+	}
 }
 
 @layer components {

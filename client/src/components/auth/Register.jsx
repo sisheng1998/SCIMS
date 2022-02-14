@@ -115,7 +115,7 @@ const Register = () => {
 
 			{success ? (
 				<div className='auth-card mt-8 text-center'>
-					<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-3 text-green-600' />
+					<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
 					<h2 className='mt-6 mb-2 text-green-600'>Registration Success!</h2>
 					<p>Your account has been created.</p>
 					<p className='mt-6'>An email has been sent to:</p>

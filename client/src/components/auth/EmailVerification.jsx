@@ -39,7 +39,7 @@ const EmailVerification = () => {
 			>
 				{success ? (
 					<>
-						<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-3 text-green-600' />
+						<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
 						<h2 className='mt-6 mb-2 text-green-600'>Email Verified!</h2>
 						<p>Your email has been verified.</p>
 						<p className='my-6'>
@@ -53,7 +53,7 @@ const EmailVerification = () => {
 					</>
 				) : (
 					<>
-						<XIcon className='mx-auto h-16 w-16 rounded-full bg-red-100 p-3 text-red-600' />
+						<XIcon className='mx-auto h-16 w-16 rounded-full bg-red-100 p-2 text-red-600' />
 						<h2 className='mt-6 mb-2 text-red-600'>Invalid Link!</h2>
 						<p>The verification link provided is invalid.</p>
 						<p className='mt-6'>
