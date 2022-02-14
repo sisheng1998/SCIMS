@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, Navigate, Outlet } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
 
 const PrivateRoute = () => {
 	const { auth, setAuth } = useAuth()
+	const [isLoading, setIsLoading] = useState(true)
 	const navigate = useNavigate()
 
 	useEffect(() => {
@@ -13,6 +14,7 @@ const PrivateRoute = () => {
 
 		// Not yet approve by any lab owner
 		if (!activeRole) {
+			setIsLoading(false)
 			navigate('/pending-approval')
 		} else {
 			// Check if local storage has stored current lab
@@ -54,11 +56,16 @@ const PrivateRoute = () => {
 				})
 			}
 		}
+		setIsLoading(false)
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	return auth?.accessToken ? <Outlet /> : <Navigate to='/login' />
+	return isLoading ? null : auth?.accessToken ? (
+		<Outlet />
+	) : (
+		<Navigate to='/login' />
+	)
 }
 
 export default PrivateRoute

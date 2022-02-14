@@ -30,7 +30,7 @@ const RemainLogin = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	return <>{isLoading ? null : <Outlet />}</>
+	return isLoading ? null : <Outlet />
 }
 
 export default RemainLogin
