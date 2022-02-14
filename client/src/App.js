@@ -16,9 +16,11 @@ import SendEmailVerification from './components/auth/SendEmailVerification'
 
 // Application
 import Dashboard from './components/app/Dashboard'
+import PendingApproval from './components/app/PendingApproval'
 
 // Layouts
 import AuthLayout from './components/layouts/AuthLayout'
+import AppLayout from './components/layouts/AppLayout'
 
 const App = () => {
 	return (
@@ -26,7 +28,18 @@ const App = () => {
 			<Route element={<RemainLogin />}>
 				{/* Private route */}
 				<Route element={<PrivateRoute />}>
-					<Route exact path='/' element={<Dashboard />} />
+					<Route element={<AppLayout />}>
+						<Route exact path='/' element={<Dashboard />} />
+					</Route>
+
+					<Route element={<AuthLayout />}>
+						{/* Haven't approved by lab owner */}
+						<Route
+							exact
+							path='/pending-approval'
+							element={<PendingApproval />}
+						/>
+					</Route>
 				</Route>
 
 				{/* Public route */}

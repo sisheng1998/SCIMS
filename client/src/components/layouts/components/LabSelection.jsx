@@ -7,17 +7,17 @@ const LabSelection = () => {
 	const { auth, setAuth } = useAuth()
 
 	const index = auth.roles.findIndex((role) => {
-		return role.lab._id === auth.currentLabId
+		const currentLab = localStorage.getItem('currentLab')
+		return role.lab._id === currentLab
 	})
 
 	const [selected, setSelected] = useState(auth.roles[index])
 
 	useEffect(() => {
+		localStorage.setItem('currentLab', selected.lab._id)
 		setAuth((prev) => {
 			return {
 				...prev,
-				currentLabId: selected.lab._id,
-				currentLabName: selected.lab.labName,
 				currentRole: selected.role,
 			}
 		})

@@ -38,7 +38,7 @@ const UserSchema = new Schema(
 				},
 				status: {
 					type: String,
-					default: 'Pending Approval',
+					default: 'Pending',
 				},
 			},
 		],
