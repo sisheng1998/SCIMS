@@ -22,7 +22,7 @@ const Dashboard = () => {
 
 	useEffect(() => {
 		const currentRole = auth.roles.find((role) => {
-			return role.isActive === true
+			return role.status === 'Active'
 		})
 
 		// Not yet approve by any lab owner

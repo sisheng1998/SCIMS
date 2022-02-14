@@ -36,9 +36,9 @@ const UserSchema = new Schema(
 					type: Number,
 					default: ROLES_LIST.viewer,
 				},
-				isActive: {
-					type: Boolean,
-					default: false,
+				status: {
+					type: String,
+					default: 'Pending Approval',
 				},
 			},
 		],

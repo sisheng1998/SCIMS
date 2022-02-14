@@ -7,7 +7,7 @@ const LabSelection = () => {
 	const { auth, setAuth } = useAuth()
 
 	const index = auth.roles.findIndex((role) => {
-		return role.lab.labName === auth.currentLab
+		return role.lab._id === auth.currentLabId
 	})
 
 	const [selected, setSelected] = useState(auth.roles[index])
@@ -45,7 +45,7 @@ const LabSelection = () => {
 
 			<Listbox.Options className='absolute top-full mt-1 w-36 rounded-lg bg-white py-2 text-sm font-medium leading-6 shadow outline-gray-300 ring-1 ring-gray-300'>
 				{auth.roles.map((role) =>
-					role.isActive ? (
+					role.status === 'Active' ? (
 						<Listbox.Option key={role._id} value={role} as={Fragment}>
 							{({ selected }) => (
 								<li
