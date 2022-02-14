@@ -32,6 +32,8 @@ const PrivateRoute = () => {
 					setAuth((prev) => {
 						return {
 							...prev,
+							currentLabId: currentRole.lab._id,
+							currentLabName: currentRole.lab.labName,
 							currentRole: currentRole.role,
 						}
 					})
@@ -41,6 +43,8 @@ const PrivateRoute = () => {
 					setAuth((prev) => {
 						return {
 							...prev,
+							currentLabId: activeRole.lab._id,
+							currentLabName: activeRole.lab.labName,
 							currentRole: activeRole.role,
 						}
 					})
@@ -51,6 +55,8 @@ const PrivateRoute = () => {
 				setAuth((prev) => {
 					return {
 						...prev,
+						currentLabId: activeRole.lab._id,
+						currentLabName: activeRole.lab.labName,
 						currentRole: activeRole.role,
 					}
 				})

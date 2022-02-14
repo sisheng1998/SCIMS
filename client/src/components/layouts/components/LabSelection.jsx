@@ -18,6 +18,8 @@ const LabSelection = () => {
 		setAuth((prev) => {
 			return {
 				...prev,
+				currentLabId: selected.lab._id,
+				currentLabName: selected.lab.labName,
 				currentRole: selected.role,
 			}
 		})
