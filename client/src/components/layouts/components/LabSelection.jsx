@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { Listbox } from '@headlessui/react'
 import { CheckIcon } from '@heroicons/react/outline'
-import useAuth from '../../hooks/useAuth'
+import useAuth from '../../../hooks/useAuth'
 
 const LabSelection = () => {
 	const { auth, setAuth } = useAuth()
@@ -42,7 +42,7 @@ const LabSelection = () => {
 				</svg>
 			</Listbox.Button>
 
-			<Listbox.Options className='absolute top-full mt-1 w-40 rounded-lg bg-white py-2 text-sm font-medium leading-6 shadow outline-gray-300 ring-1 ring-gray-300'>
+			<Listbox.Options className='absolute top-full mt-1 w-36 rounded-lg bg-white py-2 text-sm font-medium leading-6 shadow outline-gray-300 ring-1 ring-gray-300'>
 				{auth.roles.map((role) =>
 					role.isActive ? (
 						<Listbox.Option key={role._id} value={role} as={Fragment}>
@@ -53,7 +53,7 @@ const LabSelection = () => {
 									}`}
 								>
 									{role.lab.labName}
-									{selected && <CheckIcon className='h-4 w-4' />}
+									{selected && <CheckIcon className='ml-2 h-4 w-4' />}
 								</li>
 							)}
 						</Listbox.Option>
