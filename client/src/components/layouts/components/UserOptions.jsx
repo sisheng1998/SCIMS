@@ -26,7 +26,7 @@ const UserOptions = () => {
 	return (
 		<Menu as='div' className='relative flex items-center'>
 			<Menu.Button className='text-gray-500 outline-gray-300 transition hover:text-indigo-600'>
-				<UserCircleIcon className='h-8 w-8' />
+				<UserCircleIcon className='h-8 w-8 stroke-1' />
 			</Menu.Button>
 
 			<Menu.Items className='absolute right-0 top-full mt-1 w-32 rounded-lg bg-white py-2 shadow outline-gray-300 ring-1 ring-gray-300'>

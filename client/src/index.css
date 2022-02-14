@@ -107,8 +107,16 @@
 		@apply rounded border-gray-300 text-indigo-600 focus:ring-indigo-500;
 	}
 
-	svg path {
+	svg * {
 		stroke-width: 1.5;
+	}
+
+	svg.stroke-1 * {
+		stroke-width: 1;
+	}
+
+	svg.stroke-2 * {
+		stroke-width: 2;
 	}
 }
 

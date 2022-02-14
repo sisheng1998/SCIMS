@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
 import useLogout from '../../hooks/useLogout'
@@ -6,6 +6,7 @@ import { LogoutIcon, ExclamationIcon } from '@heroicons/react/outline'
 
 const PendingApproval = () => {
 	const navigate = useNavigate()
+	const [isLoading, setIsLoading] = useState(true)
 	const { auth } = useAuth()
 	const logout = useLogout()
 
@@ -14,13 +15,15 @@ const PendingApproval = () => {
 			return role.status === 'Active'
 		})
 
+		setIsLoading(false)
+
 		// Account status is active in any lab
 		return activeRole && navigate('/')
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	return (
+	return isLoading ? null : (
 		<>
 			<div className='auth-card mt-8 text-center'>
 				<ExclamationIcon className='mx-auto mb-6 h-16 w-16 rounded-full bg-yellow-100 p-2 text-yellow-600' />

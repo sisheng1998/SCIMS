@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import LabSelection from './LabSelection'
+import Notification from './Notification'
 import UserOptions from './UserOptions'
 
 const Header = () => {
@@ -9,7 +10,7 @@ const Header = () => {
 			<div className='flex items-center'>
 				<Link className='mr-4' to='/'>
 					<img
-						className='h-8'
+						className='h-9'
 						src='/scims-logo.svg'
 						alt='SCIMS Logo'
 						draggable='false'
@@ -20,6 +21,7 @@ const Header = () => {
 			</div>
 
 			<div className='flex items-center'>
+				<Notification />
 				<UserOptions />
 			</div>
 		</header>

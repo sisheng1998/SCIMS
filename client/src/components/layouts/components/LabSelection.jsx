@@ -32,14 +32,14 @@ const LabSelection = () => {
 			value={selected}
 			onChange={setSelected}
 		>
-			<Listbox.Button className='flex items-center rounded-full bg-gray-100 py-1 px-3 text-sm font-medium text-gray-500 outline-gray-300 hover:bg-gray-200'>
+			<Listbox.Button className='flex items-center rounded-full bg-gray-100 py-1 px-3 text-sm font-medium text-gray-500 outline-gray-300 hover:bg-gray-200 hover:text-gray-600'>
 				{selected.lab.labName}
 				<svg width='6' height='3' className='ml-2 overflow-visible'>
 					<path
 						d='M0 0L3 3L6 0'
 						fill='none'
 						stroke='currentColor'
-						strokeWidth='1.5'
+						strokeWidth='1'
 						strokeLinecap='round'
 					></path>
 				</svg>
@@ -56,7 +56,7 @@ const LabSelection = () => {
 									}`}
 								>
 									{role.lab.labName}
-									{selected && <CheckIcon className='ml-2 h-4 w-4' />}
+									{selected && <CheckIcon className='ml-2 h-4 w-4 stroke-2' />}
 								</li>
 							)}
 						</Listbox.Option>
