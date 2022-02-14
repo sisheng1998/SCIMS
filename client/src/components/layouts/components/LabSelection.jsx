@@ -45,7 +45,7 @@ const LabSelection = () => {
 				</svg>
 			</Listbox.Button>
 
-			<Listbox.Options className='absolute top-full mt-1 w-36 rounded-lg bg-white py-2 text-sm font-medium leading-6 shadow outline-gray-300 ring-1 ring-gray-300'>
+			<Listbox.Options className='absolute top-full mt-2 w-36 rounded-lg bg-white py-2 text-sm font-medium leading-6 shadow outline-gray-300 ring-1 ring-gray-300'>
 				{auth.roles.map((role) =>
 					role.status === 'Active' ? (
 						<Listbox.Option key={role._id} value={role} as={Fragment}>

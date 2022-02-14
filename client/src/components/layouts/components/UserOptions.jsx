@@ -29,7 +29,7 @@ const UserOptions = () => {
 				<UserCircleIcon className='h-8 w-8 stroke-1' />
 			</Menu.Button>
 
-			<Menu.Items className='absolute right-0 top-full mt-1 w-32 rounded-lg bg-white py-2 shadow outline-gray-300 ring-1 ring-gray-300'>
+			<Menu.Items className='absolute right-0 top-full mt-2 w-32 rounded-lg bg-white py-2 shadow outline-gray-300 ring-1 ring-gray-300'>
 				{USER_MENU.map((menu, index) => (
 					<Menu.Item key={index}>
 						{({ active }) => (
