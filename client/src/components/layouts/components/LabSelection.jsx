@@ -51,8 +51,9 @@ const LabSelection = () => {
 						<Listbox.Option key={role._id} value={role} as={Fragment}>
 							{({ selected }) => (
 								<li
-									className={`flex cursor-pointer items-center justify-between px-3 py-1 hover:bg-gray-100 ${
-										selected && 'pointer-events-none text-indigo-600'
+									className={`flex cursor-pointer items-center justify-between px-3 py-1 hover:bg-indigo-50 hover:text-indigo-600 ${
+										selected &&
+										'pointer-events-none font-semibold text-indigo-600'
 									}`}
 								>
 									{role.lab.labName}

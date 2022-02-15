@@ -141,10 +141,6 @@
 		@apply h-9 w-9 rounded-full p-1.5;
 	}
 
-	#sidebar a:hover svg {
-		@apply bg-gray-100;
-	}
-
 	#sidebar .active svg {
 		@apply bg-indigo-50;
 	}

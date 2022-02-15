@@ -17,6 +17,14 @@ import SendEmailVerification from './components/auth/SendEmailVerification'
 // Application
 import Dashboard from './components/app/Dashboard'
 import Inventory from './components/app/Inventory'
+import Reports from './components/app/Reports'
+import StockCheck from './components/app/StockCheck'
+import ImportExport from './components/app/ImportExport'
+import Users from './components/app/Users'
+import Labs from './components/app/Labs'
+import Settings from './components/app/Settings'
+import Notification from './components/app/Notification'
+import Profile from './components/app/Profile'
 import PendingApproval from './components/app/PendingApproval'
 
 // Layouts
@@ -32,6 +40,14 @@ const App = () => {
 					<Route element={<AppLayout />}>
 						<Route exact path='/' element={<Dashboard />} />
 						<Route exact path='/inventory' element={<Inventory />} />
+						<Route exact path='/reports' element={<Reports />} />
+						<Route exact path='/stock-check' element={<StockCheck />} />
+						<Route exact path='/import-export' element={<ImportExport />} />
+						<Route exact path='/users' element={<Users />} />
+						<Route exact path='/labs' element={<Labs />} />
+						<Route exact path='/settings' element={<Settings />} />
+						<Route exact path='/notification' element={<Notification />} />
+						<Route exact path='/profile' element={<Profile />} />
 					</Route>
 
 					<Route element={<AuthLayout />}>

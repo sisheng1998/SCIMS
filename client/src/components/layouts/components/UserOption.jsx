@@ -2,15 +2,17 @@ import React from 'react'
 import { Menu } from '@headlessui/react'
 import { UserCircleIcon, UserIcon, LogoutIcon } from '@heroicons/react/outline'
 import useLogout from '../../../hooks/useLogout'
+import { useNavigate } from 'react-router-dom'
 
 const USER_MENU = ['Profile', 'Logout']
 
 const UserOption = () => {
 	const logout = useLogout()
+	const navigate = useNavigate()
 
 	const menuHandler = (index) => {
 		if (index === 0) {
-			console.log('Profile')
+			navigate('/profile')
 		} else if (index === 1) {
 			logout()
 		}
