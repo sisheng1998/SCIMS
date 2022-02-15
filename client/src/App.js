@@ -16,6 +16,7 @@ import SendEmailVerification from './components/auth/SendEmailVerification'
 
 // Application
 import Dashboard from './components/app/Dashboard'
+import Inventory from './components/app/Inventory'
 import PendingApproval from './components/app/PendingApproval'
 
 // Layouts
@@ -30,6 +31,7 @@ const App = () => {
 				<Route element={<PrivateRoute />}>
 					<Route element={<AppLayout />}>
 						<Route exact path='/' element={<Dashboard />} />
+						<Route exact path='/inventory' element={<Inventory />} />
 					</Route>
 
 					<Route element={<AuthLayout />}>

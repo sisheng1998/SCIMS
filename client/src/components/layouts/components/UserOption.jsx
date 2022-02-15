@@ -1,24 +1,17 @@
 import React from 'react'
 import { Menu } from '@headlessui/react'
-import {
-	UserCircleIcon,
-	PlusSmIcon,
-	UserIcon,
-	LogoutIcon,
-} from '@heroicons/react/outline'
+import { UserCircleIcon, UserIcon, LogoutIcon } from '@heroicons/react/outline'
 import useLogout from '../../../hooks/useLogout'
 
-const USER_MENU = ['Add Lab', 'Profile', 'Logout']
+const USER_MENU = ['Profile', 'Logout']
 
-const UserOptions = () => {
+const UserOption = () => {
 	const logout = useLogout()
 
 	const menuHandler = (index) => {
 		if (index === 0) {
-			console.log('Add Lab')
-		} else if (index === 1) {
 			console.log('Profile')
-		} else if (index === 2) {
+		} else if (index === 1) {
 			logout()
 		}
 	}
@@ -29,7 +22,7 @@ const UserOptions = () => {
 				<UserCircleIcon className='h-8 w-8 stroke-1' />
 			</Menu.Button>
 
-			<Menu.Items className='absolute right-0 top-full mt-2 w-32 rounded-lg bg-white py-2 shadow outline-gray-300 ring-1 ring-gray-300'>
+			<Menu.Items className='absolute right-0 top-full mt-2 w-32 rounded-lg bg-white py-2 shadow-md outline-gray-300 ring-1 ring-gray-300'>
 				{USER_MENU.map((menu, index) => (
 					<Menu.Item key={index}>
 						{({ active }) => (
@@ -40,12 +33,9 @@ const UserOptions = () => {
 								}`}
 							>
 								{index === 0 && (
-									<PlusSmIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
-								)}
-								{index === 1 && (
 									<UserIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
 								)}
-								{index === 2 && (
+								{index === 1 && (
 									<LogoutIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
 								)}
 								{menu}
@@ -58,4 +48,4 @@ const UserOptions = () => {
 	)
 }
 
-export default UserOptions
+export default UserOption

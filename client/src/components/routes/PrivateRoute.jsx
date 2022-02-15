@@ -8,6 +8,11 @@ const PrivateRoute = () => {
 	const navigate = useNavigate()
 
 	useEffect(() => {
+		if (!auth?.accessToken) {
+			setIsLoading(false)
+			return
+		}
+
 		const activeRole = auth.roles.find((role) => {
 			return role.status === 'Active'
 		})
