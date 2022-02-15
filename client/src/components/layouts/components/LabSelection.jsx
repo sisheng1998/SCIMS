@@ -2,16 +2,32 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { Listbox } from '@headlessui/react'
 import { CheckIcon } from '@heroicons/react/outline'
 import useAuth from '../../../hooks/useAuth'
+import { useNavigate } from 'react-router-dom'
+import ROLES_LIST from '../../../config/roles_list'
+
+const allLabs = {
+	lab: { _id: ROLES_LIST.admin.toString(), labName: 'All Labs' },
+	role: ROLES_LIST.admin,
+}
 
 const LabSelection = () => {
 	const { auth, setAuth } = useAuth()
+	const navigate = useNavigate()
+
+	// Check whether user is admin
+	const isAdmin = auth.roles.some((role) => {
+		return role.role === ROLES_LIST.admin && role.status === 'Active'
+	})
+
+	const currentLab = localStorage.getItem('currentLab')
 
 	const index = auth.roles.findIndex((role) => {
-		const currentLab = localStorage.getItem('currentLab')
 		return role.lab._id === currentLab
 	})
 
-	const [selected, setSelected] = useState(auth.roles[index])
+	const [selected, setSelected] = useState(
+		isAdmin && currentLab === allLabs.lab._id ? allLabs : auth.roles[index]
+	)
 
 	useEffect(() => {
 		localStorage.setItem('currentLab', selected.lab._id)
@@ -23,6 +39,9 @@ const LabSelection = () => {
 				currentRole: selected.role,
 			}
 		})
+		navigate('/')
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selected, setAuth])
 
 	return (
@@ -46,6 +65,22 @@ const LabSelection = () => {
 			</Listbox.Button>
 
 			<Listbox.Options className='absolute top-full mt-2 w-36 rounded-lg bg-white py-2 text-sm font-medium leading-6 shadow-md outline-gray-300 ring-1 ring-gray-300'>
+				{isAdmin ? (
+					<Listbox.Option value={allLabs} as={Fragment}>
+						<li
+							className={`flex cursor-pointer items-center justify-between px-3 py-1 hover:bg-indigo-50 hover:text-indigo-600 ${
+								auth.currentLabId === ROLES_LIST.admin.toString() &&
+								'pointer-events-none font-semibold text-indigo-600'
+							}`}
+						>
+							All Labs
+							{auth.currentLabId === ROLES_LIST.admin.toString() && (
+								<CheckIcon className='ml-2 h-4 w-4 stroke-2' />
+							)}
+						</li>
+					</Listbox.Option>
+				) : null}
+
 				{auth.roles.map((role) =>
 					role.status === 'Active' ? (
 						<Listbox.Option key={role._id} value={role} as={Fragment}>
