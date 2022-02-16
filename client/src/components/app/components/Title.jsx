@@ -7,7 +7,7 @@ const Title = (props) => {
 			<h2>{props.title}</h2>
 			{props.hasButton && (
 				<button onClick={props.buttonAction} className='button -my-1.5'>
-					<PlusIcon className='-ml-0.5 mr-1.5 h-4 w-4 stroke-2' />
+					<PlusIcon className='-ml-1 mr-1.5 h-4 w-4 stroke-2' />
 					{props.buttonText}
 				</button>
 			)}

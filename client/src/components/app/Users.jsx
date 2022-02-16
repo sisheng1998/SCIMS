@@ -24,7 +24,10 @@ const Users = () => {
 						signal: controller.signal,
 					}
 				)
-				isMounted && setUsersData(data.data)
+				if (isMounted) {
+					data.data.labUsers.unshift(data.data.labOwner)
+					setUsersData(data.data)
+				}
 			} catch (error) {
 				return
 			}
