@@ -79,15 +79,17 @@ const LabSelection = () => {
 				{auth.roles.map((role) =>
 					role.status === 'Active' ? (
 						<Listbox.Option key={role._id} value={role} as={Fragment}>
-							{({ selected }) => (
+							{() => (
 								<li
 									className={`flex cursor-pointer items-center justify-between px-3 py-1 hover:bg-indigo-50 hover:text-indigo-600 ${
-										selected &&
+										auth.currentLabId === role.lab._id &&
 										'pointer-events-none font-semibold text-indigo-600'
 									}`}
 								>
 									{role.lab.labName}
-									{selected && <CheckIcon className='ml-2 h-4 w-4 stroke-2' />}
+									{auth.currentLabId === role.lab._id && (
+										<CheckIcon className='ml-2 h-4 w-4 stroke-2' />
+									)}
 								</li>
 							)}
 						</Listbox.Option>

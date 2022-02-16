@@ -1,10 +1,9 @@
-const verifyRoles = (...allowedRoles) => {
+const verifyRoles = (minRoles) => {
 	return (req, res, next) => {
 		if (!req?.user) return res.sendStatus(401)
 
-		const rolesArray = [...allowedRoles]
 		const result = req.user.roles
-			.map((lab) => rolesArray.includes(lab.role))
+			.map((lab) => lab.role >= minRoles)
 			.find((val) => val === true)
 
 		if (!result) return res.sendStatus(401)
