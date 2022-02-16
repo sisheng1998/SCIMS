@@ -1,7 +1,8 @@
 const ErrorResponse = require('../utils/errorResponse')
 const Lab = require('../models/Lab')
 
-const UserInfo = 'name email altEmail roles.lab roles.role roles.status'
+const UserInfo =
+	'name email altEmail isEmailVerified roles.lab roles.role roles.status'
 
 // Users
 exports.getUsers = async (req, res, next) => {
