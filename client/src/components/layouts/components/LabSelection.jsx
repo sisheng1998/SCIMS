@@ -2,7 +2,6 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { Listbox } from '@headlessui/react'
 import { CheckIcon } from '@heroicons/react/outline'
 import useAuth from '../../../hooks/useAuth'
-import { useNavigate } from 'react-router-dom'
 import ROLES_LIST from '../../../config/roles_list'
 
 const allLabs = {
@@ -12,7 +11,6 @@ const allLabs = {
 
 const LabSelection = () => {
 	const { auth, setAuth } = useAuth()
-	const navigate = useNavigate()
 
 	// Check whether user is admin
 	const isAdmin = auth.roles.some((role) => {
@@ -39,9 +37,6 @@ const LabSelection = () => {
 				currentRole: selected.role,
 			}
 		})
-		navigate('/')
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selected, setAuth])
 
 	return (

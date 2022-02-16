@@ -1,9 +1,11 @@
 import React from 'react'
 import { Navigate, Routes, Route } from 'react-router-dom'
+import ROLES_LIST from './config/roles_list'
 
 // Routing
 import PublicRoute from './components/routes/PublicRoute'
 import PrivateRoute from './components/routes/PrivateRoute'
+import Authorization from './components/routes/Authorization'
 
 // Auth
 import RemainLogin from './components/auth/RemainLogin'
@@ -38,16 +40,21 @@ const App = () => {
 				{/* Private route */}
 				<Route element={<PrivateRoute />}>
 					<Route element={<AppLayout />}>
+						{/* Accessible by all roles */}
 						<Route exact path='/' element={<Dashboard />} />
 						<Route exact path='/inventory' element={<Inventory />} />
-						<Route exact path='/reports' element={<Reports />} />
-						<Route exact path='/stock-check' element={<StockCheck />} />
-						<Route exact path='/import-export' element={<ImportExport />} />
 						<Route exact path='/users' element={<Users />} />
 						<Route exact path='/labs' element={<Labs />} />
-						<Route exact path='/settings' element={<Settings />} />
 						<Route exact path='/notification' element={<Notification />} />
 						<Route exact path='/profile' element={<Profile />} />
+
+						{/* Accessible by lab owner or admin only */}
+						<Route element={<Authorization minRole={ROLES_LIST.labOwner} />}>
+							<Route exact path='/reports' element={<Reports />} />
+							<Route exact path='/stock-check' element={<StockCheck />} />
+							<Route exact path='/import-export' element={<ImportExport />} />
+							<Route exact path='/settings' element={<Settings />} />
+						</Route>
 					</Route>
 
 					<Route element={<AuthLayout />}>

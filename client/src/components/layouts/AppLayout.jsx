@@ -9,7 +9,7 @@ const AppLayout = () => {
 		<div className='flex min-h-screen flex-col'>
 			<Header />
 			<Sidebar />
-			<main className='flex flex-col p-4 pt-[calc(71px+16px)] pl-[calc(69px+16px)]'>
+			<main className='flex flex-col p-4 pt-[calc(71px+24px)] pl-[calc(69px+24px)]'>
 				<Outlet />
 			</main>
 			<Footer />

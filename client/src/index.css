@@ -80,7 +80,8 @@
 		@apply mb-2 block text-sm font-medium;
 	}
 
-	[type='submit'] {
+	[type='submit'],
+	.button {
 		@apply rounded-lg bg-indigo-600 py-3 px-4 text-center text-lg font-semibold text-white transition hover:bg-indigo-700 hover:shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
 	}
 
