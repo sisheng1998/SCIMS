@@ -41,7 +41,14 @@ const Login = () => {
 			const accessToken = data.accessToken
 			const roles = data.roles
 
-			setAuth({ email, accessToken, roles })
+			setAuth((prev) => {
+				return {
+					...prev,
+					email,
+					accessToken,
+					roles,
+				}
+			})
 
 			navigate('/')
 		} catch (error) {
