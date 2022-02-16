@@ -6,10 +6,7 @@ const Title = (props) => {
 		<div className='mb-6 flex items-end justify-between'>
 			<h2>{props.title}</h2>
 			{props.hasButton && (
-				<button
-					onClick={props.buttonAction}
-					className='button inline-flex items-center text-base font-medium'
-				>
+				<button onClick={props.buttonAction} className='button -my-1.5'>
 					<PlusIcon className='-ml-0.5 mr-1.5 h-4 w-4 stroke-2' />
 					{props.buttonText}
 				</button>

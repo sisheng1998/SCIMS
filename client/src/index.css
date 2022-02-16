@@ -149,4 +149,8 @@
 	#sidebar .active {
 		@apply pointer-events-none font-semibold text-indigo-600;
 	}
+
+	.button {
+		@apply inline-flex items-center text-base font-medium shadow-sm;
+	}
 }
