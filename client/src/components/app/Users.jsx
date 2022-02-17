@@ -4,6 +4,7 @@ import UsersTable from './components/UsersTable'
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 import useAuth from '../../hooks/useAuth'
 import GetRoleName from '../others/GetRoleName'
+import ROLES_LIST from '../../config/roles_list'
 
 const Users = () => {
 	const axiosPrivate = useAxiosPrivate()
@@ -71,7 +72,7 @@ const Users = () => {
 		<>
 			<Title
 				title='All Users'
-				hasButton={true}
+				hasButton={auth.currentRole >= ROLES_LIST.labOwner}
 				buttonText='Add User'
 				buttonAction={addUser}
 			/>

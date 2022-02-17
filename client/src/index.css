@@ -72,6 +72,10 @@
 		@apply text-3xl;
 	}
 
+	h3 {
+		@apply text-2xl;
+	}
+
 	a {
 		@apply font-semibold text-indigo-600 outline-indigo-500 transition hover:text-indigo-700;
 	}
@@ -80,8 +84,7 @@
 		@apply mb-2 block text-sm font-medium;
 	}
 
-	[type='submit'],
-	.button {
+	[type='submit'] {
 		@apply rounded-lg bg-indigo-600 py-3 px-4 text-center text-lg font-semibold text-white transition hover:bg-indigo-700 hover:shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
 	}
 
@@ -151,6 +154,14 @@
 	}
 
 	.button {
-		@apply inline-flex items-center text-base font-medium shadow-sm;
+		@apply inline-flex items-center rounded-lg py-3 px-4 text-center text-base font-medium shadow-sm transition hover:shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+	}
+
+	.button-solid {
+		@apply bg-indigo-600 text-white hover:bg-indigo-700;
+	}
+
+	.button-outline {
+		@apply border border-indigo-500 bg-indigo-50 py-2 px-3 text-sm font-semibold text-indigo-600 shadow-indigo-50 hover:border-indigo-600 hover:text-indigo-700 hover:shadow-indigo-100;
 	}
 }

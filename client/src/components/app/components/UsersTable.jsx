@@ -130,8 +130,8 @@ const UsersTable = (props) => {
 								<tr>
 									{tableHeaders.map((header) => (
 										<th
-											key={header.key}
 											scope='col'
+											key={header.key}
 											className='px-6 py-3 text-left font-medium text-gray-500'
 										>
 											{header.sortable ? (

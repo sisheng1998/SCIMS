@@ -3,11 +3,11 @@ import { PlusIcon } from '@heroicons/react/outline'
 
 const Title = (props) => {
 	return (
-		<div className='mb-6 flex items-end justify-between'>
-			<h2 className='flex h-12 items-end'>{props.title}</h2>
+		<div className='mb-6 flex items-center justify-between'>
+			<h3 className='flex h-10 items-end'>{props.title}</h3>
 			{props.hasButton && (
-				<button onClick={props.buttonAction} className='button'>
-					<PlusIcon className='-ml-1 mr-1.5 h-4 w-4 stroke-2' />
+				<button onClick={props.buttonAction} className='button button-outline'>
+					<PlusIcon className='-ml-0.5 mr-1 h-3.5 w-3.5 stroke-2' />
 					{props.buttonText}
 				</button>
 			)}
