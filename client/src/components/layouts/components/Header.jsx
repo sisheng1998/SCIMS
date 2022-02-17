@@ -7,7 +7,7 @@ import UserOption from './UserOption'
 
 const Header = () => {
 	return (
-		<header className='fixed top-0 left-0 right-0 z-10 flex items-center justify-between border-b border-gray-300 bg-white p-4 shadow-sm'>
+		<header className='fixed top-0 left-0 right-0 z-10 flex items-center justify-between border-b border-gray-300 bg-white py-4 px-6 shadow-sm'>
 			<div className='mr-6 flex items-center'>
 				<Link className='mr-4' to='/'>
 					<img

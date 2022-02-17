@@ -66,7 +66,7 @@ const Pagination = ({
 
 			<ul className='flex items-center rounded-lg text-sm font-medium text-gray-500 shadow-sm'>
 				<li
-					className={`pointer-events-none inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-l-lg border border-gray-200 bg-white transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 ${
+					className={`pointer-events-none inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-l-lg border border-gray-200 bg-white hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 ${
 						currentPage > 1 ? 'pointer-events-auto' : 'text-gray-300'
 					}`}
 					onClick={() => paginate(currentPage - 1)}
@@ -76,7 +76,7 @@ const Pagination = ({
 
 				{buttons.map((number, index) => (
 					<li
-						className={`inline-flex h-9 w-9 cursor-pointer items-center justify-center border border-gray-200 bg-white transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 ${
+						className={`inline-flex h-9 w-9 cursor-pointer items-center justify-center border border-gray-200 bg-white hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 ${
 							number === currentPage
 								? 'pointer-events-none border-indigo-500 bg-indigo-50 font-semibold text-indigo-600'
 								: ''
@@ -89,7 +89,7 @@ const Pagination = ({
 				))}
 
 				<li
-					className={`pointer-events-none inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-r-lg border border-gray-200 bg-white transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 ${
+					className={`pointer-events-none inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-r-lg border border-gray-200 bg-white hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 ${
 						currentPage < pageNumbers[pageNumbers.length - 1]
 							? 'pointer-events-auto'
 							: 'text-gray-300'

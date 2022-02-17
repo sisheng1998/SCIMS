@@ -122,9 +122,9 @@ const UsersTable = (props) => {
 
 	return (
 		<>
-			<div className='mb-5 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-1 shadow'>
+			<div className='mb-5 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-3 shadow'>
 				<div className='overflow-x-auto'>
-					<div className='inline-block min-w-full border-b border-gray-200'>
+					<div className='border-b border-gray-200'>
 						<table className='min-w-full divide-y divide-gray-200'>
 							<thead className='bg-gray-50'>
 								<tr>
@@ -177,9 +177,15 @@ const UsersTable = (props) => {
 											<td className='px-6 py-4 capitalize'>{user.role}</td>
 											<td className='px-6 py-4 text-center'>
 												{auth.currentRole >= ROLES_LIST.labOwner ? (
-													<button className='flex font-medium text-indigo-600 transition hover:text-indigo-700'>
-														Edit
-													</button>
+													auth.email === user.email ? (
+														<button className='flex font-medium text-indigo-600 transition hover:text-indigo-700'>
+															View
+														</button>
+													) : (
+														<button className='flex font-medium text-indigo-600 transition hover:text-indigo-700'>
+															Edit
+														</button>
+													)
 												) : (
 													<button className='flex font-medium text-indigo-600 transition hover:text-indigo-700'>
 														View
