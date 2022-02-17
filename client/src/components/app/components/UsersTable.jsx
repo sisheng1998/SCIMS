@@ -1,18 +1,105 @@
-import React from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import GetRoleName from '../../others/GetRoleName'
 import ROLES_LIST from '../../../config/roles_list'
 import useAuth from '../../../hooks/useAuth'
+import {
+	SelectorIcon,
+	ChevronUpIcon,
+	ChevronDownIcon,
+} from '@heroicons/react/outline'
+
+const sortData = ({ tableData, sortKey, reverse }) => {
+	if (!sortKey) return tableData
+
+	const sortedData = tableData.sort((a, b) => {
+		return a[sortKey] > b[sortKey] ? 1 : -1
+	})
+
+	if (reverse) {
+		return sortedData.reverse()
+	}
+
+	return sortedData
+}
+
+const SortButton = ({ children, sortOrder, columnKey, sortKey, onClick }) => {
+	return (
+		<button
+			className='group flex items-center font-medium transition hover:text-indigo-600'
+			onClick={onClick}
+		>
+			{children}
+			{sortKey === columnKey ? (
+				sortOrder === 'asc' ? (
+					<ChevronUpIcon className='ml-1 h-4 w-4 stroke-2 p-0.5 text-gray-400 transition group-hover:text-indigo-500' />
+				) : (
+					<ChevronDownIcon className='ml-1 h-4 w-4 stroke-2 p-0.5 text-gray-400 transition group-hover:text-indigo-500' />
+				)
+			) : (
+				<SelectorIcon className='ml-1 h-4 w-4 text-gray-400 transition group-hover:text-indigo-500' />
+			)}
+		</button>
+	)
+}
 
 const UsersTable = (props) => {
 	const { auth } = useAuth()
 
-	const tableHeaders = ['Name', 'Email Address', 'Status', 'Role', 'Action']
+	const [sortKey, setSortKey] = useState('index')
+	const [sortOrder, setSortOrder] = useState('asc')
 
-	const getCurrentRole = (roles) => {
-		const currentRole = roles.find((role) => {
-			return role.lab === props.data._id
-		})
-		return currentRole
+	useEffect(() => {
+		setSortKey('index')
+		setSortOrder('asc')
+	}, [auth])
+
+	const tableHeaders = [
+		{
+			key: 'name',
+			label: 'Name',
+			sortable: true,
+		},
+		{
+			key: 'email',
+			label: 'Email Address',
+			sortable: true,
+		},
+		{
+			key: 'status',
+			label: 'Status',
+			sortable: true,
+		},
+		{
+			key: 'role',
+			label: 'Role',
+			sortable: true,
+		},
+		{
+			key: 'action',
+			label: 'Action',
+			sortable: false,
+		},
+	]
+
+	const sortedData = useCallback(
+		() =>
+			sortData({
+				tableData: props.data,
+				sortKey,
+				reverse: sortOrder === 'desc',
+			}),
+		[props.data, sortKey, sortOrder]
+	)
+
+	const changeSortOrder = (key) => {
+		if (key === sortKey) {
+			setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+
+			if (sortOrder === 'desc') {
+				return setSortKey('index')
+			}
+		}
+		setSortKey(key)
 	}
 
 	return (
@@ -21,29 +108,37 @@ const UsersTable = (props) => {
 				<table className='min-w-full divide-y divide-gray-300'>
 					<thead className='bg-gray-50'>
 						<tr>
-							{tableHeaders.map((title, index) => (
+							{tableHeaders.map((header) => (
 								<th
-									key={index}
+									key={header.key}
 									scope='col'
 									className='px-6 py-3 text-left font-medium text-gray-500'
 								>
-									{title}
+									{header.sortable ? (
+										<SortButton
+											columnKey={header.key}
+											onClick={() => changeSortOrder(header.key)}
+											{...{ sortOrder, sortKey }}
+										>
+											{header.label}
+										</SortButton>
+									) : (
+										header.label
+									)}
 								</th>
 							))}
 						</tr>
 					</thead>
 
 					<tbody className='divide-y divide-gray-300 bg-white'>
-						{props.data.labUsers.map((user) => {
+						{sortedData().map((user) => {
 							if (!user.isEmailVerified) return null
-
-							const currentRole = getCurrentRole(user.roles)
 
 							let classes
 
-							if (currentRole.status === 'Active') {
+							if (user.status === 'Active') {
 								classes = 'bg-green-100 text-green-600'
-							} else if (currentRole.status === 'Pending') {
+							} else if (user.status === 'Pending') {
 								classes = 'bg-yellow-100 text-yellow-600'
 							} else {
 								// Deactivated
@@ -58,11 +153,11 @@ const UsersTable = (props) => {
 										<span
 											className={`inline-flex rounded-full px-3 py-1 font-medium ${classes}`}
 										>
-											{currentRole.status}
+											{user.status}
 										</span>
 									</td>
 									<td className='px-6 py-4 capitalize'>
-										{GetRoleName(currentRole.role)}
+										{GetRoleName(user.role)}
 									</td>
 									<td className='px-6 py-4 text-center'>
 										{auth.currentRole >= ROLES_LIST.labOwner ? (
