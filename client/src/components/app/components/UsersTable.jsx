@@ -1,5 +1,4 @@
 import React, { useCallback, useState, useEffect } from 'react'
-import GetRoleName from '../../others/GetRoleName'
 import ROLES_LIST from '../../../config/roles_list'
 import useAuth from '../../../hooks/useAuth'
 import {
@@ -7,6 +6,7 @@ import {
 	ChevronUpIcon,
 	ChevronDownIcon,
 } from '@heroicons/react/outline'
+import Pagination from './Pagination'
 
 const sortData = ({ tableData, sortKey, reverse }) => {
 	if (!sortKey) return tableData
@@ -102,81 +102,96 @@ const UsersTable = (props) => {
 		setSortKey(key)
 	}
 
+	const [currentPage, setCurrentPage] = useState(1)
+	const [itemsPerPage, setItemsPerPage] = useState(5)
+	const indexOfLastItem = currentPage * itemsPerPage
+	const indexOfFirstItem = indexOfLastItem - itemsPerPage
+	const currentItems = sortedData().slice(indexOfFirstItem, indexOfLastItem)
+
+	const paginate = (pageNumber) => setCurrentPage(pageNumber)
+
 	return (
-		<div className='overflow-x-auto'>
-			<div className='inline-block min-w-full overflow-hidden rounded-lg border-b border-gray-300 shadow'>
-				<table className='min-w-full divide-y divide-gray-300'>
-					<thead className='bg-gray-50'>
-						<tr>
-							{tableHeaders.map((header) => (
-								<th
-									key={header.key}
-									scope='col'
-									className='px-6 py-3 text-left font-medium text-gray-500'
-								>
-									{header.sortable ? (
-										<SortButton
-											columnKey={header.key}
-											onClick={() => changeSortOrder(header.key)}
-											{...{ sortOrder, sortKey }}
+		<>
+			<div className='mb-4 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-1 shadow'>
+				<div className='overflow-x-auto'>
+					<div className='inline-block min-w-full border-b border-gray-200'>
+						<table className='min-w-full divide-y divide-gray-200'>
+							<thead className='bg-gray-50'>
+								<tr>
+									{tableHeaders.map((header) => (
+										<th
+											key={header.key}
+											scope='col'
+											className='px-6 py-3 text-left font-medium text-gray-500'
 										>
-											{header.label}
-										</SortButton>
-									) : (
-										header.label
-									)}
-								</th>
-							))}
-						</tr>
-					</thead>
-
-					<tbody className='divide-y divide-gray-300 bg-white'>
-						{sortedData().map((user) => {
-							if (!user.isEmailVerified) return null
-
-							let classes
-
-							if (user.status === 'Active') {
-								classes = 'bg-green-100 text-green-600'
-							} else if (user.status === 'Pending') {
-								classes = 'bg-yellow-100 text-yellow-600'
-							} else {
-								// Deactivated
-								classes = 'bg-red-100 text-red-600'
-							}
-
-							return (
-								<tr key={user._id}>
-									<td className='px-6 py-4'>{user.name}</td>
-									<td className='px-6 py-4'>{user.email}</td>
-									<td className='px-6 py-4'>
-										<span
-											className={`inline-flex rounded-full px-3 py-1 font-medium ${classes}`}
-										>
-											{user.status}
-										</span>
-									</td>
-									<td className='px-6 py-4 capitalize'>
-										{GetRoleName(user.role)}
-									</td>
-									<td className='px-6 py-4 text-center'>
-										{auth.currentRole >= ROLES_LIST.labOwner ? (
-											<button className='flex font-semibold text-indigo-600 transition hover:text-indigo-700'>
-												Edit
-											</button>
-										) : (
-											<button className='flex font-semibold text-indigo-600 transition hover:text-indigo-700'>
-												View
-											</button>
-										)}
-									</td>
+											{header.sortable ? (
+												<SortButton
+													columnKey={header.key}
+													onClick={() => changeSortOrder(header.key)}
+													{...{ sortOrder, sortKey }}
+												>
+													{header.label}
+												</SortButton>
+											) : (
+												header.label
+											)}
+										</th>
+									))}
 								</tr>
-							)
-						})}
-					</tbody>
-				</table>
+							</thead>
+
+							<tbody className='divide-y divide-gray-200 bg-white'>
+								{currentItems.map((user) => {
+									if (!user.isEmailVerified) return null
+
+									let classes
+
+									if (user.status === 'Active') {
+										classes = 'bg-green-100 text-green-600'
+									} else if (user.status === 'Pending') {
+										classes = 'bg-yellow-100 text-yellow-600'
+									} else {
+										// Deactivated
+										classes = 'bg-red-100 text-red-600'
+									}
+
+									return (
+										<tr key={user._id}>
+											<td className='px-6 py-4'>{user.name}</td>
+											<td className='px-6 py-4'>{user.email}</td>
+											<td className='px-6 py-4'>
+												<span
+													className={`inline-flex rounded-full px-3 py-1 font-medium ${classes}`}
+												>
+													{user.status}
+												</span>
+											</td>
+											<td className='px-6 py-4 capitalize'>{user.role}</td>
+											<td className='px-6 py-4 text-center'>
+												{auth.currentRole >= ROLES_LIST.labOwner ? (
+													<button className='flex font-medium text-indigo-600 transition hover:text-indigo-700'>
+														Edit
+													</button>
+												) : (
+													<button className='flex font-medium text-indigo-600 transition hover:text-indigo-700'>
+														View
+													</button>
+												)}
+											</td>
+										</tr>
+									)
+								})}
+							</tbody>
+						</table>
+					</div>
+				</div>
 			</div>
-		</div>
+			<Pagination
+				itemsPerPage={itemsPerPage}
+				totalItems={props.data.length}
+				paginate={paginate}
+			/>
+		</>
 	)
 }
 

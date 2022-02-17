@@ -3,13 +3,17 @@ import Title from './components/Title'
 import UsersTable from './components/UsersTable'
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 import useAuth from '../../hooks/useAuth'
+import GetRoleName from '../others/GetRoleName'
 
 const Users = () => {
 	const axiosPrivate = useAxiosPrivate()
 	const [usersData, setUsersData] = useState('')
+	const [isLoading, setIsLoading] = useState(true)
 	const { auth } = useAuth()
 
 	useEffect(() => {
+		setIsLoading(true)
+
 		let isMounted = true
 		const controller = new AbortController()
 
@@ -34,12 +38,13 @@ const Users = () => {
 						return {
 							...user,
 							index: index,
-							role: currentRole.role,
+							role: GetRoleName(currentRole.role),
 							status: currentRole.status,
 						}
 					})
 					// LabUsers array
 					setUsersData(processedData)
+					setIsLoading(false)
 				}
 			} catch (error) {
 				return
@@ -58,7 +63,9 @@ const Users = () => {
 		console.log('Hello')
 	}
 
-	return (
+	return isLoading ? (
+		'Loading...'
+	) : (
 		<>
 			<Title
 				title='All Users'
@@ -66,7 +73,7 @@ const Users = () => {
 				buttonText='Add User'
 				buttonAction={addUser}
 			/>
-			{usersData ? <UsersTable data={usersData} /> : 'Loading'}
+			<UsersTable data={usersData} />
 		</>
 	)
 }
