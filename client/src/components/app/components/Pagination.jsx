@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline'
 
-const Pagination = ({ currentPage, itemsPerPage, totalItems, paginate }) => {
+const Pagination = ({
+	indexOfFirstItem,
+	indexOfLastItem,
+	currentPage,
+	itemsPerPage,
+	totalItems,
+	paginate,
+}) => {
 	const pageNumbers = []
 	for (let i = 1; i <= Math.ceil(totalItems / itemsPerPage); i++) {
 		pageNumbers.push(i)
@@ -40,13 +47,21 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, paginate }) => {
 		paginate(currentPage)
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage])
+	}, [currentPage, itemsPerPage])
 
 	return (
 		<nav className='flex items-center justify-between'>
 			<p className='text-sm'>
-				Showing <span className='font-medium'>{}</span> of{' '}
-				<span className='font-medium'>{totalItems}</span> results
+				Showing{' '}
+				{indexOfFirstItem + 1 === totalItems ? (
+					<span className='font-medium'>{indexOfFirstItem + 1}</span>
+				) : (
+					<>
+						<span className='font-medium'>{indexOfFirstItem + 1}</span> to{' '}
+						<span className='font-medium'>{indexOfLastItem}</span>
+					</>
+				)}{' '}
+				of <span className='font-medium'>{totalItems}</span> results
 			</p>
 
 			<ul className='flex items-center rounded-lg text-sm font-medium text-gray-500 shadow-sm'>
@@ -56,7 +71,7 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, paginate }) => {
 					}`}
 					onClick={() => paginate(currentPage - 1)}
 				>
-					<ChevronLeftIcon className='h-4 w-4 stroke-2' />
+					<ChevronLeftIcon className='h-3.5 w-3.5 stroke-2' />
 				</li>
 
 				{buttons.map((number, index) => (
@@ -81,7 +96,7 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, paginate }) => {
 					}`}
 					onClick={() => paginate(currentPage + 1)}
 				>
-					<ChevronRightIcon className='h-4 w-4 stroke-2' />
+					<ChevronRightIcon className='h-3.5 w-3.5 stroke-2' />
 				</li>
 			</ul>
 		</nav>

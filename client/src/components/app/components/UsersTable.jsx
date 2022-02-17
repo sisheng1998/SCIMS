@@ -103,12 +103,22 @@ const UsersTable = (props) => {
 	}
 
 	const [currentPage, setCurrentPage] = useState(1)
-	const itemsPerPage = 2
-	const indexOfLastItem = currentPage * itemsPerPage
+	const itemsPerPage = 5
+
+	let indexOfLastItem = currentPage * itemsPerPage
 	const indexOfFirstItem = indexOfLastItem - itemsPerPage
+
+	if (indexOfLastItem > props.data.length) {
+		indexOfLastItem = props.data.length
+	}
+
 	const currentItems = sortedData().slice(indexOfFirstItem, indexOfLastItem)
 
 	const paginate = (pageNumber) => setCurrentPage(pageNumber)
+
+	useEffect(() => {
+		setCurrentPage(1)
+	}, [itemsPerPage])
 
 	return (
 		<>
@@ -142,8 +152,6 @@ const UsersTable = (props) => {
 
 							<tbody className='divide-y divide-gray-200 bg-white'>
 								{currentItems.map((user) => {
-									if (!user.isEmailVerified) return null
-
 									let classes
 
 									if (user.status === 'Active') {
@@ -187,6 +195,8 @@ const UsersTable = (props) => {
 				</div>
 			</div>
 			<Pagination
+				indexOfFirstItem={indexOfFirstItem}
+				indexOfLastItem={indexOfLastItem}
 				currentPage={currentPage}
 				itemsPerPage={itemsPerPage}
 				totalItems={props.data.length}
