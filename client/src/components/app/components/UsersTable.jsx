@@ -103,7 +103,7 @@ const UsersTable = (props) => {
 	}
 
 	const [currentPage, setCurrentPage] = useState(1)
-	const [itemsPerPage, setItemsPerPage] = useState(5)
+	const itemsPerPage = 2
 	const indexOfLastItem = currentPage * itemsPerPage
 	const indexOfFirstItem = indexOfLastItem - itemsPerPage
 	const currentItems = sortedData().slice(indexOfFirstItem, indexOfLastItem)
@@ -112,7 +112,7 @@ const UsersTable = (props) => {
 
 	return (
 		<>
-			<div className='mb-4 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-1 shadow'>
+			<div className='mb-5 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-1 shadow'>
 				<div className='overflow-x-auto'>
 					<div className='inline-block min-w-full border-b border-gray-200'>
 						<table className='min-w-full divide-y divide-gray-200'>
@@ -187,6 +187,7 @@ const UsersTable = (props) => {
 				</div>
 			</div>
 			<Pagination
+				currentPage={currentPage}
 				itemsPerPage={itemsPerPage}
 				totalItems={props.data.length}
 				paginate={paginate}
