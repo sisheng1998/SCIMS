@@ -8,12 +8,18 @@ import {
 } from '@heroicons/react/outline'
 import Pagination from './Pagination'
 
-const sortData = ({ tableData, sortKey, reverse }) => {
+const sortData = ({ tableData, sortKey, reverse, searchTerm }) => {
 	if (!sortKey) return tableData
 
-	const sortedData = tableData.sort((a, b) => {
-		return a[sortKey] > b[sortKey] ? 1 : -1
-	})
+	const sortedData = tableData
+		.filter(
+			(data) =>
+				data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				data.email.toLowerCase().includes(searchTerm.toLowerCase())
+		)
+		.sort((a, b) => {
+			return a[sortKey] > b[sortKey] ? 1 : -1
+		})
 
 	if (reverse) {
 		return sortedData.reverse()
@@ -47,6 +53,7 @@ const UsersTable = (props) => {
 
 	const [sortKey, setSortKey] = useState('index')
 	const [sortOrder, setSortOrder] = useState('asc')
+	const [searchTerm, setSearchTerm] = useState('')
 
 	useEffect(() => {
 		setSortKey('index')
@@ -87,8 +94,9 @@ const UsersTable = (props) => {
 				tableData: props.data,
 				sortKey,
 				reverse: sortOrder === 'desc',
+				searchTerm,
 			}),
-		[props.data, sortKey, sortOrder]
+		[props.data, sortKey, sortOrder, searchTerm]
 	)
 
 	const changeSortOrder = (key) => {
@@ -103,25 +111,68 @@ const UsersTable = (props) => {
 	}
 
 	const [currentPage, setCurrentPage] = useState(1)
-	const itemsPerPage = 5
+	const [itemsPerPage, setItemsPerPage] = useState(10)
 
 	let indexOfLastItem = currentPage * itemsPerPage
 	const indexOfFirstItem = indexOfLastItem - itemsPerPage
 
-	if (indexOfLastItem > props.data.length) {
-		indexOfLastItem = props.data.length
+	const data = sortedData()
+
+	if (indexOfLastItem > data.length) {
+		indexOfLastItem = data.length
 	}
 
-	const currentItems = sortedData().slice(indexOfFirstItem, indexOfLastItem)
+	const currentItems = data.slice(indexOfFirstItem, indexOfLastItem)
 
 	const paginate = (pageNumber) => setCurrentPage(pageNumber)
 
 	useEffect(() => {
 		setCurrentPage(1)
-	}, [itemsPerPage])
+	}, [itemsPerPage, searchTerm])
 
 	return (
 		<>
+			<div className='mb-4 flex items-end justify-between text-sm text-gray-500'>
+				<div className='flex items-center'>
+					<p>Display</p>
+					<select
+						className='mx-2 p-1 pl-2 pr-8 text-sm'
+						name='itemsPerPage'
+						id='itemsPerPage'
+						value={itemsPerPage === data.length ? 'All' : itemsPerPage}
+						onChange={(e) => {
+							const value = e.target.value
+
+							if (value === 'All') {
+								setItemsPerPage(data.length)
+							} else {
+								setItemsPerPage(value)
+							}
+						}}
+					>
+						<option value='10'>10</option>
+						<option value='50'>50</option>
+						<option value='100'>100</option>
+						<option value='All'>All</option>
+					</select>
+					<p>records</p>
+				</div>
+
+				<div className='flex items-center'>
+					<p>Search</p>
+					<input
+						type='text'
+						id='search'
+						className='ml-2 px-2 py-1 text-sm'
+						autoComplete='off'
+						spellCheck='false'
+						placeholder='Name / Email'
+						value={searchTerm}
+						onChange={(e) => setSearchTerm(e.target.value)}
+					/>
+				</div>
+			</div>
+
 			<div className='mb-5 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-3 shadow'>
 				<div className='overflow-x-auto'>
 					<div className='border-b border-gray-200'>
@@ -201,11 +252,12 @@ const UsersTable = (props) => {
 				</div>
 			</div>
 			<Pagination
+				searchTerm={searchTerm}
 				indexOfFirstItem={indexOfFirstItem}
 				indexOfLastItem={indexOfLastItem}
 				currentPage={currentPage}
 				itemsPerPage={itemsPerPage}
-				totalItems={props.data.length}
+				totalItems={data.length}
 				paginate={paginate}
 			/>
 		</>

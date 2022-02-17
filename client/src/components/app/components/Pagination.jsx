@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline'
 
 const Pagination = ({
+	searchTerm,
 	indexOfFirstItem,
 	indexOfLastItem,
 	currentPage,
@@ -47,7 +48,7 @@ const Pagination = ({
 		paginate(currentPage)
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, itemsPerPage])
+	}, [currentPage, itemsPerPage, searchTerm])
 
 	return (
 		<nav className='mb-4 flex items-center justify-between'>
@@ -55,6 +56,8 @@ const Pagination = ({
 				Showing{' '}
 				{indexOfFirstItem + 1 === totalItems ? (
 					<span className='font-medium'>{indexOfFirstItem + 1}</span>
+				) : totalItems === 0 ? (
+					<span className='font-medium'>0</span>
 				) : (
 					<>
 						<span className='font-medium'>{indexOfFirstItem + 1}</span> to{' '}
