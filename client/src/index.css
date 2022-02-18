@@ -76,6 +76,10 @@
 		@apply text-2xl;
 	}
 
+	h4 {
+		@apply text-xl;
+	}
+
 	a {
 		@apply font-semibold text-indigo-600 outline-indigo-500 transition hover:text-indigo-700;
 	}
@@ -162,6 +166,6 @@
 	}
 
 	.button-outline {
-		@apply border border-indigo-500 bg-indigo-50 py-2 px-3 text-sm font-semibold text-indigo-600 shadow-indigo-50 hover:border-indigo-600 hover:text-indigo-700 hover:shadow-indigo-100;
+		@apply border border-indigo-500 bg-indigo-50 py-2 px-3 text-sm font-semibold text-indigo-600 shadow-indigo-50 hover:border-indigo-600 hover:text-indigo-700 hover:shadow-indigo-100 focus:ring-offset-gray-100;
 	}
 }

@@ -104,7 +104,7 @@ const UsersTable = (props) => {
 				setSearchTerm={setSearchTerm}
 				searchPlaceholder='Name / Email'
 			>
-				<div className='ml-4 flex items-center'>
+				<div className='mx-6 flex items-center'>
 					<p>Filter</p>
 
 					<select

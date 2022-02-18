@@ -36,7 +36,7 @@ const LoginPasswordField = (props) => {
 	return (
 		<div className='relative mb-6'>
 			<input
-				className={`peer w-full pr-10 ${
+				className={`w-full pr-10 ${
 					!props.password
 						? ''
 						: props.validated
@@ -45,7 +45,7 @@ const LoginPasswordField = (props) => {
 				}`}
 				type='password'
 				id='password'
-				placeholder='Enter your password'
+				placeholder={props.placeholder || 'Enter your password'}
 				required
 				value={props.password}
 				onChange={inputHandler}

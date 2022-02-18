@@ -26,7 +26,7 @@ const Filters = (props) => {
 				<p>Search</p>
 				<input
 					type='text'
-					id='search'
+					id='searchFilter'
 					className='ml-2 w-48 px-2 py-1 text-sm text-gray-700'
 					autoComplete='off'
 					spellCheck='false'

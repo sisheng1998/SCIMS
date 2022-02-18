@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import AddUserModal from './components/AddUserModal'
 import Title from './components/Title'
 import UsersTable from './components/UsersTable'
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
@@ -11,6 +12,8 @@ const Users = () => {
 	const [usersData, setUsersData] = useState('')
 	const [isLoading, setIsLoading] = useState(true)
 	const { auth } = useAuth()
+
+	const [openModal, setOpenModal] = useState(false)
 
 	useEffect(() => {
 		setIsLoading(true)
@@ -62,10 +65,6 @@ const Users = () => {
 		}
 	}, [axiosPrivate, auth])
 
-	const addUser = () => {
-		console.log('Hello')
-	}
-
 	return isLoading ? (
 		'Loading...'
 	) : (
@@ -74,9 +73,12 @@ const Users = () => {
 				title='All Users'
 				hasButton={auth.currentRole >= ROLES_LIST.labOwner}
 				buttonText='Add User'
-				buttonAction={addUser}
+				buttonAction={() => setOpenModal(true)}
 			/>
 			<UsersTable data={usersData} />
+			{auth.currentRole >= ROLES_LIST.labOwner && (
+				<AddUserModal openModal={openModal} setOpenModal={setOpenModal} />
+			)}
 		</>
 	)
 }

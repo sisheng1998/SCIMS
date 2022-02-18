@@ -29,7 +29,7 @@ const USMEmailField = (props) => {
 				}`}
 				type='email'
 				id='email'
-				placeholder='Enter your email'
+				placeholder={props.placeholder || 'Enter your email'}
 				required
 				value={props.value}
 				onChange={(e) => props.setValue(e.target.value)}
