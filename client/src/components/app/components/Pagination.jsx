@@ -56,15 +56,15 @@ const Pagination = ({
 				Showing{' '}
 				{indexOfFirstItem + 1 === totalItems ? (
 					<span className='font-medium'>{indexOfFirstItem + 1}</span>
-				) : totalItems === 0 ? (
-					<span className='font-medium'>0</span>
-				) : (
+				) : totalItems === 0 ? null : (
 					<>
-						<span className='font-medium'>{indexOfFirstItem + 1}</span> to{' '}
+						<span className='font-medium'>{indexOfFirstItem + 1}</span> -{' '}
 						<span className='font-medium'>{indexOfLastItem}</span>
 					</>
 				)}{' '}
-				of <span className='font-medium'>{totalItems}</span> results
+				{totalItems === 0 ? '' : 'of'}{' '}
+				<span className='font-medium'>{totalItems}</span>{' '}
+				{totalItems > 1 ? 'results' : 'result'}
 			</p>
 
 			<ul className='flex items-center rounded-lg text-sm font-medium text-gray-500 shadow-sm'>

@@ -11,6 +11,7 @@ const Title = (props) => {
 					{props.buttonText}
 				</button>
 			)}
+			{props.children}
 		</div>
 	)
 }

@@ -1,52 +1,38 @@
 import React, { useCallback, useState, useEffect } from 'react'
 import ROLES_LIST from '../../../config/roles_list'
 import useAuth from '../../../hooks/useAuth'
-import {
-	SelectorIcon,
-	ChevronUpIcon,
-	ChevronDownIcon,
-} from '@heroicons/react/outline'
+import SortData from './SortData'
+import SortButton from './SortButton'
+import Filters from './Filters'
 import Pagination from './Pagination'
 
-const sortData = ({ tableData, sortKey, reverse, searchTerm }) => {
-	if (!sortKey) return tableData
-
-	const sortedData = tableData
-		.filter(
-			(data) =>
-				data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-				data.email.toLowerCase().includes(searchTerm.toLowerCase())
-		)
-		.sort((a, b) => {
-			return a[sortKey] > b[sortKey] ? 1 : -1
-		})
-
-	if (reverse) {
-		return sortedData.reverse()
-	}
-
-	return sortedData
-}
-
-const SortButton = ({ children, sortOrder, columnKey, sortKey, onClick }) => {
-	return (
-		<button
-			className='group flex items-center font-medium transition hover:text-indigo-600'
-			onClick={onClick}
-		>
-			{children}
-			{sortKey === columnKey ? (
-				sortOrder === 'asc' ? (
-					<ChevronUpIcon className='ml-1 h-4 w-4 stroke-2 p-0.5 text-gray-400 transition group-hover:text-indigo-500' />
-				) : (
-					<ChevronDownIcon className='ml-1 h-4 w-4 stroke-2 p-0.5 text-gray-400 transition group-hover:text-indigo-500' />
-				)
-			) : (
-				<SelectorIcon className='ml-1 h-4 w-4 text-gray-400 transition group-hover:text-indigo-500' />
-			)}
-		</button>
-	)
-}
+const tableHeaders = [
+	{
+		key: 'name',
+		label: 'Name',
+		sortable: true,
+	},
+	{
+		key: 'email',
+		label: 'Email Address',
+		sortable: true,
+	},
+	{
+		key: 'status',
+		label: 'Status',
+		sortable: true,
+	},
+	{
+		key: 'role',
+		label: 'Role',
+		sortable: true,
+	},
+	{
+		key: 'action',
+		label: 'Action',
+		sortable: false,
+	},
+]
 
 const UsersTable = (props) => {
 	const { auth } = useAuth()
@@ -54,49 +40,27 @@ const UsersTable = (props) => {
 	const [sortKey, setSortKey] = useState('index')
 	const [sortOrder, setSortOrder] = useState('asc')
 	const [searchTerm, setSearchTerm] = useState('')
+	const [filterTerms, setFilterTerms] = useState({
+		status: '',
+		role: '',
+	})
 
 	useEffect(() => {
 		setSortKey('index')
 		setSortOrder('asc')
 	}, [auth])
 
-	const tableHeaders = [
-		{
-			key: 'name',
-			label: 'Name',
-			sortable: true,
-		},
-		{
-			key: 'email',
-			label: 'Email Address',
-			sortable: true,
-		},
-		{
-			key: 'status',
-			label: 'Status',
-			sortable: true,
-		},
-		{
-			key: 'role',
-			label: 'Role',
-			sortable: true,
-		},
-		{
-			key: 'action',
-			label: 'Action',
-			sortable: false,
-		},
-	]
-
 	const sortedData = useCallback(
 		() =>
-			sortData({
+			SortData({
 				tableData: props.data,
 				sortKey,
 				reverse: sortOrder === 'desc',
 				searchTerm,
+				searchCols: ['name', 'email'],
+				filterTerms,
 			}),
-		[props.data, sortKey, sortOrder, searchTerm]
+		[props.data, sortKey, sortOrder, searchTerm, filterTerms]
 	)
 
 	const changeSortOrder = (key) => {
@@ -116,13 +80,13 @@ const UsersTable = (props) => {
 	let indexOfLastItem = currentPage * itemsPerPage
 	const indexOfFirstItem = indexOfLastItem - itemsPerPage
 
-	const data = sortedData()
+	const results = sortedData()
 
-	if (indexOfLastItem > data.length) {
-		indexOfLastItem = data.length
+	if (indexOfLastItem > results.length) {
+		indexOfLastItem = results.length
 	}
 
-	const currentItems = data.slice(indexOfFirstItem, indexOfLastItem)
+	const currentItems = results.slice(indexOfFirstItem, indexOfLastItem)
 
 	const paginate = (pageNumber) => setCurrentPage(pageNumber)
 
@@ -132,46 +96,50 @@ const UsersTable = (props) => {
 
 	return (
 		<>
-			<div className='mb-4 flex items-end justify-between text-sm text-gray-500'>
-				<div className='flex items-center'>
-					<p>Display</p>
+			<Filters
+				itemsPerPage={itemsPerPage}
+				setItemsPerPage={setItemsPerPage}
+				results={results}
+				searchTerm={searchTerm}
+				setSearchTerm={setSearchTerm}
+				searchPlaceholder='Name / Email'
+			>
+				<div className='ml-4 flex items-center'>
+					<p>Filter</p>
+
 					<select
-						className='mx-2 p-1 pl-2 pr-8 text-sm'
-						name='itemsPerPage'
-						id='itemsPerPage'
-						value={itemsPerPage === data.length ? 'All' : itemsPerPage}
-						onChange={(e) => {
-							const value = e.target.value
-
-							if (value === 'All') {
-								setItemsPerPage(data.length)
-							} else {
-								setItemsPerPage(value)
-							}
-						}}
+						className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
+						name='statusFilter'
+						id='statusFilter'
+						value={filterTerms.status}
+						onChange={(e) =>
+							setFilterTerms((prev) => ({ ...prev, status: e.target.value }))
+						}
 					>
-						<option value='10'>10</option>
-						<option value='50'>50</option>
-						<option value='100'>100</option>
-						<option value='All'>All</option>
+						<option value=''>Any Status</option>
+						<option value='active'>Active</option>
+						<option value='pending'>Pending</option>
+						<option value='deactivated'>Deactivated</option>
 					</select>
-					<p>records</p>
-				</div>
 
-				<div className='flex items-center'>
-					<p>Search</p>
-					<input
-						type='text'
-						id='search'
-						className='ml-2 px-2 py-1 text-sm'
-						autoComplete='off'
-						spellCheck='false'
-						placeholder='Name / Email'
-						value={searchTerm}
-						onChange={(e) => setSearchTerm(e.target.value)}
-					/>
+					<select
+						className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
+						name='roleFilter'
+						id='roleFilter'
+						value={filterTerms.role}
+						onChange={(e) =>
+							setFilterTerms((prev) => ({ ...prev, role: e.target.value }))
+						}
+					>
+						<option value=''>Any Role</option>
+						<option value='admin'>Admin</option>
+						<option value='lab owner'>Lab Owner</option>
+						<option value='postgraduate'>Postgraduate</option>
+						<option value='undergraduate'>Undergraduate</option>
+						<option value='viewer'>Viewer</option>
+					</select>
 				</div>
-			</div>
+			</Filters>
 
 			<div className='mb-5 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-3 shadow'>
 				<div className='overflow-x-auto'>
@@ -202,62 +170,74 @@ const UsersTable = (props) => {
 							</thead>
 
 							<tbody className='divide-y divide-gray-200 bg-white'>
-								{currentItems.map((user) => {
-									let classes
+								{currentItems.length === 0 ? (
+									<tr>
+										<td
+											className='px-6 py-4 text-center'
+											colSpan={tableHeaders.length}
+										>
+											No record found.
+										</td>
+									</tr>
+								) : (
+									currentItems.map((user) => {
+										let classes
 
-									if (user.status === 'Active') {
-										classes = 'bg-green-100 text-green-600'
-									} else if (user.status === 'Pending') {
-										classes = 'bg-yellow-100 text-yellow-600'
-									} else {
-										// Deactivated
-										classes = 'bg-red-100 text-red-600'
-									}
+										if (user.status === 'Active') {
+											classes = 'bg-green-100 text-green-600'
+										} else if (user.status === 'Pending') {
+											classes = 'bg-yellow-100 text-yellow-600'
+										} else {
+											// Deactivated
+											classes = 'bg-red-100 text-red-600'
+										}
 
-									return (
-										<tr key={user._id}>
-											<td className='px-6 py-4'>{user.name}</td>
-											<td className='px-6 py-4'>{user.email}</td>
-											<td className='px-6 py-4'>
-												<span
-													className={`inline-flex rounded-full px-3 py-1 font-medium ${classes}`}
-												>
-													{user.status}
-												</span>
-											</td>
-											<td className='px-6 py-4 capitalize'>{user.role}</td>
-											<td className='px-6 py-4 text-center'>
-												{auth.currentRole >= ROLES_LIST.labOwner ? (
-													auth.email === user.email ? (
+										return (
+											<tr key={user._id}>
+												<td className='px-6 py-4'>{user.name}</td>
+												<td className='px-6 py-4'>{user.email}</td>
+												<td className='px-6 py-4'>
+													<span
+														className={`inline-flex rounded-full px-3 py-1 font-medium ${classes}`}
+													>
+														{user.status}
+													</span>
+												</td>
+												<td className='px-6 py-4 capitalize'>{user.role}</td>
+												<td className='px-6 py-4 text-center'>
+													{auth.currentRole >= ROLES_LIST.labOwner ? (
+														auth.email === user.email ? (
+															<button className='flex font-medium text-indigo-600 transition hover:text-indigo-700'>
+																View
+															</button>
+														) : (
+															<button className='flex font-medium text-indigo-600 transition hover:text-indigo-700'>
+																Edit
+															</button>
+														)
+													) : (
 														<button className='flex font-medium text-indigo-600 transition hover:text-indigo-700'>
 															View
 														</button>
-													) : (
-														<button className='flex font-medium text-indigo-600 transition hover:text-indigo-700'>
-															Edit
-														</button>
-													)
-												) : (
-													<button className='flex font-medium text-indigo-600 transition hover:text-indigo-700'>
-														View
-													</button>
-												)}
-											</td>
-										</tr>
-									)
-								})}
+													)}
+												</td>
+											</tr>
+										)
+									})
+								)}
 							</tbody>
 						</table>
 					</div>
 				</div>
 			</div>
+
 			<Pagination
 				searchTerm={searchTerm}
 				indexOfFirstItem={indexOfFirstItem}
 				indexOfLastItem={indexOfLastItem}
 				currentPage={currentPage}
 				itemsPerPage={itemsPerPage}
-				totalItems={data.length}
+				totalItems={results.length}
 				paginate={paginate}
 			/>
 		</>

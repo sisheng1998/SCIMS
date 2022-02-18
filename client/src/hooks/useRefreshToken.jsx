@@ -11,11 +11,12 @@ const useRefreshToken = () => {
 	const refresh = async () => {
 		const { data } = await axios.get('/api/auth/refresh-token', config)
 
+		const email = data.email
 		const accessToken = data.accessToken
 		const roles = data.roles
 
 		setAuth((prev) => {
-			return { ...prev, accessToken: accessToken, roles: roles }
+			return { ...prev, email, accessToken, roles }
 		})
 
 		return accessToken

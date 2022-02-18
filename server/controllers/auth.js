@@ -285,6 +285,7 @@ exports.refreshToken = async (req, res, next) => {
 
 		res.status(200).json({
 			success: true,
+			email: foundUser.email,
 			accessToken: accessToken,
 			roles: foundUser.roles,
 		})
