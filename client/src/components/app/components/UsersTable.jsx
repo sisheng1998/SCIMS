@@ -92,7 +92,7 @@ const UsersTable = (props) => {
 
 	useEffect(() => {
 		setCurrentPage(1)
-	}, [itemsPerPage, searchTerm])
+	}, [itemsPerPage, searchTerm, filterTerms])
 
 	return (
 		<>
@@ -232,6 +232,7 @@ const UsersTable = (props) => {
 			</div>
 
 			<Pagination
+				filterTerms={filterTerms}
 				searchTerm={searchTerm}
 				indexOfFirstItem={indexOfFirstItem}
 				indexOfLastItem={indexOfLastItem}

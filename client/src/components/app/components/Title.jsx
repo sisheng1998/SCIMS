@@ -3,7 +3,7 @@ import { PlusIcon } from '@heroicons/react/outline'
 
 const Title = (props) => {
 	return (
-		<div className='mb-6 flex items-center justify-between'>
+		<div className='mb-5 flex items-center justify-between'>
 			<h3 className='flex h-10 items-end'>{props.title}</h3>
 			{props.hasButton && (
 				<button onClick={props.buttonAction} className='button button-outline'>

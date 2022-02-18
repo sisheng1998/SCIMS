@@ -3,6 +3,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline'
 
 const Pagination = ({
 	searchTerm,
+	filterTerms,
 	indexOfFirstItem,
 	indexOfLastItem,
 	currentPage,
@@ -48,7 +49,7 @@ const Pagination = ({
 		paginate(currentPage)
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, itemsPerPage, searchTerm])
+	}, [currentPage, itemsPerPage, searchTerm, filterTerms])
 
 	return (
 		<nav className='mb-4 flex items-center justify-between'>
