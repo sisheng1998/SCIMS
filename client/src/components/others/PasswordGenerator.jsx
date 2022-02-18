@@ -1,44 +1,54 @@
 import React from 'react'
 
-const arrayFromLowToHigh = (low, high) => {
-	const array = []
+const getRandomLower = () => {
+	return String.fromCharCode(Math.floor(Math.random() * 26) + 97)
+}
 
-	for (let i = low; i <= high; i++) {
-		array.push(i)
-	}
+const getRandomUpper = () => {
+	return String.fromCharCode(Math.floor(Math.random() * 26) + 65)
+}
 
-	return array
+const getRandomNumber = () => {
+	return String.fromCharCode(Math.floor(Math.random() * 10) + 48)
+}
+
+const getRandomSymbol = () => {
+	const symbols = '!@#$%^&*(){}[]=<>/,.'
+	return symbols[Math.floor(Math.random() * symbols.length)]
+}
+
+const randomFunction = {
+	lower: getRandomLower,
+	upper: getRandomUpper,
+	number: getRandomNumber,
+	symbols: getRandomSymbol,
 }
 
 const PasswordGenerator = () => {
-	const NUMBER_OF_CHARACTER = 8
-	const LOWERCASE_CHAR_CODES = arrayFromLowToHigh(97, 122)
-	const UPPERCASE_CHAR_CODES = arrayFromLowToHigh(65, 90)
-	const NUMBER_CHAR_CODES = arrayFromLowToHigh(48, 57)
-	const SYMBOL_CHAR_CODES = arrayFromLowToHigh(33, 47)
-		.concat(arrayFromLowToHigh(58, 64))
-		.concat(arrayFromLowToHigh(91, 96))
-		.concat(arrayFromLowToHigh(123, 126))
+	const NUMBER_OF_CHARACTER = 16
 
 	const generatePassword = () => {
-		const charCodes = LOWERCASE_CHAR_CODES.concat(UPPERCASE_CHAR_CODES)
-			.concat(NUMBER_CHAR_CODES)
-			.concat(SYMBOL_CHAR_CODES)
+		let generatedPassword = ''
 
-		const passwordCharacters = []
+		const passwordInput = document.getElementById('password')
+		const viewPassword = document.getElementById('viewPassword')
 
-		// for (let i = 0; i < charCodes.length; i++) {
-		// 	passwordCharacters.push(String.fromCharCode(charCodes[i]))
-		// }
+		const typesArr = ['lower', 'upper', 'number', 'symbols']
 
-		const password = document.getElementById('password')
+		for (let i = 0; i < NUMBER_OF_CHARACTER; i += 4) {
+			for (let j = 0; j < typesArr.length; j++) {
+				generatedPassword += randomFunction[typesArr[j]]()
+			}
+		}
 
 		Object.getOwnPropertyDescriptor(
 			window.HTMLInputElement.prototype,
 			'value'
-		).set.call(password, 'Sheng980721!')
+		).set.call(passwordInput, generatedPassword)
 
-		password.dispatchEvent(new Event('change', { bubbles: true }))
+		passwordInput.dispatchEvent(new Event('change', { bubbles: true }))
+		viewPassword &&
+			viewPassword.dispatchEvent(new Event('click', { bubbles: true }))
 	}
 
 	return (

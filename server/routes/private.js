@@ -4,9 +4,10 @@ const router = express.Router()
 const ROLES_LIST = require('../config/roles_list')
 const verifyRoles = require('../middleware/verifyRoles')
 
-const { getUsers } = require('../controllers/private')
+const { getUsers, addUser } = require('../controllers/private')
 
 // Users
 router.route('/users').post(verifyRoles(ROLES_LIST.viewer), getUsers)
+router.route('/user').post(verifyRoles(ROLES_LIST.labOwner), addUser)
 
 module.exports = router

@@ -14,6 +14,7 @@ const Users = () => {
 	const { auth } = useAuth()
 
 	const [openModal, setOpenModal] = useState(false)
+	const [addUserSuccess, setAddUserSuccess] = useState(false)
 
 	useEffect(() => {
 		setIsLoading(true)
@@ -63,7 +64,7 @@ const Users = () => {
 			isMounted = false
 			controller.abort()
 		}
-	}, [axiosPrivate, auth])
+	}, [axiosPrivate, auth, addUserSuccess])
 
 	return isLoading ? (
 		'Loading...'
@@ -77,7 +78,12 @@ const Users = () => {
 			/>
 			<UsersTable data={usersData} />
 			{auth.currentRole >= ROLES_LIST.labOwner && (
-				<AddUserModal openModal={openModal} setOpenModal={setOpenModal} />
+				<AddUserModal
+					openModal={openModal}
+					setOpenModal={setOpenModal}
+					success={addUserSuccess}
+					setSuccess={setAddUserSuccess}
+				/>
 			)}
 		</>
 	)
