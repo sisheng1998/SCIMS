@@ -23,8 +23,10 @@ const EditUserModal = ({
 	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
 
-	const [role, setRole] = useState(getKeyByValue(user.roleValue))
+	const userId = user._id
+	const labId = auth.currentLabId
 	const [status, setStatus] = useState(user.status)
+	const [role, setRole] = useState(getKeyByValue(user.roleValue))
 
 	const [allowed, setAllowed] = useState(false)
 	const [success, setSuccess] = useState(false)
@@ -34,7 +36,12 @@ const EditUserModal = ({
 		e.preventDefault()
 
 		try {
-			await axiosPrivate.put('/api/private/user', {})
+			await axiosPrivate.put('/api/private/user', {
+				userId,
+				labId,
+				status,
+				role: ROLES_LIST[role],
+			})
 			setSuccess(true)
 		} catch (error) {
 			if (error.response?.status === 500) {
@@ -46,28 +53,14 @@ const EditUserModal = ({
 	}
 
 	useEffect(() => {
-		let isMounted = true
-
-		if (isMounted) {
-			setErrorMessage('')
-			setRole(getKeyByValue(user.roleValue))
-			setStatus(user.status)
-		}
-
-		return () => {
-			isMounted = false
-		}
+		setErrorMessage('')
+		setRole(getKeyByValue(user.roleValue))
+		setStatus(user.status)
 	}, [user])
 
 	useEffect(() => {
-		let isMounted = true
-
-		isMounted && setAllowed()
-
-		return () => {
-			isMounted = false
-		}
-	}, [])
+		setAllowed(role !== getKeyByValue(user.roleValue) || status !== user.status)
+	}, [user, role, status])
 
 	const closeHandler = () => {
 		if (success) {
@@ -136,9 +129,6 @@ const EditUserModal = ({
 											readOnly
 											value={user.name}
 										/>
-										<p className='mt-2 text-xs text-gray-400'>
-											Name cannot be changed.
-										</p>
 									</div>
 
 									<div className='ml-3 flex-1'>
@@ -151,9 +141,6 @@ const EditUserModal = ({
 											readOnly
 											value={user.email}
 										/>
-										<p className='mt-2 text-xs text-gray-400'>
-											Email cannot be changed.
-										</p>
 									</div>
 								</div>
 
@@ -168,9 +155,6 @@ const EditUserModal = ({
 											readOnly
 											value={user.altEmail}
 										/>
-										<p className='mt-2 text-xs text-gray-400'>
-											Alternative email cannot be changed.
-										</p>
 									</div>
 
 									<div className='ml-3 flex-1'>
@@ -183,9 +167,6 @@ const EditUserModal = ({
 											readOnly
 											value={auth.currentLabName}
 										/>
-										<p className='mt-2 text-xs text-gray-400'>
-											Current lab cannot be changed.
-										</p>
 									</div>
 								</div>
 
@@ -193,61 +174,79 @@ const EditUserModal = ({
 									<div className='mr-3 flex-1'>
 										<label
 											htmlFor='statusSelection'
-											className='required-input-label'
+											className={isEdit ? 'required-input-label' : undefined}
 										>
 											Status
 										</label>
-										<select
-											className='w-full'
-											id='statusSelection'
-											required
-											value={status}
-											onChange={(e) => setStatus(e.target.value)}
-										>
-											<option value='Active'>Active</option>
-											<option value='Pending'>Pending</option>
-											<option value='Deactivated'>Deactivated</option>
-										</select>
-										<p className='mt-2 text-xs text-gray-400'>
-											User status for the current lab.
-										</p>
+										{isEdit ? (
+											<>
+												<select
+													className='w-full'
+													id='statusSelection'
+													required
+													value={status}
+													onChange={(e) => setStatus(e.target.value)}
+												>
+													<option value='Active'>Active</option>
+													<option value='Pending'>Pending</option>
+													<option value='Deactivated'>Deactivated</option>
+												</select>
+												<p className='mt-2 text-xs text-gray-400'>
+													User status for the current lab.
+												</p>
+											</>
+										) : (
+											<input
+												className='w-full'
+												type='text'
+												name='statusSelection'
+												id='statusSelection'
+												readOnly
+												value={user.status}
+											/>
+										)}
 									</div>
 
 									<div className='ml-3 flex-1'>
 										<label
 											htmlFor='roleSelection'
-											className='required-input-label'
+											className={isEdit ? 'required-input-label' : undefined}
 										>
 											Role
 										</label>
-										<select
-											className='w-full'
-											id='roleSelection'
-											required
-											value={role}
-											onChange={(e) => setRole(e.target.value)}
-										>
-											{isEdit ? null : (
-												<>
-													<option value={Object.keys(ROLES_LIST)[0]}>
-														Admin
+										{isEdit ? (
+											<>
+												<select
+													className='w-full'
+													id='roleSelection'
+													required
+													value={role}
+													onChange={(e) => setRole(e.target.value)}
+												>
+													<option value={Object.keys(ROLES_LIST)[2]}>
+														Postgraduate
 													</option>
-													<option value={Object.keys(ROLES_LIST)[1]}>
-														Lab Owner
+													<option value={Object.keys(ROLES_LIST)[3]}>
+														Undergraduate
 													</option>
-												</>
-											)}
-											<option value={Object.keys(ROLES_LIST)[2]}>
-												Postgraduate
-											</option>
-											<option value={Object.keys(ROLES_LIST)[3]}>
-												Undergraduate
-											</option>
-											<option value={Object.keys(ROLES_LIST)[4]}>Viewer</option>
-										</select>
-										<p className='mt-2 text-xs text-gray-400'>
-											User role for the current lab.
-										</p>
+													<option value={Object.keys(ROLES_LIST)[4]}>
+														Viewer
+													</option>
+												</select>
+												<p className='mt-2 text-xs text-gray-400'>
+													User role for the current lab.
+												</p>
+											</>
+										) : (
+											<input
+												className='w-full capitalize'
+												type='text'
+												name='roleSelection'
+												id='roleSelection'
+												readOnly
+												value={user.role}
+											/>
+										)}
 									</div>
 								</div>
 

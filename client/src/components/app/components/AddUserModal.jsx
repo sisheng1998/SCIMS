@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Dialog } from '@headlessui/react'
-import axios from 'axios'
 import USMEmailField from '../../validations/USMEmailField'
 import LoginPasswordField from '../../validations/LoginPasswordField'
 import NameField from '../../validations/NameField'
@@ -18,40 +17,6 @@ import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
-
-	const [emails, setEmails] = useState([])
-
-	useEffect(() => {
-		let isMounted = true
-		const controller = new AbortController()
-
-		const fetchEmails = async () => {
-			const config = {
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				signal: controller.signal,
-			}
-
-			try {
-				const { data } = await axios.get('/api/auth/emails', config)
-
-				isMounted && setEmails(data.emails)
-			} catch (error) {
-				setEmails([])
-				if (error.response?.status === 500) {
-					setErrorMessage('Server not responding. Please try again later.')
-				}
-			}
-		}
-
-		fetchEmails()
-
-		return () => {
-			isMounted = false
-			controller.abort()
-		}
-	}, [])
 
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
@@ -183,8 +148,7 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 											placeholder='Enter USM email'
 											message='Only *@usm.my or *.usm.my are allowed.'
 											successMessage='Looks good!'
-											checkExist={true}
-											existingEmails={emails}
+											checkExist={false}
 											value={email}
 											setValue={setEmail}
 											validated={USMEmailValidated}

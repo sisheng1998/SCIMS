@@ -15,13 +15,9 @@ const Users = () => {
 
 	const [openAddUserModal, setOpenAddUserModal] = useState(false)
 	const [addUserSuccess, setAddUserSuccess] = useState(false)
-
 	const [editUserSuccess, setEditUserSuccess] = useState(false)
 
 	useEffect(() => {
-		let isMounted = true
-		const controller = new AbortController()
-
 		if (addUserSuccess) {
 			setAddUserSuccess(false)
 			return
@@ -31,6 +27,9 @@ const Users = () => {
 			setEditUserSuccess(false)
 			return
 		}
+
+		let isMounted = true
+		const controller = new AbortController()
 
 		setIsLoading(true)
 

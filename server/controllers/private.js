@@ -52,7 +52,7 @@ exports.addUser = async (req, res, next) => {
 			password,
 			roles: {
 				lab: foundLab._id,
-				role: role,
+				role,
 				status: 'Active',
 			},
 			isEmailVerified: true,
@@ -75,6 +75,34 @@ exports.addUser = async (req, res, next) => {
 			return next(new ErrorResponse('Alternative email address existed.', 409))
 		}
 
+		next(error)
+	}
+}
+
+exports.updateUser = async (req, res, next) => {
+	const { userId, labId, status, role } = req.body
+
+	if (!userId || !labId || !status || !role) {
+		return next(new ErrorResponse('Missing value for required field.', 400))
+	}
+
+	try {
+		await User.findOneAndUpdate(
+			{ _id: userId },
+			{
+				$set: {
+					'roles.$[el].role': role,
+					'roles.$[el].status': status,
+				},
+			},
+			{ arrayFilters: [{ 'el.lab': labId }], new: true }
+		)
+
+		res.status(200).json({
+			success: true,
+			data: 'User information updated.',
+		})
+	} catch (error) {
 		next(error)
 	}
 }
