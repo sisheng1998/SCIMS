@@ -13,14 +13,26 @@ const Users = () => {
 	const [isLoading, setIsLoading] = useState(true)
 	const { auth } = useAuth()
 
-	const [openModal, setOpenModal] = useState(false)
+	const [openAddUserModal, setOpenAddUserModal] = useState(false)
 	const [addUserSuccess, setAddUserSuccess] = useState(false)
 
-	useEffect(() => {
-		setIsLoading(true)
+	const [editUserSuccess, setEditUserSuccess] = useState(false)
 
+	useEffect(() => {
 		let isMounted = true
 		const controller = new AbortController()
+
+		if (addUserSuccess) {
+			setAddUserSuccess(false)
+			return
+		}
+
+		if (editUserSuccess) {
+			setEditUserSuccess(false)
+			return
+		}
+
+		setIsLoading(true)
 
 		const getUsers = async () => {
 			try {
@@ -46,6 +58,7 @@ const Users = () => {
 								...user,
 								index: index,
 								role: GetRoleName(currentRole.role),
+								roleValue: currentRole.role,
 								status: currentRole.status,
 							}
 						})
@@ -60,15 +73,11 @@ const Users = () => {
 
 		getUsers()
 
-		if (addUserSuccess) {
-			setAddUserSuccess(false)
-		}
-
 		return () => {
 			isMounted = false
 			controller.abort()
 		}
-	}, [axiosPrivate, auth, addUserSuccess])
+	}, [axiosPrivate, auth, addUserSuccess, editUserSuccess])
 
 	return isLoading ? (
 		'Loading...'
@@ -78,13 +87,13 @@ const Users = () => {
 				title='All Users'
 				hasButton={auth.currentRole >= ROLES_LIST.labOwner}
 				buttonText='Add User'
-				buttonAction={() => setOpenModal(true)}
+				buttonAction={() => setOpenAddUserModal(true)}
 			/>
-			<UsersTable data={usersData} />
+			<UsersTable data={usersData} setEditUserSuccess={setEditUserSuccess} />
 			{auth.currentRole >= ROLES_LIST.labOwner && (
 				<AddUserModal
-					openModal={openModal}
-					setOpenModal={setOpenModal}
+					openModal={openAddUserModal}
+					setOpenModal={setOpenAddUserModal}
 					setAddUserSuccess={setAddUserSuccess}
 				/>
 			)}

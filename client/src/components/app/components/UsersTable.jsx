@@ -5,6 +5,7 @@ import SortData from './SortData'
 import SortButton from './SortButton'
 import Filters from './Filters'
 import Pagination from './Pagination'
+import EditUserModal from './EditUserModal'
 
 const tableHeaders = [
 	{
@@ -36,6 +37,10 @@ const tableHeaders = [
 
 const UsersTable = (props) => {
 	const { auth } = useAuth()
+
+	const [userData, setUserData] = useState({})
+	const [isEdit, setIsEdit] = useState(false)
+	const [openEditUserModal, setOpenEditUserModal] = useState(false)
 
 	const [sortKey, setSortKey] = useState('index')
 	const [sortOrder, setSortOrder] = useState('asc')
@@ -93,6 +98,12 @@ const UsersTable = (props) => {
 	useEffect(() => {
 		setCurrentPage(1)
 	}, [itemsPerPage, searchTerm, filterTerms])
+
+	const editUserHandler = (userData, isEdit) => {
+		setUserData(userData)
+		setIsEdit(isEdit)
+		setOpenEditUserModal(true)
+	}
 
 	return (
 		<>
@@ -206,17 +217,27 @@ const UsersTable = (props) => {
 												<td className='px-6 py-4 capitalize'>{user.role}</td>
 												<td className='px-6 py-4 text-center'>
 													{auth.currentRole >= ROLES_LIST.labOwner ? (
-														auth.email === user.email ? (
-															<button className='flex font-medium text-indigo-600 transition hover:text-indigo-700'>
+														auth.email === user.email ||
+														user.roleValue >= ROLES_LIST.labOwner ? (
+															<button
+																onClick={() => editUserHandler(user, false)}
+																className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
+															>
 																View
 															</button>
 														) : (
-															<button className='flex font-medium text-indigo-600 transition hover:text-indigo-700'>
+															<button
+																onClick={() => editUserHandler(user, true)}
+																className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
+															>
 																Edit
 															</button>
 														)
 													) : (
-														<button className='flex font-medium text-indigo-600 transition hover:text-indigo-700'>
+														<button
+															onClick={() => editUserHandler(user, false)}
+															className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
+														>
 															View
 														</button>
 													)}
@@ -240,6 +261,14 @@ const UsersTable = (props) => {
 				itemsPerPage={itemsPerPage}
 				totalItems={results.length}
 				paginate={paginate}
+			/>
+
+			<EditUserModal
+				user={userData}
+				isEdit={isEdit}
+				openModal={openEditUserModal}
+				setOpenModal={setOpenEditUserModal}
+				setEditUserSuccess={props.setEditUserSuccess}
 			/>
 		</>
 	)

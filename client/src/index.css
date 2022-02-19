@@ -110,6 +110,22 @@
 		@apply rounded-lg border-gray-300 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500;
 	}
 
+	[type='text'],
+	[type='email'],
+	[type='url'],
+	[type='password'],
+	[type='number'],
+	[type='date'],
+	[type='datetime-local'],
+	[type='month'],
+	[type='search'],
+	[type='tel'],
+	[type='time'],
+	[type='week'],
+	textarea {
+		@apply read-only:bg-gray-50 read-only:text-gray-500 read-only:shadow-none read-only:focus:border-gray-300 read-only:focus:ring-0;
+	}
+
 	[type='checkbox'],
 	[type='radio'] {
 		@apply rounded border-gray-300 text-indigo-600 focus:ring-indigo-500;

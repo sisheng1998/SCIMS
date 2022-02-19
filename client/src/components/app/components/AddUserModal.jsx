@@ -70,7 +70,7 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 	const [success, setSuccess] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
 
-	const registerHandler = async (e) => {
+	const addUserHandler = async (e) => {
 		e.preventDefault()
 
 		try {
@@ -103,29 +103,13 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 	}
 
 	useEffect(() => {
-		let isMounted = true
-
-		isMounted && setErrorMessage('')
-
-		return () => {
-			isMounted = false
-		}
+		setErrorMessage('')
 	}, [email, password, name, altEmail])
 
 	useEffect(() => {
-		let isMounted = true
-
-		isMounted &&
-			setAllowed(
-				USMEmailValidated &&
-					passwordValidated &&
-					nameValidated &&
-					emailValidated
-			)
-
-		return () => {
-			isMounted = false
-		}
+		setAllowed(
+			USMEmailValidated && passwordValidated && nameValidated && emailValidated
+		)
 	}, [USMEmailValidated, passwordValidated, nameValidated, emailValidated])
 
 	const closeHandler = () => {
@@ -186,7 +170,7 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 							)}
 
 							<form
-								onSubmit={registerHandler}
+								onSubmit={addUserHandler}
 								spellCheck='false'
 								autoComplete='off'
 							>
@@ -198,7 +182,7 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 										<USMEmailField
 											placeholder='Enter USM email'
 											message='Only *@usm.my or *.usm.my are allowed.'
-											successMessage='Looks good.'
+											successMessage='Looks good!'
 											checkExist={true}
 											existingEmails={emails}
 											value={email}
@@ -261,10 +245,8 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 								</div>
 
 								<div className='mb-9 flex'>
-									<div className='pointer-events-none mr-3 flex-1'>
-										<label htmlFor='lab' className='required-input-label'>
-											Current Lab
-										</label>
+									<div className='mr-3 flex-1'>
+										<label htmlFor='lab'>Current Lab</label>
 										<input
 											className='w-full'
 											type='text'
@@ -274,7 +256,7 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 											value={labName}
 										/>
 										<p className='mt-2 text-xs text-gray-400'>
-											Current lab is chosen by default and it cannot be changed.
+											Current lab cannot be changed.
 										</p>
 									</div>
 
@@ -292,13 +274,13 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 											value={role}
 											onChange={(e) => setRole(e.target.value)}
 										>
-											<option value={Object.keys(ROLES_LIST)[4]}>Viewer</option>
-											<option value={Object.keys(ROLES_LIST)[3]}>
-												Undergraduate
-											</option>
 											<option value={Object.keys(ROLES_LIST)[2]}>
 												Postgraduate
 											</option>
+											<option value={Object.keys(ROLES_LIST)[3]}>
+												Undergraduate
+											</option>
+											<option value={Object.keys(ROLES_LIST)[4]}>Viewer</option>
 										</select>
 										<p className='mt-2 text-xs text-gray-400'>
 											User role for the current lab.

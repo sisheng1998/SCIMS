@@ -1,0 +1,280 @@
+import React, { useState, useEffect } from 'react'
+import { Dialog } from '@headlessui/react'
+import {
+	CheckIcon,
+	XIcon,
+	ExclamationCircleIcon,
+} from '@heroicons/react/outline'
+import useAuth from '../../../hooks/useAuth'
+import ROLES_LIST from '../../../config/roles_list'
+import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
+
+function getKeyByValue(value) {
+	return Object.keys(ROLES_LIST).find((key) => ROLES_LIST[key] === value)
+}
+
+const EditUserModal = ({
+	user,
+	isEdit,
+	openModal,
+	setOpenModal,
+	setEditUserSuccess,
+}) => {
+	const { auth } = useAuth()
+	const axiosPrivate = useAxiosPrivate()
+
+	const [role, setRole] = useState(getKeyByValue(user.roleValue))
+	const [status, setStatus] = useState(user.status)
+
+	const [allowed, setAllowed] = useState(false)
+	const [success, setSuccess] = useState(false)
+	const [errorMessage, setErrorMessage] = useState('')
+
+	const editUserHandler = async (e) => {
+		e.preventDefault()
+
+		try {
+			await axiosPrivate.put('/api/private/user', {})
+			setSuccess(true)
+		} catch (error) {
+			if (error.response?.status === 500) {
+				setErrorMessage('Server not responding. Please try again later.')
+			} else {
+				setErrorMessage('Oops. Something went wrong. Please try again later.')
+			}
+		}
+	}
+
+	useEffect(() => {
+		let isMounted = true
+
+		if (isMounted) {
+			setErrorMessage('')
+			setRole(getKeyByValue(user.roleValue))
+			setStatus(user.status)
+		}
+
+		return () => {
+			isMounted = false
+		}
+	}, [user])
+
+	useEffect(() => {
+		let isMounted = true
+
+		isMounted && setAllowed()
+
+		return () => {
+			isMounted = false
+		}
+	}, [])
+
+	const closeHandler = () => {
+		if (success) {
+			setSuccess(false)
+			setEditUserSuccess(true)
+		}
+
+		setOpenModal(false)
+	}
+
+	return (
+		<Dialog
+			open={openModal}
+			onClose={() => {}}
+			className='fixed inset-0 z-10 overflow-y-auto'
+		>
+			<div className='flex min-h-screen items-center justify-center'>
+				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
+				<div
+					className={`relative w-full  rounded-lg bg-white p-6 shadow ${
+						success ? 'max-w-sm text-center' : 'max-w-3xl'
+					}`}
+				>
+					{success ? (
+						<>
+							<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
+							<h2 className='mt-6 mb-2 text-green-600'>User Info Updated!</h2>
+							<p>The user information has been updated.</p>
+							<button
+								className='button button-solid mt-6 w-32 justify-center'
+								onClick={closeHandler}
+							>
+								Okay
+							</button>
+						</>
+					) : (
+						<>
+							<div className='mb-6 flex justify-between border-b border-gray-200 pb-3'>
+								<h4>{isEdit ? 'Edit' : 'View'} User Information</h4>
+								<XIcon
+									className='h-5 w-5 cursor-pointer hover:text-indigo-600'
+									onClick={closeHandler}
+								/>
+							</div>
+
+							{errorMessage && (
+								<p className='mb-6 flex items-center text-sm font-medium text-red-600'>
+									<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}
+									{errorMessage}
+								</p>
+							)}
+
+							<form
+								onSubmit={editUserHandler}
+								spellCheck='false'
+								autoComplete='off'
+							>
+								<div className='mb-6 flex'>
+									<div className='mr-3 flex-1'>
+										<label htmlFor='name'>Name</label>
+										<input
+											className='w-full'
+											type='text'
+											name='name'
+											id='name'
+											readOnly
+											value={user.name}
+										/>
+										<p className='mt-2 text-xs text-gray-400'>
+											Name cannot be changed.
+										</p>
+									</div>
+
+									<div className='ml-3 flex-1'>
+										<label htmlFor='email'>Email Address</label>
+										<input
+											className='w-full'
+											type='text'
+											name='email'
+											id='email'
+											readOnly
+											value={user.email}
+										/>
+										<p className='mt-2 text-xs text-gray-400'>
+											Email cannot be changed.
+										</p>
+									</div>
+								</div>
+
+								<div className='mb-6 flex'>
+									<div className='mr-3 flex-1'>
+										<label htmlFor='altEmail'>Alternative Email Address</label>
+										<input
+											className='w-full'
+											type='text'
+											name='altEmail'
+											id='altEmail'
+											readOnly
+											value={user.altEmail}
+										/>
+										<p className='mt-2 text-xs text-gray-400'>
+											Alternative email cannot be changed.
+										</p>
+									</div>
+
+									<div className='ml-3 flex-1'>
+										<label htmlFor='lab'>Current Lab</label>
+										<input
+											className='w-full'
+											type='text'
+											name='lab'
+											id='lab'
+											readOnly
+											value={auth.currentLabName}
+										/>
+										<p className='mt-2 text-xs text-gray-400'>
+											Current lab cannot be changed.
+										</p>
+									</div>
+								</div>
+
+								<div className='mb-9 flex'>
+									<div className='mr-3 flex-1'>
+										<label
+											htmlFor='statusSelection'
+											className='required-input-label'
+										>
+											Status
+										</label>
+										<select
+											className='w-full'
+											id='statusSelection'
+											required
+											value={status}
+											onChange={(e) => setStatus(e.target.value)}
+										>
+											<option value='Active'>Active</option>
+											<option value='Pending'>Pending</option>
+											<option value='Deactivated'>Deactivated</option>
+										</select>
+										<p className='mt-2 text-xs text-gray-400'>
+											User status for the current lab.
+										</p>
+									</div>
+
+									<div className='ml-3 flex-1'>
+										<label
+											htmlFor='roleSelection'
+											className='required-input-label'
+										>
+											Role
+										</label>
+										<select
+											className='w-full'
+											id='roleSelection'
+											required
+											value={role}
+											onChange={(e) => setRole(e.target.value)}
+										>
+											{isEdit ? null : (
+												<>
+													<option value={Object.keys(ROLES_LIST)[0]}>
+														Admin
+													</option>
+													<option value={Object.keys(ROLES_LIST)[1]}>
+														Lab Owner
+													</option>
+												</>
+											)}
+											<option value={Object.keys(ROLES_LIST)[2]}>
+												Postgraduate
+											</option>
+											<option value={Object.keys(ROLES_LIST)[3]}>
+												Undergraduate
+											</option>
+											<option value={Object.keys(ROLES_LIST)[4]}>Viewer</option>
+										</select>
+										<p className='mt-2 text-xs text-gray-400'>
+											User role for the current lab.
+										</p>
+									</div>
+								</div>
+
+								<div className='flex items-center justify-end'>
+									<span
+										onClick={closeHandler}
+										className='cursor-pointer font-medium text-gray-500 hover:text-indigo-600'
+									>
+										{isEdit ? 'Cancel' : 'Close'}
+									</span>
+									{isEdit && (
+										<button
+											className='ml-6 w-40'
+											type='submit'
+											disabled={!allowed}
+										>
+											Update
+										</button>
+									)}
+								</div>
+							</form>
+						</>
+					)}
+				</div>
+			</div>
+		</Dialog>
+	)
+}
+
+export default EditUserModal
