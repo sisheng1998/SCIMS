@@ -60,6 +60,10 @@ const Users = () => {
 
 		getUsers()
 
+		if (addUserSuccess) {
+			setAddUserSuccess(false)
+		}
+
 		return () => {
 			isMounted = false
 			controller.abort()
@@ -81,8 +85,7 @@ const Users = () => {
 				<AddUserModal
 					openModal={openModal}
 					setOpenModal={setOpenModal}
-					success={addUserSuccess}
-					setSuccess={setAddUserSuccess}
+					setAddUserSuccess={setAddUserSuccess}
 				/>
 			)}
 		</>

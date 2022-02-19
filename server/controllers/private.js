@@ -71,6 +71,10 @@ exports.addUser = async (req, res, next) => {
 			data: 'New user created.',
 		})
 	} catch (error) {
+		if (error.code === 11000) {
+			return next(new ErrorResponse('Alternative email address existed.', 409))
+		}
+
 		next(error)
 	}
 }

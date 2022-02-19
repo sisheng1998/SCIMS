@@ -76,7 +76,15 @@ const Register = () => {
 			setSuccess(true)
 		} catch (error) {
 			if (error.response?.status === 409) {
-				setErrorMessage('An account with this email already exists.')
+				if (
+					error.response.data.error === 'Alternative email address existed.'
+				) {
+					setErrorMessage(
+						'An account with this alternative email already exists.'
+					)
+				} else {
+					setErrorMessage('An account with this email already exists.')
+				}
 			} else if (error.response?.status === 500) {
 				setErrorMessage('Server not responding. Please try again later.')
 			} else {

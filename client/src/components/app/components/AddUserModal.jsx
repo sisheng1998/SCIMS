@@ -15,7 +15,7 @@ import ROLES_LIST from '../../../config/roles_list'
 import PasswordGenerator from '../../others/PasswordGenerator'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 
-const AddUserModal = ({ openModal, setOpenModal, success, setSuccess }) => {
+const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
 
@@ -67,6 +67,7 @@ const AddUserModal = ({ openModal, setOpenModal, success, setSuccess }) => {
 	const [emailValidated, setEmailValidated] = useState(false)
 
 	const [allowed, setAllowed] = useState(false)
+	const [success, setSuccess] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
 
 	const registerHandler = async (e) => {
@@ -84,7 +85,15 @@ const AddUserModal = ({ openModal, setOpenModal, success, setSuccess }) => {
 			setSuccess(true)
 		} catch (error) {
 			if (error.response?.status === 409) {
-				setErrorMessage('An account with this email already exists.')
+				if (
+					error.response.data.error === 'Alternative email address existed.'
+				) {
+					setErrorMessage(
+						'An account with this alternative email already exists.'
+					)
+				} else {
+					setErrorMessage('An account with this email already exists.')
+				}
 			} else if (error.response?.status === 500) {
 				setErrorMessage('Server not responding. Please try again later.')
 			} else {
@@ -126,7 +135,11 @@ const AddUserModal = ({ openModal, setOpenModal, success, setSuccess }) => {
 		setAltEmail('')
 		setRole(Object.keys(ROLES_LIST)[4])
 
-		success && setSuccess(false)
+		if (success) {
+			setSuccess(false)
+			setAddUserSuccess(true)
+		}
+
 		setOpenModal(false)
 	}
 

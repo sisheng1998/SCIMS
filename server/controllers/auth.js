@@ -45,6 +45,10 @@ exports.register = async (req, res, next) => {
 
 		sendVerificationEmail(user, emailVerificationToken, res, next)
 	} catch (error) {
+		if (error.code === 11000) {
+			return next(new ErrorResponse('Alternative email address existed.', 409))
+		}
+
 		next(error)
 	}
 }
