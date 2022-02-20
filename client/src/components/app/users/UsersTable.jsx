@@ -1,10 +1,10 @@
 import React, { useCallback, useState, useEffect } from 'react'
 import ROLES_LIST from '../../../config/roles_list'
 import useAuth from '../../../hooks/useAuth'
-import SortData from './SortData'
-import SortButton from './SortButton'
-import Filters from './Filters'
-import Pagination from './Pagination'
+import SortData from '../components/SortData'
+import SortButton from '../components/SortButton'
+import Filters from '../components/Filters'
+import Pagination from '../components/Pagination'
 import EditUserModal from './EditUserModal'
 
 const tableHeaders = [

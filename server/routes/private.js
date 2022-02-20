@@ -9,7 +9,7 @@ const {
 	addUser,
 	updateUser,
 	removeUser,
-} = require('../controllers/private')
+} = require('../controllers/user')
 
 // Users
 router.route('/users').post(verifyRoles(ROLES_LIST.viewer), getUsers)

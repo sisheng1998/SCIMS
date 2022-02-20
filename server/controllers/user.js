@@ -5,7 +5,6 @@ const User = require('../models/User')
 const UserInfo =
 	'name email altEmail isEmailVerified roles.lab roles.role roles.status'
 
-// Users
 exports.getUsers = async (req, res, next) => {
 	const labId = req.body.labId
 

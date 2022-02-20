@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import AddUserModal from './components/AddUserModal'
-import Title from './components/Title'
-import UsersTable from './components/UsersTable'
-import useAxiosPrivate from '../../hooks/useAxiosPrivate'
-import useAuth from '../../hooks/useAuth'
-import GetRoleName from '../others/GetRoleName'
-import ROLES_LIST from '../../config/roles_list'
+import AddUserModal from './AddUserModal'
+import Title from '../components/Title'
+import UsersTable from './UsersTable'
+import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
+import useAuth from '../../../hooks/useAuth'
+import GetRoleName from '../../others/GetRoleName'
+import ROLES_LIST from '../../../config/roles_list'
 
 const Users = () => {
 	const axiosPrivate = useAxiosPrivate()
