@@ -19,15 +19,11 @@ const PrivateRoute = () => {
 			return
 		}
 
-		if (auth.roles.length === 0) {
-			console.log('No lab')
-		}
-
 		const activeRole = auth.roles.find((role) => {
 			return role.status === 'Active'
 		})
 
-		// Not yet approve by any lab owner
+		// Not yet approve by any lab owner or din't have any lab
 		if (!activeRole) {
 			setIsLoading(false)
 			navigate('/pending-approval')

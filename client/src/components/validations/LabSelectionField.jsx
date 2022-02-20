@@ -5,22 +5,31 @@ const LabSelectionField = (props) => {
 	const [labs, setLabs] = useState([])
 
 	useEffect(() => {
+		let isMounted = true
+		const controller = new AbortController()
+
 		const fetchLabs = async () => {
 			const config = {
 				headers: {
 					'Content-Type': 'application/json',
 				},
+				signal: controller.signal,
 			}
 
 			try {
 				const { data } = await axios.get('/api/auth/labs', config)
-				setLabs(data.labs)
+				isMounted && setLabs(data.labs)
 			} catch (error) {
 				setLabs([])
 			}
 		}
 
 		fetchLabs()
+
+		return () => {
+			isMounted = false
+			controller.abort()
+		}
 	}, [])
 
 	useEffect(() => {
@@ -42,9 +51,19 @@ const LabSelectionField = (props) => {
 					Select lab
 				</option>
 				{labs.map((lab) => {
+					const existed =
+						props.checkExist &&
+						props.userRoles.some((role) => role.lab._id === lab._id)
+
 					return (
-						<option key={lab._id} value={lab._id} className='text-gray-700'>
+						<option
+							key={lab._id}
+							disabled={existed}
+							value={lab._id}
+							className='text-gray-700 disabled:text-gray-400'
+						>
 							{lab.labName}
+							{existed ? ' (Pending approval)' : null}
 						</option>
 					)
 				})}
@@ -52,11 +71,14 @@ const LabSelectionField = (props) => {
 
 			<p className='mt-2 text-xs text-gray-400'>
 				{!props.value ? (
-					'The registration request will be sent to the lab owner.'
+					`The ${
+						props.checkExist ? '' : 'registration '
+					}request will be sent to the lab owner.`
 				) : (
 					<span className='text-green-600'>
-						The owner of this lab will receive your registration request after
-						your email verified.
+						The owner of this lab will receive your{' '}
+						{props.checkExist ? '' : 'registration '}request
+						{props.checkExist ? '' : ' after your email verified'}.
 					</span>
 				)}
 			</p>

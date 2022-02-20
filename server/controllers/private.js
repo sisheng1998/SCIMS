@@ -140,7 +140,6 @@ exports.removeUser = async (req, res, next) => {
 			data: 'User removed.',
 		})
 	} catch (error) {
-		console.log(error)
 		next(error)
 	}
 }

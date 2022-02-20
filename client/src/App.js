@@ -28,6 +28,7 @@ import Settings from './components/app/Settings'
 import Notification from './components/app/Notification'
 import Profile from './components/app/Profile'
 import PendingApproval from './components/app/PendingApproval'
+import ApplyNewLab from './components/app/ApplyNewLab'
 
 // Layouts
 import AuthLayout from './components/layouts/AuthLayout'
@@ -64,6 +65,8 @@ const App = () => {
 							path='/pending-approval'
 							element={<PendingApproval />}
 						/>
+						{/* Apply for other lab */}
+						<Route exact path='/apply-new-lab' element={<ApplyNewLab />} />
 					</Route>
 				</Route>
 

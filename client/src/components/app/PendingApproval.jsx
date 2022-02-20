@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
 import useLogout from '../../hooks/useLogout'
 import { LogoutIcon, ExclamationIcon } from '@heroicons/react/outline'
@@ -29,7 +29,10 @@ const PendingApproval = () => {
 				<ExclamationIcon className='mx-auto mb-6 h-16 w-16 rounded-full bg-yellow-100 p-2 text-yellow-600' />
 				<p>Your account status:</p>
 				<h2 className='text-yellow-600'>Pending Approval</h2>
-				<p className='mt-6'>Kindly wait for the approval from the lab owner.</p>
+				<p className='my-6'>Kindly wait for the approval from the lab owner.</p>
+				<Link to='/apply-new-lab' className='text-sm'>
+					Apply for other lab?
+				</Link>
 			</div>
 
 			<p className='mt-6 text-center'>

@@ -18,16 +18,20 @@ const Register = () => {
 	const [emails, setEmails] = useState([])
 
 	useEffect(() => {
+		let isMounted = true
+		const controller = new AbortController()
+
 		const fetchEmails = async () => {
 			const config = {
 				headers: {
 					'Content-Type': 'application/json',
 				},
+				signal: controller.signal,
 			}
 
 			try {
 				const { data } = await axios.get('/api/auth/emails', config)
-				setEmails(data.emails)
+				isMounted && setEmails(data.emails)
 			} catch (error) {
 				setEmails([])
 				if (error.response?.status === 500) {
@@ -37,6 +41,11 @@ const Register = () => {
 		}
 
 		fetchEmails()
+
+		return () => {
+			isMounted = false
+			controller.abort()
+		}
 	}, [])
 
 	const [email, setEmail] = useState('')

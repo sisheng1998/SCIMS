@@ -328,6 +328,47 @@ exports.emails = (req, res, next) => {
 	}
 }
 
+exports.applyNewLab = async (req, res, next) => {
+	const { email, labId } = req.body
+
+	if (!email || !labId) {
+		return next(new ErrorResponse('Missing value for required field.', 400))
+	}
+
+	const foundUser = await User.findOne({ email })
+	if (!foundUser) {
+		return next(new ErrorResponse('Email registered.', 409))
+	}
+
+	try {
+		const foundLab = await Lab.findById(labId)
+		if (!foundLab) {
+			return next(new ErrorResponse('Lab not found.', 404))
+		}
+
+		await User.updateOne(foundUser, {
+			$push: {
+				roles: {
+					lab: labId,
+				},
+			},
+		})
+
+		await Lab.updateOne(foundLab, {
+			$push: {
+				labUsers: foundUser._id,
+			},
+		})
+
+		res.status(200).json({
+			success: true,
+			data: 'New lab applied.',
+		})
+	} catch (error) {
+		next(error)
+	}
+}
+
 const sendToken = async (user, rememberMe, statusCode, res) => {
 	const accessToken = user.getAccessToken()
 	const refreshToken = user.getRefreshToken()

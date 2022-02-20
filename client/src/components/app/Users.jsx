@@ -76,7 +76,7 @@ const Users = () => {
 			isMounted = false
 			controller.abort()
 		}
-	}, [axiosPrivate, auth, addUserSuccess, editUserSuccess])
+	}, [axiosPrivate, auth.currentLabId, addUserSuccess, editUserSuccess])
 
 	return isLoading ? (
 		'Loading...'

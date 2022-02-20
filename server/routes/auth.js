@@ -12,6 +12,7 @@ const {
 	refreshToken,
 	labs,
 	emails,
+	applyNewLab,
 } = require('../controllers/auth')
 
 router.route('/register').post(register)
@@ -24,5 +25,6 @@ router.route('/reset-password/:resetToken').put(resetPassword)
 router.route('/refresh-token').get(refreshToken)
 router.route('/labs').get(labs)
 router.route('/emails').get(emails)
+router.route('/apply-new-lab').put(applyNewLab)
 
 module.exports = router
