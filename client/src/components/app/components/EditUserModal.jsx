@@ -30,24 +30,43 @@ const EditUserModal = ({
 
 	const [allowed, setAllowed] = useState(false)
 	const [success, setSuccess] = useState(false)
+	const [isRemove, setIsRemove] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
 
 	const editUserHandler = async (e) => {
 		e.preventDefault()
 
-		try {
-			await axiosPrivate.put('/api/private/user', {
-				userId,
-				labId,
-				status,
-				role: ROLES_LIST[role],
-			})
-			setSuccess(true)
-		} catch (error) {
-			if (error.response?.status === 500) {
-				setErrorMessage('Server not responding. Please try again later.')
-			} else {
-				setErrorMessage('Oops. Something went wrong. Please try again later.')
+		if (isRemove) {
+			try {
+				await axiosPrivate.delete('/api/private/user', {
+					data: {
+						userId,
+						labId,
+					},
+				})
+				setSuccess(true)
+			} catch (error) {
+				if (error.response?.status === 500) {
+					setErrorMessage('Server not responding. Please try again later.')
+				} else {
+					setErrorMessage('Oops. Something went wrong. Please try again later.')
+				}
+			}
+		} else {
+			try {
+				await axiosPrivate.put('/api/private/user', {
+					userId,
+					labId,
+					status,
+					role: ROLES_LIST[role],
+				})
+				setSuccess(true)
+			} catch (error) {
+				if (error.response?.status === 500) {
+					setErrorMessage('Server not responding. Please try again later.')
+				} else {
+					setErrorMessage('Oops. Something went wrong. Please try again later.')
+				}
 			}
 		}
 	}
@@ -63,6 +82,8 @@ const EditUserModal = ({
 	}, [user, role, status])
 
 	const closeHandler = () => {
+		setIsRemove(false)
+
 		if (success) {
 			setSuccess(false)
 			setEditUserSuccess(true)
@@ -87,8 +108,14 @@ const EditUserModal = ({
 					{success ? (
 						<>
 							<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
-							<h2 className='mt-6 mb-2 text-green-600'>User Info Updated!</h2>
-							<p>The user information has been updated.</p>
+							<h2 className='mt-6 mb-2 text-green-600'>
+								User {isRemove ? 'Removed' : 'Info Updated'}!
+							</h2>
+							{isRemove ? (
+								<p>The user has been removed.</p>
+							) : (
+								<p>The user information has been updated.</p>
+							)}
 							<button
 								className='button button-solid mt-6 w-32 justify-center'
 								onClick={closeHandler}
@@ -250,23 +277,54 @@ const EditUserModal = ({
 									</div>
 								</div>
 
-								<div className='flex items-center justify-end'>
-									<span
-										onClick={closeHandler}
-										className='cursor-pointer font-medium text-gray-500 hover:text-indigo-600'
-									>
-										{isEdit ? 'Cancel' : 'Close'}
-									</span>
-									{isEdit && (
-										<button
-											className='ml-6 w-40'
-											type='submit'
-											disabled={!allowed}
+								{isRemove ? (
+									<div className='flex items-center justify-end'>
+										<div className='mr-auto'>
+											<p className='font-medium text-gray-900'>
+												Confirm remove user from the current lab?
+											</p>
+											<p className='mt-1 flex items-center text-sm font-medium text-red-600'>
+												<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}
+												This action is irreversible!
+											</p>
+										</div>
+										<span
+											onClick={() => setIsRemove(false)}
+											className='cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'
 										>
-											Update
+											Cancel
+										</span>
+										<button className='button-red ml-6 w-40' type='submit'>
+											Remove
 										</button>
-									)}
-								</div>
+									</div>
+								) : (
+									<div className='flex items-center justify-end'>
+										{isEdit && (
+											<span
+												onClick={() => setIsRemove(true)}
+												className='mr-auto cursor-pointer self-end text-sm font-medium text-red-500 transition hover:text-red-600'
+											>
+												Remove User
+											</span>
+										)}
+										<span
+											onClick={closeHandler}
+											className='cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'
+										>
+											{isEdit ? 'Cancel' : 'Close'}
+										</span>
+										{isEdit && (
+											<button
+												className='ml-6 w-40'
+												type='submit'
+												disabled={!allowed}
+											>
+												Update
+											</button>
+										)}
+									</div>
+								)}
 							</form>
 						</>
 					)}

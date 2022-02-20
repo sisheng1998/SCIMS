@@ -255,7 +255,7 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 								<div className='flex items-center justify-end'>
 									<span
 										onClick={closeHandler}
-										className='mr-6 cursor-pointer font-medium text-gray-500 hover:text-indigo-600'
+										className='mr-6 cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'
 									>
 										Cancel
 									</span>

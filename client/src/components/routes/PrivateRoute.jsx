@@ -19,6 +19,10 @@ const PrivateRoute = () => {
 			return
 		}
 
+		if (auth.roles.length === 0) {
+			console.log('No lab')
+		}
+
 		const activeRole = auth.roles.find((role) => {
 			return role.status === 'Active'
 		})

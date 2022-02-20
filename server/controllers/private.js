@@ -106,3 +106,41 @@ exports.updateUser = async (req, res, next) => {
 		next(error)
 	}
 }
+
+exports.removeUser = async (req, res, next) => {
+	const { userId, labId } = req.body
+
+	if (!userId || !labId) {
+		return next(new ErrorResponse('Missing required value.', 400))
+	}
+
+	try {
+		await User.updateOne(
+			{ _id: userId },
+			{
+				$pull: {
+					roles: {
+						lab: labId,
+					},
+				},
+			}
+		)
+
+		await Lab.updateOne(
+			{ _id: labId },
+			{
+				$pull: {
+					labUsers: userId,
+				},
+			}
+		)
+
+		res.status(200).json({
+			success: true,
+			data: 'User removed.',
+		})
+	} catch (error) {
+		console.log(error)
+		next(error)
+	}
+}
