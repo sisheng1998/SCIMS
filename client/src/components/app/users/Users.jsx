@@ -6,6 +6,7 @@ import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import useAuth from '../../../hooks/useAuth'
 import GetRoleName from '../../others/GetRoleName'
 import ROLES_LIST from '../../../config/roles_list'
+import LoadingScreen from '../../others/LoadingScreen'
 
 const Users = () => {
 	const axiosPrivate = useAxiosPrivate()
@@ -79,7 +80,7 @@ const Users = () => {
 	}, [axiosPrivate, auth.currentLabId, addUserSuccess, editUserSuccess])
 
 	return isLoading ? (
-		'Loading...'
+		<LoadingScreen />
 	) : (
 		<>
 			<Title
