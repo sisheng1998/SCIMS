@@ -34,7 +34,7 @@ const UserSchema = new Schema(
 				},
 				role: {
 					type: Number,
-					default: ROLES_LIST.viewer,
+					default: ROLES_LIST.undergraduate,
 				},
 				status: {
 					type: String,

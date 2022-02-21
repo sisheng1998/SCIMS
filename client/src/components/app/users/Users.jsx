@@ -11,6 +11,7 @@ import LoadingScreen from '../../others/LoadingScreen'
 const Users = () => {
 	const axiosPrivate = useAxiosPrivate()
 	const [usersData, setUsersData] = useState('')
+	const [otherUsers, setOtherUsers] = useState('')
 	const [isLoading, setIsLoading] = useState(true)
 	const { auth } = useAuth()
 
@@ -64,6 +65,12 @@ const Users = () => {
 						})
 					// LabUsers array
 					setUsersData(processedData)
+
+					// Get all existing users that are not in the current lab - for lab owner or admin to add existing user to their lab
+					if (data.otherUsers) {
+						setOtherUsers(data.otherUsers)
+					}
+
 					setIsLoading(false)
 				}
 			} catch (error) {
@@ -92,6 +99,7 @@ const Users = () => {
 			<UsersTable data={usersData} setEditUserSuccess={setEditUserSuccess} />
 			{auth.currentRole >= ROLES_LIST.labOwner && (
 				<AddUserModal
+					otherUsers={otherUsers}
 					openModal={openAddUserModal}
 					setOpenModal={setOpenAddUserModal}
 					setAddUserSuccess={setAddUserSuccess}

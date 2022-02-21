@@ -49,7 +49,9 @@ const ResetPassword = () => {
 					<p>Your password has been changed successfully.</p>
 
 					<Link to='/login'>
-						<button className='mt-9 w-full'>Login</button>
+						<button className='button button-solid mt-9 w-32 justify-center text-lg font-semibold'>
+							Login
+						</button>
 					</Link>
 				</div>
 			) : (

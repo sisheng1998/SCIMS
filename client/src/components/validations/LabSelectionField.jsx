@@ -63,7 +63,6 @@ const LabSelectionField = (props) => {
 							className='text-gray-700 disabled:text-gray-400'
 						>
 							{lab.labName}
-							{existed ? ' (Pending approval)' : null}
 						</option>
 					)
 				})}

@@ -14,7 +14,12 @@ import ROLES_LIST from '../../../config/roles_list'
 import PasswordGenerator from '../../others/PasswordGenerator'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 
-const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
+const AddUserModal = ({
+	otherUsers,
+	openModal,
+	setOpenModal,
+	setAddUserSuccess,
+}) => {
 	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
 
@@ -25,6 +30,7 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 	const labId = auth.currentLabId
 	const labName = auth.currentLabName
 	const [role, setRole] = useState(Object.keys(ROLES_LIST)[4])
+	const [userId, setUserId] = useState('')
 
 	const [USMEmailValidated, setUSMEmailValidated] = useState(false)
 	const [passwordValidated, setPasswordValidated] = useState(false)
@@ -32,6 +38,7 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 	const [emailValidated, setEmailValidated] = useState(false)
 
 	const [allowed, setAllowed] = useState(false)
+	const [selectUser, setSelectUser] = useState(true)
 	const [success, setSuccess] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
 
@@ -39,14 +46,22 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 		e.preventDefault()
 
 		try {
-			await axiosPrivate.post('/api/private/user', {
-				name,
-				email,
-				altEmail,
-				password,
-				labId,
-				role: ROLES_LIST[role],
-			})
+			if (selectUser) {
+				await axiosPrivate.post('/api/private/existing-user', {
+					userId,
+					labId,
+					role: ROLES_LIST[role],
+				})
+			} else {
+				await axiosPrivate.post('/api/private/user', {
+					name,
+					email,
+					altEmail,
+					password,
+					labId,
+					role: ROLES_LIST[role],
+				})
+			}
 			setSuccess(true)
 		} catch (error) {
 			if (error.response?.status === 409) {
@@ -69,13 +84,27 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 
 	useEffect(() => {
 		setErrorMessage('')
-	}, [email, password, name, altEmail])
+	}, [email, password, name, altEmail, userId])
 
 	useEffect(() => {
-		setAllowed(
-			USMEmailValidated && passwordValidated && nameValidated && emailValidated
-		)
-	}, [USMEmailValidated, passwordValidated, nameValidated, emailValidated])
+		if (selectUser) {
+			setAllowed(userId !== '')
+		} else {
+			setAllowed(
+				USMEmailValidated &&
+					passwordValidated &&
+					nameValidated &&
+					emailValidated
+			)
+		}
+	}, [
+		USMEmailValidated,
+		passwordValidated,
+		nameValidated,
+		emailValidated,
+		selectUser,
+		userId,
+	])
 
 	const closeHandler = () => {
 		setEmail('')
@@ -83,6 +112,8 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 		setName('')
 		setAltEmail('')
 		setRole(Object.keys(ROLES_LIST)[4])
+		setUserId('')
+		setSelectUser(true)
 
 		if (success) {
 			setSuccess(false)
@@ -139,74 +170,108 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 								spellCheck='false'
 								autoComplete='off'
 							>
-								<div className='flex'>
-									<div className='mr-3 flex-1'>
-										<label htmlFor='email' className='required-input-label'>
-											Email Address
+								{selectUser ? (
+									<div className='mb-6'>
+										<label
+											htmlFor='userSelection'
+											className='required-input-label'
+										>
+											User (Name / Email)
 										</label>
-										<USMEmailField
-											placeholder='Enter USM email'
-											message='Only *@usm.my or *.usm.my are allowed.'
-											successMessage='Looks good!'
-											checkExist={false}
-											value={email}
-											setValue={setEmail}
-											validated={USMEmailValidated}
-											setValidated={setUSMEmailValidated}
-										/>
+										<select
+											className='w-full'
+											id='userSelection'
+											required
+											value={userId}
+											onChange={(e) => setUserId(e.target.value)}
+										>
+											<option value=''>Select user</option>
+											{otherUsers.map((user) => (
+												<option key={user._id} value={user._id}>
+													{user.name} ({user.email})
+												</option>
+											))}
+										</select>
+										<p className='mt-2 text-xs text-gray-400'>
+											The users of the current lab are not included in the list
+											provided.
+										</p>
 									</div>
+								) : (
+									<>
+										<div className='flex'>
+											<div className='mr-3 flex-1'>
+												<label htmlFor='email' className='required-input-label'>
+													Email Address
+												</label>
+												<USMEmailField
+													placeholder='Enter USM email'
+													message='Only *@usm.my or *.usm.my are allowed.'
+													successMessage='Looks good!'
+													checkExist={false}
+													value={email}
+													setValue={setEmail}
+													validated={USMEmailValidated}
+													setValidated={setUSMEmailValidated}
+												/>
+											</div>
 
-									<div className='ml-3 flex-1'>
-										<div className='flex items-end justify-between'>
-											<label
-												htmlFor='password'
-												className='required-input-label'
-											>
-												Password
-											</label>
-											<PasswordGenerator />
+											<div className='ml-3 flex-1'>
+												<div className='flex items-end justify-between'>
+													<label
+														htmlFor='password'
+														className='required-input-label'
+													>
+														Password
+													</label>
+													<PasswordGenerator />
+												</div>
+												<LoginPasswordField
+													placeholder='Enter strong password'
+													password={password}
+													setPassword={setPassword}
+													validated={passwordValidated}
+													setValidated={setPasswordValidated}
+												/>
+											</div>
 										</div>
-										<LoginPasswordField
-											placeholder='Enter strong password'
-											password={password}
-											setPassword={setPassword}
-											validated={passwordValidated}
-											setValidated={setPasswordValidated}
-										/>
-									</div>
-								</div>
 
-								<div className='flex'>
-									<div className='mr-3 flex-1'>
-										<label htmlFor='name' className='required-input-label'>
-											Name
-										</label>
-										<NameField
-											id='name'
-											placeholder='Enter name'
-											required={true}
-											value={name}
-											setValue={setName}
-											validated={nameValidated}
-											setValidated={setNameValidated}
-										/>
-									</div>
+										<div className='flex'>
+											<div className='mr-3 flex-1'>
+												<label htmlFor='name' className='required-input-label'>
+													Name
+												</label>
+												<NameField
+													id='name'
+													placeholder='Enter name'
+													required={true}
+													value={name}
+													setValue={setName}
+													validated={nameValidated}
+													setValidated={setNameValidated}
+												/>
+											</div>
 
-									<div className='ml-3 flex-1'>
-										<label htmlFor='altEmail' className='required-input-label'>
-											Alternative Email Address
-										</label>
-										<EmailField
-											id='altEmail'
-											placeholder='Enter email'
-											message='Personal email is recommended.'
-											value={altEmail}
-											setValue={setAltEmail}
-											validated={emailValidated}
-											setValidated={setEmailValidated}
-										/>
-									</div>
-								</div>
+											<div className='ml-3 flex-1'>
+												<label
+													htmlFor='altEmail'
+													className='required-input-label'
+												>
+													Alternative Email Address
+												</label>
+												<EmailField
+													id='altEmail'
+													placeholder='Enter email'
+													message='Personal email is recommended.'
+													value={altEmail}
+													setValue={setAltEmail}
+													validated={emailValidated}
+													setValidated={setEmailValidated}
+												/>
+											</div>
+										</div>
+									</>
+								)}
 
 								<div className='mb-9 flex'>
 									<div className='mr-3 flex-1'>
@@ -253,6 +318,12 @@ const AddUserModal = ({ openModal, setOpenModal, setAddUserSuccess }) => {
 								</div>
 
 								<div className='flex items-center justify-end'>
+									<span
+										onClick={() => setSelectUser(!selectUser)}
+										className='mr-auto cursor-pointer self-end text-sm font-medium text-indigo-600 transition hover:text-indigo-700'
+									>
+										{selectUser ? 'Create New User' : 'Select Existing User'}
+									</span>
 									<span
 										onClick={closeHandler}
 										className='mr-6 cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'

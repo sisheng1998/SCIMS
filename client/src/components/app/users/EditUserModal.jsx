@@ -303,7 +303,7 @@ const EditUserModal = ({
 										{isEdit && (
 											<span
 												onClick={() => setIsRemove(true)}
-												className='mr-auto cursor-pointer self-end text-sm font-medium text-red-500 transition hover:text-red-600'
+												className='mr-auto cursor-pointer self-end text-sm font-medium text-red-600 transition hover:text-red-700'
 											>
 												Remove User
 											</span>

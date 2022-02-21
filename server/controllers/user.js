@@ -1,6 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse')
 const Lab = require('../models/Lab')
 const User = require('../models/User')
+const ROLES_LIST = require('../config/roles_list')
 
 const UserInfo =
 	'name email altEmail isEmailVerified roles.lab roles.role roles.status'
@@ -17,10 +18,24 @@ exports.getUsers = async (req, res, next) => {
 			return next(new ErrorResponse('Lab not found.', 404))
 		}
 
-		res.status(200).json({
-			success: true,
-			data: foundLab,
-		})
+		// Get all existing users that are not in the current lab - for lab owner or admin to add existing user to their lab
+		if (res.locals.user.role >= ROLES_LIST.labOwner) {
+			const otherUsers = await User.find(
+				{ 'roles.lab': { $ne: labId } },
+				'name email'
+			)
+
+			res.status(200).json({
+				success: true,
+				data: foundLab,
+				otherUsers: otherUsers,
+			})
+		} else {
+			res.status(200).json({
+				success: true,
+				data: foundLab,
+			})
+		}
 	} catch (error) {
 		return next(new ErrorResponse('Lab not found.', 404))
 	}
@@ -74,6 +89,49 @@ exports.addUser = async (req, res, next) => {
 			return next(new ErrorResponse('Alternative email address existed.', 409))
 		}
 
+		next(error)
+	}
+}
+
+exports.addExistingUser = async (req, res, next) => {
+	const { userId, labId, role } = req.body
+
+	if (!userId || !labId || !role) {
+		return next(new ErrorResponse('Missing value for required field.', 400))
+	}
+
+	const foundUser = await User.findById(userId)
+	if (!foundUser) {
+		return next(new ErrorResponse('User not found.', 404))
+	}
+
+	try {
+		const foundLab = await Lab.findById(labId)
+		if (!foundLab) {
+			return next(new ErrorResponse('Lab not found.', 404))
+		}
+
+		await User.updateOne(foundUser, {
+			$push: {
+				roles: {
+					lab: foundLab._id,
+					role,
+					status: 'Active',
+				},
+			},
+		})
+
+		await Lab.updateOne(foundLab, {
+			$push: {
+				labUsers: userId,
+			},
+		})
+
+		res.status(200).json({
+			success: true,
+			data: 'User added.',
+		})
+	} catch (error) {
 		next(error)
 	}
 }

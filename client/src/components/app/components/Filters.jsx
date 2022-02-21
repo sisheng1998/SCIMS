@@ -27,7 +27,7 @@ const Filters = (props) => {
 				<input
 					type='text'
 					id='searchFilter'
-					className='ml-2 w-48 px-2 py-1 text-sm text-gray-700'
+					className='ml-2 w-60 px-2 py-1 text-sm text-gray-700'
 					autoComplete='off'
 					spellCheck='false'
 					placeholder={props.searchPlaceholder}
