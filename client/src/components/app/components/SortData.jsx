@@ -23,9 +23,7 @@ const SortData = ({
 						data[col].toString().toLowerCase().indexOf(value.toLowerCase()) > -1
 				)
 		)
-		.sort((a, b) => {
-			return a[sortKey] > b[sortKey] ? 1 : -1
-		})
+		.sort((a, b) => (a[sortKey] > b[sortKey] ? 1 : -1))
 
 	if (reverse) {
 		return sortedData.reverse()

@@ -4,6 +4,7 @@ import USMEmailField from '../../validations/USMEmailField'
 import LoginPasswordField from '../../validations/LoginPasswordField'
 import NameField from '../../validations/NameField'
 import EmailField from '../../validations/EmailField'
+import SearchableSelect from '../../others/SearchableSelect'
 import {
 	CheckIcon,
 	XIcon,
@@ -140,7 +141,7 @@ const AddUserModal = ({
 						<>
 							<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
 							<h2 className='mt-6 mb-2 text-green-600'>New User Added!</h2>
-							<p>The account has been created.</p>
+							<p>The new user have been added.</p>
 							<button
 								className='button button-solid mt-6 w-32 justify-center'
 								onClick={closeHandler}
@@ -178,20 +179,11 @@ const AddUserModal = ({
 										>
 											User (Name / Email)
 										</label>
-										<select
-											className='w-full'
-											id='userSelection'
-											required
-											value={userId}
-											onChange={(e) => setUserId(e.target.value)}
-										>
-											<option value=''>Select user</option>
-											{otherUsers.map((user) => (
-												<option key={user._id} value={user._id}>
-													{user.name} ({user.email})
-												</option>
-											))}
-										</select>
+										<SearchableSelect
+											selectedId={userId}
+											setSelectedId={setUserId}
+											options={otherUsers}
+										/>
 										<p className='mt-2 text-xs text-gray-400'>
 											The users of the current lab are not included in the list
 											provided.

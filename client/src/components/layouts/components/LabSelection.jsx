@@ -64,8 +64,9 @@ const LabSelection = () => {
 					<Listbox.Option value={allLabs} as={Fragment}>
 						<li
 							className={`flex cursor-pointer items-center justify-between px-3 py-1 hover:bg-indigo-50 hover:text-indigo-600 ${
-								auth.currentLabId === ROLES_LIST.admin.toString() &&
-								'pointer-events-none font-semibold text-indigo-600'
+								auth.currentLabId === ROLES_LIST.admin.toString()
+									? 'pointer-events-none font-semibold text-indigo-600'
+									: ''
 							}`}
 						>
 							All Labs
@@ -82,8 +83,9 @@ const LabSelection = () => {
 							{() => (
 								<li
 									className={`flex cursor-pointer items-center justify-between px-3 py-1 hover:bg-indigo-50 hover:text-indigo-600 ${
-										auth.currentLabId === role.lab._id &&
-										'pointer-events-none font-semibold text-indigo-600'
+										auth.currentLabId === role.lab._id
+											? 'pointer-events-none font-semibold text-indigo-600'
+											: ''
 									}`}
 								>
 									{role.lab.labName}

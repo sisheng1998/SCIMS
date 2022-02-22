@@ -50,22 +50,24 @@ const LabSelectionField = (props) => {
 				<option value='' className='text-gray-700'>
 					Select lab
 				</option>
-				{labs.map((lab) => {
-					const existed =
-						props.checkExist &&
-						props.userRoles.some((role) => role.lab._id === lab._id)
+				{labs
+					.sort((a, b) => (a['labName'] > b['labName'] ? 1 : -1))
+					.map((lab) => {
+						const existed =
+							props.checkExist &&
+							props.userRoles.some((role) => role.lab._id === lab._id)
 
-					return (
-						<option
-							key={lab._id}
-							disabled={existed}
-							value={lab._id}
-							className='text-gray-700 disabled:text-gray-400'
-						>
-							{lab.labName}
-						</option>
-					)
-				})}
+						return (
+							<option
+								key={lab._id}
+								disabled={existed}
+								value={lab._id}
+								className='text-gray-700 disabled:text-gray-400'
+							>
+								{lab.labName}
+							</option>
+						)
+					})}
 			</select>
 
 			<p className='mt-2 text-xs text-gray-400'>

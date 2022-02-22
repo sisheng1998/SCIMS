@@ -16,17 +16,11 @@ const Users = () => {
 	const { auth } = useAuth()
 
 	const [openAddUserModal, setOpenAddUserModal] = useState(false)
-	const [addUserSuccess, setAddUserSuccess] = useState(false)
-	const [editUserSuccess, setEditUserSuccess] = useState(false)
+	const [refresh, setRefresh] = useState(false)
 
 	useEffect(() => {
-		if (addUserSuccess) {
-			setAddUserSuccess(false)
-			return
-		}
-
-		if (editUserSuccess) {
-			setEditUserSuccess(false)
+		if (refresh) {
+			setRefresh(false)
 			return
 		}
 
@@ -84,7 +78,7 @@ const Users = () => {
 			isMounted = false
 			controller.abort()
 		}
-	}, [axiosPrivate, auth.currentLabId, addUserSuccess, editUserSuccess])
+	}, [axiosPrivate, auth.currentLabId, refresh])
 
 	return isLoading ? (
 		<LoadingScreen />
@@ -93,16 +87,18 @@ const Users = () => {
 			<Title
 				title='All Users'
 				hasButton={auth.currentRole >= ROLES_LIST.labOwner}
+				hasRefreshButton={true}
 				buttonText='Add User'
 				buttonAction={() => setOpenAddUserModal(true)}
+				setRefresh={setRefresh}
 			/>
-			<UsersTable data={usersData} setEditUserSuccess={setEditUserSuccess} />
+			<UsersTable data={usersData} setEditUserSuccess={setRefresh} />
 			{auth.currentRole >= ROLES_LIST.labOwner && (
 				<AddUserModal
 					otherUsers={otherUsers}
 					openModal={openAddUserModal}
 					setOpenModal={setOpenAddUserModal}
-					setAddUserSuccess={setAddUserSuccess}
+					setAddUserSuccess={setRefresh}
 				/>
 			)}
 		</>
