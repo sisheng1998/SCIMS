@@ -48,12 +48,6 @@ const MENU_LIST = [
 		minRole: ROLES_LIST.viewer,
 	},
 	{
-		text: 'Labs',
-		link: '/labs',
-		icon: <BeakerIcon />,
-		minRole: ROLES_LIST.viewer,
-	},
-	{
 		text: 'Settings',
 		link: '/settings',
 		icon: <CogIcon />,
@@ -62,3 +56,32 @@ const MENU_LIST = [
 ]
 
 export default MENU_LIST
+
+const ADMIN_MENU_LIST = [
+	{
+		text: 'Dashboard',
+		link: '/admin',
+		icon: <ViewGridIcon />,
+		minRole: ROLES_LIST.admin,
+	},
+	{
+		text: 'Labs',
+		link: '/admin/labs',
+		icon: <BeakerIcon />,
+		minRole: ROLES_LIST.admin,
+	},
+	{
+		text: 'Users',
+		link: '/admin/users',
+		icon: <UsersIcon />,
+		minRole: ROLES_LIST.admin,
+	},
+	{
+		text: 'Settings',
+		link: '/admin/settings',
+		icon: <CogIcon />,
+		minRole: ROLES_LIST.admin,
+	},
+]
+
+export { ADMIN_MENU_LIST }

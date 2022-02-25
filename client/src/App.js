@@ -30,6 +30,12 @@ import Profile from './components/app/profile/Profile'
 import PendingApproval from './components/app/PendingApproval'
 import ApplyNewLab from './components/app/ApplyNewLab'
 
+// Admin
+import AdminDashboard from './components/app/admin/dashboard/Dashboard'
+import AdminLabs from './components/app/admin/labs/Labs'
+import AdminUsers from './components/app/admin/users/Users'
+import AdminSettings from './components/app/admin/settings/Settings'
+
 // Layouts
 import AuthLayout from './components/layouts/AuthLayout'
 import AppLayout from './components/layouts/AppLayout'
@@ -55,6 +61,14 @@ const App = () => {
 							<Route exact path='/stock-check' element={<StockCheck />} />
 							<Route exact path='/import-export' element={<ImportExport />} />
 							<Route exact path='/settings' element={<Settings />} />
+						</Route>
+
+						{/* Accessible by admin only */}
+						<Route element={<Authorization minRole={ROLES_LIST.admin} />}>
+							<Route exact path='/admin' element={<AdminDashboard />} />
+							<Route exact path='/admin/labs' element={<AdminLabs />} />
+							<Route exact path='/admin/users' element={<AdminUsers />} />
+							<Route exact path='/admin/settings' element={<AdminSettings />} />
 						</Route>
 					</Route>
 
