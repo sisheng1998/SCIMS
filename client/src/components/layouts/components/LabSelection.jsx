@@ -20,7 +20,7 @@ const LabSelection = () => {
 	const currentLab = localStorage.getItem('currentLab')
 
 	const index = auth.roles.findIndex((role) => {
-		return role.lab._id === currentLab
+		return role.lab._id === currentLab && role.lab.status === 'In Use'
 	})
 
 	const [selected, setSelected] = useState(
@@ -78,7 +78,7 @@ const LabSelection = () => {
 				) : null}
 
 				{auth.roles.map((role) =>
-					role.status === 'Active' ? (
+					role.status === 'Active' && role.lab.status === 'In Use' ? (
 						<Listbox.Option key={role._id} value={role} as={Fragment}>
 							{() => (
 								<li

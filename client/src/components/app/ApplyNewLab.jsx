@@ -25,9 +25,9 @@ const PendingApproval = () => {
 	const [errorMessage, setErrorMessage] = useState('')
 
 	useEffect(() => {
-		const activeRole = auth.roles.find((role) => {
-			return role.status === 'Active'
-		})
+		const activeRole = auth.roles.find(
+			(role) => role.status === 'Active' && role.lab.status === 'In Use'
+		)
 
 		setIsLoading(false)
 

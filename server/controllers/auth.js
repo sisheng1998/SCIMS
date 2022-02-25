@@ -112,7 +112,7 @@ exports.login = async (req, res, next) => {
 	try {
 		const user = await User.findOne({ email })
 			.select('+password')
-			.populate('roles.lab', 'labName')
+			.populate('roles.lab', 'labName status')
 
 		if (!user) {
 			return next(new ErrorResponse('Invalid credentials.', 401))
@@ -270,7 +270,7 @@ exports.refreshToken = async (req, res, next) => {
 	try {
 		const foundUser = await User.findOne({
 			refreshToken: refreshToken,
-		}).populate('roles.lab', 'labName')
+		}).populate('roles.lab', 'labName status')
 
 		if (!foundUser) {
 			return next(new ErrorResponse('User not found.', 403))
@@ -300,7 +300,7 @@ exports.refreshToken = async (req, res, next) => {
 
 exports.labs = (req, res, next) => {
 	try {
-		Lab.find({}, 'labName', (err, data) => {
+		Lab.find({ status: 'In Use' }, 'labName', (err, data) => {
 			if (!err) {
 				res.status(200).json({
 					success: true,

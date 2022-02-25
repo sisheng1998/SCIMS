@@ -18,6 +18,10 @@ const LabSchema = new Schema(
 				ref: 'User',
 			},
 		],
+		status: {
+			type: String,
+			default: 'In Use',
+		},
 	},
 	{ collection: 'labs' }
 )

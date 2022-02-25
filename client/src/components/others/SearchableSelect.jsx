@@ -185,26 +185,20 @@ const LabSearchableSelect = ({
 								checkExist &&
 								userRoles.some((role) => role.lab._id === option._id)
 
-							return (
+							return existed ? null : (
 								<Listbox.Option
 									key={option._id}
 									value={option._id}
-									disabled={existed}
 									className='focus-visible:outline-none'
 								>
 									{({ selected, active }) => (
 										<p
 											className={`flex cursor-pointer items-center justify-between px-3 py-0.5 ${
 												active ? 'bg-indigo-600 text-white' : ''
-											} ${existed ? 'pointer-events-none text-gray-400' : ''}`}
+											}`}
 										>
 											<span className={selected ? 'font-medium' : ''}>
 												{option.labName}
-												{existed ? (
-													<span className='ml-2 text-sm'>
-														(Pending approval)
-													</span>
-												) : null}
 											</span>
 
 											{selected && (

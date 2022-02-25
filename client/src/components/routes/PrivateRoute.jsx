@@ -20,7 +20,7 @@ const PrivateRoute = () => {
 		}
 
 		const activeRole = auth.roles.find((role) => {
-			return role.status === 'Active'
+			return role.status === 'Active' && role.lab.status === 'In Use'
 		})
 
 		// Not yet approve by any lab owner or din't have any lab
@@ -54,7 +54,7 @@ const PrivateRoute = () => {
 
 				// Get the role
 				const currentRole = auth.roles.find((role) => {
-					return role.lab._id === currentLab
+					return role.lab._id === currentLab && role.lab.status === 'In Use'
 				})
 
 				// Check the status of the role
