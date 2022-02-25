@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+import { LabSearchableSelect } from '../others/SearchableSelect'
 
 const LabSelectionField = (props) => {
 	const [labs, setLabs] = useState([])
@@ -38,37 +39,14 @@ const LabSelectionField = (props) => {
 
 	return (
 		<div className='mb-6'>
-			<select
-				className={`w-full invalid:text-gray-400 ${
-					props.validated ? 'input-valid' : ''
-				}`}
-				id='labSelection'
-				required
-				value={props.value}
-				onChange={(e) => props.setValue(e.target.value)}
-			>
-				<option value='' className='text-gray-700'>
-					Select lab
-				</option>
-				{labs
-					.sort((a, b) => (a['labName'] > b['labName'] ? 1 : -1))
-					.map((lab) => {
-						const existed =
-							props.checkExist &&
-							props.userRoles.some((role) => role.lab._id === lab._id)
-
-						return (
-							<option
-								key={lab._id}
-								disabled={existed}
-								value={lab._id}
-								className='text-gray-700 disabled:text-gray-400'
-							>
-								{lab.labName}
-							</option>
-						)
-					})}
-			</select>
+			<LabSearchableSelect
+				selectedId={props.value}
+				setSelectedId={props.setValue}
+				options={labs}
+				validated={props.validated}
+				checkExist={props.checkExist}
+				userRoles={props.userRoles}
+			/>
 
 			<p className='mt-2 text-xs text-gray-400'>
 				{!props.value ? (

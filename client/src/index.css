@@ -154,7 +154,7 @@
 	}
 
 	.input-valid {
-		@apply border-green-600 focus:border-green-500 focus:ring-green-500;
+		@apply !border-green-600 focus:!border-green-500 focus:!ring-green-500;
 	}
 
 	.input-invalid {

@@ -4,7 +4,7 @@ import USMEmailField from '../../validations/USMEmailField'
 import LoginPasswordField from '../../validations/LoginPasswordField'
 import NameField from '../../validations/NameField'
 import EmailField from '../../validations/EmailField'
-import SearchableSelect from '../../others/SearchableSelect'
+import UserSearchableSelect from '../../others/SearchableSelect'
 import {
 	CheckIcon,
 	XIcon,
@@ -179,7 +179,7 @@ const AddUserModal = ({
 										>
 											User (Name / Email)
 										</label>
-										<SearchableSelect
+										<UserSearchableSelect
 											selectedId={userId}
 											setSelectedId={setUserId}
 											options={otherUsers}

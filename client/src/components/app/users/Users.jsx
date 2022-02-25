@@ -11,7 +11,7 @@ import LoadingScreen from '../../others/LoadingScreen'
 const Users = () => {
 	const axiosPrivate = useAxiosPrivate()
 	const [usersData, setUsersData] = useState('')
-	const [otherUsers, setOtherUsers] = useState('')
+	const [otherUsers, setOtherUsers] = useState([])
 	const [isLoading, setIsLoading] = useState(true)
 	const { auth } = useAuth()
 
