@@ -5,42 +5,36 @@ import {
 	XIcon,
 	ExclamationCircleIcon,
 } from '@heroicons/react/outline'
-import useAuth from '../../../hooks/useAuth'
-import ROLES_LIST from '../../../config/roles_list'
-import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
+import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
+import UserSearchableSelect from '../../../others/SearchableSelect'
 
-function getKeyByValue(value) {
-	return Object.keys(ROLES_LIST).find((key) => ROLES_LIST[key] === value)
-}
-
-const EditUserModal = ({
-	user,
+const EditLabModal = ({
+	lab,
 	isEdit,
 	openModal,
 	setOpenModal,
-	setEditUserSuccess,
+	setEditLabSuccess,
+	users,
 }) => {
-	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
 
-	const userId = user._id
-	const labId = auth.currentLabId
-	const [status, setStatus] = useState(user.status)
-	const [role, setRole] = useState(getKeyByValue(user.roleValue))
+	const labId = lab._id
+	const [ownerId, setOwnerId] = useState(lab.labOwner._id)
+	const [labName, setLabName] = useState(lab.labName)
+	const [status, setStatus] = useState(lab.status)
 
 	const [allowed, setAllowed] = useState(false)
 	const [success, setSuccess] = useState(false)
 	const [isRemove, setIsRemove] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
 
-	const editUserHandler = async (e) => {
+	const editLabHandler = async (e) => {
 		e.preventDefault()
 
 		if (isRemove) {
 			try {
 				await axiosPrivate.delete('/api/private/user', {
 					data: {
-						userId,
 						labId,
 					},
 				})
@@ -55,10 +49,8 @@ const EditUserModal = ({
 		} else {
 			try {
 				await axiosPrivate.put('/api/private/user', {
-					userId,
 					labId,
 					status,
-					role: ROLES_LIST[role],
 				})
 				setSuccess(true)
 			} catch (error) {
@@ -72,8 +64,8 @@ const EditUserModal = ({
 	}
 
 	useEffect(() => {
-		setAllowed(role !== getKeyByValue(user.roleValue) || status !== user.status)
-	}, [user, role, status])
+		setAllowed(status !== lab.status || ownerId !== lab.labOwner._id)
+	}, [lab, ownerId, status])
 
 	const closeHandler = () => {
 		setErrorMessage('')
@@ -81,7 +73,7 @@ const EditUserModal = ({
 
 		if (success) {
 			setSuccess(false)
-			setEditUserSuccess(true)
+			setEditLabSuccess(true)
 		}
 
 		setOpenModal(false)
@@ -107,9 +99,9 @@ const EditUserModal = ({
 								User {isRemove ? 'Removed' : 'Info Updated'}!
 							</h2>
 							{isRemove ? (
-								<p>The user has been removed.</p>
+								<p>The lab has been removed.</p>
 							) : (
-								<p>The user information has been updated.</p>
+								<p>The lab information has been updated.</p>
 							)}
 							<button
 								className='button button-solid mt-6 w-32 justify-center'
@@ -121,7 +113,7 @@ const EditUserModal = ({
 					) : (
 						<>
 							<div className='mb-6 flex justify-between border-b border-gray-200 pb-3'>
-								<h4>{isEdit ? 'Edit' : 'View'} User Information</h4>
+								<h4>{isEdit ? 'Edit' : 'View'} Lab Information</h4>
 								<XIcon
 									className='h-5 w-5 cursor-pointer hover:text-indigo-600'
 									onClick={closeHandler}
@@ -136,64 +128,57 @@ const EditUserModal = ({
 							)}
 
 							<form
-								onSubmit={editUserHandler}
+								onSubmit={editLabHandler}
 								spellCheck='false'
 								autoComplete='off'
 							>
-								<div className='mb-6 flex'>
-									<div className='mr-3 flex-1'>
-										<label htmlFor='name'>Name</label>
-										<input
-											className='w-full'
-											type='text'
-											name='name'
-											id='name'
-											readOnly
-											value={user.name}
-										/>
-									</div>
-
-									<div className='ml-3 flex-1'>
-										<label htmlFor='email'>Email Address</label>
-										<input
-											className='w-full'
-											type='text'
-											name='email'
-											id='email'
-											readOnly
-											value={user.email}
-										/>
-									</div>
+								<div className='mb-6'>
+									<label
+										htmlFor='userSelection'
+										className={isEdit ? 'required-input-label' : undefined}
+									>
+										Lab Owner (Name / Email)
+									</label>
+									<UserSearchableSelect
+										readOnly={!isEdit}
+										selectedId={ownerId}
+										setSelectedId={setOwnerId}
+										options={users}
+									/>
+									{isEdit ? (
+										<p className='mt-2 text-xs text-gray-400'>
+											Lab owner for the current lab.
+										</p>
+									) : null}
 								</div>
 
 								<div className='mb-6 flex'>
 									<div className='mr-3 flex-1'>
-										<label htmlFor='altEmail'>Alternative Email Address</label>
-										<input
-											className='w-full'
-											type='text'
-											name='altEmail'
-											id='altEmail'
-											readOnly
-											value={user.altEmail}
-										/>
+										<label
+											htmlFor='labName'
+											className={isEdit ? 'required-input-label' : undefined}
+										>
+											Lab Name
+										</label>
+										{isEdit ? (
+											<>
+												<p className='mt-2 text-xs text-gray-400'>
+													Name of the current lab.
+												</p>
+											</>
+										) : (
+											<input
+												className='w-full'
+												type='text'
+												name='labName'
+												id='labName'
+												readOnly
+												value={labName}
+											/>
+										)}
 									</div>
 
 									<div className='ml-3 flex-1'>
-										<label htmlFor='lab'>Current Lab</label>
-										<input
-											className='w-full'
-											type='text'
-											name='lab'
-											id='lab'
-											readOnly
-											value={auth.currentLabName}
-										/>
-									</div>
-								</div>
-
-								<div className='mb-9 flex'>
-									<div className='mr-3 flex-1'>
 										<label
 											htmlFor='statusSelection'
 											className={isEdit ? 'required-input-label' : undefined}
@@ -209,12 +194,11 @@ const EditUserModal = ({
 													value={status}
 													onChange={(e) => setStatus(e.target.value)}
 												>
-													<option value='Active'>Active</option>
-													<option value='Pending'>Pending</option>
-													<option value='Deactivated'>Deactivated</option>
+													<option value='In Use'>In Use</option>
+													<option value='Not In Use'>Not In Use</option>
 												</select>
 												<p className='mt-2 text-xs text-gray-400'>
-													User status for the current lab.
+													Status of the current lab.
 												</p>
 											</>
 										) : (
@@ -224,59 +208,33 @@ const EditUserModal = ({
 												name='statusSelection'
 												id='statusSelection'
 												readOnly
-												value={user.status}
+												value={lab.status}
 											/>
 										)}
+									</div>
+								</div>
+
+								<div className='mb-6 flex'>
+									<div className='mr-3 flex-1'>
+										<label htmlFor='numOfUsers'>Number of Users</label>
+										<input
+											className='w-full'
+											type='number'
+											name='numOfUsers'
+											id='numOfUsers'
+											readOnly
+											value={lab.labUsers.length}
+										/>
 									</div>
 
-									<div className='ml-3 flex-1'>
-										<label
-											htmlFor='roleSelection'
-											className={isEdit ? 'required-input-label' : undefined}
-										>
-											Role
-										</label>
-										{isEdit ? (
-											<>
-												<select
-													className='w-full'
-													id='roleSelection'
-													required
-													value={role}
-													onChange={(e) => setRole(e.target.value)}
-												>
-													<option value={Object.keys(ROLES_LIST)[2]}>
-														Postgraduate
-													</option>
-													<option value={Object.keys(ROLES_LIST)[3]}>
-														Undergraduate
-													</option>
-													<option value={Object.keys(ROLES_LIST)[4]}>
-														Viewer
-													</option>
-												</select>
-												<p className='mt-2 text-xs text-gray-400'>
-													User role for the current lab.
-												</p>
-											</>
-										) : (
-											<input
-												className='w-full capitalize'
-												type='text'
-												name='roleSelection'
-												id='roleSelection'
-												readOnly
-												value={user.role}
-											/>
-										)}
-									</div>
+									<div className='ml-3 flex-1'></div>
 								</div>
 
 								{isRemove ? (
 									<div className='flex items-center justify-end'>
 										<div className='mr-auto'>
 											<p className='font-medium text-gray-900'>
-												Confirm remove user from the current lab?
+												Confirm remove the current lab?
 											</p>
 											<p className='mt-1 flex items-center text-sm font-medium text-red-600'>
 												<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}
@@ -300,7 +258,7 @@ const EditUserModal = ({
 												onClick={() => setIsRemove(true)}
 												className='mr-auto cursor-pointer self-end text-sm font-medium text-red-600 transition hover:text-red-700'
 											>
-												Remove User
+												Remove Lab
 											</span>
 										)}
 										<span
@@ -329,4 +287,4 @@ const EditUserModal = ({
 	)
 }
 
-export default EditUserModal
+export default EditLabModal

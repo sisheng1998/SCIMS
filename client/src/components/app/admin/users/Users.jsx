@@ -9,8 +9,6 @@ const Users = () => {
 	const navigate = useNavigate()
 	const { auth } = useAuth()
 
-	console.log(auth)
-
 	useEffect(() => {
 		auth.currentLabId !== ROLES_LIST.admin.toString() && navigate('/users')
 	}, [auth.currentLabId, navigate])

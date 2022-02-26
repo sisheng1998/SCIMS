@@ -18,7 +18,12 @@ const FilterOptions = ({ options, searchTerm, searchCols }) => {
 	return filteredOptions
 }
 
-const UserSearchableSelect = ({ selectedId, setSelectedId, options }) => {
+const UserSearchableSelect = ({
+	readOnly,
+	selectedId,
+	setSelectedId,
+	options,
+}) => {
 	const selectedOption = options.find((options) => options._id === selectedId)
 	const [searchTerm, setSearchTerm] = useState('')
 
@@ -37,7 +42,11 @@ const UserSearchableSelect = ({ selectedId, setSelectedId, options }) => {
 	return (
 		<div className='relative'>
 			<Listbox value={selectedId} onChange={setSelectedId}>
-				<Listbox.Button className='flex w-full items-center justify-between rounded-lg border border-gray-300 p-2 pl-3 shadow-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500'>
+				<Listbox.Button
+					className={`flex w-full items-center justify-between rounded-lg border border-gray-300 p-2 pl-3 shadow-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 ${
+						readOnly ? 'read-only pointer-events-none' : ''
+					}`}
+				>
 					{selectedId ? (
 						<span>
 							{selectedOption.name}
@@ -48,7 +57,7 @@ const UserSearchableSelect = ({ selectedId, setSelectedId, options }) => {
 					) : (
 						<span className='text-gray-400'>Select user</span>
 					)}
-					<SelectorIcon className='h-6 w-6 text-gray-500' />
+					{readOnly ? null : <SelectorIcon className='h-6 w-6 text-gray-500' />}
 				</Listbox.Button>
 
 				<Listbox.Options

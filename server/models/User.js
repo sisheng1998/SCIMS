@@ -80,6 +80,27 @@ UserSchema.methods.getAccessToken = function () {
 }
 
 UserSchema.methods.getRefreshToken = function () {
+	// Check refresh token exist in database
+	if (this.refreshToken) {
+		try {
+			// Verify database refresh token
+			jwt.verify(this.refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET)
+
+			// Return database refresh token if the token not expired
+			return this.refreshToken
+		} catch (error) {
+			// Sign a new refresh token if the token is expired
+			return jwt.sign(
+				{ email: this.email },
+				process.env.JWT_REFRESH_TOKEN_SECRET,
+				{
+					expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRE,
+				}
+			)
+		}
+	}
+
+	// Sign a new refresh token if token not exist in database
 	return jwt.sign({ email: this.email }, process.env.JWT_REFRESH_TOKEN_SECRET, {
 		expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRE,
 	})

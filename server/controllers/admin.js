@@ -8,10 +8,25 @@ const UserInfo =
 
 exports.getUsers = async (req, res, next) => {
 	try {
-		const users = await User.find({}, UserInfo)
+		const users = await User.find({}, UserInfo).populate('roles.lab', 'labName')
 
 		res.status(200).json({
 			success: true,
+			users,
+		})
+	} catch (error) {
+		next(error)
+	}
+}
+
+exports.getLabs = async (req, res, next) => {
+	try {
+		const labs = await Lab.find({}).populate('labOwner', 'name email')
+		const users = await User.find({}, 'name email')
+
+		res.status(200).json({
+			success: true,
+			labs,
 			users,
 		})
 	} catch (error) {

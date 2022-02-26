@@ -1,31 +1,30 @@
 import React, { useCallback, useState, useEffect } from 'react'
-import ROLES_LIST from '../../../config/roles_list'
-import useAuth from '../../../hooks/useAuth'
-import SortData from '../components/SortData'
-import SortButton from '../components/SortButton'
-import Filters from '../components/Filters'
-import Pagination from '../components/Pagination'
-import EditUserModal from './EditUserModal'
+import SortData from '../../components/SortData'
+import SortButton from '../../components/SortButton'
+import Filters from '../../components/Filters'
+import Pagination from '../../components/Pagination'
+import EditLabModal from './EditLabModal'
+import useAuth from '../../../../hooks/useAuth'
 
 const tableHeaders = [
 	{
-		key: 'name',
+		key: 'labName',
 		label: 'Name',
 		sortable: true,
 	},
 	{
-		key: 'email',
-		label: 'Email Address',
+		key: 'ownerName',
+		label: 'Lab Owner',
+		sortable: true,
+	},
+	{
+		key: 'ownerEmail',
+		label: 'Email',
 		sortable: true,
 	},
 	{
 		key: 'status',
 		label: 'Status',
-		sortable: true,
-	},
-	{
-		key: 'role',
-		label: 'Role',
 		sortable: true,
 	},
 	{
@@ -35,19 +34,18 @@ const tableHeaders = [
 	},
 ]
 
-const UsersTable = (props) => {
+const LabsTable = (props) => {
 	const { auth } = useAuth()
 
-	const [userData, setUserData] = useState('')
+	const [labData, setLabData] = useState('')
 	const [isEdit, setIsEdit] = useState(false)
-	const [openEditUserModal, setOpenEditUserModal] = useState(false)
+	const [openEditLabModal, setOpenEditLabModal] = useState(false)
 
 	const [sortKey, setSortKey] = useState('index')
 	const [sortOrder, setSortOrder] = useState('asc')
 	const [searchTerm, setSearchTerm] = useState('')
 	const [filterTerms, setFilterTerms] = useState({
 		status: '',
-		role: '',
 	})
 
 	useEffect(() => {
@@ -62,7 +60,7 @@ const UsersTable = (props) => {
 				sortKey,
 				reverse: sortOrder === 'desc',
 				searchTerm,
-				searchCols: ['name', 'email'],
+				searchCols: ['labName', 'ownerName', 'ownerEmail'],
 				filterTerms,
 			}),
 		[props.data, sortKey, sortOrder, searchTerm, filterTerms]
@@ -99,10 +97,10 @@ const UsersTable = (props) => {
 		setCurrentPage(1)
 	}, [itemsPerPage, searchTerm, filterTerms])
 
-	const editUserHandler = (userData, isEdit) => {
-		setUserData(userData)
+	const editLabHandler = (labData, isEdit) => {
+		setLabData(labData)
 		setIsEdit(isEdit)
-		setOpenEditUserModal(true)
+		setOpenEditLabModal(true)
 	}
 
 	return (
@@ -113,7 +111,7 @@ const UsersTable = (props) => {
 				results={results}
 				searchTerm={searchTerm}
 				setSearchTerm={setSearchTerm}
-				searchPlaceholder='Name / Email'
+				searchPlaceholder='Name / Lab Owner / Email'
 			>
 				<div className='mx-6 flex items-center'>
 					<p>Filter</p>
@@ -128,26 +126,8 @@ const UsersTable = (props) => {
 						}
 					>
 						<option value=''>Any Status</option>
-						<option value='active'>Active</option>
-						<option value='pending'>Pending</option>
-						<option value='deactivated'>Deactivated</option>
-					</select>
-
-					<select
-						className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
-						name='roleFilter'
-						id='roleFilter'
-						value={filterTerms.role}
-						onChange={(e) =>
-							setFilterTerms((prev) => ({ ...prev, role: e.target.value }))
-						}
-					>
-						<option value=''>Any Role</option>
-						<option value='admin'>Admin</option>
-						<option value='lab owner'>Lab Owner</option>
-						<option value='postgraduate'>Postgraduate</option>
-						<option value='undergraduate'>Undergraduate</option>
-						<option value='viewer'>Viewer</option>
+						<option value='In Use'>In Use</option>
+						<option value='Not In Use'>Not In Use</option>
 					</select>
 				</div>
 			</Filters>
@@ -191,60 +171,41 @@ const UsersTable = (props) => {
 										</td>
 									</tr>
 								) : (
-									currentItems.map((user) => {
-										let classes
-
-										if (user.status === 'Active') {
-											classes = 'bg-green-100 text-green-600'
-										} else if (user.status === 'Pending') {
-											classes = 'bg-yellow-100 text-yellow-600'
-										} else {
-											// Deactivated
-											classes = 'bg-red-100 text-red-600'
-										}
-
-										return (
-											<tr key={user._id}>
-												<td className='px-6 py-4'>{user.name}</td>
-												<td className='px-6 py-4'>{user.email}</td>
-												<td className='px-6 py-4'>
-													<span
-														className={`inline-flex rounded-full px-3 py-1 font-medium ${classes}`}
+									currentItems.map((lab) => (
+										<tr key={lab._id}>
+											<td className='px-6 py-4'>{lab.labName}</td>
+											<td className='px-6 py-4'>{lab.ownerName}</td>
+											<td className='px-6 py-4'>{lab.ownerEmail}</td>
+											<td className='px-6 py-4'>
+												<span
+													className={`inline-flex rounded-full px-3 py-1 font-medium ${
+														lab.status === 'In Use'
+															? 'bg-green-100 text-green-600'
+															: 'bg-red-100 text-red-600'
+													}`}
+												>
+													{lab.status}
+												</span>
+											</td>
+											<td className='px-6 py-4 text-center'>
+												{auth.email === lab.ownerEmail ? (
+													<button
+														onClick={() => editLabHandler(lab, false)}
+														className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
 													>
-														{user.status}
-													</span>
-												</td>
-												<td className='px-6 py-4 capitalize'>{user.role}</td>
-												<td className='px-6 py-4 text-center'>
-													{auth.currentRole >= ROLES_LIST.labOwner ? (
-														auth.email === user.email ||
-														user.roleValue >= ROLES_LIST.labOwner ? (
-															<button
-																onClick={() => editUserHandler(user, false)}
-																className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
-															>
-																View
-															</button>
-														) : (
-															<button
-																onClick={() => editUserHandler(user, true)}
-																className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
-															>
-																Edit
-															</button>
-														)
-													) : (
-														<button
-															onClick={() => editUserHandler(user, false)}
-															className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
-														>
-															View
-														</button>
-													)}
-												</td>
-											</tr>
-										)
-									})
+														View
+													</button>
+												) : (
+													<button
+														onClick={() => editLabHandler(lab, true)}
+														className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
+													>
+														Edit
+													</button>
+												)}
+											</td>
+										</tr>
+									))
 								)}
 							</tbody>
 						</table>
@@ -263,17 +224,18 @@ const UsersTable = (props) => {
 				paginate={paginate}
 			/>
 
-			{openEditUserModal && userData && (
-				<EditUserModal
-					user={userData}
+			{openEditLabModal && labData && (
+				<EditLabModal
+					lab={labData}
 					isEdit={isEdit}
-					openModal={openEditUserModal}
-					setOpenModal={setOpenEditUserModal}
-					setEditUserSuccess={props.setEditUserSuccess}
+					openModal={openEditLabModal}
+					setOpenModal={setOpenEditLabModal}
+					setEditLabSuccess={props.setEditLabSuccess}
+					users={props.users}
 				/>
 			)}
 		</>
 	)
 }
 
-export default UsersTable
+export default LabsTable

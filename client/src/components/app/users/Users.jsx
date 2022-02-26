@@ -12,7 +12,7 @@ import LoadingScreen from '../../others/LoadingScreen'
 const Users = () => {
 	const axiosPrivate = useAxiosPrivate()
 	const [usersData, setUsersData] = useState('')
-	const [otherUsers, setOtherUsers] = useState([])
+	const [otherUsers, setOtherUsers] = useState('')
 	const [isLoading, setIsLoading] = useState(true)
 	const { auth } = useAuth()
 	const navigate = useNavigate()
@@ -100,14 +100,16 @@ const Users = () => {
 				setRefresh={setRefresh}
 			/>
 			<UsersTable data={usersData} setEditUserSuccess={setRefresh} />
-			{auth.currentRole >= ROLES_LIST.labOwner && (
-				<AddUserModal
-					otherUsers={otherUsers}
-					openModal={openAddUserModal}
-					setOpenModal={setOpenAddUserModal}
-					setAddUserSuccess={setRefresh}
-				/>
-			)}
+			{openAddUserModal &&
+				otherUsers &&
+				auth.currentRole >= ROLES_LIST.labOwner && (
+					<AddUserModal
+						otherUsers={otherUsers}
+						openModal={openAddUserModal}
+						setOpenModal={setOpenAddUserModal}
+						setAddUserSuccess={setRefresh}
+					/>
+				)}
 		</>
 	)
 }

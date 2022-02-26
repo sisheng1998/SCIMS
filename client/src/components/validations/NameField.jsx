@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-const NAME_REGEX = /^[a-zA-z]+([\s][a-zA-Z]+)*$/
+const NAME_REGEX = /^[a-zA-Z,.'-/]+( [a-zA-Z,.'-/]+)*$/
 
 const NameField = (props) => {
 	useEffect(() => {

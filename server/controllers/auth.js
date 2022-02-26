@@ -143,46 +143,15 @@ exports.logout = async (req, res, next) => {
 		return next(new ErrorResponse('Refresh token not found.', 204))
 	}
 
-	try {
-		const foundUser = await User.findOne({ refreshToken: refreshToken })
-
-		if (!foundUser) {
-			res
-				.status(204)
-				.cookie('refreshToken', '', {
-					httpOnly: true,
-					sameSite: 'None',
-					secure: true,
-					maxAge: 0,
-				})
-				.send()
-			return
-		}
-
-		foundUser.refreshToken = undefined
-		await foundUser.save()
-
-		res
-			.status(204)
-			.cookie('refreshToken', '', {
-				httpOnly: true,
-				sameSite: 'None',
-				secure: true,
-				maxAge: 0,
-			})
-			.send()
-	} catch (error) {
-		res
-			.status(204)
-			.cookie('refreshToken', '', {
-				httpOnly: true,
-				sameSite: 'None',
-				secure: true,
-				maxAge: 0,
-			})
-			.send()
-		return
-	}
+	res
+		.status(204)
+		.cookie('refreshToken', '', {
+			httpOnly: true,
+			sameSite: 'None',
+			secure: true,
+			maxAge: 0,
+		})
+		.send()
 }
 
 exports.forgotPassword = async (req, res, next) => {
