@@ -2,6 +2,7 @@ const ErrorResponse = require('../utils/errorResponse')
 const Lab = require('../models/Lab')
 const User = require('../models/User')
 const ROLES_LIST = require('../config/roles_list')
+const { startSession } = require('mongoose')
 
 const UserInfo =
 	'name email altEmail isEmailVerified roles.lab roles.role roles.status'
@@ -32,6 +33,126 @@ exports.getLabs = async (req, res, next) => {
 			users,
 		})
 	} catch (error) {
+		next(error)
+	}
+}
+
+exports.addLab = async (req, res, next) => {
+	const { name, email, altEmail, password, labName } = req.body
+
+	if (!name || !email || !altEmail || !password || !labName) {
+		return next(new ErrorResponse('Missing value for required field.', 400))
+	}
+
+	const duplicate = await User.findOne({ email })
+	if (duplicate) {
+		return next(new ErrorResponse('Email registered.', 409))
+	}
+
+	const session = await startSession()
+
+	try {
+		session.startTransaction()
+
+		const newLab = await Lab.create(
+			[
+				{
+					labName,
+				},
+			],
+			{ session }
+		)
+
+		const newUser = await User.create(
+			[
+				{
+					name,
+					email,
+					altEmail,
+					password,
+					roles: {
+						lab: newLab._id,
+						role: ROLES_LIST.labOwner,
+						status: 'Active',
+					},
+					isEmailVerified: true,
+				},
+			],
+			{ session }
+		)
+
+		await Lab.updateOne(
+			newLab,
+			{
+				$set: {
+					labOwner: newUser._id,
+				},
+			},
+			{ new: true, session }
+		)
+
+		await session.commitTransaction()
+		session.endSession()
+
+		res.status(201).json({
+			success: true,
+			data: 'New user and lab created.',
+		})
+	} catch (error) {
+		await session.abortTransaction()
+		session.endSession()
+
+		if (error.code === 11000) {
+			if (error.keyPattern.hasOwnProperty('altEmail')) {
+				return next(
+					new ErrorResponse('Alternative email address existed.', 409)
+				)
+			} else if (error.keyPattern.hasOwnProperty('labName')) {
+				return next(new ErrorResponse('Lab name existed.', 409))
+			}
+		}
+		console.log(error)
+		next(error)
+	}
+}
+
+exports.addLabWithExistingUser = async (req, res, next) => {
+	const { ownerId, labName } = req.body
+
+	if (!ownerId || !labName) {
+		return next(new ErrorResponse('Missing value.', 400))
+	}
+
+	try {
+		const foundUser = await User.findById(ownerId)
+		if (!foundUser) {
+			return next(new ErrorResponse('User not found.', 404))
+		}
+
+		const lab = await Lab.create({
+			labName,
+			labOwner: foundUser._id,
+		})
+
+		await User.updateOne(foundUser, {
+			$push: {
+				roles: {
+					lab: lab._id,
+					role: ROLES_LIST.labOwner,
+					status: 'Active',
+				},
+			},
+		})
+
+		res.status(201).json({
+			success: true,
+			data: 'New lab created.',
+		})
+	} catch (error) {
+		if (error.code === 11000) {
+			return next(new ErrorResponse('Lab name existed.', 409))
+		}
+
 		next(error)
 	}
 }
@@ -119,6 +240,10 @@ exports.updateLab = async (req, res, next) => {
 			data: 'Lab information updated.',
 		})
 	} catch (error) {
+		if (error.code === 11000) {
+			return next(new ErrorResponse('Lab name existed.', 409))
+		}
+
 		next(error)
 	}
 }

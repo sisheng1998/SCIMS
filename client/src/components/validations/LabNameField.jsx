@@ -5,13 +5,19 @@ const LAB_NAME_REGEX = /^[a-zA-Z0-9.-]+( [a-zA-Z0-9.-]+)*$/
 const LabNameField = (props) => {
 	useEffect(() => {
 		const result = LAB_NAME_REGEX.test(props.value)
-		props.setValidated(result && props.value.length > 2)
+		props.setValidated(result && props.value.length >= 2)
 	}, [props])
 
 	return (
 		<input
 			className={`w-full ${
-				!props.value ? '' : props.validated ? '' : 'input-invalid'
+				!props.value
+					? ''
+					: props.validated
+					? props.showValidated
+						? 'input-valid'
+						: ''
+					: 'input-invalid'
 			}`}
 			type='text'
 			id='labName'

@@ -15,6 +15,12 @@ const USMEmailField = (props) => {
 		) {
 			setEmailExisted(true)
 			props.setValidated(false)
+		} else if (
+			result &&
+			props.excludeStudent &&
+			props.value.toLowerCase().indexOf('@student.usm.my') !== -1
+		) {
+			props.setValidated(false)
 		} else {
 			setEmailExisted(false)
 			props.setValidated(result)

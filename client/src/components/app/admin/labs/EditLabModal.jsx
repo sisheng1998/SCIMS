@@ -51,7 +51,9 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 				})
 				setSuccess(true)
 			} catch (error) {
-				if (error.response?.status === 500) {
+				if (error.response?.status === 409) {
+					setErrorMessage('A lab with this name already exists.')
+				} else if (error.response?.status === 500) {
 					setErrorMessage('Server not responding. Please try again later.')
 				} else {
 					setErrorMessage('Oops. Something went wrong. Please try again later.')
@@ -61,6 +63,7 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 	}
 
 	useEffect(() => {
+		setErrorMessage('')
 		setAllowed(
 			labNameValidated &&
 				(status !== lab.status ||
@@ -167,7 +170,7 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 													validated={labNameValidated}
 													setValidated={setLabNameValidated}
 												/>
-												{labNameValidated ? (
+												{labNameValidated || labName === '' ? (
 													<p className='mt-2 text-xs text-gray-400'>
 														Name of the current lab.
 													</p>

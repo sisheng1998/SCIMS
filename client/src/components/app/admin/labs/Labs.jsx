@@ -6,6 +6,7 @@ import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import LoadingScreen from '../../../others/LoadingScreen'
 import Title from '../../components/Title'
 import LabsTable from './LabsTable'
+import AddLabModal from './AddLabModal'
 
 const Labs = () => {
 	const navigate = useNavigate()
@@ -18,8 +19,9 @@ const Labs = () => {
 	const axiosPrivate = useAxiosPrivate()
 	const [labsData, setLabsData] = useState('')
 	const [users, setUsers] = useState([])
-	const [isLoading, setIsLoading] = useState(true)
+	const [openAddLabModal, setOpenAddLabModal] = useState(false)
 
+	const [isLoading, setIsLoading] = useState(true)
 	const [refresh, setRefresh] = useState(false)
 
 	useEffect(() => {
@@ -75,10 +77,17 @@ const Labs = () => {
 				hasButton={true}
 				hasRefreshButton={true}
 				buttonText='Add Lab'
-				buttonAction={() => console.log('hello')}
+				buttonAction={() => setOpenAddLabModal(true)}
 				setRefresh={setRefresh}
 			/>
 			<LabsTable data={labsData} users={users} />
+			{openAddLabModal && users && (
+				<AddLabModal
+					users={users}
+					openModal={openAddLabModal}
+					setOpenModal={setOpenAddLabModal}
+				/>
+			)}
 		</>
 	)
 }

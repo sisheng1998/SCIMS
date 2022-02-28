@@ -1,38 +1,30 @@
 import React, { useState, useEffect } from 'react'
 import { Dialog } from '@headlessui/react'
-import USMEmailField from '../../validations/USMEmailField'
-import LoginPasswordField from '../../validations/LoginPasswordField'
-import NameField from '../../validations/NameField'
-import EmailField from '../../validations/EmailField'
-import UserSearchableSelect from '../../others/SearchableSelect'
+import USMEmailField from '../../../validations/USMEmailField'
+import LoginPasswordField from '../../../validations/LoginPasswordField'
+import NameField from '../../../validations/NameField'
+import EmailField from '../../../validations/EmailField'
+import UserSearchableSelect from '../../../others/SearchableSelect'
 import {
 	CheckIcon,
 	XIcon,
 	ExclamationCircleIcon,
 } from '@heroicons/react/outline'
-import useAuth from '../../../hooks/useAuth'
-import ROLES_LIST from '../../../config/roles_list'
-import PasswordGenerator from '../../others/PasswordGenerator'
-import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
+import PasswordGenerator from '../../../others/PasswordGenerator'
+import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
+import LabNameField from '../../../validations/LabNameField'
 
-const AddUserModal = ({
-	otherUsers,
-	openModal,
-	setOpenModal,
-	setAddUserSuccess,
-}) => {
-	const { auth } = useAuth()
+const AddLabModal = ({ users, openModal, setOpenModal }) => {
 	const axiosPrivate = useAxiosPrivate()
 
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [name, setName] = useState('')
 	const [altEmail, setAltEmail] = useState('')
-	const labId = auth.currentLabId
-	const labName = auth.currentLabName
-	const [role, setRole] = useState(Object.keys(ROLES_LIST)[4])
-	const [userId, setUserId] = useState('')
+	const [ownerId, setOwnerId] = useState('')
+	const [labName, setLabName] = useState('')
 
+	const [labNameValidated, setLabNameValidated] = useState(false)
 	const [USMEmailValidated, setUSMEmailValidated] = useState(false)
 	const [passwordValidated, setPasswordValidated] = useState(false)
 	const [nameValidated, setNameValidated] = useState(false)
@@ -43,24 +35,22 @@ const AddUserModal = ({
 	const [success, setSuccess] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
 
-	const addUserHandler = async (e) => {
+	const addLabHandler = async (e) => {
 		e.preventDefault()
 
 		try {
 			if (selectUser) {
-				await axiosPrivate.post('/api/private/existing-user', {
-					userId,
-					labId,
-					role: ROLES_LIST[role],
+				await axiosPrivate.post('/api/admin/lab-existing-user', {
+					ownerId,
+					labName,
 				})
 			} else {
-				await axiosPrivate.post('/api/private/user', {
+				await axiosPrivate.post('/api/admin/lab', {
 					name,
 					email,
 					altEmail,
 					password,
-					labId,
-					role: ROLES_LIST[role],
+					labName,
 				})
 			}
 			setSuccess(true)
@@ -72,6 +62,8 @@ const AddUserModal = ({
 					setErrorMessage(
 						'An account with this alternative email already exists.'
 					)
+				} else if (error.response.data.error === 'Lab name existed.') {
+					setErrorMessage('A lab with this name already exists.')
 				} else {
 					setErrorMessage('An account with this email already exists.')
 				}
@@ -85,17 +77,18 @@ const AddUserModal = ({
 
 	useEffect(() => {
 		setErrorMessage('')
-	}, [email, password, name, altEmail, userId])
+	}, [email, password, name, altEmail, ownerId, labName])
 
 	useEffect(() => {
 		if (selectUser) {
-			setAllowed(userId !== '')
+			setAllowed(ownerId !== '' && labNameValidated)
 		} else {
 			setAllowed(
 				USMEmailValidated &&
 					passwordValidated &&
 					nameValidated &&
-					emailValidated
+					emailValidated &&
+					labNameValidated
 			)
 		}
 	}, [
@@ -104,7 +97,8 @@ const AddUserModal = ({
 		nameValidated,
 		emailValidated,
 		selectUser,
-		userId,
+		ownerId,
+		labNameValidated,
 	])
 
 	const resetInputField = () => {
@@ -112,18 +106,15 @@ const AddUserModal = ({
 		setPassword('')
 		setName('')
 		setAltEmail('')
-		setUserId('')
+		setOwnerId('')
+		setLabName('')
 	}
 
 	const closeHandler = () => {
 		resetInputField()
-		setRole(Object.keys(ROLES_LIST)[4])
 		setSelectUser(true)
 
-		if (success) {
-			setSuccess(false)
-			setAddUserSuccess(true)
-		}
+		success && window.location.reload(false)
 
 		setOpenModal(false)
 	}
@@ -149,8 +140,8 @@ const AddUserModal = ({
 					{success ? (
 						<>
 							<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
-							<h2 className='mt-6 mb-2 text-green-600'>New User Added!</h2>
-							<p>The new user have been added.</p>
+							<h2 className='mt-6 mb-2 text-green-600'>New Lab Added!</h2>
+							<p>The new lab have been added.</p>
 							<button
 								className='button button-solid mt-6 w-32 justify-center'
 								onClick={closeHandler}
@@ -161,7 +152,7 @@ const AddUserModal = ({
 					) : (
 						<>
 							<div className='mb-6 flex justify-between border-b border-gray-200 pb-3'>
-								<h4>Add New User</h4>
+								<h4>Add New Lab</h4>
 								<XIcon
 									className='h-5 w-5 cursor-pointer hover:text-indigo-600'
 									onClick={closeHandler}
@@ -176,7 +167,7 @@ const AddUserModal = ({
 							)}
 
 							<form
-								onSubmit={addUserHandler}
+								onSubmit={addLabHandler}
 								spellCheck='false'
 								autoComplete='off'
 							>
@@ -186,16 +177,15 @@ const AddUserModal = ({
 											htmlFor='userSelection'
 											className='required-input-label'
 										>
-											User (Name / Email)
+											Lab Owner (Name / Email)
 										</label>
 										<UserSearchableSelect
-											selectedId={userId}
-											setSelectedId={setUserId}
-											options={otherUsers}
+											selectedId={ownerId}
+											setSelectedId={setOwnerId}
+											options={users}
 										/>
 										<p className='mt-2 text-xs text-gray-400'>
-											The users of the current lab are not included in the list
-											provided.
+											Lab owner for the new lab.
 										</p>
 									</div>
 								) : (
@@ -207,13 +197,14 @@ const AddUserModal = ({
 												</label>
 												<USMEmailField
 													placeholder='Enter USM email'
-													message='Only *@usm.my or *.usm.my are allowed.'
+													message='Only *@usm.my or *.usm.my (except student email) are allowed.'
 													successMessage='Looks good!'
 													checkExist={false}
 													value={email}
 													setValue={setEmail}
 													validated={USMEmailValidated}
 													setValidated={setUSMEmailValidated}
+													excludeStudent={true}
 												/>
 											</div>
 
@@ -276,44 +267,41 @@ const AddUserModal = ({
 
 								<div className='mb-9 flex'>
 									<div className='mr-3 flex-1'>
-										<label htmlFor='lab'>Current Lab</label>
-										<input
-											className='w-full'
-											type='text'
-											name='lab'
-											id='lab'
-											readOnly
+										<label htmlFor='labName' className='required-input-label'>
+											Lab Name
+										</label>
+										<LabNameField
 											value={labName}
+											setValue={setLabName}
+											validated={labNameValidated}
+											setValidated={setLabNameValidated}
+											showValidated={true}
 										/>
 										<p className='mt-2 text-xs text-gray-400'>
-											Current lab cannot be changed.
+											{!labName ? (
+												'Name of the new lab.'
+											) : labNameValidated ? (
+												<span className='text-green-600'>Looks good!</span>
+											) : (
+												<span className='text-red-600'>
+													Please enter a valid lab name.
+												</span>
+											)}
 										</p>
 									</div>
 
 									<div className='ml-3 flex-1'>
-										<label
-											htmlFor='roleSelection'
-											className='required-input-label'
-										>
-											Role
-										</label>
-										<select
+										<label htmlFor='role'>Role</label>
+										<input
 											className='w-full'
-											id='roleSelection'
-											required
-											value={role}
-											onChange={(e) => setRole(e.target.value)}
-										>
-											<option value={Object.keys(ROLES_LIST)[2]}>
-												Postgraduate
-											</option>
-											<option value={Object.keys(ROLES_LIST)[3]}>
-												Undergraduate
-											</option>
-											<option value={Object.keys(ROLES_LIST)[4]}>Viewer</option>
-										</select>
+											type='text'
+											name='role'
+											id='role'
+											readOnly
+											value='Lab Owner'
+										/>
 										<p className='mt-2 text-xs text-gray-400'>
-											User role for the current lab.
+											Role cannot be changed.
 										</p>
 									</div>
 								</div>
@@ -332,7 +320,7 @@ const AddUserModal = ({
 										Cancel
 									</span>
 									<button className='w-40' type='submit' disabled={!allowed}>
-										Add User
+										Add Lab
 									</button>
 								</div>
 							</form>
@@ -344,4 +332,4 @@ const AddUserModal = ({
 	)
 }
 
-export default AddUserModal
+export default AddLabModal
