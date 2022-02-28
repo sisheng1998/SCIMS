@@ -9,14 +9,7 @@ import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import UserSearchableSelect from '../../../others/SearchableSelect'
 import LabNameField from '../../../validations/LabNameField'
 
-const EditLabModal = ({
-	lab,
-	isEdit,
-	openModal,
-	setOpenModal,
-	setEditLabSuccess,
-	users,
-}) => {
+const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 	const axiosPrivate = useAxiosPrivate()
 
 	const labId = lab._id
@@ -80,10 +73,7 @@ const EditLabModal = ({
 		setErrorMessage('')
 		setIsRemove(false)
 
-		if (success) {
-			setSuccess(false)
-			setEditLabSuccess(true)
-		}
+		success && window.location.reload(false)
 
 		setOpenModal(false)
 	}

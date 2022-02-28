@@ -236,7 +236,6 @@ const LabsTable = (props) => {
 					isEdit={isEdit}
 					openModal={openEditLabModal}
 					setOpenModal={setOpenEditLabModal}
-					setEditLabSuccess={props.setEditLabSuccess}
 					users={props.users}
 				/>
 			)}

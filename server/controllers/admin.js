@@ -84,11 +84,9 @@ exports.updateLab = async (req, res, next) => {
 				)
 
 				// Remove the new lab owner in the lab users list
-				await Lab.updateOne(foundLab, {
-					$pull: {
-						labUsers: ownerId,
-					},
-				})
+				foundLab.labUsers = foundLab.labUsers.filter(
+					(userId) => !userId.equals(ownerId)
+				)
 			} else {
 				// Push new role to new lab owner's roles (role not exist)
 				await User.updateOne(foundUser, {

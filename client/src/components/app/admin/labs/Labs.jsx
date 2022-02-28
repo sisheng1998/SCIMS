@@ -78,7 +78,7 @@ const Labs = () => {
 				buttonAction={() => console.log('hello')}
 				setRefresh={setRefresh}
 			/>
-			<LabsTable data={labsData} setEditLabSuccess={setRefresh} users={users} />
+			<LabsTable data={labsData} users={users} />
 		</>
 	)
 }
