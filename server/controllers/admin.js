@@ -45,6 +45,9 @@ exports.updateLab = async (req, res, next) => {
 
 	try {
 		const foundLab = await Lab.findById(labId)
+		if (!foundLab) {
+			return next(new ErrorResponse('Lab not found.', 404))
+		}
 
 		if (!foundLab.labOwner.equals(ownerId)) {
 			const previousOwnerId = foundLab.labOwner
@@ -114,6 +117,44 @@ exports.updateLab = async (req, res, next) => {
 		res.status(200).json({
 			success: true,
 			data: 'Lab information updated.',
+		})
+	} catch (error) {
+		next(error)
+	}
+}
+
+exports.removeLab = async (req, res, next) => {
+	const { labId } = req.body
+
+	if (!labId) {
+		return next(new ErrorResponse('Missing required value.', 400))
+	}
+
+	try {
+		const foundLab = await Lab.findById(labId)
+		if (!foundLab) {
+			return next(new ErrorResponse('Lab not found.', 404))
+		}
+
+		const userIds = foundLab.labUsers
+		userIds.push(foundLab.labOwner)
+
+		await User.updateMany(
+			{ _id: { $in: userIds } },
+			{
+				$pull: {
+					roles: {
+						lab: labId,
+					},
+				},
+			}
+		)
+
+		await Lab.deleteOne({ _id: labId })
+
+		res.status(200).json({
+			success: true,
+			data: 'Lab removed.',
 		})
 	} catch (error) {
 		next(error)

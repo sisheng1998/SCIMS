@@ -28,7 +28,7 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 
 		if (isRemove) {
 			try {
-				await axiosPrivate.delete('/api/private/user', {
+				await axiosPrivate.delete('/api/admin/lab', {
 					data: {
 						labId,
 					},
@@ -234,7 +234,7 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 											name='numOfUsers'
 											id='numOfUsers'
 											readOnly
-											value={lab.labUsers.length}
+											value={lab.labUsers.length + 1}
 										/>
 									</div>
 
