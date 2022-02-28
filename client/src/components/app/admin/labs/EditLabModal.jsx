@@ -7,6 +7,7 @@ import {
 } from '@heroicons/react/outline'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import UserSearchableSelect from '../../../others/SearchableSelect'
+import LabNameField from '../../../validations/LabNameField'
 
 const EditLabModal = ({
 	lab,
@@ -21,6 +22,7 @@ const EditLabModal = ({
 	const labId = lab._id
 	const [ownerId, setOwnerId] = useState(lab.labOwner._id)
 	const [labName, setLabName] = useState(lab.labName)
+	const [labNameValidated, setLabNameValidated] = useState(false)
 	const [status, setStatus] = useState(lab.status)
 
 	const [allowed, setAllowed] = useState(false)
@@ -48,8 +50,10 @@ const EditLabModal = ({
 			}
 		} else {
 			try {
-				await axiosPrivate.put('/api/private/user', {
+				await axiosPrivate.put('/api/admin/lab', {
 					labId,
+					ownerId,
+					labName,
 					status,
 				})
 				setSuccess(true)
@@ -64,8 +68,13 @@ const EditLabModal = ({
 	}
 
 	useEffect(() => {
-		setAllowed(status !== lab.status || ownerId !== lab.labOwner._id)
-	}, [lab, ownerId, status])
+		setAllowed(
+			labNameValidated &&
+				(status !== lab.status ||
+					ownerId !== lab.labOwner._id ||
+					labName !== lab.labName)
+		)
+	}, [lab, ownerId, labName, labNameValidated, status])
 
 	const closeHandler = () => {
 		setErrorMessage('')
@@ -96,7 +105,7 @@ const EditLabModal = ({
 						<>
 							<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
 							<h2 className='mt-6 mb-2 text-green-600'>
-								User {isRemove ? 'Removed' : 'Info Updated'}!
+								Lab {isRemove ? 'Removed' : 'Info Updated'}!
 							</h2>
 							{isRemove ? (
 								<p>The lab has been removed.</p>
@@ -162,9 +171,21 @@ const EditLabModal = ({
 										</label>
 										{isEdit ? (
 											<>
-												<p className='mt-2 text-xs text-gray-400'>
-													Name of the current lab.
-												</p>
+												<LabNameField
+													value={labName}
+													setValue={setLabName}
+													validated={labNameValidated}
+													setValidated={setLabNameValidated}
+												/>
+												{labNameValidated ? (
+													<p className='mt-2 text-xs text-gray-400'>
+														Name of the current lab.
+													</p>
+												) : (
+													<p className='mt-2 text-xs text-red-600'>
+														Please enter a valid lab name.
+													</p>
+												)}
 											</>
 										) : (
 											<input

@@ -39,14 +39,18 @@ const Labs = () => {
 					signal: controller.signal,
 				})
 				if (isMounted) {
-					const processedData = data.labs.map((lab, index) => ({
+					const processedLabData = data.labs.map((lab, index) => ({
 						...lab,
 						index: index,
 						ownerName: lab.labOwner.name,
 						ownerEmail: lab.labOwner.email,
 					}))
-					setLabsData(processedData)
-					setUsers(data.users)
+					setLabsData(processedLabData)
+
+					const processedUserData = data.users.filter(
+						(user) => !user.email.includes('@student.usm.my')
+					)
+					setUsers(processedUserData)
 					setIsLoading(false)
 				}
 			} catch (error) {

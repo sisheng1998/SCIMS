@@ -5,6 +5,7 @@ import Filters from '../../components/Filters'
 import Pagination from '../../components/Pagination'
 import EditLabModal from './EditLabModal'
 import useAuth from '../../../../hooks/useAuth'
+import ROLES_LIST from '../../../../config/roles_list'
 
 const tableHeaders = [
 	{
@@ -188,7 +189,12 @@ const LabsTable = (props) => {
 												</span>
 											</td>
 											<td className='px-6 py-4 text-center'>
-												{auth.email === lab.ownerEmail ? (
+												{auth.email === lab.ownerEmail &&
+												auth.roles.some(
+													(role) =>
+														role.role === ROLES_LIST.admin &&
+														role.lab._id === lab._id
+												) ? (
 													<button
 														onClick={() => editLabHandler(lab, false)}
 														className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
