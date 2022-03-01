@@ -54,7 +54,7 @@ exports.addLab = async (req, res, next) => {
 	try {
 		session.startTransaction()
 
-		const newLab = await Lab.create(
+		const lab = await Lab.create(
 			[
 				{
 					labName,
@@ -63,7 +63,7 @@ exports.addLab = async (req, res, next) => {
 			{ session }
 		)
 
-		const newUser = await User.create(
+		const user = await User.create(
 			[
 				{
 					name,
@@ -71,7 +71,7 @@ exports.addLab = async (req, res, next) => {
 					altEmail,
 					password,
 					roles: {
-						lab: newLab._id,
+						lab: lab[0]._id,
 						role: ROLES_LIST.labOwner,
 						status: 'Active',
 					},
@@ -82,10 +82,10 @@ exports.addLab = async (req, res, next) => {
 		)
 
 		await Lab.updateOne(
-			newLab,
+			lab[0],
 			{
 				$set: {
-					labOwner: newUser._id,
+					labOwner: user[0]._id,
 				},
 			},
 			{ new: true, session }
@@ -111,7 +111,7 @@ exports.addLab = async (req, res, next) => {
 				return next(new ErrorResponse('Lab name existed.', 409))
 			}
 		}
-		console.log(error)
+
 		next(error)
 	}
 }
