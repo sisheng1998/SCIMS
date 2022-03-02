@@ -10,8 +10,11 @@ const UserInfo =
 // User
 exports.getUsers = async (req, res, next) => {
 	try {
-		const users = await User.find({}, UserInfo).populate('roles.lab', 'labName')
-		const labs = await Lab.find({}, 'labName')
+		const users = await User.find({}, UserInfo).populate(
+			'roles.lab',
+			'labName status'
+		)
+		const labs = await Lab.find({ status: 'In Use' }, 'labName')
 
 		res.status(200).json({
 			success: true,
@@ -27,7 +30,7 @@ exports.getUsers = async (req, res, next) => {
 exports.getLabs = async (req, res, next) => {
 	try {
 		const labs = await Lab.find({}).populate('labOwner', 'name email')
-		const users = await User.find({}, 'name email')
+		const users = await User.find({ isEmailVerified: true }, 'name email')
 
 		res.status(200).json({
 			success: true,

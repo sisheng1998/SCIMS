@@ -46,9 +46,6 @@ const Users = () => {
 						index: index,
 					}))
 					setUsersData(processedData)
-
-					console.log(processedData)
-					console.log(data.labs)
 					setLabsData(data.labs)
 					setIsLoading(false)
 				}

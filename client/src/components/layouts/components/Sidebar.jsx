@@ -20,7 +20,7 @@ const Sidebar = () => {
 			{menus.map((menu, index) =>
 				auth.currentRole >= menu.minRole ? (
 					<NavLink
-						className='flex items-center py-1 px-[1.125rem] font-medium text-gray-500 hover:bg-indigo-50 hover:text-indigo-600'
+						className='flex items-center py-1 px-[1.125rem] font-medium text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 xl:px-3'
 						key={index}
 						to={menu.link}
 						end

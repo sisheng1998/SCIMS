@@ -44,23 +44,26 @@ const UserOption = () => {
 				{USER_MENU.map((menu, index) => (
 					<Menu.Item key={index}>
 						{({ active }) => (
-							<button
-								onClick={() => menuHandler(index)}
-								className={`group flex w-full items-center px-3 py-1 text-sm font-medium leading-6 hover:bg-indigo-50 ${
-									active ? 'text-indigo-600' : ''
-								}`}
-							>
-								{index === 0 && (
-									<UserIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
-								)}
-								{index === 1 && (
-									<BeakerIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
-								)}
-								{index === 2 && (
-									<LogoutIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
-								)}
-								{menu}
-							</button>
+							<>
+								{index === 2 && <hr className='my-2' />}
+								<button
+									onClick={() => menuHandler(index)}
+									className={`group flex w-full items-center px-3 py-1 text-sm font-medium leading-6 ${
+										index === 2 ? '' : 'hover:bg-indigo-50'
+									} ${active ? 'text-indigo-600' : ''}`}
+								>
+									{index === 0 && (
+										<UserIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
+									)}
+									{index === 1 && (
+										<BeakerIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
+									)}
+									{index === 2 && (
+										<LogoutIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
+									)}
+									{menu}
+								</button>
+							</>
 						)}
 					</Menu.Item>
 				))}

@@ -15,6 +15,7 @@ function getKeyByValue(value) {
 
 const EditUserModal = ({
 	user,
+	currentRole,
 	isEdit,
 	openModal,
 	setOpenModal,
@@ -96,7 +97,7 @@ const EditUserModal = ({
 			<div className='flex min-h-screen items-center justify-center'>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div
-					className={`relative w-full  rounded-lg bg-white p-6 shadow ${
+					className={`relative w-full rounded-lg bg-white p-6 shadow ${
 						success ? 'max-w-sm text-center' : 'max-w-3xl'
 					}`}
 				>
@@ -140,8 +141,8 @@ const EditUserModal = ({
 								spellCheck='false'
 								autoComplete='off'
 							>
-								<div className='mb-6 flex'>
-									<div className='mr-3 flex-1'>
+								<div className='mb-6 flex space-x-6'>
+									<div className='flex-1'>
 										<label htmlFor='name'>Name</label>
 										<input
 											className='w-full'
@@ -153,8 +154,19 @@ const EditUserModal = ({
 										/>
 									</div>
 
-									<div className='ml-3 flex-1'>
-										<label htmlFor='email'>Email Address</label>
+									<div className='flex-1'>
+										<div className='flex justify-between'>
+											<label htmlFor='email'>Email Address</label>
+											<p
+												className={`mb-2 text-sm font-medium ${
+													user.isEmailVerified
+														? 'text-green-600'
+														: 'text-red-600'
+												}`}
+											>
+												{user.isEmailVerified ? 'Verified' : 'Not Verified'}
+											</p>
+										</div>
 										<input
 											className='w-full'
 											type='text'
@@ -164,10 +176,8 @@ const EditUserModal = ({
 											value={user.email}
 										/>
 									</div>
-								</div>
 
-								<div className='mb-6 flex'>
-									<div className='mr-3 flex-1'>
+									<div className='flex-1'>
 										<label htmlFor='altEmail'>Alternative Email Address</label>
 										<input
 											className='w-full'
@@ -178,99 +188,81 @@ const EditUserModal = ({
 											value={user.altEmail}
 										/>
 									</div>
+								</div>
 
+								<div className='mb-6 flex'>
 									<div className='ml-3 flex-1'>
-										<label htmlFor='lab'>Current Lab</label>
-										<input
-											className='w-full'
-											type='text'
-											name='lab'
-											id='lab'
-											readOnly
-											value={auth.currentLabName}
-										/>
+										{isEdit && (
+											<>
+												<label htmlFor='lab'>Current Lab</label>
+												<input
+													className='w-full'
+													type='text'
+													name='lab'
+													id='lab'
+													readOnly
+													value={auth.currentLabName}
+												/>
+											</>
+										)}
 									</div>
 								</div>
 
-								<div className='mb-9 flex'>
-									<div className='mr-3 flex-1'>
-										<label
-											htmlFor='statusSelection'
-											className={isEdit ? 'required-input-label' : undefined}
-										>
-											Status
-										</label>
-										{isEdit ? (
-											<>
-												<select
-													className='w-full'
-													id='statusSelection'
-													required
-													value={status}
-													onChange={(e) => setStatus(e.target.value)}
-												>
-													<option value='Active'>Active</option>
-													<option value='Pending'>Pending</option>
-													<option value='Deactivated'>Deactivated</option>
-												</select>
-												<p className='mt-2 text-xs text-gray-400'>
-													User status for the current lab.
-												</p>
-											</>
-										) : (
-											<input
+								{isEdit && (
+									<div className='mb-9 flex'>
+										<div className='mr-3 flex-1'>
+											<label
+												htmlFor='statusSelection'
+												className='required-input-label'
+											>
+												Status
+											</label>
+											<select
 												className='w-full'
-												type='text'
-												name='statusSelection'
 												id='statusSelection'
-												readOnly
-												value={user.status}
-											/>
-										)}
-									</div>
+												required
+												value={status}
+												onChange={(e) => setStatus(e.target.value)}
+											>
+												<option value='Active'>Active</option>
+												<option value='Pending'>Pending</option>
+												<option value='Deactivated'>Deactivated</option>
+											</select>
+											<p className='mt-2 text-xs text-gray-400'>
+												User status for the current lab.
+											</p>
+										</div>
 
-									<div className='ml-3 flex-1'>
-										<label
-											htmlFor='roleSelection'
-											className={isEdit ? 'required-input-label' : undefined}
-										>
-											Role
-										</label>
-										{isEdit ? (
-											<>
-												<select
-													className='w-full'
-													id='roleSelection'
-													required
-													value={role}
-													onChange={(e) => setRole(e.target.value)}
-												>
-													<option value={Object.keys(ROLES_LIST)[2]}>
-														Postgraduate
-													</option>
-													<option value={Object.keys(ROLES_LIST)[3]}>
-														Undergraduate
-													</option>
-													<option value={Object.keys(ROLES_LIST)[4]}>
-														Viewer
-													</option>
-												</select>
-												<p className='mt-2 text-xs text-gray-400'>
-													User role for the current lab.
-												</p>
-											</>
-										) : (
-											<input
-												className='w-full capitalize'
-												type='text'
-												name='roleSelection'
+										<div className='ml-3 flex-1'>
+											<label
+												htmlFor='roleSelection'
+												className='required-input-label'
+											>
+												Role
+											</label>
+											<select
+												className='w-full'
 												id='roleSelection'
-												readOnly
-												value={user.role}
-											/>
-										)}
+												required
+												value={role}
+												onChange={(e) => setRole(e.target.value)}
+											>
+												<option value={Object.keys(ROLES_LIST)[2]}>
+													Postgraduate
+												</option>
+												<option value={Object.keys(ROLES_LIST)[3]}>
+													Undergraduate
+												</option>
+												<option value={Object.keys(ROLES_LIST)[4]}>
+													Viewer
+												</option>
+											</select>
+											<p className='mt-2 text-xs text-gray-400'>
+												User role for the current lab.
+											</p>
+										</div>
 									</div>
-								</div>
+								)}
 
 								{isRemove ? (
 									<div className='flex items-center justify-end'>

@@ -1,11 +1,11 @@
 import React, { useCallback, useState, useEffect } from 'react'
-import ROLES_LIST from '../../../../config/roles_list'
 import useAuth from '../../../../hooks/useAuth'
 import SortData from '../../components/SortData'
 import SortButton from '../../components/SortButton'
 import Filters from '../../components/Filters'
 import Pagination from '../../components/Pagination'
 import EditUserModal from './EditUserModal'
+import ViewUserModal from './ViewUserModal'
 import { PencilAltIcon } from '@heroicons/react/outline'
 
 const tableHeaders = [
@@ -41,8 +41,8 @@ const UsersTable = (props) => {
 
 	const [userData, setUserData] = useState('')
 	const [role, setRole] = useState('')
-	const [isEdit, setIsEdit] = useState(false)
 	const [openEditUserModal, setOpenEditUserModal] = useState(false)
+	const [openViewUserModal, setOpenViewUserModal] = useState(false)
 
 	const [sortKey, setSortKey] = useState('index')
 	const [sortOrder, setSortOrder] = useState('asc')
@@ -101,14 +101,15 @@ const UsersTable = (props) => {
 		setCurrentPage(1)
 	}, [itemsPerPage, searchTerm, filterTerms])
 
-	const editUserHandler = (userData, role, isEdit) => {
-		if (role) {
-			setRole(role)
-		}
-
+	const editUserHandler = (userData, role) => {
+		setRole(role)
 		setUserData(userData)
-		setIsEdit(isEdit)
 		setOpenEditUserModal(true)
+	}
+
+	const viewUserHandler = (userData) => {
+		setUserData(userData)
+		setOpenViewUserModal(true)
 	}
 
 	return (
@@ -218,6 +219,7 @@ const UsersTable = (props) => {
 											<td className='space-y-0.5 px-6 py-4'>
 												{user.roles.length !== 0
 													? user.roles
+															.filter((role) => role.lab.status === 'In Use')
 															.sort((a, b) =>
 																a.lab.labName.toLowerCase() >
 																b.lab.labName.toLowerCase()
@@ -231,9 +233,7 @@ const UsersTable = (props) => {
 																>
 																	<p>{role.lab.labName}</p>
 																	<button
-																		onClick={() =>
-																			editUserHandler(user, role, true)
-																		}
+																		onClick={() => editUserHandler(user, role)}
 																		className='ml-2 text-gray-400 transition hover:text-indigo-700'
 																	>
 																		<PencilAltIcon className='h-5 w-5' />
@@ -244,7 +244,7 @@ const UsersTable = (props) => {
 											</td>
 											<td className='px-6 py-4 text-center'>
 												<button
-													onClick={() => editUserHandler(user, '', false)}
+													onClick={() => viewUserHandler(user)}
 													className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
 												>
 													View
@@ -270,16 +270,23 @@ const UsersTable = (props) => {
 				paginate={paginate}
 			/>
 
-			{/* {openEditUserModal && userData && (
+			{openEditUserModal && userData && role && (
 				<EditUserModal
 					user={userData}
-          role={role}
-					isEdit={isEdit}
+					currentRole={role}
 					openModal={openEditUserModal}
 					setOpenModal={setOpenEditUserModal}
 					setEditUserSuccess={props.setEditUserSuccess}
 				/>
-			)} */}
+			)}
+
+			{openViewUserModal && userData && (
+				<ViewUserModal
+					user={userData}
+					openModal={openViewUserModal}
+					setOpenModal={setOpenViewUserModal}
+				/>
+			)}
 		</>
 	)
 }
