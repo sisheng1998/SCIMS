@@ -77,26 +77,30 @@ const LabSelection = () => {
 					</Listbox.Option>
 				) : null}
 
-				{auth.roles.map((role) =>
-					role.status === 'Active' && role.lab.status === 'In Use' ? (
-						<Listbox.Option key={role._id} value={role} as={Fragment}>
-							{() => (
-								<li
-									className={`flex cursor-pointer items-center justify-between px-3 py-1 hover:bg-indigo-50 hover:text-indigo-600 ${
-										auth.currentLabId === role.lab._id
-											? 'pointer-events-none font-semibold text-indigo-600'
-											: ''
-									}`}
-								>
-									{role.lab.labName}
-									{auth.currentLabId === role.lab._id && (
-										<CheckIcon className='ml-2 h-4 w-4 stroke-2' />
-									)}
-								</li>
-							)}
-						</Listbox.Option>
-					) : null
-				)}
+				{auth.roles
+					.sort((a, b) =>
+						a.lab.labName.toLowerCase() > b.lab.labName.toLowerCase() ? 1 : -1
+					)
+					.map((role) =>
+						role.status === 'Active' && role.lab.status === 'In Use' ? (
+							<Listbox.Option key={role._id} value={role} as={Fragment}>
+								{() => (
+									<li
+										className={`flex cursor-pointer items-center justify-between px-3 py-1 hover:bg-indigo-50 hover:text-indigo-600 ${
+											auth.currentLabId === role.lab._id
+												? 'pointer-events-none font-semibold text-indigo-600'
+												: ''
+										}`}
+									>
+										{role.lab.labName}
+										{auth.currentLabId === role.lab._id && (
+											<CheckIcon className='ml-2 h-4 w-4 stroke-2' />
+										)}
+									</li>
+								)}
+							</Listbox.Option>
+						) : null
+					)}
 			</Listbox.Options>
 		</Listbox>
 	)

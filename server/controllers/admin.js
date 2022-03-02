@@ -11,10 +11,12 @@ const UserInfo =
 exports.getUsers = async (req, res, next) => {
 	try {
 		const users = await User.find({}, UserInfo).populate('roles.lab', 'labName')
+		const labs = await Lab.find({}, 'labName')
 
 		res.status(200).json({
 			success: true,
 			users,
+			labs,
 		})
 	} catch (error) {
 		next(error)

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import AddUserModal from './AddUserModal'
+import Title from '../../components/Title'
+import UsersTable from './UsersTable'
 import useAuth from '../../../../hooks/useAuth'
 import ROLES_LIST from '../../../../config/roles_list'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
@@ -15,8 +18,10 @@ const Users = () => {
 
 	const axiosPrivate = useAxiosPrivate()
 	const [usersData, setUsersData] = useState('')
+	const [labsData, setLabsData] = useState('')
 	const [isLoading, setIsLoading] = useState(true)
 
+	const [openAddUserModal, setOpenAddUserModal] = useState(false)
 	const [refresh, setRefresh] = useState(false)
 
 	useEffect(() => {
@@ -36,8 +41,15 @@ const Users = () => {
 					signal: controller.signal,
 				})
 				if (isMounted) {
-					console.log(data.users)
-					setUsersData('')
+					const processedData = data.users.map((user, index) => ({
+						...user,
+						index: index,
+					}))
+					setUsersData(processedData)
+
+					console.log(processedData)
+					console.log(data.labs)
+					setLabsData(data.labs)
 					setIsLoading(false)
 				}
 			} catch (error) {
@@ -53,7 +65,32 @@ const Users = () => {
 		}
 	}, [axiosPrivate, refresh])
 
-	return isLoading ? <LoadingScreen /> : <div>Admin Users</div>
+	return isLoading ? (
+		<LoadingScreen />
+	) : (
+		<>
+			<Title
+				title='All Users'
+				hasButton={true}
+				hasRefreshButton={true}
+				buttonText='Add User'
+				buttonAction={() => console.log('hello')}
+				setRefresh={setRefresh}
+			/>
+			<UsersTable
+				data={usersData}
+				labs={labsData}
+				setEditUserSuccess={setRefresh}
+			/>
+			{/* {openAddUserModal && (
+				<AddUserModal
+					openModal={openAddUserModal}
+					setOpenModal={setOpenAddUserModal}
+					setAddUserSuccess={setRefresh}
+				/>
+			)} */}
+		</>
+	)
 }
 
 export default Users
