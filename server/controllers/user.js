@@ -111,6 +111,14 @@ exports.addExistingUser = async (req, res, next) => {
 			return next(new ErrorResponse('Lab not found.', 404))
 		}
 
+		const isUserExisted =
+			foundLab.labUsers.some((user) => user._id.equals(foundUser._id)) ||
+			foundLab.labOwner.equals(foundUser._id)
+
+		if (isUserExisted) {
+			return next(new ErrorResponse('User existed.', 409))
+		}
+
 		await User.updateOne(foundUser, {
 			$push: {
 				roles: {

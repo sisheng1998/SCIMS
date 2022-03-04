@@ -41,11 +41,12 @@ const UserOption = () => {
 					</p>
 					<p className='text-sm text-gray-500'>{auth.email}</p>
 				</div>
+
 				{USER_MENU.map((menu, index) => (
-					<Menu.Item key={index}>
-						{({ active }) => (
-							<>
-								{index === 2 && <hr className='my-2' />}
+					<React.Fragment key={index}>
+						{index === 2 && <hr className='my-2' />}
+						<Menu.Item>
+							{({ active }) => (
 								<button
 									onClick={() => menuHandler(index)}
 									className={`group flex w-full items-center px-3 py-1 text-sm font-medium leading-6 ${
@@ -63,9 +64,9 @@ const UserOption = () => {
 									)}
 									{menu}
 								</button>
-							</>
-						)}
-					</Menu.Item>
+							)}
+						</Menu.Item>
+					</React.Fragment>
 				))}
 			</Menu.Items>
 		</Menu>

@@ -13,9 +13,11 @@ import {
 import PasswordGenerator from '../../../others/PasswordGenerator'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import LabNameField from '../../../validations/LabNameField'
+import useAuth from '../../../../hooks/useAuth'
 
-const AddLabModal = ({ users, openModal, setOpenModal }) => {
+const AddLabModal = ({ users, openModal, setOpenModal, setAddLabSuccess }) => {
 	const axiosPrivate = useAxiosPrivate()
+	const { auth } = useAuth()
 
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
@@ -114,7 +116,14 @@ const AddLabModal = ({ users, openModal, setOpenModal }) => {
 		resetInputField()
 		setSelectUser(true)
 
-		success && window.location.reload(false)
+		if (success) {
+			if (ownerId === auth.id) {
+				window.location.reload(false)
+			} else {
+				setSuccess(false)
+				setAddLabSuccess(true)
+			}
+		}
 
 		setOpenModal(false)
 	}

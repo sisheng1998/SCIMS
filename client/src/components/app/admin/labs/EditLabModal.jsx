@@ -8,9 +8,18 @@ import {
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import UserSearchableSelect from '../../../others/SearchableSelect'
 import LabNameField from '../../../validations/LabNameField'
+import useAuth from '../../../../hooks/useAuth'
 
-const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
+const EditLabModal = ({
+	lab,
+	isEdit,
+	openModal,
+	setOpenModal,
+	setEditLabSuccess,
+	users,
+}) => {
 	const axiosPrivate = useAxiosPrivate()
+	const { auth } = useAuth()
 
 	const labId = lab._id
 	const [ownerId, setOwnerId] = useState(lab.labOwner._id)
@@ -76,7 +85,14 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 		setErrorMessage('')
 		setIsRemove(false)
 
-		success && window.location.reload(false)
+		if (success) {
+			if (lab.labOwner._id === auth.id || ownerId === auth.id) {
+				window.location.reload(false)
+			} else {
+				setSuccess(false)
+				setEditLabSuccess(true)
+			}
+		}
 
 		setOpenModal(false)
 	}

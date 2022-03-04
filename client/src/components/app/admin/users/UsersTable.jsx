@@ -153,11 +153,15 @@ const UsersTable = (props) => {
 						}
 					>
 						<option value=''>Any Lab</option>
-						{props.labs.map((lab) => (
-							<option key={lab._id} value={lab.labName}>
-								{lab.labName}
-							</option>
-						))}
+						{props.labs
+							.sort((a, b) =>
+								a.labName.toLowerCase() > b.labName.toLowerCase() ? 1 : -1
+							)
+							.map((lab) => (
+								<option key={lab._id} value={lab.labName}>
+									{lab.labName}
+								</option>
+							))}
 						<option value='-'>No Lab</option>
 					</select>
 				</div>

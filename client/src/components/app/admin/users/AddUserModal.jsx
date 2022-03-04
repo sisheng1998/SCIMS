@@ -14,22 +14,23 @@ import useAuth from '../../../../hooks/useAuth'
 import ROLES_LIST from '../../../../config/roles_list'
 import PasswordGenerator from '../../../others/PasswordGenerator'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
+import { LabSearchableSelect } from '../../../others/SearchableSelect'
 
 const AddUserModal = ({
-	otherUsers,
+	users,
+	labs,
 	openModal,
 	setOpenModal,
 	setAddUserSuccess,
 }) => {
-	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
+	const { auth } = useAuth()
 
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [name, setName] = useState('')
 	const [altEmail, setAltEmail] = useState('')
-	const labId = auth.currentLabId
-	const labName = auth.currentLabName
+	const [labId, setLabId] = useState('')
 	const [role, setRole] = useState(Object.keys(ROLES_LIST)[4])
 	const [userId, setUserId] = useState('')
 
@@ -42,6 +43,9 @@ const AddUserModal = ({
 	const [selectUser, setSelectUser] = useState(true)
 	const [success, setSuccess] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
+
+	const verifiedUser = users.filter((user) => user.isEmailVerified)
+	const inUseLab = labs.filter((lab) => lab.status === 'In Use')
 
 	const addUserHandler = async (e) => {
 		e.preventDefault()
@@ -72,6 +76,10 @@ const AddUserModal = ({
 					setErrorMessage(
 						'An account with this alternative email already exists.'
 					)
+				} else if (error.response.data.error === 'User existed.') {
+					setErrorMessage(
+						'The selected user already exists in the selected lab.'
+					)
 				} else {
 					setErrorMessage('An account with this email already exists.')
 				}
@@ -85,17 +93,18 @@ const AddUserModal = ({
 
 	useEffect(() => {
 		setErrorMessage('')
-	}, [email, password, name, altEmail, userId])
+	}, [email, password, name, altEmail, userId, labId])
 
 	useEffect(() => {
 		if (selectUser) {
-			setAllowed(userId !== '')
+			setAllowed(userId !== '' && labId !== '')
 		} else {
 			setAllowed(
 				USMEmailValidated &&
 					passwordValidated &&
 					nameValidated &&
-					emailValidated
+					emailValidated &&
+					labId !== ''
 			)
 		}
 	}, [
@@ -105,6 +114,7 @@ const AddUserModal = ({
 		emailValidated,
 		selectUser,
 		userId,
+		labId,
 	])
 
 	const resetInputField = () => {
@@ -121,8 +131,12 @@ const AddUserModal = ({
 		setSelectUser(true)
 
 		if (success) {
-			setSuccess(false)
-			setAddUserSuccess(true)
+			if (userId === auth.id) {
+				window.location.reload(false)
+			} else {
+				setSuccess(false)
+				setAddUserSuccess(true)
+			}
 		}
 
 		setOpenModal(false)
@@ -191,11 +205,10 @@ const AddUserModal = ({
 										<UserSearchableSelect
 											selectedId={userId}
 											setSelectedId={setUserId}
-											options={otherUsers}
+											options={verifiedUser}
 										/>
 										<p className='mt-2 text-xs text-gray-400'>
-											The users of the current lab are not included in the list
-											provided.
+											The list provided includes email verified users only.
 										</p>
 									</div>
 								) : (
@@ -276,17 +289,19 @@ const AddUserModal = ({
 
 								<div className='mb-9 flex'>
 									<div className='mr-3 flex-1'>
-										<label htmlFor='lab'>Current Lab</label>
-										<input
-											className='w-full'
-											type='text'
-											name='lab'
-											id='lab'
-											readOnly
-											value={labName}
+										<label
+											htmlFor='labSelection'
+											className='required-input-label'
+										>
+											Lab
+										</label>
+										<LabSearchableSelect
+											selectedId={labId}
+											setSelectedId={setLabId}
+											options={inUseLab}
 										/>
 										<p className='mt-2 text-xs text-gray-400'>
-											Current lab cannot be changed.
+											The list provided includes "In Use" labs only.
 										</p>
 									</div>
 

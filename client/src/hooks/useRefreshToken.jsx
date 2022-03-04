@@ -14,9 +14,10 @@ const useRefreshToken = () => {
 		const email = data.email
 		const accessToken = data.accessToken
 		const roles = data.roles
+		const id = data.id
 
 		setAuth((prev) => {
-			return { ...prev, email, accessToken, roles }
+			return { ...prev, email, accessToken, roles, id }
 		})
 
 		return accessToken

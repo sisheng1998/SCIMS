@@ -261,6 +261,7 @@ exports.refreshToken = async (req, res, next) => {
 			email: foundUser.email,
 			accessToken: accessToken,
 			roles: foundUser.roles,
+			id: foundUser._id,
 		})
 	} catch (error) {
 		return next(new ErrorResponse('Invalid refresh token.', 401))
@@ -362,6 +363,7 @@ const sendToken = async (user, rememberMe, statusCode, res) => {
 		success: true,
 		accessToken: accessToken,
 		roles: user.roles,
+		id: user._id,
 	})
 }
 

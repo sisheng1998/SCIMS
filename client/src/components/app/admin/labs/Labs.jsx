@@ -80,12 +80,13 @@ const Labs = () => {
 				buttonAction={() => setOpenAddLabModal(true)}
 				setRefresh={setRefresh}
 			/>
-			<LabsTable data={labsData} users={users} />
+			<LabsTable data={labsData} users={users} setEditLabSuccess={setRefresh} />
 			{openAddLabModal && users && (
 				<AddLabModal
 					users={users}
 					openModal={openAddLabModal}
 					setOpenModal={setOpenAddLabModal}
+					setAddLabSuccess={setRefresh}
 				/>
 			)}
 		</>

@@ -40,6 +40,7 @@ const Login = () => {
 
 			const accessToken = data.accessToken
 			const roles = data.roles
+			const id = data.id
 
 			setAuth((prev) => {
 				return {
@@ -47,6 +48,7 @@ const Login = () => {
 					email,
 					accessToken,
 					roles,
+					id,
 				}
 			})
 

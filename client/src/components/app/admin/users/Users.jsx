@@ -71,7 +71,7 @@ const Users = () => {
 				hasButton={true}
 				hasRefreshButton={true}
 				buttonText='Add User'
-				buttonAction={() => console.log('hello')}
+				buttonAction={() => setOpenAddUserModal(true)}
 				setRefresh={setRefresh}
 			/>
 			<UsersTable
@@ -79,13 +79,15 @@ const Users = () => {
 				labs={labsData}
 				setEditUserSuccess={setRefresh}
 			/>
-			{/* {openAddUserModal && (
+			{openAddUserModal && (
 				<AddUserModal
+					users={usersData}
+					labs={labsData}
 					openModal={openAddUserModal}
 					setOpenModal={setOpenAddUserModal}
 					setAddUserSuccess={setRefresh}
 				/>
-			)} */}
+			)}
 		</>
 	)
 }

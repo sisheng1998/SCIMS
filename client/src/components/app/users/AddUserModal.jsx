@@ -72,6 +72,8 @@ const AddUserModal = ({
 					setErrorMessage(
 						'An account with this alternative email already exists.'
 					)
+				} else if (error.response.data.error === 'User existed.') {
+					setErrorMessage('The user already exists in the current lab.')
 				} else {
 					setErrorMessage('An account with this email already exists.')
 				}
