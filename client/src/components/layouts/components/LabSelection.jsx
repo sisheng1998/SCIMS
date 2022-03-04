@@ -13,15 +13,15 @@ const LabSelection = () => {
 	const { auth, setAuth } = useAuth()
 
 	// Check whether user is admin
-	const isAdmin = auth.roles.some((role) => {
-		return role.role === ROLES_LIST.admin && role.status === 'Active'
-	})
+	const isAdmin = auth.roles.some(
+		(role) => role.role === ROLES_LIST.admin && role.status === 'Active'
+	)
 
 	const currentLab = localStorage.getItem('currentLab')
 
-	const index = auth.roles.findIndex((role) => {
-		return role.lab._id === currentLab && role.lab.status === 'In Use'
-	})
+	const index = auth.roles.findIndex(
+		(role) => role.lab._id === currentLab && role.lab.status === 'In Use'
+	)
 
 	const [selected, setSelected] = useState(
 		isAdmin && currentLab === allLabs.lab._id ? allLabs : auth.roles[index]

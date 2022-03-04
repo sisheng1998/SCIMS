@@ -5,7 +5,6 @@ import {
 	XIcon,
 	ExclamationCircleIcon,
 } from '@heroicons/react/outline'
-import useAuth from '../../../../hooks/useAuth'
 import ROLES_LIST from '../../../../config/roles_list'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 
@@ -16,18 +15,16 @@ function getKeyByValue(value) {
 const EditUserModal = ({
 	user,
 	currentRole,
-	isEdit,
 	openModal,
 	setOpenModal,
 	setEditUserSuccess,
 }) => {
-	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
 
 	const userId = user._id
-	const labId = auth.currentLabId
-	const [status, setStatus] = useState(user.status)
-	const [role, setRole] = useState(getKeyByValue(user.roleValue))
+	const labId = currentRole.lab._id
+	const [status, setStatus] = useState(currentRole.status)
+	const [role, setRole] = useState(getKeyByValue(currentRole.role))
 
 	const [allowed, setAllowed] = useState(false)
 	const [success, setSuccess] = useState(false)
@@ -73,8 +70,10 @@ const EditUserModal = ({
 	}
 
 	useEffect(() => {
-		setAllowed(role !== getKeyByValue(user.roleValue) || status !== user.status)
-	}, [user, role, status])
+		setAllowed(
+			role !== getKeyByValue(currentRole.role) || status !== currentRole.status
+		)
+	}, [currentRole, role, status])
 
 	const closeHandler = () => {
 		setErrorMessage('')
@@ -122,7 +121,7 @@ const EditUserModal = ({
 					) : (
 						<>
 							<div className='mb-6 flex justify-between border-b border-gray-200 pb-3'>
-								<h4>{isEdit ? 'Edit' : 'View'} User Information</h4>
+								<h4>Edit User Information</h4>
 								<XIcon
 									className='h-5 w-5 cursor-pointer hover:text-indigo-600'
 									onClick={closeHandler}
@@ -155,10 +154,10 @@ const EditUserModal = ({
 									</div>
 
 									<div className='flex-1'>
-										<div className='flex justify-between'>
+										<div className='flex items-end justify-between'>
 											<label htmlFor='email'>Email Address</label>
 											<p
-												className={`mb-2 text-sm font-medium ${
+												className={`mb-2 text-xs font-medium ${
 													user.isEmailVerified
 														? 'text-green-600'
 														: 'text-red-600'
@@ -190,79 +189,79 @@ const EditUserModal = ({
 									</div>
 								</div>
 
-								<div className='mb-6 flex'>
-									<div className='ml-3 flex-1'>
-										{isEdit && (
-											<>
-												<label htmlFor='lab'>Current Lab</label>
-												<input
-													className='w-full'
-													type='text'
-													name='lab'
-													id='lab'
-													readOnly
-													value={auth.currentLabName}
-												/>
-											</>
-										)}
+								<div className='mb-9 flex space-x-6'>
+									<div className='flex-1'>
+										<div className='flex items-end justify-between'>
+											<label htmlFor='lab'>Current Lab</label>
+											{currentRole.lab.status === 'Not In Use' && (
+												<p className='mb-2 text-xs font-medium text-red-600'>
+													Not In Use
+												</p>
+											)}
+										</div>
+										<input
+											className='w-full'
+											type='text'
+											name='lab'
+											id='lab'
+											readOnly
+											value={currentRole.lab.labName}
+										/>
+										<p className='mt-2 text-xs text-gray-400'>
+											Current lab cannot be changed.
+										</p>
+									</div>
+
+									<div className='flex-1'>
+										<label
+											htmlFor='statusSelection'
+											className='required-input-label'
+										>
+											Status
+										</label>
+										<select
+											className='w-full'
+											id='statusSelection'
+											required
+											value={status}
+											onChange={(e) => setStatus(e.target.value)}
+										>
+											<option value='Active'>Active</option>
+											<option value='Pending'>Pending</option>
+											<option value='Deactivated'>Deactivated</option>
+										</select>
+										<p className='mt-2 text-xs text-gray-400'>
+											User status for the current lab.
+										</p>
+									</div>
+
+									<div className='flex-1'>
+										<label
+											htmlFor='roleSelection'
+											className='required-input-label'
+										>
+											Role
+										</label>
+										<select
+											className='w-full'
+											id='roleSelection'
+											required
+											value={role}
+											onChange={(e) => setRole(e.target.value)}
+										>
+											<option value={Object.keys(ROLES_LIST)[2]}>
+												Postgraduate
+											</option>
+											<option value={Object.keys(ROLES_LIST)[3]}>
+												Undergraduate
+											</option>
+											<option value={Object.keys(ROLES_LIST)[4]}>Viewer</option>
+										</select>
+										<p className='mt-2 text-xs text-gray-400'>
+											User role for the current lab.
+										</p>
 									</div>
 								</div>
-
-								{isEdit && (
-									<div className='mb-9 flex'>
-										<div className='mr-3 flex-1'>
-											<label
-												htmlFor='statusSelection'
-												className='required-input-label'
-											>
-												Status
-											</label>
-											<select
-												className='w-full'
-												id='statusSelection'
-												required
-												value={status}
-												onChange={(e) => setStatus(e.target.value)}
-											>
-												<option value='Active'>Active</option>
-												<option value='Pending'>Pending</option>
-												<option value='Deactivated'>Deactivated</option>
-											</select>
-											<p className='mt-2 text-xs text-gray-400'>
-												User status for the current lab.
-											</p>
-										</div>
-
-										<div className='ml-3 flex-1'>
-											<label
-												htmlFor='roleSelection'
-												className='required-input-label'
-											>
-												Role
-											</label>
-											<select
-												className='w-full'
-												id='roleSelection'
-												required
-												value={role}
-												onChange={(e) => setRole(e.target.value)}
-											>
-												<option value={Object.keys(ROLES_LIST)[2]}>
-													Postgraduate
-												</option>
-												<option value={Object.keys(ROLES_LIST)[3]}>
-													Undergraduate
-												</option>
-												<option value={Object.keys(ROLES_LIST)[4]}>
-													Viewer
-												</option>
-											</select>
-											<p className='mt-2 text-xs text-gray-400'>
-												User role for the current lab.
-											</p>
-										</div>
-									</div>
-								)}
 
 								{isRemove ? (
 									<div className='flex items-center justify-end'>
@@ -287,29 +286,25 @@ const EditUserModal = ({
 									</div>
 								) : (
 									<div className='flex items-center justify-end'>
-										{isEdit && (
-											<span
-												onClick={() => setIsRemove(true)}
-												className='mr-auto cursor-pointer self-end text-sm font-medium text-red-600 transition hover:text-red-700'
-											>
-												Remove User
-											</span>
-										)}
+										<span
+											onClick={() => setIsRemove(true)}
+											className='mr-auto cursor-pointer self-end text-sm font-medium text-red-600 transition hover:text-red-700'
+										>
+											Remove User
+										</span>
 										<span
 											onClick={closeHandler}
 											className='cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'
 										>
-											{isEdit ? 'Cancel' : 'Close'}
+											Cancel
 										</span>
-										{isEdit && (
-											<button
-												className='ml-6 w-40'
-												type='submit'
-												disabled={!allowed}
-											>
-												Update
-											</button>
-										)}
+										<button
+											className='ml-6 w-40'
+											type='submit'
+											disabled={!allowed}
+										>
+											Update
+										</button>
 									</div>
 								)}
 							</form>

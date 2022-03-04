@@ -1,6 +1,9 @@
 const express = require('express')
 const router = express.Router()
 
+const ROLES_LIST = require('../config/roles_list')
+const verifyRoles = require('../middleware/verifyRoles')
+
 const {
 	getUsers,
 	getLabs,
@@ -11,13 +14,15 @@ const {
 } = require('../controllers/admin')
 
 // Users
-router.route('/users').get(getUsers)
+router.route('/users').get(verifyRoles(ROLES_LIST.admin), getUsers)
 
 // Labs
-router.route('/labs').get(getLabs)
-router.route('/lab').post(addLab)
-router.route('/lab-existing-user').post(addLabWithExistingUser)
-router.route('/lab').put(updateLab)
-router.route('/lab').delete(removeLab)
+router.route('/labs').get(verifyRoles(ROLES_LIST.admin), getLabs)
+router.route('/lab').post(verifyRoles(ROLES_LIST.admin), addLab)
+router
+	.route('/lab-existing-user')
+	.post(verifyRoles(ROLES_LIST.admin), addLabWithExistingUser)
+router.route('/lab').put(verifyRoles(ROLES_LIST.admin), updateLab)
+router.route('/lab').delete(verifyRoles(ROLES_LIST.admin), removeLab)
 
 module.exports = router

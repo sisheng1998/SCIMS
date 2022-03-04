@@ -7,6 +7,7 @@ import Pagination from '../../components/Pagination'
 import EditUserModal from './EditUserModal'
 import ViewUserModal from './ViewUserModal'
 import { PencilAltIcon } from '@heroicons/react/outline'
+import ROLES_LIST from '../../../../config/roles_list'
 
 const tableHeaders = [
 	{
@@ -219,7 +220,6 @@ const UsersTable = (props) => {
 											<td className='space-y-0.5 px-6 py-4'>
 												{user.roles.length !== 0
 													? user.roles
-															.filter((role) => role.lab.status === 'In Use')
 															.sort((a, b) =>
 																a.lab.labName.toLowerCase() >
 																b.lab.labName.toLowerCase()
@@ -232,12 +232,20 @@ const UsersTable = (props) => {
 																	className='flex items-center'
 																>
 																	<p>{role.lab.labName}</p>
-																	<button
-																		onClick={() => editUserHandler(user, role)}
-																		className='ml-2 text-gray-400 transition hover:text-indigo-700'
-																	>
-																		<PencilAltIcon className='h-5 w-5' />
-																	</button>
+																	{!(
+																		user.email === auth.email ||
+																		role.role === ROLES_LIST.admin ||
+																		role.role === ROLES_LIST.labOwner
+																	) && (
+																		<button
+																			onClick={() =>
+																				editUserHandler(user, role)
+																			}
+																			className='ml-2 text-gray-400 transition hover:text-indigo-700'
+																		>
+																			<PencilAltIcon className='h-5 w-5' />
+																		</button>
+																	)}
 																</div>
 															))
 													: '-'}

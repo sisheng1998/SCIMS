@@ -14,7 +14,7 @@ exports.getUsers = async (req, res, next) => {
 			'roles.lab',
 			'labName status'
 		)
-		const labs = await Lab.find({ status: 'In Use' }, 'labName')
+		const labs = await Lab.find({}, 'labName')
 
 		res.status(200).json({
 			success: true,
