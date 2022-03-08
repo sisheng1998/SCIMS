@@ -41,7 +41,7 @@ const LabCard = ({ role }) => {
 					<div>
 						<label
 							htmlFor='labName'
-							className='mb-0.5 font-normal text-gray-400'
+							className='mb-0.5 text-xs font-normal text-gray-400'
 						>
 							Name
 						</label>
@@ -73,12 +73,13 @@ const LabCard = ({ role }) => {
 
 				<div className='flex items-end justify-between'>
 					<div>
-						<label htmlFor='role' className='mb-0.5 font-normal text-gray-400'>
+						<label
+							htmlFor='role'
+							className='mb-0.5 text-xs font-normal text-gray-400'
+						>
 							Role
 						</label>
-						<p className='text-lg font-medium capitalize'>
-							{GetRoleName(role.role)}
-						</p>
+						<p className='font-medium capitalize'>{GetRoleName(role.role)}</p>
 					</div>
 
 					<p

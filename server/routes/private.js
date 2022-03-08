@@ -12,6 +12,8 @@ const {
 	addExistingUser,
 } = require('../controllers/user')
 
+const { getProfile } = require('../controllers/profile')
+
 // Users
 router.route('/users').post(verifyRoles(ROLES_LIST.viewer), getUsers)
 router.route('/user').post(verifyRoles(ROLES_LIST.labOwner), addUser)
@@ -20,5 +22,8 @@ router
 	.post(verifyRoles(ROLES_LIST.labOwner), addExistingUser)
 router.route('/user').put(verifyRoles(ROLES_LIST.labOwner), updateUser)
 router.route('/user').delete(verifyRoles(ROLES_LIST.labOwner), removeUser)
+
+// Profile
+router.route('/profile').get(verifyRoles(ROLES_LIST.viewer), getProfile)
 
 module.exports = router
