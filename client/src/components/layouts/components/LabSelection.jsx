@@ -28,6 +28,12 @@ const LabSelection = () => {
 	)
 
 	useEffect(() => {
+		setSelected(
+			isAdmin && currentLab === allLabs.lab._id ? allLabs : auth.roles[index]
+		)
+	}, [isAdmin, currentLab, auth.roles, index])
+
+	useEffect(() => {
 		localStorage.setItem('currentLab', selected.lab._id)
 		setAuth((prev) => {
 			return {

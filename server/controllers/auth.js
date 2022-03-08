@@ -4,6 +4,7 @@ const Lab = require('../models/Lab')
 const jwt = require('jsonwebtoken')
 const ErrorResponse = require('../utils/errorResponse')
 const sendEmail = require('../utils/sendEmail')
+const ROLES_LIST = require('../config/roles_list')
 
 exports.register = async (req, res, next) => {
 	const { name, email, altEmail, password, labId } = req.body
@@ -316,10 +317,19 @@ exports.applyNewLab = async (req, res, next) => {
 			return next(new ErrorResponse('Lab not found.', 404))
 		}
 
+		const isUserExisted =
+			foundLab.labUsers.some((user) => user._id.equals(foundUser._id)) ||
+			foundLab.labOwner.equals(foundUser._id)
+
+		if (isUserExisted) {
+			return next(new ErrorResponse('User existed.', 409))
+		}
+
 		await User.updateOne(foundUser, {
 			$push: {
 				roles: {
 					lab: labId,
+					role: ROLES_LIST.viewer,
 				},
 			},
 		})
