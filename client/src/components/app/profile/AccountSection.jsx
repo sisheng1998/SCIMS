@@ -2,7 +2,7 @@ import React from 'react'
 
 const AccountSection = ({ user, setRefresh }) => {
 	return (
-		<div className='mt-3 mb-16 rounded-lg border border-gray-300 bg-white p-6 shadow'>
+		<div className='mt-3 mb-12 rounded-lg border border-gray-300 bg-white p-6 shadow'>
 			<div className='flex items-end justify-between'>
 				<label htmlFor='email'>Email Address</label>
 				<p

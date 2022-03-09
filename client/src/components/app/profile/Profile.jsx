@@ -51,7 +51,7 @@ const Profile = () => {
 	) : (
 		<>
 			<Title title='Profile' hasButton={false} hasRefreshButton={false} />
-			<hr className='mb-12 border-gray-200' />
+			<hr className='mb-8 border-gray-200' />
 
 			<div className='mx-auto w-full max-w-3xl'>
 				<h4>Account Info</h4>
