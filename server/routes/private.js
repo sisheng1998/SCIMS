@@ -24,6 +24,6 @@ router.route('/user').put(verifyRoles(ROLES_LIST.labOwner), updateUser)
 router.route('/user').delete(verifyRoles(ROLES_LIST.labOwner), removeUser)
 
 // Profile
-router.route('/profile').get(verifyRoles(ROLES_LIST.viewer), getProfile)
+router.route('/profile').get(getProfile)
 
 module.exports = router
