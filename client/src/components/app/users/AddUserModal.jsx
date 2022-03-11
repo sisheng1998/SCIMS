@@ -242,11 +242,12 @@ const AddUserModal = ({
 										<div className='flex'>
 											<div className='mr-3 flex-1'>
 												<label htmlFor='name' className='required-input-label'>
-													Name
+													Full Name{' '}
+													<span className='text-xs'>(as per IC/Passport)</span>
 												</label>
 												<NameField
 													id='name'
-													placeholder='Enter name'
+													placeholder='Enter full name'
 													required={true}
 													value={name}
 													setValue={setName}
@@ -312,7 +313,7 @@ const AddUserModal = ({
 											<option value={Object.keys(ROLES_LIST)[3]}>
 												Undergraduate
 											</option>
-											<option value={Object.keys(ROLES_LIST)[4]}>Viewer</option>
+											<option value={Object.keys(ROLES_LIST)[4]}>Guest</option>
 										</select>
 										<p className='mt-2 text-xs text-gray-400'>
 											User role for the current lab.

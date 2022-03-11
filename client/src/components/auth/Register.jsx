@@ -206,11 +206,11 @@ const Register = () => {
 							</div>
 
 							<label htmlFor='name' className='required-input-label'>
-								Name
+								Full Name <span className='text-xs'>(as per IC/Passport)</span>
 							</label>
 							<NameField
 								id='name'
-								placeholder='Enter your name'
+								placeholder='Enter your full name'
 								required={true}
 								value={name}
 								setValue={setName}

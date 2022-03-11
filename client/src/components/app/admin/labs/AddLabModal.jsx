@@ -240,11 +240,12 @@ const AddLabModal = ({ users, openModal, setOpenModal, setAddLabSuccess }) => {
 										<div className='flex'>
 											<div className='mr-3 flex-1'>
 												<label htmlFor='name' className='required-input-label'>
-													Name
+													Full Name{' '}
+													<span className='text-xs'>(as per IC/Passport)</span>
 												</label>
 												<NameField
 													id='name'
-													placeholder='Enter name'
+													placeholder='Enter full name'
 													required={true}
 													value={name}
 													setValue={setName}

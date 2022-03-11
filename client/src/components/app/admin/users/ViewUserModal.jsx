@@ -29,7 +29,9 @@ const ViewUserModal = ({ user, openModal, setOpenModal }) => {
 
 					<div className='mb-6 flex space-x-6'>
 						<div className='flex-1'>
-							<label htmlFor='name'>Name</label>
+							<label htmlFor='name'>
+								Full Name <span className='text-xs'>(as per IC/Passport)</span>
+							</label>
 							<input
 								className='w-full'
 								type='text'

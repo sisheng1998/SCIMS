@@ -12,7 +12,7 @@ import ROLES_LIST from '../../../../config/roles_list'
 const tableHeaders = [
 	{
 		key: 'name',
-		label: 'Name',
+		label: 'Full Name',
 		sortable: true,
 	},
 	{

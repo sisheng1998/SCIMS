@@ -3,7 +3,9 @@ import React from 'react'
 const PersonalSection = ({ user, setRefresh }) => {
 	return (
 		<div className='mt-3 mb-12 rounded-lg border border-gray-300 bg-white p-6 shadow'>
-			<label htmlFor='name'>Name</label>
+			<label htmlFor='name'>
+				Full Name <span className='text-xs'>(as per IC/Passport)</span>
+			</label>
 			<input
 				className='mb-6 w-full'
 				type='text'

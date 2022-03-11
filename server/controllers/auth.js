@@ -329,7 +329,7 @@ exports.applyNewLab = async (req, res, next) => {
 			$push: {
 				roles: {
 					lab: labId,
-					role: ROLES_LIST.viewer,
+					role: ROLES_LIST.guest,
 				},
 			},
 		})

@@ -15,7 +15,7 @@ const {
 const { getProfile } = require('../controllers/profile')
 
 // Users
-router.route('/users').post(verifyRoles(ROLES_LIST.viewer), getUsers)
+router.route('/users').post(verifyRoles(ROLES_LIST.guest), getUsers)
 router.route('/user').post(verifyRoles(ROLES_LIST.labOwner), addUser)
 router
 	.route('/existing-user')

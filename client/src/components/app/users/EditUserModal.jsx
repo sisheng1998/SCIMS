@@ -142,7 +142,10 @@ const EditUserModal = ({
 							>
 								<div className='mb-6 flex'>
 									<div className='mr-3 flex-1'>
-										<label htmlFor='name'>Name</label>
+										<label htmlFor='name'>
+											Full Name{' '}
+											<span className='text-xs'>(as per IC/Passport)</span>
+										</label>
 										<input
 											className='w-full'
 											type='text'
@@ -252,7 +255,7 @@ const EditUserModal = ({
 														Undergraduate
 													</option>
 													<option value={Object.keys(ROLES_LIST)[4]}>
-														Viewer
+														Guest
 													</option>
 												</select>
 												<p className='mt-2 text-xs text-gray-400'>

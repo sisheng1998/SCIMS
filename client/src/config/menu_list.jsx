@@ -15,13 +15,13 @@ const MENU_LIST = [
 		text: 'Dashboard',
 		link: '/',
 		icon: <ViewGridIcon />,
-		minRole: ROLES_LIST.viewer,
+		minRole: ROLES_LIST.guest,
 	},
 	{
 		text: 'Inventory',
 		link: '/inventory',
 		icon: <CubeIcon />,
-		minRole: ROLES_LIST.viewer,
+		minRole: ROLES_LIST.guest,
 	},
 	{
 		text: 'Reports',
@@ -45,7 +45,7 @@ const MENU_LIST = [
 		text: 'Users',
 		link: '/users',
 		icon: <UsersIcon />,
-		minRole: ROLES_LIST.viewer,
+		minRole: ROLES_LIST.guest,
 	},
 	{
 		text: 'Settings',

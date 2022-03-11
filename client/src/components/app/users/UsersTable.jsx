@@ -10,7 +10,7 @@ import EditUserModal from './EditUserModal'
 const tableHeaders = [
 	{
 		key: 'name',
-		label: 'Name',
+		label: 'Full Name',
 		sortable: true,
 	},
 	{
@@ -147,7 +147,7 @@ const UsersTable = (props) => {
 						<option value='lab owner'>Lab Owner</option>
 						<option value='postgraduate'>Postgraduate</option>
 						<option value='undergraduate'>Undergraduate</option>
-						<option value='viewer'>Viewer</option>
+						<option value='guest'>Guest</option>
 					</select>
 				</div>
 			</Filters>
