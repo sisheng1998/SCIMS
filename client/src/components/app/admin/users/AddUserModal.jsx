@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Dialog } from '@headlessui/react'
-import USMEmailField from '../../../validations/USMEmailField'
-import LoginPasswordField from '../../../validations/LoginPasswordField'
-import NameField from '../../../validations/NameField'
-import EmailField from '../../../validations/EmailField'
 import UserSearchableSelect from '../../../others/SearchableSelect'
 import {
 	CheckIcon,
@@ -12,9 +8,9 @@ import {
 } from '@heroicons/react/outline'
 import useAuth from '../../../../hooks/useAuth'
 import ROLES_LIST from '../../../../config/roles_list'
-import PasswordGenerator from '../../../others/PasswordGenerator'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import { LabSearchableSelect } from '../../../others/SearchableSelect'
+import RegisterNewUser from '../../components/RegisterNewUser'
 
 const AddUserModal = ({
 	users,
@@ -212,80 +208,25 @@ const AddUserModal = ({
 										</p>
 									</div>
 								) : (
-									<>
-										<div className='flex'>
-											<div className='mr-3 flex-1'>
-												<label htmlFor='email' className='required-input-label'>
-													Email Address
-												</label>
-												<USMEmailField
-													placeholder='Enter USM email'
-													message='Only *@usm.my or *.usm.my are allowed.'
-													successMessage='Looks good!'
-													checkExist={false}
-													value={email}
-													setValue={setEmail}
-													validated={USMEmailValidated}
-													setValidated={setUSMEmailValidated}
-												/>
-											</div>
-
-											<div className='ml-3 flex-1'>
-												<div className='flex items-end justify-between'>
-													<label
-														htmlFor='password'
-														className='required-input-label'
-													>
-														Password
-													</label>
-													<PasswordGenerator />
-												</div>
-												<LoginPasswordField
-													placeholder='Enter strong password'
-													password={password}
-													setPassword={setPassword}
-													validated={passwordValidated}
-													setValidated={setPasswordValidated}
-												/>
-											</div>
-										</div>
-
-										<div className='flex'>
-											<div className='mr-3 flex-1'>
-												<label htmlFor='name' className='required-input-label'>
-													Full Name{' '}
-													<span className='text-xs'>(as per IC/Passport)</span>
-												</label>
-												<NameField
-													id='name'
-													placeholder='Enter full name'
-													required={true}
-													value={name}
-													setValue={setName}
-													validated={nameValidated}
-													setValidated={setNameValidated}
-												/>
-											</div>
-
-											<div className='ml-3 flex-1'>
-												<label
-													htmlFor='altEmail'
-													className='required-input-label'
-												>
-													Alternative Email Address
-												</label>
-												<EmailField
-													id='altEmail'
-													placeholder='Enter email'
-													message='Personal email is recommended.'
-													value={altEmail}
-													setValue={setAltEmail}
-													validated={emailValidated}
-													setValidated={setEmailValidated}
-												/>
-											</div>
-										</div>
-									</>
+									<RegisterNewUser
+										email={email}
+										setEmail={setEmail}
+										USMEmailValidated={USMEmailValidated}
+										setUSMEmailValidated={setUSMEmailValidated}
+										excludeStudent={false}
+										password={password}
+										setPassword={setPassword}
+										passwordValidated={passwordValidated}
+										setPasswordValidated={setPasswordValidated}
+										name={name}
+										setName={setName}
+										nameValidated={nameValidated}
+										setNameValidated={setNameValidated}
+										altEmail={altEmail}
+										setAltEmail={setAltEmail}
+										emailValidated={emailValidated}
+										setEmailValidated={setEmailValidated}
+									/>
 								)}
 
 								<div className='mb-9 flex'>
