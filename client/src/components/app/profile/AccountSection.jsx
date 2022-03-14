@@ -2,25 +2,31 @@ import React from 'react'
 
 const AccountSection = ({ user, setRefresh }) => {
 	return (
-		<div className='mt-3 mb-12 rounded-lg border border-gray-300 bg-white p-6 shadow'>
+		<div className='my-3 rounded-lg border border-gray-300 bg-white p-6 shadow'>
 			<div className='flex items-end justify-between'>
 				<label htmlFor='email'>Email Address</label>
-				<p
-					className={`mb-2 text-sm font-medium ${
-						user.isEmailVerified ? 'text-green-600' : 'text-red-600'
-					}`}
+				<button
+					className='mb-2 text-sm font-medium text-indigo-600 transition hover:text-indigo-700'
+					onClick={() => {}}
 				>
-					{user.isEmailVerified ? 'Verified' : 'Not Verified'}
-				</p>
+					Change Email
+				</button>
 			</div>
 			<input
-				className='mb-6 w-full'
+				className='mb-2 w-full'
 				type='text'
 				name='email'
 				id='email'
 				readOnly
 				value={user.email}
 			/>
+			<p
+				className={`mb-6 text-sm font-medium ${
+					user.isEmailVerified ? 'text-green-600' : 'text-red-600'
+				}`}
+			>
+				{user.isEmailVerified ? 'Verified' : 'Not Verified'}
+			</p>
 
 			<label htmlFor='password'>Password</label>
 			<button

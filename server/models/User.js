@@ -54,6 +54,14 @@ const UserSchema = new Schema(
 		resetPasswordToken: String,
 		resetPasswordExpire: Date,
 		refreshToken: String,
+		registeredAt: {
+			type: Date,
+			default: Date.now,
+		},
+		lastUpdated: {
+			type: Date,
+			default: Date.now,
+		},
 	},
 	{ collection: 'users' }
 )

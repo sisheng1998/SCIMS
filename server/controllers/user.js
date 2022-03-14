@@ -4,7 +4,7 @@ const User = require('../models/User')
 const ROLES_LIST = require('../config/roles_list')
 
 const UserInfo =
-	'name email altEmail isEmailVerified roles.lab roles.role roles.status'
+	'name email altEmail isEmailVerified registeredAt lastUpdated roles.lab roles.role roles.status'
 
 exports.getUsers = async (req, res, next) => {
 	const labId = req.body.labId
@@ -76,6 +76,9 @@ exports.addUser = async (req, res, next) => {
 			$push: {
 				labUsers: user._id,
 			},
+			$set: {
+				lastUpdated: Date.now(),
+			},
 		})
 
 		await user.save()
@@ -127,11 +130,17 @@ exports.addExistingUser = async (req, res, next) => {
 					status: 'Active',
 				},
 			},
+			$set: {
+				lastUpdated: Date.now(),
+			},
 		})
 
 		await Lab.updateOne(foundLab, {
 			$push: {
 				labUsers: userId,
+			},
+			$set: {
+				lastUpdated: Date.now(),
 			},
 		})
 
@@ -158,6 +167,7 @@ exports.updateUser = async (req, res, next) => {
 				$set: {
 					'roles.$[el].role': role,
 					'roles.$[el].status': status,
+					lastUpdated: Date.now(),
 				},
 			},
 			{ arrayFilters: [{ 'el.lab': labId }], new: true }
@@ -188,6 +198,9 @@ exports.removeUser = async (req, res, next) => {
 						lab: labId,
 					},
 				},
+				$set: {
+					lastUpdated: Date.now(),
+				},
 			}
 		)
 
@@ -196,6 +209,9 @@ exports.removeUser = async (req, res, next) => {
 			{
 				$pull: {
 					labUsers: userId,
+				},
+				$set: {
+					lastUpdated: Date.now(),
 				},
 			}
 		)

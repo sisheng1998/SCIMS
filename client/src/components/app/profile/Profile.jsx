@@ -5,6 +5,7 @@ import Title from '../components/Title'
 import AccountSection from './AccountSection'
 import PersonalSection from './PersonalSection'
 import LabsSection from './LabsSection'
+import FormatDate from '../../others/FormatDate'
 
 const Profile = () => {
 	const axiosPrivate = useAxiosPrivate()
@@ -50,12 +51,21 @@ const Profile = () => {
 		<LoadingScreen />
 	) : (
 		<>
-			<Title title='Profile' hasButton={false} hasRefreshButton={false} />
-			<hr className='mb-8 border-gray-200' />
+			<Title title='Profile' hasButton={false} hasRefreshButton={false}>
+				<p className='self-end text-sm text-gray-500'>
+					Last Updated:{' '}
+					<span className='font-semibold'>{FormatDate(user.lastUpdated)}</span>
+				</p>
+			</Title>
+			<hr className='mb-12 border-gray-200' />
 
 			<div className='mx-auto w-full max-w-3xl'>
 				<h4>Account Info</h4>
 				<AccountSection user={user} setRefresh={setRefresh} />
+				<p className='mb-12 text-sm text-gray-500'>
+					Registered At:{' '}
+					<span className='font-semibold'>{FormatDate(user.registeredAt)}</span>
+				</p>
 
 				<h4>Personal Info</h4>
 				<PersonalSection user={user} setRefresh={setRefresh} />

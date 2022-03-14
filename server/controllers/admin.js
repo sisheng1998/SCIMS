@@ -5,7 +5,7 @@ const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
 
 const UserInfo =
-	'name email altEmail isEmailVerified roles.lab roles.role roles.status'
+	'name email altEmail isEmailVerified registeredAt lastUpdated roles.lab roles.role roles.status'
 
 // User
 exports.getUsers = async (req, res, next) => {
@@ -147,6 +147,9 @@ exports.addLabWithExistingUser = async (req, res, next) => {
 					status: 'Active',
 				},
 			},
+			$set: {
+				lastUpdated: Date.now(),
+			},
 		})
 
 		res.status(201).json({
@@ -190,6 +193,9 @@ exports.updateLab = async (req, res, next) => {
 							lab: labId,
 						},
 					},
+					$set: {
+						lastUpdated: Date.now(),
+					},
 				}
 			)
 
@@ -207,6 +213,7 @@ exports.updateLab = async (req, res, next) => {
 						$set: {
 							'roles.$[el].role': ROLES_LIST.labOwner,
 							'roles.$[el].status': 'Active',
+							lastUpdated: Date.now(),
 						},
 					},
 					{ arrayFilters: [{ 'el.lab': labId }], new: true }
@@ -226,6 +233,9 @@ exports.updateLab = async (req, res, next) => {
 							status: 'Active',
 						},
 					},
+					$set: {
+						lastUpdated: Date.now(),
+					},
 				})
 			}
 		}
@@ -237,6 +247,8 @@ exports.updateLab = async (req, res, next) => {
 		if (foundLab.status !== status) {
 			foundLab.status = status
 		}
+
+		foundLab.lastUpdated = Date.now()
 
 		await foundLab.save()
 
@@ -276,6 +288,9 @@ exports.removeLab = async (req, res, next) => {
 					roles: {
 						lab: labId,
 					},
+				},
+				$set: {
+					lastUpdated: Date.now(),
 				},
 			}
 		)

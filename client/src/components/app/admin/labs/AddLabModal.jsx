@@ -109,11 +109,11 @@ const AddLabModal = ({ users, openModal, setOpenModal, setAddLabSuccess }) => {
 		setName('')
 		setAltEmail('')
 		setOwnerId('')
-		setLabName('')
 	}
 
 	const closeHandler = () => {
 		resetInputField()
+		setLabName('')
 		setSelectUser(true)
 
 		if (success) {

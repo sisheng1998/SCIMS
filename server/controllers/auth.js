@@ -38,6 +38,9 @@ exports.register = async (req, res, next) => {
 			$push: {
 				labUsers: user._id,
 			},
+			$set: {
+				lastUpdated: Date.now(),
+			},
 		})
 
 		const emailVerificationToken = user.getEmailVerificationToken()
@@ -71,6 +74,7 @@ exports.emailVerification = async (req, res, next) => {
 
 		user.emailVerificationToken = undefined
 		user.isEmailVerified = true
+		user.lastUpdated = Date.now()
 
 		await user.save()
 
@@ -218,6 +222,7 @@ exports.resetPassword = async (req, res, next) => {
 		user.password = req.body.password
 		user.resetPasswordToken = undefined
 		user.resetPasswordExpire = undefined
+		user.lastUpdated = Date.now()
 
 		await user.save()
 
@@ -332,11 +337,17 @@ exports.applyNewLab = async (req, res, next) => {
 					role: ROLES_LIST.guest,
 				},
 			},
+			$set: {
+				lastUpdated: Date.now(),
+			},
 		})
 
 		await Lab.updateOne(foundLab, {
 			$push: {
 				labUsers: foundUser._id,
+			},
+			$set: {
+				lastUpdated: Date.now(),
 			},
 		})
 

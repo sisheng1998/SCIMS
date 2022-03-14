@@ -22,6 +22,14 @@ const LabSchema = new Schema(
 			type: String,
 			default: 'In Use',
 		},
+		createdAt: {
+			type: Date,
+			default: Date.now,
+		},
+		lastUpdated: {
+			type: Date,
+			default: Date.now,
+		},
 	},
 	{ collection: 'labs' }
 )

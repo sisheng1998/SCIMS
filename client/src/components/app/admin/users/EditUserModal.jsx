@@ -7,6 +7,7 @@ import {
 } from '@heroicons/react/outline'
 import ROLES_LIST from '../../../../config/roles_list'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
+import FormatDate from '../../../others/FormatDate'
 
 function getKeyByValue(value) {
 	return Object.keys(ROLES_LIST).find((key) => ROLES_LIST[key] === value)
@@ -192,7 +193,7 @@ const EditUserModal = ({
 									</div>
 								</div>
 
-								<div className='mb-9 flex space-x-6'>
+								<div className='mb-6 flex space-x-6'>
 									<div className='flex-1'>
 										<div className='flex items-end justify-between'>
 											<label htmlFor='lab'>Current Lab</label>
@@ -264,6 +265,21 @@ const EditUserModal = ({
 											User role for the current lab.
 										</p>
 									</div>
+								</div>
+
+								<div className='mb-6 flex items-center justify-between space-x-6 text-sm text-gray-500'>
+									<p>
+										Registered At:{' '}
+										<span className='font-semibold'>
+											{FormatDate(user.registeredAt)}
+										</span>
+									</p>
+									<p>
+										Last Updated:{' '}
+										<span className='font-semibold'>
+											{FormatDate(user.lastUpdated)}
+										</span>
+									</p>
 								</div>
 
 								{isRemove ? (

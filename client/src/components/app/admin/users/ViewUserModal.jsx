@@ -2,6 +2,7 @@ import React from 'react'
 import { Dialog } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import GetRoleName from '../../../others/GetRoleName'
+import FormatDate from '../../../others/FormatDate'
 
 const tableHeaders = ['Name', 'Status', 'Role']
 
@@ -77,7 +78,7 @@ const ViewUserModal = ({ user, openModal, setOpenModal }) => {
 					</div>
 
 					<label htmlFor='lab'>Labs</label>
-					<div className='mb-9 overflow-hidden rounded-lg border border-gray-300 bg-gray-50 pb-3'>
+					<div className='mb-6 overflow-hidden rounded-lg border border-gray-300 bg-gray-50 pb-3'>
 						<div className='max-h-48 overflow-x-auto'>
 							<div className='border-b border-gray-200'>
 								<table className='min-w-full divide-y divide-gray-200'>
@@ -150,6 +151,21 @@ const ViewUserModal = ({ user, openModal, setOpenModal }) => {
 								</table>
 							</div>
 						</div>
+					</div>
+
+					<div className='mb-6 flex items-center justify-between space-x-6 text-sm text-gray-500'>
+						<p>
+							Registered At:{' '}
+							<span className='font-semibold'>
+								{FormatDate(user.registeredAt)}
+							</span>
+						</p>
+						<p>
+							Last Updated:{' '}
+							<span className='font-semibold'>
+								{FormatDate(user.lastUpdated)}
+							</span>
+						</p>
 					</div>
 
 					<div className='flex items-center justify-end'>

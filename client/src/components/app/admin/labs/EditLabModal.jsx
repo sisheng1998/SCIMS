@@ -8,6 +8,7 @@ import {
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import UserSearchableSelect from '../../../others/SearchableSelect'
 import LabNameField from '../../../validations/LabNameField'
+import FormatDate from '../../../others/FormatDate'
 
 const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 	const axiosPrivate = useAxiosPrivate()
@@ -230,7 +231,7 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 									</div>
 								</div>
 
-								<div className='mb-9 flex'>
+								<div className='mb-6 flex'>
 									<div className='mr-3 flex-1'>
 										<label htmlFor='numOfUsers'>Number of Users</label>
 										<input
@@ -244,6 +245,21 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 									</div>
 
 									<div className='ml-3 flex-1'></div>
+								</div>
+
+								<div className='mb-6 flex items-center justify-between space-x-6 text-sm text-gray-500'>
+									<p>
+										Created At:{' '}
+										<span className='font-semibold'>
+											{FormatDate(lab.createdAt)}
+										</span>
+									</p>
+									<p>
+										Last Updated:{' '}
+										<span className='font-semibold'>
+											{FormatDate(lab.lastUpdated)}
+										</span>
+									</p>
 								</div>
 
 								{isRemove ? (
