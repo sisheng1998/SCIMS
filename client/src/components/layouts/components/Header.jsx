@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Logo from '../../../images/Logo'
 import LabSelection from './LabSelection'
 import Search from './Search'
 import Notification from './Notification'
@@ -15,12 +16,7 @@ const Header = () => {
 		<header className='fixed top-0 left-0 right-0 z-10 flex items-center justify-between border-b border-gray-300 bg-white py-4 px-6 shadow-sm xl:px-4'>
 			<div className='mr-6 flex items-center'>
 				<Link className='mr-4' to={isAdmin ? '/admin' : '/'}>
-					<img
-						className='h-8'
-						src='/scims-logo.svg'
-						alt='SCIMS Logo'
-						draggable='false'
-					/>
+					<Logo className='h-8' />
 				</Link>
 
 				<LabSelection />
