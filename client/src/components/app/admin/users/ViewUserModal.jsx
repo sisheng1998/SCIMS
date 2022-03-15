@@ -72,7 +72,7 @@ const ViewUserModal = ({ user, openModal, setOpenModal }) => {
 								name='altEmail'
 								id='altEmail'
 								readOnly
-								value={user.altEmail}
+								value={user.altEmail || '-'}
 							/>
 						</div>
 					</div>

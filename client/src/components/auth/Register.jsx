@@ -7,6 +7,7 @@ import StrongPasswordField from '../validations/StrongPasswordField'
 import NameField from '../validations/NameField'
 import EmailField from '../validations/EmailField'
 import LabSelectionField from '../validations/LabSelectionField'
+import MatricNoField from '../validations/MatricNoField'
 import {
 	ArrowRightIcon,
 	ArrowLeftIcon,
@@ -53,12 +54,14 @@ const Register = () => {
 	const [name, setName] = useState('')
 	const [altEmail, setAltEmail] = useState('')
 	const [labId, setLabId] = useState('')
+	const [matricNo, setMatricNo] = useState('')
 
 	const [USMEmailValidated, setUSMEmailValidated] = useState(false)
 	const [passwordValidated, setPasswordValidated] = useState(false)
 	const [nameValidated, setNameValidated] = useState(false)
 	const [emailValidated, setEmailValidated] = useState(false)
 	const [labValidated, setLabValidated] = useState(false)
+	const [matricNoValidated, setMatricNoValidated] = useState(false)
 
 	const [allowed, setAllowed] = useState(false)
 	const [nextStep, setNextStep] = useState(false)
@@ -79,17 +82,15 @@ const Register = () => {
 		try {
 			await axios.post(
 				'/api/auth/register',
-				{ name, email, altEmail, password, labId },
+				{ name, email, altEmail, password, labId, matricNo },
 				config
 			)
 			setSuccess(true)
 		} catch (error) {
 			if (error.response?.status === 409) {
-				if (
-					error.response.data.error === 'Alternative email address existed.'
-				) {
+				if (error.response.data.error === 'Matric number existed.') {
 					setErrorMessage(
-						'An account with this alternative email already exists.'
+						'An account with this matric number or staff number already exists.'
 					)
 				} else {
 					setErrorMessage('An account with this email already exists.')
@@ -104,17 +105,20 @@ const Register = () => {
 
 	useEffect(() => {
 		setErrorMessage('')
-	}, [email, password, name, altEmail, labId])
+	}, [email, password, name, altEmail, labId, matricNo])
 
 	useEffect(() => {
-		setAllowNextStep(USMEmailValidated && passwordValidated)
+		setAllowNextStep(
+			matricNoValidated && USMEmailValidated && passwordValidated
+		)
 
 		setAllowed(
 			USMEmailValidated &&
 				passwordValidated &&
 				nameValidated &&
 				emailValidated &&
-				labValidated
+				labValidated &&
+				matricNoValidated
 		)
 	}, [
 		USMEmailValidated,
@@ -122,6 +126,7 @@ const Register = () => {
 		nameValidated,
 		emailValidated,
 		labValidated,
+		matricNoValidated,
 	])
 
 	return (
@@ -159,6 +164,17 @@ const Register = () => {
 						autoComplete='off'
 					>
 						<div className={!nextStep ? 'block' : 'hidden'}>
+							<label htmlFor='matricNo' className='required-input-label'>
+								Matric/Staff Number
+							</label>
+							<MatricNoField
+								placeholder='Enter your matric/staff number'
+								value={matricNo}
+								setValue={setMatricNo}
+								validated={matricNoValidated}
+								setValidated={setMatricNoValidated}
+							/>
+
 							<label htmlFor='email' className='required-input-label'>
 								Email Address
 							</label>

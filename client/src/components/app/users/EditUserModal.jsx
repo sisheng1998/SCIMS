@@ -179,7 +179,7 @@ const EditUserModal = ({
 											name='altEmail'
 											id='altEmail'
 											readOnly
-											value={user.altEmail}
+											value={user.altEmail || '-'}
 										/>
 									</div>
 

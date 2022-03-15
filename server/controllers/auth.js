@@ -7,9 +7,9 @@ const sendEmail = require('../utils/sendEmail')
 const ROLES_LIST = require('../config/roles_list')
 
 exports.register = async (req, res, next) => {
-	const { name, email, altEmail, password, labId } = req.body
+	const { name, email, altEmail, password, labId, matricNo } = req.body
 
-	if (!name || !email || !altEmail || !password || !labId) {
+	if (!name || !email || !altEmail || !password || !labId || !matricNo) {
 		return next(new ErrorResponse('Missing value for required field.', 400))
 	}
 
@@ -29,6 +29,7 @@ exports.register = async (req, res, next) => {
 			email,
 			altEmail,
 			password,
+			matricNo,
 			roles: {
 				lab: foundLab._id,
 			},
@@ -49,8 +50,8 @@ exports.register = async (req, res, next) => {
 
 		sendVerificationEmail(user, emailVerificationToken, res, next)
 	} catch (error) {
-		if (error.code === 11000) {
-			return next(new ErrorResponse('Alternative email address existed.', 409))
+		if (error.code === 11000 && error.keyPattern.hasOwnProperty('matricNo')) {
+			return next(new ErrorResponse('Matric number existed.', 409))
 		}
 
 		next(error)

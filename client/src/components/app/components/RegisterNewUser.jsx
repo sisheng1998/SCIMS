@@ -3,7 +3,7 @@ import USMEmailField from '../../validations/USMEmailField'
 import PasswordGenerator from '../../others/PasswordGenerator'
 import LoginPasswordField from '../../validations/LoginPasswordField'
 import NameField from '../../validations/NameField'
-import EmailField from '../../validations/EmailField'
+import MatricNoField from '../../validations/MatricNoField'
 
 const RegisterNewUser = ({
 	email,
@@ -19,15 +19,15 @@ const RegisterNewUser = ({
 	setName,
 	nameValidated,
 	setNameValidated,
-	altEmail,
-	setAltEmail,
-	emailValidated,
-	setEmailValidated,
+	matricNo,
+	setMatricNo,
+	matricNoValidated,
+	setMatricNoValidated,
 }) => {
 	return (
 		<>
-			<div className='flex'>
-				<div className='mr-3 flex-1'>
+			<div className='flex space-x-6'>
+				<div className='flex-1'>
 					<label htmlFor='email' className='required-input-label'>
 						Email Address
 					</label>
@@ -48,7 +48,7 @@ const RegisterNewUser = ({
 					/>
 				</div>
 
-				<div className='ml-3 flex-1'>
+				<div className='flex-1'>
 					<div className='flex items-end justify-between'>
 						<label htmlFor='password' className='required-input-label'>
 							Password
@@ -65,8 +65,21 @@ const RegisterNewUser = ({
 				</div>
 			</div>
 
-			<div className='flex'>
-				<div className='mr-3 flex-1'>
+			<div className='flex space-x-6'>
+				<div className='flex-1'>
+					<label htmlFor='matricNo' className='required-input-label'>
+						Matric/Staff Number
+					</label>
+					<MatricNoField
+						placeholder='Enter your matric/staff number'
+						value={matricNo}
+						setValue={setMatricNo}
+						validated={matricNoValidated}
+						setValidated={setMatricNoValidated}
+					/>
+				</div>
+
+				<div className='flex-1'>
 					<label htmlFor='name' className='required-input-label'>
 						Full Name <span className='text-xs'>(as per IC/Passport)</span>
 					</label>
@@ -78,21 +91,6 @@ const RegisterNewUser = ({
 						setValue={setName}
 						validated={nameValidated}
 						setValidated={setNameValidated}
-					/>
-				</div>
-
-				<div className='ml-3 flex-1'>
-					<label htmlFor='altEmail' className='required-input-label'>
-						Alternative Email Address
-					</label>
-					<EmailField
-						id='altEmail'
-						placeholder='Enter email'
-						message='Personal email is recommended.'
-						value={altEmail}
-						setValue={setAltEmail}
-						validated={emailValidated}
-						setValidated={setEmailValidated}
 					/>
 				</div>
 			</div>

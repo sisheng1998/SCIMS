@@ -18,7 +18,7 @@ const AddLabModal = ({ users, openModal, setOpenModal, setAddLabSuccess }) => {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [name, setName] = useState('')
-	const [altEmail, setAltEmail] = useState('')
+	const [matricNo, setMatricNo] = useState('')
 	const [ownerId, setOwnerId] = useState('')
 	const [labName, setLabName] = useState('')
 
@@ -26,7 +26,7 @@ const AddLabModal = ({ users, openModal, setOpenModal, setAddLabSuccess }) => {
 	const [USMEmailValidated, setUSMEmailValidated] = useState(false)
 	const [passwordValidated, setPasswordValidated] = useState(false)
 	const [nameValidated, setNameValidated] = useState(false)
-	const [emailValidated, setEmailValidated] = useState(false)
+	const [matricNoValidated, setMatricNoValidated] = useState(false)
 
 	const [allowed, setAllowed] = useState(false)
 	const [selectUser, setSelectUser] = useState(true)
@@ -46,22 +46,20 @@ const AddLabModal = ({ users, openModal, setOpenModal, setAddLabSuccess }) => {
 				await axiosPrivate.post('/api/admin/lab', {
 					name,
 					email,
-					altEmail,
 					password,
+					matricNo,
 					labName,
 				})
 			}
 			setSuccess(true)
 		} catch (error) {
 			if (error.response?.status === 409) {
-				if (
-					error.response.data.error === 'Alternative email address existed.'
-				) {
-					setErrorMessage(
-						'An account with this alternative email already exists.'
-					)
-				} else if (error.response.data.error === 'Lab name existed.') {
+				if (error.response.data.error === 'Lab name existed.') {
 					setErrorMessage('A lab with this name already exists.')
+				} else if (error.response.data.error === 'Matric number existed.') {
+					setErrorMessage(
+						'An account with this matric number or staff number already exists.'
+					)
 				} else {
 					setErrorMessage('An account with this email already exists.')
 				}
@@ -75,7 +73,7 @@ const AddLabModal = ({ users, openModal, setOpenModal, setAddLabSuccess }) => {
 
 	useEffect(() => {
 		setErrorMessage('')
-	}, [email, password, name, altEmail, ownerId, labName])
+	}, [email, password, name, matricNo, ownerId, labName])
 
 	useEffect(() => {
 		if (selectUser) {
@@ -85,7 +83,7 @@ const AddLabModal = ({ users, openModal, setOpenModal, setAddLabSuccess }) => {
 				USMEmailValidated &&
 					passwordValidated &&
 					nameValidated &&
-					emailValidated &&
+					matricNoValidated &&
 					labNameValidated
 			)
 		}
@@ -93,7 +91,7 @@ const AddLabModal = ({ users, openModal, setOpenModal, setAddLabSuccess }) => {
 		USMEmailValidated,
 		passwordValidated,
 		nameValidated,
-		emailValidated,
+		matricNoValidated,
 		selectUser,
 		ownerId,
 		labNameValidated,
@@ -103,7 +101,7 @@ const AddLabModal = ({ users, openModal, setOpenModal, setAddLabSuccess }) => {
 		setEmail('')
 		setPassword('')
 		setName('')
-		setAltEmail('')
+		setMatricNo('')
 		setOwnerId('')
 	}
 
@@ -208,10 +206,10 @@ const AddLabModal = ({ users, openModal, setOpenModal, setAddLabSuccess }) => {
 										setName={setName}
 										nameValidated={nameValidated}
 										setNameValidated={setNameValidated}
-										altEmail={altEmail}
-										setAltEmail={setAltEmail}
-										emailValidated={emailValidated}
-										setEmailValidated={setEmailValidated}
+										matricNo={matricNo}
+										setMatricNo={setMatricNo}
+										matricNoValidated={matricNoValidated}
+										setMatricNoValidated={setMatricNoValidated}
 									/>
 								)}
 

@@ -4,7 +4,7 @@ const User = require('../models/User')
 const ROLES_LIST = require('../config/roles_list')
 
 const UserInfo =
-	'name email altEmail isEmailVerified registeredAt lastUpdated roles.lab roles.role roles.status'
+	'name email altEmail matricNo isEmailVerified registeredAt lastUpdated roles.lab roles.role roles.status'
 
 exports.getUsers = async (req, res, next) => {
 	const labId = req.body.labId
@@ -42,9 +42,9 @@ exports.getUsers = async (req, res, next) => {
 }
 
 exports.addUser = async (req, res, next) => {
-	const { name, email, altEmail, password, labId, role } = req.body
+	const { name, email, matricNo, password, labId, role } = req.body
 
-	if (!name || !email || !altEmail || !password || !labId || !role) {
+	if (!name || !email || !matricNo || !password || !labId || !role) {
 		return next(new ErrorResponse('Missing value for required field.', 400))
 	}
 
@@ -62,7 +62,7 @@ exports.addUser = async (req, res, next) => {
 		const user = await User.create({
 			name,
 			email,
-			altEmail,
+			matricNo,
 			password,
 			roles: {
 				lab: foundLab._id,
@@ -88,8 +88,8 @@ exports.addUser = async (req, res, next) => {
 			data: 'New user created.',
 		})
 	} catch (error) {
-		if (error.code === 11000) {
-			return next(new ErrorResponse('Alternative email address existed.', 409))
+		if (error.code === 11000 && error.keyPattern.hasOwnProperty('matricNo')) {
+			return next(new ErrorResponse('Matric number existed.', 409))
 		}
 
 		next(error)

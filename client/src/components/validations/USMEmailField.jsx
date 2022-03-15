@@ -38,7 +38,7 @@ const USMEmailField = (props) => {
 				placeholder={props.placeholder || 'Enter your email'}
 				required
 				value={props.value}
-				onChange={(e) => props.setValue(e.target.value)}
+				onChange={(e) => props.setValue(e.target.value.toLowerCase())}
 			/>
 
 			<p className='mt-2 text-xs text-gray-400'>

@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 
-const EMAIL_REGEX = /^[A-Za-z]+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/
+const MATRIC_REGEX = /^[a-zA-Z0-9-_/]*$/
 
-const EmailField = (props) => {
+const MatricNoField = (props) => {
 	useEffect(() => {
-		const result = EMAIL_REGEX.test(props.value)
-		props.setValidated(result)
+		const result = MATRIC_REGEX.test(props.value)
+		props.setValidated(result && props.value.length >= 6)
 	}, [props])
 
 	return (
@@ -14,25 +14,27 @@ const EmailField = (props) => {
 				className={`w-full ${
 					!props.value ? '' : props.validated ? 'input-valid' : 'input-invalid'
 				}`}
-				type='email'
-				id={props.id}
+				type='text'
+				id='matricNo'
 				placeholder={props.placeholder}
 				required
 				value={props.value}
-				onChange={(e) => props.setValue(e.target.value.toLowerCase())}
+				onChange={(e) => props.setValue(e.target.value)}
 			/>
 
 			<p className='mt-2 text-xs text-gray-400'>
 				{!props.value ? (
-					props.message
+					<span>Matric number or staff number is required.</span>
 				) : props.validated ? (
 					<span className='text-green-600'>Looks good!</span>
 				) : (
-					<span className='text-red-600'>Please enter a valid email.</span>
+					<span className='text-red-600'>
+						Please enter a valid matric number or staff number.
+					</span>
 				)}
 			</p>
 		</div>
 	)
 }
 
-export default EmailField
+export default MatricNoField

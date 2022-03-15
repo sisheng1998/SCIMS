@@ -4,7 +4,7 @@ const User = require('../models/User')
 const ROLES_LIST = require('../config/roles_list')
 
 const UserInfo =
-	'name email altEmail isEmailVerified registeredAt lastUpdated roles.lab roles.role roles.status'
+	'name email altEmail matricNo isEmailVerified registeredAt lastUpdated roles.lab roles.role roles.status'
 
 exports.getProfile = async (req, res, next) => {
 	try {

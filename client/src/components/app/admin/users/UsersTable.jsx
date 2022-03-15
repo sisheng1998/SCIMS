@@ -11,6 +11,11 @@ import ROLES_LIST from '../../../../config/roles_list'
 
 const tableHeaders = [
 	{
+		key: 'matricNo',
+		label: 'Matric/Staff No.',
+		sortable: true,
+	},
+	{
 		key: 'name',
 		label: 'Full Name',
 		sortable: true,
@@ -208,6 +213,7 @@ const UsersTable = (props) => {
 								) : (
 									currentItems.map((user) => (
 										<tr key={user._id}>
+											<td className='px-6 py-4'>{user.matricNo}</td>
 											<td className='px-6 py-4'>{user.name}</td>
 											<td className='px-6 py-4'>{user.email}</td>
 											<td className='px-6 py-4'>

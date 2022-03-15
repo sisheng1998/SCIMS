@@ -5,7 +5,7 @@ const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
 
 const UserInfo =
-	'name email altEmail isEmailVerified registeredAt lastUpdated roles.lab roles.role roles.status'
+	'name email altEmail matricNo isEmailVerified registeredAt lastUpdated roles.lab roles.role roles.status'
 
 // User
 exports.getUsers = async (req, res, next) => {
@@ -43,9 +43,9 @@ exports.getLabs = async (req, res, next) => {
 }
 
 exports.addLab = async (req, res, next) => {
-	const { name, email, altEmail, password, labName } = req.body
+	const { name, email, matricNo, password, labName } = req.body
 
-	if (!name || !email || !altEmail || !password || !labName) {
+	if (!name || !email || !matricNo || !password || !labName) {
 		return next(new ErrorResponse('Missing value for required field.', 400))
 	}
 
@@ -73,7 +73,7 @@ exports.addLab = async (req, res, next) => {
 				{
 					name,
 					email,
-					altEmail,
+					matricNo,
 					password,
 					roles: {
 						lab: lab[0]._id,
@@ -108,12 +108,10 @@ exports.addLab = async (req, res, next) => {
 		session.endSession()
 
 		if (error.code === 11000) {
-			if (error.keyPattern.hasOwnProperty('altEmail')) {
-				return next(
-					new ErrorResponse('Alternative email address existed.', 409)
-				)
-			} else if (error.keyPattern.hasOwnProperty('labName')) {
+			if (error.keyPattern.hasOwnProperty('labName')) {
 				return next(new ErrorResponse('Lab name existed.', 409))
+			} else if (error.keyPattern.hasOwnProperty('matricNo')) {
+				return next(new ErrorResponse('Matric number existed.', 409))
 			}
 		}
 
