@@ -7,9 +7,9 @@ const sendEmail = require('../utils/sendEmail')
 const ROLES_LIST = require('../config/roles_list')
 
 exports.register = async (req, res, next) => {
-	const { name, email, altEmail, password, labId, matricNo } = req.body
+	const { name, email, password, labId, matricNo } = req.body
 
-	if (!name || !email || !altEmail || !password || !labId || !matricNo) {
+	if (!name || !email || !password || !labId || !matricNo) {
 		return next(new ErrorResponse('Missing value for required field.', 400))
 	}
 
@@ -27,7 +27,6 @@ exports.register = async (req, res, next) => {
 		const user = await User.create({
 			name,
 			email,
-			altEmail,
 			password,
 			matricNo,
 			roles: {

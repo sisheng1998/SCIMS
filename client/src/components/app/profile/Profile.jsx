@@ -57,7 +57,6 @@ const Profile = () => {
 					<span className='font-semibold'>{FormatDate(user.lastUpdated)}</span>
 				</p>
 			</Title>
-			<hr className='mb-6 border-gray-200' />
 
 			<div className='mx-auto w-full max-w-3xl'>
 				<h4>Account Info</h4>

@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import Title from '../components/Title'
-import ImageDropZone from '../../others/ImageDropZone'
-import RenderImage from '../../others/RenderImage'
+import ImageDropZone from '../components/ImageDropZone'
+import RenderImage from '../components/RenderImage'
+import SampleImages from '../components/SampleImages'
 
 const Settings = () => {
 	const navigate = useNavigate()
@@ -20,12 +21,14 @@ const Settings = () => {
 	return (
 		<>
 			<Title title='Settings' hasButton={false} hasRefreshButton={false} />
-			<hr className='mb-6 border-gray-200' />
 
 			<div className='auth-card mx-auto'>
-				<label htmlFor='profilePic' className='required-input-label'>
-					Profile Picture
-				</label>
+				<div className='flex items-end justify-between'>
+					<label htmlFor='profilePic' className='required-input-label'>
+						Profile Picture
+					</label>
+					{!image && <SampleImages />}
+				</div>
 
 				{!image ? (
 					<ImageDropZone setImage={setImage} />

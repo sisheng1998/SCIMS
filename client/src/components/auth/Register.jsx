@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom'
 import USMEmailField from '../validations/USMEmailField'
 import StrongPasswordField from '../validations/StrongPasswordField'
 import NameField from '../validations/NameField'
-import EmailField from '../validations/EmailField'
 import LabSelectionField from '../validations/LabSelectionField'
 import MatricNoField from '../validations/MatricNoField'
 import {
@@ -52,14 +51,12 @@ const Register = () => {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [name, setName] = useState('')
-	const [altEmail, setAltEmail] = useState('')
 	const [labId, setLabId] = useState('')
 	const [matricNo, setMatricNo] = useState('')
 
 	const [USMEmailValidated, setUSMEmailValidated] = useState(false)
 	const [passwordValidated, setPasswordValidated] = useState(false)
 	const [nameValidated, setNameValidated] = useState(false)
-	const [emailValidated, setEmailValidated] = useState(false)
 	const [labValidated, setLabValidated] = useState(false)
 	const [matricNoValidated, setMatricNoValidated] = useState(false)
 
@@ -82,7 +79,7 @@ const Register = () => {
 		try {
 			await axios.post(
 				'/api/auth/register',
-				{ name, email, altEmail, password, labId, matricNo },
+				{ name, email, password, labId, matricNo },
 				config
 			)
 			setSuccess(true)
@@ -105,18 +102,15 @@ const Register = () => {
 
 	useEffect(() => {
 		setErrorMessage('')
-	}, [email, password, name, altEmail, labId, matricNo])
+	}, [email, password, name, labId, matricNo])
 
 	useEffect(() => {
-		setAllowNextStep(
-			matricNoValidated && USMEmailValidated && passwordValidated
-		)
+		setAllowNextStep(USMEmailValidated && passwordValidated)
 
 		setAllowed(
 			USMEmailValidated &&
 				passwordValidated &&
 				nameValidated &&
-				emailValidated &&
 				labValidated &&
 				matricNoValidated
 		)
@@ -124,7 +118,6 @@ const Register = () => {
 		USMEmailValidated,
 		passwordValidated,
 		nameValidated,
-		emailValidated,
 		labValidated,
 		matricNoValidated,
 	])
@@ -164,17 +157,6 @@ const Register = () => {
 						autoComplete='off'
 					>
 						<div className={!nextStep ? 'block' : 'hidden'}>
-							<label htmlFor='matricNo' className='required-input-label'>
-								Matric/Staff Number
-							</label>
-							<MatricNoField
-								placeholder='Enter your matric/staff number'
-								value={matricNo}
-								setValue={setMatricNo}
-								validated={matricNoValidated}
-								setValidated={setMatricNoValidated}
-							/>
-
 							<label htmlFor='email' className='required-input-label'>
 								Email Address
 							</label>
@@ -221,6 +203,17 @@ const Register = () => {
 								</p>
 							</div>
 
+							<label htmlFor='matricNo' className='required-input-label'>
+								Matric/Staff Number
+							</label>
+							<MatricNoField
+								placeholder='Enter your matric/staff number'
+								value={matricNo}
+								setValue={setMatricNo}
+								validated={matricNoValidated}
+								setValidated={setMatricNoValidated}
+							/>
+
 							<label htmlFor='name' className='required-input-label'>
 								Full Name <span className='text-xs'>(as per IC/Passport)</span>
 							</label>
@@ -232,19 +225,6 @@ const Register = () => {
 								setValue={setName}
 								validated={nameValidated}
 								setValidated={setNameValidated}
-							/>
-
-							<label htmlFor='altEmail' className='required-input-label'>
-								Alternative Email Address
-							</label>
-							<EmailField
-								id='altEmail'
-								placeholder='Enter your email'
-								message='Personal email is recommended. (Not used for login)'
-								value={altEmail}
-								setValue={setAltEmail}
-								validated={emailValidated}
-								setValidated={setEmailValidated}
 							/>
 
 							<label htmlFor='labSelection' className='required-input-label'>

@@ -54,7 +54,7 @@ const ImageDropZone = ({ setImage }) => {
 
 				{!isDragAccept && !isDragReject && (
 					<>
-						<UserCircleIcon className='mb-2 h-12 w-12 stroke-1 text-gray-400' />
+						<UserCircleIcon className='mb-1 h-12 w-12 stroke-1 text-gray-400' />
 						<p className='font-medium'>Drag & drop your image here</p>
 						<p className='text-sm text-gray-500'>
 							or{' '}

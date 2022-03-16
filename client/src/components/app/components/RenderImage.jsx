@@ -1,11 +1,11 @@
 import React from 'react'
-import FormatBytes from './FormatBytes'
+import FormatBytes from '../../others/FormatBytes'
 
 const RenderImage = ({ image, setImage }) => {
 	return (
-		<div className='flex h-36 items-center rounded-lg border-2 border-dashed border-gray-200 p-2'>
+		<div className='flex h-36 items-center rounded-lg'>
 			<img
-				className='ml-2 mr-4 h-28 w-28 rounded-full border border-gray-200 object-cover'
+				className='mr-4 h-32 w-32 rounded-full border border-gray-200 object-cover'
 				src={URL.createObjectURL(image)}
 				alt='User Profile'
 			/>
