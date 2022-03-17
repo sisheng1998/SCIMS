@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
-import LoadingScreen from '../../others/LoadingScreen'
+import LoadingScreen from '../../utils/LoadingScreen'
 import Title from '../components/Title'
 import AccountSection from './AccountSection'
 import PersonalSection from './PersonalSection'
 import LabsSection from './LabsSection'
-import FormatDate from '../../others/FormatDate'
+import FormatDate from '../../utils/FormatDate'
 
 const Profile = () => {
 	const axiosPrivate = useAxiosPrivate()

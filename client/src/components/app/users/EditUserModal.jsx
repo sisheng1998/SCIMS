@@ -8,7 +8,7 @@ import {
 import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
-import FormatDate from '../../others/FormatDate'
+import FormatDate from '../../utils/FormatDate'
 
 function getKeyByValue(value) {
 	return Object.keys(ROLES_LIST).find((key) => ROLES_LIST[key] === value)

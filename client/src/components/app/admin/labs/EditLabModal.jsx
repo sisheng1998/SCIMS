@@ -6,9 +6,9 @@ import {
 	ExclamationCircleIcon,
 } from '@heroicons/react/outline'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
-import UserSearchableSelect from '../../../others/SearchableSelect'
+import UserSearchableSelect from '../../../utils/SearchableSelect'
 import LabNameField from '../../../validations/LabNameField'
-import FormatDate from '../../../others/FormatDate'
+import FormatDate from '../../../utils/FormatDate'
 
 const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 	const axiosPrivate = useAxiosPrivate()

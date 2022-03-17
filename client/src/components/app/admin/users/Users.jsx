@@ -6,7 +6,7 @@ import UsersTable from './UsersTable'
 import useAuth from '../../../../hooks/useAuth'
 import ROLES_LIST from '../../../../config/roles_list'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
-import LoadingScreen from '../../../others/LoadingScreen'
+import LoadingScreen from '../../../utils/LoadingScreen'
 
 const Users = () => {
 	const navigate = useNavigate()

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Dialog } from '@headlessui/react'
-import UserSearchableSelect from '../../../others/SearchableSelect'
+import UserSearchableSelect from '../../../utils/SearchableSelect'
 import {
 	CheckIcon,
 	XIcon,
@@ -9,7 +9,7 @@ import {
 import useAuth from '../../../../hooks/useAuth'
 import ROLES_LIST from '../../../../config/roles_list'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
-import { LabSearchableSelect } from '../../../others/SearchableSelect'
+import { LabSearchableSelect } from '../../../utils/SearchableSelect'
 import RegisterNewUser from '../../components/RegisterNewUser'
 
 const AddUserModal = ({

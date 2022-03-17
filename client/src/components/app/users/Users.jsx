@@ -5,9 +5,9 @@ import Title from '../components/Title'
 import UsersTable from './UsersTable'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import useAuth from '../../../hooks/useAuth'
-import GetRoleName from '../../others/GetRoleName'
+import GetRoleName from '../../utils/GetRoleName'
 import ROLES_LIST from '../../../config/roles_list'
-import LoadingScreen from '../../others/LoadingScreen'
+import LoadingScreen from '../../utils/LoadingScreen'
 
 const Users = () => {
 	const axiosPrivate = useAxiosPrivate()

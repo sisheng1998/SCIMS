@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import ViewPasswordToggle from '../others/ViewPasswordToggle'
+import ViewPasswordToggle from '../utils/ViewPasswordToggle'
 
 const LoginPasswordField = (props) => {
 	const [state, setState] = useState({

@@ -5,7 +5,7 @@ const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
 
 const UserInfo =
-	'name email altEmail matricNo isEmailVerified registeredAt lastUpdated roles.lab roles.role roles.status'
+	'name email altEmail avatar matricNo isEmailVerified registeredAt lastUpdated roles.lab roles.role roles.status'
 
 // User
 exports.getUsers = async (req, res, next) => {
@@ -29,8 +29,11 @@ exports.getUsers = async (req, res, next) => {
 // Lab
 exports.getLabs = async (req, res, next) => {
 	try {
-		const labs = await Lab.find({}).populate('labOwner', 'name email')
-		const users = await User.find({ isEmailVerified: true }, 'name email')
+		const labs = await Lab.find({}).populate('labOwner', 'name email avatar')
+		const users = await User.find(
+			{ isEmailVerified: true },
+			'name email avatar'
+		)
 
 		res.status(200).json({
 			success: true,

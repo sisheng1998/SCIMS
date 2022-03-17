@@ -1,5 +1,5 @@
 import React from 'react'
-import GetRoleName from '../../others/GetRoleName'
+import GetRoleName from '../../utils/GetRoleName'
 
 const tableHeaders = ['Name', 'Status', 'Role']
 

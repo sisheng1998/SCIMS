@@ -37,7 +37,7 @@ const SampleImages = () => {
 					<div className='flex min-h-screen items-center justify-center'>
 						<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 						<div className='relative w-full max-w-xl rounded-lg bg-white p-6 shadow'>
-							<div className='mb-6 flex justify-between border-b border-gray-200 pb-3'>
+							<div className='mb-4 flex justify-between'>
 								<h4>Sample Profile Pictures</h4>
 								<XIcon
 									className='h-5 w-5 cursor-pointer hover:text-indigo-600'
@@ -45,13 +45,13 @@ const SampleImages = () => {
 								/>
 							</div>
 
-							<div className='grid grid-cols-3 gap-6'>
+							<div className='grid grid-cols-3 gap-2'>
 								{images.map((image, index) => (
 									<img
 										key={index}
 										src={image}
-										alt='Profile'
-										className='h-40 w-40 border border-gray-200 object-cover'
+										alt='Avatar'
+										className='w-full border border-gray-200 object-cover'
 										width='160'
 										height='160'
 										draggable={false}

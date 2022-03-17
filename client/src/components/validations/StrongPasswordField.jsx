@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { XIcon, CheckIcon } from '@heroicons/react/outline'
-import ViewPasswordToggle from '../others/ViewPasswordToggle'
+import ViewPasswordToggle from '../utils/ViewPasswordToggle'
 
 const StrongPasswordField = (props) => {
 	const [state, setState] = useState({

@@ -47,6 +47,7 @@ const UserSchema = new Schema(
 				},
 			},
 		],
+		avatar: String,
 		isEmailVerified: {
 			type: Boolean,
 			default: false,

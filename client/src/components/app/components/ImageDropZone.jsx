@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { UserCircleIcon } from '@heroicons/react/outline'
+import ResizeImage from './ResizeImage'
 
 const ImageDropZone = ({ setImage }) => {
 	const MAX_SIZE_IN_BYTES = 5242880 // 5MB
@@ -18,7 +19,7 @@ const ImageDropZone = ({ setImage }) => {
 			) {
 				console.log('File format not supported.')
 			} else {
-				setImage(image)
+				ResizeImage(image, setImage)
 			}
 		}
 

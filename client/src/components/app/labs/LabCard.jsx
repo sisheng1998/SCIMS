@@ -1,5 +1,5 @@
 import React from 'react'
-import GetRoleName from '../../others/GetRoleName'
+import GetRoleName from '../../utils/GetRoleName'
 import useAuth from '../../../hooks/useAuth'
 import { SwitchHorizontalIcon } from '@heroicons/react/outline'
 

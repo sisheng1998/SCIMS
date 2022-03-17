@@ -9,7 +9,7 @@ import {
 import useLogout from '../../../hooks/useLogout'
 import { useNavigate } from 'react-router-dom'
 import useAuth from '../../../hooks/useAuth'
-import GetRoleName from '../../others/GetRoleName'
+import GetRoleName from '../../utils/GetRoleName'
 
 const USER_MENU = ['Profile', 'My Labs', 'Logout']
 
@@ -30,8 +30,19 @@ const UserOption = () => {
 
 	return (
 		<Menu as='div' className='relative flex items-center'>
-			<Menu.Button className='text-gray-500 outline-gray-300 transition hover:text-indigo-600'>
-				<UserCircleIcon className='h-8 w-8 stroke-1' />
+			<Menu.Button className='outline-gray-300'>
+				{auth.avatar ? (
+					<img
+						src={auth.avatar}
+						alt='Avatar'
+						className='h-9 w-9 rounded-full border border-gray-300 object-cover'
+						height='64'
+						width='64'
+						draggable={false}
+					/>
+				) : (
+					<UserCircleIcon className='h-8 w-8 stroke-1 text-gray-500 transition hover:text-indigo-600' />
+				)}
 			</Menu.Button>
 
 			<Menu.Items className='absolute right-0 top-full mt-2 w-auto rounded-lg bg-white py-2 shadow-md outline-gray-300 ring-1 ring-gray-300'>

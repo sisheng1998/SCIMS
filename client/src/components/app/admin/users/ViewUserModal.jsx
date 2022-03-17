@@ -1,8 +1,8 @@
 import React from 'react'
 import { Dialog } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
-import GetRoleName from '../../../others/GetRoleName'
-import FormatDate from '../../../others/FormatDate'
+import GetRoleName from '../../../utils/GetRoleName'
+import FormatDate from '../../../utils/FormatDate'
 
 const tableHeaders = ['Name', 'Status', 'Role']
 

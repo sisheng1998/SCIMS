@@ -3,6 +3,7 @@ const router = express.Router()
 
 const ROLES_LIST = require('../config/roles_list')
 const verifyRoles = require('../middleware/verifyRoles')
+const { uploadAvatar } = require('../middleware/uploadFile')
 
 const {
 	getUsers,
@@ -12,7 +13,7 @@ const {
 	addExistingUser,
 } = require('../controllers/user')
 
-const { getProfile } = require('../controllers/profile')
+const { getProfile, updateAvatar } = require('../controllers/profile')
 
 // Users
 router.route('/users').post(verifyRoles(ROLES_LIST.guest), getUsers)
@@ -25,5 +26,6 @@ router.route('/user').delete(verifyRoles(ROLES_LIST.labOwner), removeUser)
 
 // Profile
 router.route('/profile').get(getProfile)
+router.route('/avatar').post(uploadAvatar.single('avatar'), updateAvatar)
 
 module.exports = router

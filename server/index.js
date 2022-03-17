@@ -24,6 +24,9 @@ app.use(cors(corsOptions))
 app.use(express.json())
 app.use(cookieParser())
 
+// Serve public files
+app.use('/public', express.static('public'))
+
 // Connecting Routes
 app.get('/', (req, res, next) => {
 	res.status(200).send('API running.')

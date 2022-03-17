@@ -1,6 +1,6 @@
 import React from 'react'
 import USMEmailField from '../../validations/USMEmailField'
-import PasswordGenerator from '../../others/PasswordGenerator'
+import PasswordGenerator from '../../utils/PasswordGenerator'
 import LoginPasswordField from '../../validations/LoginPasswordField'
 import NameField from '../../validations/NameField'
 import MatricNoField from '../../validations/MatricNoField'

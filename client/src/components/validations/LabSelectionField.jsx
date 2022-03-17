@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { LabSearchableSelect } from '../others/SearchableSelect'
+import { LabSearchableSelect } from '../utils/SearchableSelect'
 
 const LabSelectionField = (props) => {
 	const [labs, setLabs] = useState([])

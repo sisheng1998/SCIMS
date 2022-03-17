@@ -1,5 +1,5 @@
 import React from 'react'
-import FormatBytes from '../../others/FormatBytes'
+import FormatBytes from '../../utils/FormatBytes'
 
 const RenderImage = ({ image, setImage }) => {
 	return (
@@ -7,7 +7,7 @@ const RenderImage = ({ image, setImage }) => {
 			<img
 				className='mr-4 h-32 w-32 rounded-full border border-gray-200 object-cover'
 				src={URL.createObjectURL(image)}
-				alt='User Profile'
+				alt='Avatar'
 			/>
 
 			<div className='overflow-auto'>

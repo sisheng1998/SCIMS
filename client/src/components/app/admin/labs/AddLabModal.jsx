@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Dialog } from '@headlessui/react'
-import UserSearchableSelect from '../../../others/SearchableSelect'
+import UserSearchableSelect from '../../../utils/SearchableSelect'
 import {
 	CheckIcon,
 	XIcon,
