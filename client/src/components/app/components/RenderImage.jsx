@@ -3,7 +3,7 @@ import FormatBytes from '../../utils/FormatBytes'
 
 const RenderImage = ({ image, setImage }) => {
 	return (
-		<div className='flex h-36 items-center'>
+		<div className='mb-6 flex items-center'>
 			<img
 				className='mr-4 h-32 w-32 rounded-full object-cover'
 				src={URL.createObjectURL(image)}

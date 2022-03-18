@@ -26,13 +26,42 @@ exports.getProfile = async (req, res, next) => {
 	}
 }
 
+exports.changePassword = async (req, res, next) => {
+	const userId = req.user._id
+	const { currentPassword, newPassword } = req.body
+
+	if (!currentPassword || !newPassword) {
+		return next(new ErrorResponse('Missing value.', 400))
+	}
+
+	try {
+		const foundUser = await User.findById(userId).select('+password')
+		if (!foundUser) {
+			return next(new ErrorResponse('User not found.', 404))
+		}
+
+		const isMatch = await foundUser.matchPassword(currentPassword)
+		if (!isMatch) {
+			return next(new ErrorResponse('Invalid credentials.', 401))
+		}
+
+		foundUser.password = newPassword
+		foundUser.lastUpdated = Date.now()
+
+		await foundUser.save()
+
+		res.status(201).json({
+			success: true,
+			data: 'Password changed successful.',
+		})
+	} catch (error) {
+		next(error)
+	}
+}
+
 exports.updateAvatar = async (req, res, next) => {
 	const url = req.protocol + '://' + req.get('host')
 	const userId = req.user._id
-
-	if (!userId) {
-		return next(new ErrorResponse('Missing value.', 400))
-	}
 
 	try {
 		const foundUser = await User.findById(userId)

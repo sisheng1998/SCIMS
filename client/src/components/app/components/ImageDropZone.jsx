@@ -6,57 +6,52 @@ import ResizeImage from './ResizeImage'
 const ImageDropZone = ({ setImage, setErrorMessage }) => {
 	const MAX_SIZE_IN_BYTES = 5242880 // 5MB
 
-	const onDrop = useCallback((acceptedFiles) => {
+	const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
 		if (acceptedFiles.length !== 0) {
 			const image = acceptedFiles[0]
 
 			if (image.size > MAX_SIZE_IN_BYTES) {
-				setErrorMessage('File size already exceed the limit.')
+				setErrorMessage('The file size already exceed the limit.')
 			} else if (
 				image.type.toLowerCase() !== 'image/png' &&
 				image.type.toLowerCase() !== 'image/jpeg' &&
 				image.type.toLowerCase() !== 'image/jpg'
 			) {
-				setErrorMessage('File format not supported.')
+				setErrorMessage('This file format is not supported.')
 			} else {
 				setErrorMessage('')
 				ResizeImage(image, setImage)
 			}
 		} else {
-			setErrorMessage('File format not supported.')
+			if (rejectedFiles.length > 1) {
+				setErrorMessage('Only single file is accepted.')
+			} else {
+				setErrorMessage('This file format is not supported.')
+			}
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	const { getRootProps, getInputProps, isDragAccept, isDragReject } =
-		useDropzone({
-			onDrop,
-			multiple: false,
-			accept: 'image/png, image/jpeg, image/jpg',
-		})
+	const { getRootProps, getInputProps, isDragActive } = useDropzone({
+		onDrop,
+		multiple: false,
+		accept: 'image/png, image/jpeg, image/jpg',
+	})
 
 	return (
 		<div
 			{...getRootProps()}
-			className={`flex h-36 flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-200 ${
-				isDragReject ? 'border-red-600 bg-red-50' : ''
-			}${isDragAccept ? 'border-green-600 bg-green-50' : ''}`}
+			className={`flex h-36 flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-200 focus:outline-none ${
+				isDragActive ? 'border-indigo-600 bg-indigo-50' : ''
+			}`}
 		>
 			<input {...getInputProps()} />
 
 			<div className='flex flex-col items-center'>
-				{isDragAccept && (
-					<p className='font-medium text-green-600'>Drop your image here</p>
-				)}
-
-				{isDragReject && (
-					<p className='font-medium text-red-600'>
-						Sorry, this file format is not supported
-					</p>
-				)}
-
-				{!isDragAccept && !isDragReject && (
+				{isDragActive ? (
+					<p className='font-medium text-indigo-600'>Drop your image here</p>
+				) : (
 					<>
 						<UserCircleIcon className='mb-1 h-12 w-12 stroke-1 text-gray-400' />
 						<p className='font-medium'>Drag & drop your image here</p>

@@ -172,6 +172,7 @@ const Register = () => {
 							/>
 
 							<StrongPasswordField
+								new={false}
 								password={password}
 								setPassword={setPassword}
 								setValidated={setPasswordValidated}

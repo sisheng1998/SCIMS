@@ -60,7 +60,7 @@ const Profile = () => {
 
 			<div className='mx-auto w-full max-w-3xl'>
 				<h4>Account Info</h4>
-				<AccountSection user={user} setRefresh={setRefresh} />
+				<AccountSection user={user} />
 				<p className='mb-12 text-sm text-gray-500'>
 					Registered At:{' '}
 					<span className='font-semibold'>{FormatDate(user.registeredAt)}</span>

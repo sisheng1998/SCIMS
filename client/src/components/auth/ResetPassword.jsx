@@ -68,6 +68,7 @@ const ResetPassword = () => {
 
 						<form onSubmit={resetPasswordHandler}>
 							<StrongPasswordField
+								new={true}
 								password={password}
 								setPassword={setPassword}
 								setValidated={setPasswordValidated}

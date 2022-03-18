@@ -13,7 +13,11 @@ const {
 	addExistingUser,
 } = require('../controllers/user')
 
-const { getProfile, updateAvatar } = require('../controllers/profile')
+const {
+	getProfile,
+	changePassword,
+	updateAvatar,
+} = require('../controllers/profile')
 
 // Users
 router.route('/users').post(verifyRoles(ROLES_LIST.guest), getUsers)
@@ -26,6 +30,9 @@ router.route('/user').delete(verifyRoles(ROLES_LIST.labOwner), removeUser)
 
 // Profile
 router.route('/profile').get(getProfile)
-router.route('/avatar').post(uploadAvatar.single('avatar'), updateAvatar)
+router.route('/profile/password').post(changePassword)
+router
+	.route('/profile/avatar')
+	.post(uploadAvatar.single('avatar'), updateAvatar)
 
 module.exports = router

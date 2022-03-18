@@ -24,7 +24,7 @@ const UpdateAvatarModal = ({ openModal, setOpenModal }) => {
 		formData.append('avatar', image)
 
 		try {
-			await axiosPrivate.post('/api/private/avatar', formData)
+			await axiosPrivate.post('/api/private/profile/avatar', formData)
 			setSuccess(true)
 		} catch (error) {
 			if (error.response?.status === 500) {
@@ -100,23 +100,19 @@ const UpdateAvatarModal = ({ openModal, setOpenModal }) => {
 								</div>
 
 								{!image ? (
-									<ImageDropZone
-										setImage={setImage}
-										setErrorMessage={setErrorMessage}
-									/>
+									<>
+										<ImageDropZone
+											setImage={setImage}
+											setErrorMessage={setErrorMessage}
+										/>
+										<p className='mt-2 mb-6 text-xs text-gray-400'>
+											Only JPG, JPEG, and PNG are supported. Max file size: 5
+											MB.
+										</p>
+									</>
 								) : (
 									<RenderImage image={image} setImage={setImage} />
 								)}
-
-								<p
-									className={`mt-2 mb-6 text-xs ${
-										!image ? 'text-gray-400' : 'text-green-600'
-									}`}
-								>
-									{!image
-										? 'Only JPG, JPEG, and PNG are supported. Max file size: 5 MB.'
-										: 'Looks good!'}
-								</p>
 
 								<div className='flex items-center justify-end'>
 									<span

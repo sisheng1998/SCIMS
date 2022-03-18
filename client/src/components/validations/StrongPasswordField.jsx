@@ -55,8 +55,11 @@ const StrongPasswordField = (props) => {
 
 	return (
 		<>
-			<label htmlFor='password' className='required-input-label'>
-				Password
+			<label
+				htmlFor={props.new ? 'newPassword' : 'password'}
+				className='required-input-label'
+			>
+				{props.new ? 'New Password' : 'Password'}
 			</label>
 			<div className='relative mb-6'>
 				<input
@@ -68,13 +71,13 @@ const StrongPasswordField = (props) => {
 							: 'input-invalid'
 					}`}
 					type='password'
-					id='password'
+					id={props.new ? 'newPassword' : 'password'}
 					placeholder='Enter a new password'
 					required
 					value={props.password}
 					onChange={inputHandler}
 				/>
-				<ViewPasswordToggle fieldId='password' />
+				<ViewPasswordToggle fieldId={props.new ? 'newPassword' : 'password'} />
 
 				<p className='mt-2 text-xs text-gray-400'>
 					{!props.password ? (
@@ -114,7 +117,7 @@ const StrongPasswordField = (props) => {
 			</div>
 
 			<label htmlFor='confirmPassword' className='required-input-label'>
-				Confirm Password
+				{props.new ? 'Confirm New Password' : 'Confirm Password'}
 			</label>
 			<div className='relative mb-6'>
 				<input
