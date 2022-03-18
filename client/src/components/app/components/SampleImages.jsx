@@ -39,10 +39,12 @@ const SampleImages = () => {
 						<div className='relative w-full max-w-xl rounded-lg bg-white p-6 shadow'>
 							<div className='mb-4 flex justify-between'>
 								<h4>Sample Profile Pictures</h4>
-								<XIcon
-									className='h-5 w-5 cursor-pointer hover:text-indigo-600'
+								<button
+									className='cursor-pointer hover:text-indigo-600 focus:outline-none'
 									onClick={closeHandler}
-								/>
+								>
+									<XIcon className='h-5 w-5' />
+								</button>
 							</div>
 
 							<div className='grid grid-cols-3 gap-2'>
@@ -51,7 +53,7 @@ const SampleImages = () => {
 										key={index}
 										src={image}
 										alt='Avatar'
-										className='w-full border border-gray-200 object-cover'
+										className='w-full object-cover'
 										width='160'
 										height='160'
 										draggable={false}
@@ -59,18 +61,9 @@ const SampleImages = () => {
 								))}
 							</div>
 
-							<p className='mt-4 mb-6 text-xs'>
+							<p className='mt-4 text-xs'>
 								Preferred 500px x 500px (Square), file size less than 100 KB.
 							</p>
-
-							<div className='flex items-center justify-end'>
-								<button
-									onClick={closeHandler}
-									className='font-medium text-gray-500 transition hover:text-indigo-600 focus:outline-none'
-								>
-									Close
-								</button>
-							</div>
 						</div>
 					</div>
 				</Dialog>

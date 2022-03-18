@@ -12,7 +12,6 @@ const Settings = () => {
 	const axiosPrivate = useAxiosPrivate()
 	const navigate = useNavigate()
 	const { auth } = useAuth()
-	console.log(auth)
 
 	const [image, setImage] = useState('')
 

@@ -8,6 +8,8 @@ import EditUserModal from './EditUserModal'
 import ViewUserModal from './ViewUserModal'
 import { PencilAltIcon } from '@heroicons/react/outline'
 import ROLES_LIST from '../../../../config/roles_list'
+import GetLetterPicture from '../../../utils/GetLetterPicture'
+import ImageLightBox from '../../../utils/ImageLightBox'
 
 const tableHeaders = [
 	{
@@ -17,12 +19,7 @@ const tableHeaders = [
 	},
 	{
 		key: 'name',
-		label: 'Full Name',
-		sortable: true,
-	},
-	{
-		key: 'email',
-		label: 'Email Address',
+		label: 'User',
 		sortable: true,
 	},
 	{
@@ -46,9 +43,11 @@ const UsersTable = (props) => {
 	const { auth } = useAuth()
 
 	const [userData, setUserData] = useState('')
+	const [avatarInfo, setAvatarInfo] = useState('')
 	const [role, setRole] = useState('')
 	const [openEditUserModal, setOpenEditUserModal] = useState(false)
 	const [openViewUserModal, setOpenViewUserModal] = useState(false)
+	const [openViewImageModal, setOpenViewImageModal] = useState(false)
 
 	const [sortKey, setSortKey] = useState('index')
 	const [sortOrder, setSortOrder] = useState('asc')
@@ -116,6 +115,11 @@ const UsersTable = (props) => {
 	const viewUserHandler = (userData) => {
 		setUserData(userData)
 		setOpenViewUserModal(true)
+	}
+
+	const viewImageHandler = (name, imageSrc) => {
+		setAvatarInfo({ name, imageSrc })
+		setOpenViewImageModal(true)
 	}
 
 	return (
@@ -211,65 +215,95 @@ const UsersTable = (props) => {
 										</td>
 									</tr>
 								) : (
-									currentItems.map((user) => (
-										<tr key={user._id}>
-											<td className='px-6 py-4'>{user.matricNo}</td>
-											<td className='px-6 py-4'>{user.name}</td>
-											<td className='px-6 py-4'>{user.email}</td>
-											<td className='px-6 py-4'>
-												<span
-													className={`inline-flex rounded-full px-3 py-1 font-medium ${
-														user.isEmailVerified
-															? 'bg-green-100 text-green-600'
-															: 'bg-red-100 text-red-600'
-													}`}
-												>
-													{user.isEmailVerified ? 'Verified' : 'Not Verified'}
-												</span>
-											</td>
-											<td className='space-y-0.5 px-6 py-4'>
-												{user.roles.length !== 0
-													? user.roles
-															.sort((a, b) =>
-																a.lab.labName.toLowerCase() >
-																b.lab.labName.toLowerCase()
-																	? 1
-																	: -1
-															)
-															.map((role) => (
-																<div
-																	key={role.lab._id}
-																	className='flex items-center'
-																>
-																	<p>{role.lab.labName}</p>
-																	{!(
-																		user.email === auth.email ||
-																		role.role === ROLES_LIST.admin ||
-																		role.role === ROLES_LIST.labOwner
-																	) && (
-																		<button
-																			onClick={() =>
-																				editUserHandler(user, role)
-																			}
-																			className='ml-2 text-gray-400 transition hover:text-indigo-700'
-																		>
-																			<PencilAltIcon className='h-5 w-5' />
-																		</button>
-																	)}
-																</div>
-															))
-													: '-'}
-											</td>
-											<td className='px-6 py-4 text-center'>
-												<button
-													onClick={() => viewUserHandler(user)}
-													className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
-												>
-													View
-												</button>
-											</td>
-										</tr>
-									))
+									currentItems.map((user) => {
+										const imageSrc = user.avatar
+											? user.avatar
+											: GetLetterPicture(user.name)
+
+										return (
+											<tr key={user._id}>
+												<td className='px-6 py-4'>{user.matricNo}</td>
+
+												<td className='px-6 py-4'>
+													<div className='flex items-center space-x-3'>
+														<img
+															src={imageSrc}
+															alt='Avatar'
+															className='h-12 w-12 cursor-pointer rounded-full object-cover'
+															height='64'
+															width='64'
+															draggable={false}
+															onClick={() =>
+																viewImageHandler(user.name, imageSrc)
+															}
+														/>
+
+														<div>
+															<p className='font-medium leading-5'>
+																{user.name}
+															</p>
+															<p className='text-sm leading-4 text-gray-400'>
+																{user.email}
+															</p>
+														</div>
+													</div>
+												</td>
+
+												<td className='px-6 py-4'>
+													<span
+														className={`inline-flex rounded-full px-3 py-1 font-medium ${
+															user.isEmailVerified
+																? 'bg-green-100 text-green-600'
+																: 'bg-red-100 text-red-600'
+														}`}
+													>
+														{user.isEmailVerified ? 'Verified' : 'Not Verified'}
+													</span>
+												</td>
+												<td className='space-y-0.5 px-6 py-4'>
+													{user.roles.length !== 0
+														? user.roles
+																.sort((a, b) =>
+																	a.lab.labName.toLowerCase() >
+																	b.lab.labName.toLowerCase()
+																		? 1
+																		: -1
+																)
+																.map((role) => (
+																	<div
+																		key={role.lab._id}
+																		className='flex items-center'
+																	>
+																		<p>{role.lab.labName}</p>
+																		{!(
+																			user.email === auth.email ||
+																			role.role === ROLES_LIST.admin ||
+																			role.role === ROLES_LIST.labOwner
+																		) && (
+																			<button
+																				onClick={() =>
+																					editUserHandler(user, role)
+																				}
+																				className='ml-2 text-gray-400 transition hover:text-indigo-700'
+																			>
+																				<PencilAltIcon className='h-5 w-5' />
+																			</button>
+																		)}
+																	</div>
+																))
+														: '-'}
+												</td>
+												<td className='px-6 py-4 text-center'>
+													<button
+														onClick={() => viewUserHandler(user)}
+														className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
+													>
+														View
+													</button>
+												</td>
+											</tr>
+										)
+									})
 								)}
 							</tbody>
 						</table>
@@ -303,6 +337,14 @@ const UsersTable = (props) => {
 					user={userData}
 					openModal={openViewUserModal}
 					setOpenModal={setOpenViewUserModal}
+				/>
+			)}
+
+			{openViewImageModal && avatarInfo && (
+				<ImageLightBox
+					user={avatarInfo}
+					openModal={openViewImageModal}
+					setOpenModal={setOpenViewImageModal}
 				/>
 			)}
 		</>

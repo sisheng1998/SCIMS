@@ -3,24 +3,27 @@ import { useDropzone } from 'react-dropzone'
 import { UserCircleIcon } from '@heroicons/react/outline'
 import ResizeImage from './ResizeImage'
 
-const ImageDropZone = ({ setImage }) => {
+const ImageDropZone = ({ setImage, setErrorMessage }) => {
 	const MAX_SIZE_IN_BYTES = 5242880 // 5MB
 
 	const onDrop = useCallback((acceptedFiles) => {
-		if (acceptedFiles) {
+		if (acceptedFiles.length !== 0) {
 			const image = acceptedFiles[0]
 
 			if (image.size > MAX_SIZE_IN_BYTES) {
-				console.log('File size already exceed the limit.')
+				setErrorMessage('File size already exceed the limit.')
 			} else if (
 				image.type.toLowerCase() !== 'image/png' &&
 				image.type.toLowerCase() !== 'image/jpeg' &&
 				image.type.toLowerCase() !== 'image/jpg'
 			) {
-				console.log('File format not supported.')
+				setErrorMessage('File format not supported.')
 			} else {
+				setErrorMessage('')
 				ResizeImage(image, setImage)
 			}
+		} else {
+			setErrorMessage('File format not supported.')
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps

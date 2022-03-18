@@ -6,6 +6,8 @@ import SortButton from '../components/SortButton'
 import Filters from '../components/Filters'
 import Pagination from '../components/Pagination'
 import EditUserModal from './EditUserModal'
+import GetLetterPicture from '../../utils/GetLetterPicture'
+import ImageLightBox from '../../utils/ImageLightBox'
 
 const tableHeaders = [
 	{
@@ -15,12 +17,7 @@ const tableHeaders = [
 	},
 	{
 		key: 'name',
-		label: 'Full Name',
-		sortable: true,
-	},
-	{
-		key: 'email',
-		label: 'Email Address',
+		label: 'User',
 		sortable: true,
 	},
 	{
@@ -44,8 +41,10 @@ const UsersTable = (props) => {
 	const { auth } = useAuth()
 
 	const [userData, setUserData] = useState('')
+	const [avatarInfo, setAvatarInfo] = useState('')
 	const [isEdit, setIsEdit] = useState(false)
 	const [openEditUserModal, setOpenEditUserModal] = useState(false)
+	const [openViewImageModal, setOpenViewImageModal] = useState(false)
 
 	const [sortKey, setSortKey] = useState('index')
 	const [sortOrder, setSortOrder] = useState('asc')
@@ -108,6 +107,11 @@ const UsersTable = (props) => {
 		setUserData(userData)
 		setIsEdit(isEdit)
 		setOpenEditUserModal(true)
+	}
+
+	const viewImageHandler = (name, imageSrc) => {
+		setAvatarInfo({ name, imageSrc })
+		setOpenViewImageModal(true)
 	}
 
 	return (
@@ -197,6 +201,10 @@ const UsersTable = (props) => {
 									</tr>
 								) : (
 									currentItems.map((user) => {
+										const imageSrc = user.avatar
+											? user.avatar
+											: GetLetterPicture(user.name)
+
 										let classes
 
 										if (user.status === 'Active') {
@@ -211,8 +219,32 @@ const UsersTable = (props) => {
 										return (
 											<tr key={user._id}>
 												<td className='px-6 py-4'>{user.matricNo}</td>
-												<td className='px-6 py-4'>{user.name}</td>
-												<td className='px-6 py-4'>{user.email}</td>
+
+												<td className='px-6 py-4'>
+													<div className='flex items-center space-x-3'>
+														<img
+															src={imageSrc}
+															alt='Avatar'
+															className='h-12 w-12 cursor-pointer rounded-full object-cover'
+															height='64'
+															width='64'
+															draggable={false}
+															onClick={() =>
+																viewImageHandler(user.name, imageSrc)
+															}
+														/>
+
+														<div>
+															<p className='font-medium leading-5'>
+																{user.name}
+															</p>
+															<p className='text-sm leading-4 text-gray-400'>
+																{user.email}
+															</p>
+														</div>
+													</div>
+												</td>
+
 												<td className='px-6 py-4'>
 													<span
 														className={`inline-flex rounded-full px-3 py-1 font-medium ${classes}`}
@@ -276,6 +308,14 @@ const UsersTable = (props) => {
 					openModal={openEditUserModal}
 					setOpenModal={setOpenEditUserModal}
 					setEditUserSuccess={props.setEditUserSuccess}
+				/>
+			)}
+
+			{openViewImageModal && avatarInfo && (
+				<ImageLightBox
+					user={avatarInfo}
+					openModal={openViewImageModal}
+					setOpenModal={setOpenViewImageModal}
 				/>
 			)}
 		</>

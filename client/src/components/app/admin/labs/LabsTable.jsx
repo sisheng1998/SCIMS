@@ -6,6 +6,8 @@ import Pagination from '../../components/Pagination'
 import EditLabModal from './EditLabModal'
 import useAuth from '../../../../hooks/useAuth'
 import ROLES_LIST from '../../../../config/roles_list'
+import GetLetterPicture from '../../../utils/GetLetterPicture'
+import ImageLightBox from '../../../utils/ImageLightBox'
 
 const tableHeaders = [
 	{
@@ -19,9 +21,9 @@ const tableHeaders = [
 		sortable: true,
 	},
 	{
-		key: 'ownerEmail',
-		label: 'Email',
-		sortable: true,
+		key: 'usersNo',
+		label: 'No. of Users',
+		sortable: false,
 	},
 	{
 		key: 'status',
@@ -39,8 +41,10 @@ const LabsTable = (props) => {
 	const { auth } = useAuth()
 
 	const [labData, setLabData] = useState('')
+	const [avatarInfo, setAvatarInfo] = useState('')
 	const [isEdit, setIsEdit] = useState(false)
 	const [openEditLabModal, setOpenEditLabModal] = useState(false)
+	const [openViewImageModal, setOpenViewImageModal] = useState(false)
 
 	const [sortKey, setSortKey] = useState('index')
 	const [sortOrder, setSortOrder] = useState('asc')
@@ -102,6 +106,11 @@ const LabsTable = (props) => {
 		setLabData(labData)
 		setIsEdit(isEdit)
 		setOpenEditLabModal(true)
+	}
+
+	const viewImageHandler = (name, imageSrc) => {
+		setAvatarInfo({ name, imageSrc })
+		setOpenViewImageModal(true)
 	}
 
 	return (
@@ -172,46 +181,78 @@ const LabsTable = (props) => {
 										</td>
 									</tr>
 								) : (
-									currentItems.map((lab) => (
-										<tr key={lab._id}>
-											<td className='px-6 py-4'>{lab.labName}</td>
-											<td className='px-6 py-4'>{lab.ownerName}</td>
-											<td className='px-6 py-4'>{lab.ownerEmail}</td>
-											<td className='px-6 py-4'>
-												<span
-													className={`inline-flex rounded-full px-3 py-1 font-medium ${
-														lab.status === 'In Use'
-															? 'bg-green-100 text-green-600'
-															: 'bg-red-100 text-red-600'
-													}`}
-												>
-													{lab.status}
-												</span>
-											</td>
-											<td className='px-6 py-4 text-center'>
-												{auth.email === lab.ownerEmail &&
-												auth.roles.some(
-													(role) =>
-														role.role === ROLES_LIST.admin &&
-														role.lab._id === lab._id
-												) ? (
-													<button
-														onClick={() => editLabHandler(lab, false)}
-														className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
+									currentItems.map((lab) => {
+										const imageSrc = lab.labOwner.avatar
+											? lab.labOwner.avatar
+											: GetLetterPicture(lab.labOwner.name)
+
+										return (
+											<tr key={lab._id}>
+												<td className='px-6 py-4'>{lab.labName}</td>
+
+												<td className='px-6 py-4'>
+													<div className='flex items-center space-x-3'>
+														<img
+															src={imageSrc}
+															alt='Avatar'
+															className='h-12 w-12 cursor-pointer rounded-full object-cover'
+															height='64'
+															width='64'
+															draggable={false}
+															onClick={() =>
+																viewImageHandler(lab.labOwner.name, imageSrc)
+															}
+														/>
+
+														<div>
+															<p className='font-medium leading-5'>
+																{lab.labOwner.name}
+															</p>
+															<p className='text-sm leading-4 text-gray-400'>
+																{lab.labOwner.email}
+															</p>
+														</div>
+													</div>
+												</td>
+
+												<td className='px-6 py-4'>{lab.labUsers.length + 1}</td>
+
+												<td className='px-6 py-4'>
+													<span
+														className={`inline-flex rounded-full px-3 py-1 font-medium ${
+															lab.status === 'In Use'
+																? 'bg-green-100 text-green-600'
+																: 'bg-red-100 text-red-600'
+														}`}
 													>
-														View
-													</button>
-												) : (
-													<button
-														onClick={() => editLabHandler(lab, true)}
-														className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
-													>
-														Edit
-													</button>
-												)}
-											</td>
-										</tr>
-									))
+														{lab.status}
+													</span>
+												</td>
+												<td className='px-6 py-4 text-center'>
+													{auth.email === lab.ownerEmail &&
+													auth.roles.some(
+														(role) =>
+															role.role === ROLES_LIST.admin &&
+															role.lab._id === lab._id
+													) ? (
+														<button
+															onClick={() => editLabHandler(lab, false)}
+															className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
+														>
+															View
+														</button>
+													) : (
+														<button
+															onClick={() => editLabHandler(lab, true)}
+															className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
+														>
+															Edit
+														</button>
+													)}
+												</td>
+											</tr>
+										)
+									})
 								)}
 							</tbody>
 						</table>
@@ -237,6 +278,14 @@ const LabsTable = (props) => {
 					openModal={openEditLabModal}
 					setOpenModal={setOpenEditLabModal}
 					users={props.users}
+				/>
+			)}
+
+			{openViewImageModal && avatarInfo && (
+				<ImageLightBox
+					user={avatarInfo}
+					openModal={openViewImageModal}
+					setOpenModal={setOpenViewImageModal}
 				/>
 			)}
 		</>

@@ -3,11 +3,13 @@ import FormatBytes from '../../utils/FormatBytes'
 
 const RenderImage = ({ image, setImage }) => {
 	return (
-		<div className='flex h-36 items-center rounded-lg'>
+		<div className='flex h-36 items-center'>
 			<img
-				className='mr-4 h-32 w-32 rounded-full border border-gray-200 object-cover'
+				className='mr-4 h-32 w-32 rounded-full object-cover'
 				src={URL.createObjectURL(image)}
 				alt='Avatar'
+				width='200'
+				height='200'
 			/>
 
 			<div className='overflow-auto'>

@@ -35,7 +35,7 @@ const UserOption = () => {
 					<img
 						src={auth.avatar}
 						alt='Avatar'
-						className='h-9 w-9 rounded-full border border-gray-300 object-cover'
+						className='h-9 w-9 rounded-full object-cover'
 						height='64'
 						width='64'
 						draggable={false}
