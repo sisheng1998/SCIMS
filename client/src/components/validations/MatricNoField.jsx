@@ -12,7 +12,13 @@ const MatricNoField = (props) => {
 		<div className='mb-6'>
 			<input
 				className={`w-full ${
-					!props.value ? '' : props.validated ? 'input-valid' : 'input-invalid'
+					!props.value
+						? ''
+						: props.validated
+						? props.showValidated
+							? 'input-valid'
+							: ''
+						: 'input-invalid'
 				}`}
 				type='text'
 				id='matricNo'
@@ -23,7 +29,7 @@ const MatricNoField = (props) => {
 			/>
 
 			<p className='mt-2 text-xs text-gray-400'>
-				{!props.value ? (
+				{!props.value || (!props.showValidated && props.validated) ? (
 					<span>Matric number or staff number is required.</span>
 				) : props.validated ? (
 					<span className='text-green-600'>Looks good!</span>

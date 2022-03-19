@@ -76,6 +76,7 @@ const RegisterNewUser = ({
 						setValue={setMatricNo}
 						validated={matricNoValidated}
 						setValidated={setMatricNoValidated}
+						showValidated={true}
 					/>
 				</div>
 
@@ -91,6 +92,7 @@ const RegisterNewUser = ({
 						setValue={setName}
 						validated={nameValidated}
 						setValidated={setNameValidated}
+						showValidated={true}
 					/>
 				</div>
 			</div>

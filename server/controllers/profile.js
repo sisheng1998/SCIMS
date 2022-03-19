@@ -1,7 +1,5 @@
 const ErrorResponse = require('../utils/errorResponse')
-const Lab = require('../models/Lab')
 const User = require('../models/User')
-const ROLES_LIST = require('../config/roles_list')
 
 const UserInfo =
 	'name email altEmail avatar matricNo isEmailVerified registeredAt lastUpdated roles.lab roles.role roles.status'
@@ -23,6 +21,49 @@ exports.getProfile = async (req, res, next) => {
 		})
 	} catch (error) {
 		return next(new ErrorResponse('User not found.', 404))
+	}
+}
+
+exports.updateProfile = async (req, res, next) => {
+	const userId = req.user._id
+	const { matricNo, name, altEmail } = req.body
+
+	if (!matricNo || !name || !altEmail) {
+		return next(new ErrorResponse('Missing value.', 400))
+	}
+
+	try {
+		const foundUser = await User.findById(userId)
+		if (!foundUser) {
+			return next(new ErrorResponse('User not found.', 404))
+		}
+
+		if (foundUser.matricNo !== matricNo) {
+			foundUser.matricNo = matricNo
+		}
+
+		if (foundUser.name !== name) {
+			foundUser.name = name
+		}
+
+		if (foundUser.altEmail !== altEmail) {
+			foundUser.altEmail = altEmail
+		}
+
+		foundUser.lastUpdated = Date.now()
+
+		await foundUser.save()
+
+		res.status(201).json({
+			success: true,
+			data: 'Personal info updated.',
+		})
+	} catch (error) {
+		if (error.code === 11000 && error.keyPattern.hasOwnProperty('matricNo')) {
+			return next(new ErrorResponse('Matric number existed.', 409))
+		}
+
+		next(error)
 	}
 }
 
@@ -52,7 +93,7 @@ exports.changePassword = async (req, res, next) => {
 
 		res.status(201).json({
 			success: true,
-			data: 'Password changed successful.',
+			data: 'Password changed.',
 		})
 	} catch (error) {
 		next(error)

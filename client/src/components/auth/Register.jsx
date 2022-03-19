@@ -213,6 +213,7 @@ const Register = () => {
 								setValue={setMatricNo}
 								validated={matricNoValidated}
 								setValidated={setMatricNoValidated}
+								showValidated={true}
 							/>
 
 							<label htmlFor='name' className='required-input-label'>
@@ -226,6 +227,7 @@ const Register = () => {
 								setValue={setName}
 								validated={nameValidated}
 								setValidated={setNameValidated}
+								showValidated={true}
 							/>
 
 							<label htmlFor='labSelection' className='required-input-label'>

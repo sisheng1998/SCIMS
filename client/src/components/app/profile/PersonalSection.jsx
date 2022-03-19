@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
 import GetLetterPicture from '../../utils/GetLetterPicture'
 import UpdateAvatarModal from './UpdateAvatarModal'
+import EditPersonalInfoModal from './EditPersonalInfoModal'
 
 const PersonalSection = ({ user, setRefresh }) => {
 	const imageSrc = user.avatar ? user.avatar : GetLetterPicture(user.name)
 	const [openUpdateAvatarModal, setOpenUpdateAvatarModal] = useState(false)
+	const [openEditPersonalInfoModal, setOpenEditPersonalInfoModal] =
+		useState(false)
 
 	return (
 		<>
@@ -61,7 +64,7 @@ const PersonalSection = ({ user, setRefresh }) => {
 
 				<button
 					className='button button-outline w-full max-w-xs justify-center px-4 py-3'
-					onClick={() => {}}
+					onClick={() => setOpenEditPersonalInfoModal(true)}
 				>
 					Edit Personal Info
 				</button>
@@ -71,6 +74,15 @@ const PersonalSection = ({ user, setRefresh }) => {
 				<UpdateAvatarModal
 					openModal={openUpdateAvatarModal}
 					setOpenModal={setOpenUpdateAvatarModal}
+				/>
+			)}
+
+			{openEditPersonalInfoModal && (
+				<EditPersonalInfoModal
+					user={user}
+					openModal={openEditPersonalInfoModal}
+					setOpenModal={setOpenEditPersonalInfoModal}
+					setEditPersonalInfoSuccess={setRefresh}
 				/>
 			)}
 		</>
