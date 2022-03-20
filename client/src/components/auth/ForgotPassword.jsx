@@ -86,6 +86,7 @@ const ForgotPassword = () => {
 								setValue={setEmail}
 								validated={emailValidated}
 								setValidated={setEmailValidated}
+								showValidated={true}
 							/>
 
 							<button

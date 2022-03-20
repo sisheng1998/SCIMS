@@ -421,3 +421,5 @@ const sendVerificationEmail = async (
 		return next(new ErrorResponse('Email could not be sent.', 500))
 	}
 }
+
+module.exports.sendVerificationEmail = sendVerificationEmail

@@ -42,14 +42,6 @@ const EmailVerification = () => {
 						<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
 						<h2 className='mt-6 mb-2 text-green-600'>Email Verified!</h2>
 						<p>Your email has been verified.</p>
-						<p className='my-6'>
-							Your registration request is sent to the lab owner of your chosen
-							lab.
-						</p>
-						<p>
-							You will be able to interact with the system after your request is
-							approved.
-						</p>
 					</>
 				) : (
 					<>

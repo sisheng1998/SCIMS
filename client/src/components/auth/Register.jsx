@@ -169,6 +169,7 @@ const Register = () => {
 								setValue={setEmail}
 								validated={USMEmailValidated}
 								setValidated={setUSMEmailValidated}
+								showValidated={true}
 							/>
 
 							<StrongPasswordField

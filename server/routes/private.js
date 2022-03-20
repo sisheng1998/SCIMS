@@ -16,6 +16,7 @@ const {
 const {
 	getProfile,
 	updateProfile,
+	changeEmail,
 	changePassword,
 	updateAvatar,
 } = require('../controllers/profile')
@@ -32,6 +33,7 @@ router.route('/user').delete(verifyRoles(ROLES_LIST.labOwner), removeUser)
 // Profile
 router.route('/profile').get(getProfile)
 router.route('/profile').post(updateProfile)
+router.route('/profile/email').post(changeEmail)
 router.route('/profile/password').post(changePassword)
 router
 	.route('/profile/avatar')

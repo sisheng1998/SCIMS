@@ -99,6 +99,7 @@ const Login = () => {
 						setValue={setEmail}
 						validated={emailValidated}
 						setValidated={setEmailValidated}
+						showValidated={true}
 					/>
 
 					<label htmlFor='password' className='required-input-label'>

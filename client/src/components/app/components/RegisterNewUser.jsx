@@ -45,6 +45,7 @@ const RegisterNewUser = ({
 						validated={USMEmailValidated}
 						setValidated={setUSMEmailValidated}
 						excludeStudent={excludeStudent}
+						showValidated={true}
 					/>
 				</div>
 

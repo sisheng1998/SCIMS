@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
+import ChangeEmailModal from './ChangeEmailModal'
 import ChangePasswordModal from './ChangePasswordModal'
 
 const AccountSection = ({ user }) => {
+	const [openChangeEmailModal, setOpenChangeEmailModal] = useState(false)
 	const [openChangePasswordModal, setOpenChangePasswordModal] = useState(false)
 
 	return (
@@ -10,8 +12,8 @@ const AccountSection = ({ user }) => {
 				<div className='flex items-end justify-between'>
 					<label htmlFor='email'>Email Address</label>
 					<button
-						className='mb-2 text-sm font-medium text-indigo-600 transition hover:text-indigo-700'
-						onClick={() => {}}
+						className='mb-2 text-sm font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+						onClick={() => setOpenChangeEmailModal(true)}
 					>
 						Change Email
 					</button>
@@ -45,6 +47,14 @@ const AccountSection = ({ user }) => {
 				<ChangePasswordModal
 					openModal={openChangePasswordModal}
 					setOpenModal={setOpenChangePasswordModal}
+				/>
+			)}
+
+			{openChangeEmailModal && (
+				<ChangeEmailModal
+					user={user}
+					openModal={openChangeEmailModal}
+					setOpenModal={setOpenChangeEmailModal}
 				/>
 			)}
 		</>

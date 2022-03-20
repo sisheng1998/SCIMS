@@ -1,5 +1,6 @@
 const ErrorResponse = require('../utils/errorResponse')
 const User = require('../models/User')
+const { sendVerificationEmail } = require('./auth')
 
 const UserInfo =
 	'name email altEmail avatar matricNo isEmailVerified registeredAt lastUpdated roles.lab roles.role roles.status'
@@ -63,6 +64,39 @@ exports.updateProfile = async (req, res, next) => {
 			return next(new ErrorResponse('Matric number existed.', 409))
 		}
 
+		next(error)
+	}
+}
+
+exports.changeEmail = async (req, res, next) => {
+	const userId = req.user._id
+	const { email } = req.body
+
+	if (!email) {
+		return next(new ErrorResponse('Missing value.', 400))
+	}
+
+	const duplicate = await User.findOne({ email })
+	if (duplicate) {
+		return next(new ErrorResponse('Email registered.', 409))
+	}
+
+	try {
+		const foundUser = await User.findById(userId)
+		if (!foundUser) {
+			return next(new ErrorResponse('User not found.', 404))
+		}
+
+		foundUser.email = email
+		foundUser.isEmailVerified = false
+		foundUser.lastUpdated = Date.now()
+
+		const emailVerificationToken = foundUser.getEmailVerificationToken()
+
+		await foundUser.save()
+
+		sendVerificationEmail(foundUser, emailVerificationToken, res, next)
+	} catch (error) {
 		next(error)
 	}
 }

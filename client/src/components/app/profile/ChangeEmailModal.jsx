@@ -1,30 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { Dialog } from '@headlessui/react'
-import MatricNoField from '../../validations/MatricNoField'
-import NameField from '../../validations/NameField'
-import AltEmailField from '../../validations/AltEmailField'
 import {
 	CheckIcon,
 	XIcon,
 	ExclamationCircleIcon,
 } from '@heroicons/react/outline'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
+import USMEmailField from '../../validations/USMEmailField'
+import useLogout from '../../../hooks/useLogout'
 
-const EditPersonalInfoModal = ({
-	user,
-	openModal,
-	setOpenModal,
-	setEditPersonalInfoSuccess,
-}) => {
+const ChangePasswordModal = ({ user, openModal, setOpenModal }) => {
 	const axiosPrivate = useAxiosPrivate()
+	const logout = useLogout()
 
-	const [matricNo, setMatricNo] = useState(user.matricNo)
-	const [name, setName] = useState(user.name)
-	const [altEmail, setAltEmail] = useState(user.altEmail || '')
-
-	const [matricNoValidated, setMatricNoValidated] = useState(false)
-	const [nameValidated, setNameValidated] = useState(false)
-	const [altEmailValidated, setAltEmailValidated] = useState(false)
+	const [email, setEmail] = useState(user.email)
+	const [USMEmailValidated, setUSMEmailValidated] = useState(false)
 
 	const [allowed, setAllowed] = useState(false)
 	const [success, setSuccess] = useState(false)
@@ -34,17 +24,13 @@ const EditPersonalInfoModal = ({
 		e.preventDefault()
 
 		try {
-			await axiosPrivate.post('/api/private/profile', {
-				matricNo,
-				name,
-				altEmail,
+			await axiosPrivate.post('/api/private/profile/email', {
+				email,
 			})
 			setSuccess(true)
 		} catch (error) {
 			if (error.response?.status === 409) {
-				setErrorMessage(
-					'A user with this matric number or staff number already exists.'
-				)
+				setErrorMessage('An account with this email already exists.')
 			} else if (error.response?.status === 500) {
 				setErrorMessage('Server not responding. Please try again later.')
 			} else {
@@ -55,30 +41,14 @@ const EditPersonalInfoModal = ({
 
 	useEffect(() => {
 		setErrorMessage('')
-		setAllowed(
-			matricNoValidated &&
-				nameValidated &&
-				altEmailValidated &&
-				(matricNo !== user.matricNo ||
-					name !== user.name ||
-					altEmail !== user.altEmail)
-		)
-	}, [
-		user,
-		matricNo,
-		name,
-		altEmail,
-		matricNoValidated,
-		nameValidated,
-		altEmailValidated,
-	])
+		setAllowed(USMEmailValidated && email !== user.email)
+	}, [user, email, USMEmailValidated])
 
 	const closeHandler = () => {
 		setErrorMessage('')
 
 		if (success) {
-			setSuccess(false)
-			setEditPersonalInfoSuccess(true)
+			logout()
 		}
 
 		setOpenModal(false)
@@ -100,21 +70,23 @@ const EditPersonalInfoModal = ({
 					{success ? (
 						<>
 							<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
-							<h2 className='mt-6 mb-2 text-green-600'>
-								Personal Info Updated!
-							</h2>
-							<p>Your personal info has been updated.</p>
+							<h2 className='mt-6 mb-2 text-green-600'>Email Changed!</h2>
+							<p>Your email has been changed.</p>
+							<p className='mt-6 flex items-center justify-center text-sm font-medium text-red-600'>
+								<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />
+								Kindly verify and re-login with your new email.
+							</p>
 							<button
 								className='button button-solid mt-6 w-32 justify-center'
 								onClick={closeHandler}
 							>
-								Okay
+								Logout
 							</button>
 						</>
 					) : (
 						<>
 							<div className='mb-6 flex justify-between border-b border-gray-200 pb-3'>
-								<h4>Edit Personal Info</h4>
+								<h4>Change Email</h4>
 								<XIcon
 									className='h-5 w-5 cursor-pointer hover:text-indigo-600'
 									onClick={closeHandler}
@@ -133,37 +105,23 @@ const EditPersonalInfoModal = ({
 								spellCheck='false'
 								autoComplete='off'
 							>
-								<label htmlFor='matricNo' className='required-input-label'>
-									Matric/Staff Number
+								<label htmlFor='email' className='required-input-label'>
+									Email Address
 								</label>
-								<MatricNoField
-									placeholder='Enter your matric/staff number'
-									value={matricNo}
-									setValue={setMatricNo}
-									validated={matricNoValidated}
-									setValidated={setMatricNoValidated}
+								<USMEmailField
+									message='Only *@usm.my or *.usm.my are allowed.'
+									checkExist={false}
+									value={email}
+									setValue={setEmail}
+									validated={USMEmailValidated}
+									setValidated={setUSMEmailValidated}
 								/>
 
-								<label htmlFor='name' className='required-input-label'>
-									Full Name{' '}
-									<span className='text-xs'>(as per IC/Passport)</span>
-								</label>
-								<NameField
-									id='name'
-									placeholder='Enter your full name'
-									required={true}
-									value={name}
-									setValue={setName}
-									validated={nameValidated}
-									setValidated={setNameValidated}
-								/>
-
-								<AltEmailField
-									value={altEmail}
-									setValue={setAltEmail}
-									validated={altEmailValidated}
-									setValidated={setAltEmailValidated}
-								/>
+								<p className='mb-6 flex items-center text-xs font-medium text-indigo-600'>
+									<ExclamationCircleIcon className='mr-1.5 h-4 w-4 shrink-0 stroke-2' />
+									A verification email will be sent to your new email address
+									after the email changed.
+								</p>
 
 								<div className='flex items-center justify-end'>
 									<span
@@ -177,7 +135,7 @@ const EditPersonalInfoModal = ({
 										type='submit'
 										disabled={!allowed}
 									>
-										Update
+										Change
 									</button>
 								</div>
 							</form>
@@ -189,4 +147,4 @@ const EditPersonalInfoModal = ({
 	)
 }
 
-export default EditPersonalInfoModal
+export default ChangePasswordModal
