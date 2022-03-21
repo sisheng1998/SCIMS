@@ -18,12 +18,19 @@ const LabSchema = new Schema(
 				ref: 'User',
 			},
 		],
+		chemicals: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'Chemical',
+			},
+		],
 		status: {
 			type: String,
 			default: 'In Use',
 		},
 		createdAt: {
 			type: Date,
+			immutable: true,
 			default: Date.now,
 		},
 		lastUpdated: {

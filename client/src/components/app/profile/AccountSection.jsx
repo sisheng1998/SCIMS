@@ -10,7 +10,18 @@ const AccountSection = ({ user }) => {
 		<>
 			<div className='my-3 rounded-lg border border-gray-300 bg-white p-6 shadow'>
 				<div className='flex items-end justify-between'>
-					<label htmlFor='email'>Email Address</label>
+					<label htmlFor='email'>
+						Email Address
+						<span
+							className={`ml-2 rounded-full px-2 py-1 text-xs font-medium ${
+								user.isEmailVerified
+									? 'bg-green-100 text-green-600'
+									: 'bg-red-100 text-red-600'
+							}`}
+						>
+							{user.isEmailVerified ? 'Verified' : 'Not Verified'}
+						</span>
+					</label>
 					<button
 						className='mb-2 text-sm font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
 						onClick={() => setOpenChangeEmailModal(true)}
@@ -19,20 +30,13 @@ const AccountSection = ({ user }) => {
 					</button>
 				</div>
 				<input
-					className='mb-2 w-full'
+					className='mb-6 w-full'
 					type='text'
 					name='email'
 					id='email'
 					readOnly
 					value={user.email}
 				/>
-				<p
-					className={`mb-6 text-sm font-medium ${
-						user.isEmailVerified ? 'text-green-600' : 'text-red-600'
-					}`}
-				>
-					{user.isEmailVerified ? 'Verified' : 'Not Verified'}
-				</p>
 
 				<label htmlFor='password'>Password</label>
 				<button

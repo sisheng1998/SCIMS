@@ -4,7 +4,7 @@ const User = require('../models/User')
 const ROLES_LIST = require('../config/roles_list')
 
 const UserInfo =
-	'name email altEmail avatar matricNo isEmailVerified registeredAt lastUpdated roles.lab roles.role roles.status'
+	'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status'
 
 exports.getUsers = async (req, res, next) => {
 	const labId = req.body.labId

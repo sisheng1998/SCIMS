@@ -231,15 +231,30 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 									</div>
 								</div>
 
-								<div className='mb-6'>
-									<label htmlFor='extraInfo'>Extra Information</label>
-									<p className='font-semibold'>
-										{lab.labUsers.length + 1}
-										<span className='text-sm font-normal'>
-											{' '}
-											User{lab.labUsers.length > 1 ? 's' : null}
-										</span>
-									</p>
+								<div className='mb-6 flex space-x-6'>
+									<div className='flex-1'>
+										<label htmlFor='numberOfUsers'>No. of Users</label>
+										<input
+											className='w-full'
+											type='text'
+											name='numberOfUsers'
+											id='numberOfUsers'
+											readOnly
+											value={lab.labUsers.length + 1}
+										/>
+									</div>
+
+									<div className='flex-1'>
+										<label htmlFor='numberOfChemicals'>No. of Chemicals</label>
+										<input
+											className='w-full'
+											type='text'
+											name='numberOfChemicals'
+											id='numberOfChemicals'
+											readOnly
+											value={lab.chemicals.length}
+										/>
+									</div>
 								</div>
 
 								<div className='mb-6 flex items-center justify-between space-x-6 text-sm text-gray-500'>

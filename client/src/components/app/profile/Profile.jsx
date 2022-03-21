@@ -63,7 +63,7 @@ const Profile = () => {
 				<AccountSection user={user} />
 				<p className='mb-12 text-sm text-gray-500'>
 					Registered At:{' '}
-					<span className='font-semibold'>{FormatDate(user.registeredAt)}</span>
+					<span className='font-semibold'>{FormatDate(user.createdAt)}</span>
 				</p>
 
 				<h4>Personal Info</h4>

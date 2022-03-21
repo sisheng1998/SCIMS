@@ -222,7 +222,7 @@ const EditUserModal = ({
 									<p>
 										Registered At:{' '}
 										<span className='font-semibold'>
-											{FormatDate(user.registeredAt)}
+											{FormatDate(user.createdAt)}
 										</span>
 									</p>
 									<p>

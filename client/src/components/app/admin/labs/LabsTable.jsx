@@ -22,7 +22,12 @@ const tableHeaders = [
 	},
 	{
 		key: 'usersNo',
-		label: 'No. of Users',
+		label: 'Users',
+		sortable: false,
+	},
+	{
+		key: 'chemicalsNo',
+		label: 'Chemicals',
 		sortable: false,
 	},
 	{
@@ -216,6 +221,7 @@ const LabsTable = (props) => {
 												</td>
 
 												<td className='px-6 py-4'>{lab.labUsers.length + 1}</td>
+												<td className='px-6 py-4'>{lab.chemicals.length}</td>
 
 												<td className='px-6 py-4'>
 													<span

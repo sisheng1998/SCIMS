@@ -44,8 +44,10 @@ const StaticUserInfo = ({ user }) => {
 							<label htmlFor='email' className='mb-1 flex items-baseline'>
 								Email Address
 								<span
-									className={`ml-4 text-xs font-medium ${
-										user.isEmailVerified ? 'text-green-600' : 'text-red-600'
+									className={`ml-2 rounded-full px-2 py-1 text-xs font-medium ${
+										user.isEmailVerified
+											? 'bg-green-100 text-green-600'
+											: 'bg-red-100 text-red-600'
 									}`}
 								>
 									{user.isEmailVerified ? 'Verified' : 'Not Verified'}

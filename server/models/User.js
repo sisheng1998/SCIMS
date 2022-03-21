@@ -60,8 +60,9 @@ const UserSchema = new Schema(
 		resetPasswordToken: String,
 		resetPasswordExpire: Date,
 		refreshToken: String,
-		registeredAt: {
+		createdAt: {
 			type: Date,
+			immutable: true,
 			default: Date.now,
 		},
 		lastUpdated: {
