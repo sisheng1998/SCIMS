@@ -8,6 +8,7 @@ import {
 import ROLES_LIST from '../../../../config/roles_list'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import FormatDate from '../../../utils/FormatDate'
+import StaticUserInfo from '../../components/StaticUserInfo'
 
 function getKeyByValue(value) {
 	return Object.keys(ROLES_LIST).find((key) => ROLES_LIST[key] === value)
@@ -141,61 +142,11 @@ const EditUserModal = ({
 								spellCheck='false'
 								autoComplete='off'
 							>
-								<div className='mb-6 flex space-x-6'>
-									<div className='flex-1'>
-										<label htmlFor='name'>
-											Full Name{' '}
-											<span className='text-xs'>(as per IC/Passport)</span>
-										</label>
-										<input
-											className='w-full'
-											type='text'
-											name='name'
-											id='name'
-											readOnly
-											value={user.name}
-										/>
-									</div>
-
-									<div className='flex-1'>
-										<div className='flex items-end justify-between'>
-											<label htmlFor='email'>Email Address</label>
-											<p
-												className={`mb-2 text-xs font-medium ${
-													user.isEmailVerified
-														? 'text-green-600'
-														: 'text-red-600'
-												}`}
-											>
-												{user.isEmailVerified ? 'Verified' : 'Not Verified'}
-											</p>
-										</div>
-										<input
-											className='w-full'
-											type='text'
-											name='email'
-											id='email'
-											readOnly
-											value={user.email}
-										/>
-									</div>
-
-									<div className='flex-1'>
-										<label htmlFor='altEmail'>Alternative Email Address</label>
-										<input
-											className='w-full'
-											type='text'
-											name='altEmail'
-											id='altEmail'
-											readOnly
-											value={user.altEmail || '-'}
-										/>
-									</div>
-								</div>
+								<StaticUserInfo user={user} />
 
 								<div className='mb-6 flex space-x-6'>
 									<div className='flex-1'>
-										<div className='flex items-end justify-between'>
+										<div className='flex items-baseline justify-between'>
 											<label htmlFor='lab'>Current Lab</label>
 											{currentRole.lab.status === 'Not In Use' && (
 												<p className='mb-2 text-xs font-medium text-red-600'>

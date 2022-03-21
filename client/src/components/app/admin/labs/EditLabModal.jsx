@@ -157,8 +157,8 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 									) : null}
 								</div>
 
-								<div className='mb-6 flex'>
-									<div className='mr-3 flex-1'>
+								<div className='mb-6 flex space-x-6'>
+									<div className='flex-1'>
 										<label
 											htmlFor='labName'
 											className={isEdit ? 'required-input-label' : undefined}
@@ -195,7 +195,7 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 										)}
 									</div>
 
-									<div className='ml-3 flex-1'>
+									<div className='flex-1'>
 										<label
 											htmlFor='statusSelection'
 											className={isEdit ? 'required-input-label' : undefined}
@@ -231,20 +231,15 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 									</div>
 								</div>
 
-								<div className='mb-6 flex'>
-									<div className='mr-3 flex-1'>
-										<label htmlFor='numOfUsers'>Number of Users</label>
-										<input
-											className='w-full'
-											type='number'
-											name='numOfUsers'
-											id='numOfUsers'
-											readOnly
-											value={lab.labUsers.length + 1}
-										/>
-									</div>
-
-									<div className='ml-3 flex-1'></div>
+								<div className='mb-6'>
+									<label htmlFor='extraInfo'>Extra Information</label>
+									<p className='font-semibold'>
+										{lab.labUsers.length + 1}
+										<span className='text-sm font-normal'>
+											{' '}
+											User{lab.labUsers.length > 1 ? 's' : null}
+										</span>
+									</p>
 								</div>
 
 								<div className='mb-6 flex items-center justify-between space-x-6 text-sm text-gray-500'>

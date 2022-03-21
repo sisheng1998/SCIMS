@@ -259,14 +259,14 @@ const UsersTable = (props) => {
 														user.roleValue >= ROLES_LIST.labOwner ? (
 															<button
 																onClick={() => editUserHandler(user, false)}
-																className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
+																className='flex font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
 															>
 																View
 															</button>
 														) : (
 															<button
 																onClick={() => editUserHandler(user, true)}
-																className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
+																className='flex font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
 															>
 																Edit
 															</button>
@@ -274,7 +274,7 @@ const UsersTable = (props) => {
 													) : (
 														<button
 															onClick={() => editUserHandler(user, false)}
-															className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
+															className='flex font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
 														>
 															View
 														</button>

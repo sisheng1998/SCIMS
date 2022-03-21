@@ -237,14 +237,14 @@ const LabsTable = (props) => {
 													) ? (
 														<button
 															onClick={() => editLabHandler(lab, false)}
-															className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
+															className='flex font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
 														>
 															View
 														</button>
 													) : (
 														<button
 															onClick={() => editLabHandler(lab, true)}
-															className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
+															className='flex font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
 														>
 															Edit
 														</button>

@@ -89,6 +89,7 @@ exports.changeEmail = async (req, res, next) => {
 
 		foundUser.email = email
 		foundUser.isEmailVerified = false
+		foundUser.refreshToken = undefined
 		foundUser.lastUpdated = Date.now()
 
 		const emailVerificationToken = foundUser.getEmailVerificationToken()

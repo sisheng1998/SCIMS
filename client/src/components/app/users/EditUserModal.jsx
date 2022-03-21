@@ -9,6 +9,7 @@ import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import FormatDate from '../../utils/FormatDate'
+import StaticUserInfo from '../components/StaticUserInfo'
 
 function getKeyByValue(value) {
 	return Object.keys(ROLES_LIST).find((key) => ROLES_LIST[key] === value)
@@ -141,49 +142,10 @@ const EditUserModal = ({
 								spellCheck='false'
 								autoComplete='off'
 							>
-								<div className='mb-6 flex'>
-									<div className='mr-3 flex-1'>
-										<label htmlFor='name'>
-											Full Name{' '}
-											<span className='text-xs'>(as per IC/Passport)</span>
-										</label>
-										<input
-											className='w-full'
-											type='text'
-											name='name'
-											id='name'
-											readOnly
-											value={user.name}
-										/>
-									</div>
+								<StaticUserInfo user={user} />
 
-									<div className='ml-3 flex-1'>
-										<label htmlFor='email'>Email Address</label>
-										<input
-											className='w-full'
-											type='text'
-											name='email'
-											id='email'
-											readOnly
-											value={user.email}
-										/>
-									</div>
-								</div>
-
-								<div className='mb-6 flex'>
-									<div className='mr-3 flex-1'>
-										<label htmlFor='altEmail'>Alternative Email Address</label>
-										<input
-											className='w-full'
-											type='text'
-											name='altEmail'
-											id='altEmail'
-											readOnly
-											value={user.altEmail || '-'}
-										/>
-									</div>
-
-									<div className='ml-3 flex-1'>
+								<div className='mb-6 flex space-x-6'>
+									<div className='flex-1'>
 										<label htmlFor='lab'>Current Lab</label>
 										<input
 											className='w-full'
@@ -193,11 +155,14 @@ const EditUserModal = ({
 											readOnly
 											value={auth.currentLabName}
 										/>
+										{isEdit && (
+											<p className='mt-2 text-xs text-gray-400'>
+												Current lab cannot be changed.
+											</p>
+										)}
 									</div>
-								</div>
 
-								<div className='mb-6 flex'>
-									<div className='mr-3 flex-1'>
+									<div className='flex-1'>
 										<label
 											htmlFor='statusSelection'
 											className={isEdit ? 'required-input-label' : undefined}
@@ -233,7 +198,7 @@ const EditUserModal = ({
 										)}
 									</div>
 
-									<div className='ml-3 flex-1'>
+									<div className='flex-1'>
 										<label
 											htmlFor='roleSelection'
 											className={isEdit ? 'required-input-label' : undefined}

@@ -284,7 +284,7 @@ const UsersTable = (props) => {
 																				onClick={() =>
 																					editUserHandler(user, role)
 																				}
-																				className='ml-2 text-gray-400 transition hover:text-indigo-700'
+																				className='ml-2 text-gray-400 transition hover:text-indigo-700 focus:outline-none'
 																			>
 																				<PencilAltIcon className='h-5 w-5' />
 																			</button>
@@ -296,7 +296,7 @@ const UsersTable = (props) => {
 												<td className='px-6 py-4 text-center'>
 													<button
 														onClick={() => viewUserHandler(user)}
-														className='flex font-medium text-indigo-600 transition hover:text-indigo-700'
+														className='flex font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
 													>
 														View
 													</button>

@@ -50,7 +50,7 @@ const RegisterNewUser = ({
 				</div>
 
 				<div className='flex-1'>
-					<div className='flex items-end justify-between'>
+					<div className='flex items-baseline justify-between'>
 						<label htmlFor='password' className='required-input-label'>
 							Password
 						</label>

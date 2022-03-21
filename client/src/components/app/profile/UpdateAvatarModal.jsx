@@ -92,7 +92,7 @@ const UpdateAvatarModal = ({ openModal, setOpenModal }) => {
 								spellCheck='false'
 								autoComplete='off'
 							>
-								<div className='flex items-end justify-between'>
+								<div className='flex items-baseline justify-between'>
 									<label htmlFor='profilePic' className='required-input-label'>
 										Profile Picture
 									</label>

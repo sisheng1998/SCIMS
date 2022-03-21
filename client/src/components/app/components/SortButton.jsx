@@ -8,7 +8,7 @@ import {
 const SortButton = ({ children, sortOrder, columnKey, sortKey, onClick }) => {
 	return (
 		<button
-			className='group flex items-center font-medium transition hover:text-indigo-600'
+			className='group flex items-center font-medium transition hover:text-indigo-600 focus:outline-none'
 			onClick={onClick}
 		>
 			{children}

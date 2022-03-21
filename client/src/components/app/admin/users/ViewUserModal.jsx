@@ -3,6 +3,7 @@ import { Dialog } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import GetRoleName from '../../../utils/GetRoleName'
 import FormatDate from '../../../utils/FormatDate'
+import StaticUserInfo from '../../components/StaticUserInfo'
 
 const tableHeaders = ['Name', 'Status', 'Role']
 
@@ -28,54 +29,7 @@ const ViewUserModal = ({ user, openModal, setOpenModal }) => {
 						/>
 					</div>
 
-					<div className='mb-6 flex space-x-6'>
-						<div className='flex-1'>
-							<label htmlFor='name'>
-								Full Name <span className='text-xs'>(as per IC/Passport)</span>
-							</label>
-							<input
-								className='w-full'
-								type='text'
-								name='name'
-								id='name'
-								readOnly
-								value={user.name}
-							/>
-						</div>
-
-						<div className='flex-1'>
-							<div className='flex items-end justify-between'>
-								<label htmlFor='email'>Email Address</label>
-								<p
-									className={`mb-2 text-xs font-medium ${
-										user.isEmailVerified ? 'text-green-600' : 'text-red-600'
-									}`}
-								>
-									{user.isEmailVerified ? 'Verified' : 'Not Verified'}
-								</p>
-							</div>
-							<input
-								className='w-full'
-								type='text'
-								name='email'
-								id='email'
-								readOnly
-								value={user.email}
-							/>
-						</div>
-
-						<div className='flex-1'>
-							<label htmlFor='altEmail'>Alternative Email Address</label>
-							<input
-								className='w-full'
-								type='text'
-								name='altEmail'
-								id='altEmail'
-								readOnly
-								value={user.altEmail || '-'}
-							/>
-						</div>
-					</div>
+					<StaticUserInfo user={user} />
 
 					<label htmlFor='lab'>Labs</label>
 					<div className='mb-6 overflow-hidden rounded-lg border border-gray-300 bg-gray-50 pb-3'>
@@ -169,12 +123,12 @@ const ViewUserModal = ({ user, openModal, setOpenModal }) => {
 					</div>
 
 					<div className='flex items-center justify-end'>
-						<span
+						<button
 							onClick={closeHandler}
-							className='cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'
+							className='cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600 focus:outline-none'
 						>
 							Close
-						</span>
+						</button>
 					</div>
 				</div>
 			</div>
