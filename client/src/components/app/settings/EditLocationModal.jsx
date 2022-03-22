@@ -5,43 +5,40 @@ import {
 	XIcon,
 	ExclamationCircleIcon,
 } from '@heroicons/react/outline'
-import ROLES_LIST from '../../../../config/roles_list'
-import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
-import FormatDate from '../../../utils/FormatDate'
-import StaticUserInfo from '../../components/StaticUserInfo'
+import useAuth from '../../../hooks/useAuth'
+import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
+import NameField from '../../validations/NameField'
 
-function getKeyByValue(value) {
-	return Object.keys(ROLES_LIST).find((key) => ROLES_LIST[key] === value)
-}
-
-const EditUserModal = ({
-	user,
-	currentRole,
+const EditLocationModal = ({
+	location,
 	openModal,
 	setOpenModal,
-	setEditUserSuccess,
+	setEditLocationSuccess,
 }) => {
+	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
 
-	const userId = user._id
-	const labId = currentRole.lab._id
-	const [status, setStatus] = useState(currentRole.status)
-	const [role, setRole] = useState(getKeyByValue(currentRole.role))
+	const labId = auth.currentLabId
+	const locationId = location._id
+	const [name, setName] = useState(location.name)
+	const [status, setStatus] = useState(location.status)
+
+	const [nameValidated, setNameValidated] = useState(false)
 
 	const [allowed, setAllowed] = useState(false)
 	const [success, setSuccess] = useState(false)
 	const [isRemove, setIsRemove] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
 
-	const editUserHandler = async (e) => {
+	const editLocationHandler = async (e) => {
 		e.preventDefault()
 
 		if (isRemove) {
 			try {
-				await axiosPrivate.delete('/api/private/user', {
+				await axiosPrivate.delete('/api/private/location', {
 					data: {
-						userId,
 						labId,
+						locationId,
 					},
 				})
 				setSuccess(true)
@@ -54,15 +51,17 @@ const EditUserModal = ({
 			}
 		} else {
 			try {
-				await axiosPrivate.put('/api/private/user', {
-					userId,
+				await axiosPrivate.put('/api/private/location', {
 					labId,
+					locationId,
+					name,
 					status,
-					role: ROLES_LIST[role],
 				})
 				setSuccess(true)
 			} catch (error) {
-				if (error.response?.status === 500) {
+				if (error.response?.status === 409) {
+					setErrorMessage('The location already exists.')
+				} else if (error.response?.status === 500) {
 					setErrorMessage('Server not responding. Please try again later.')
 				} else {
 					setErrorMessage('Oops. Something went wrong. Please try again later.')
@@ -72,18 +71,20 @@ const EditUserModal = ({
 	}
 
 	useEffect(() => {
+		setErrorMessage('')
 		setAllowed(
-			role !== getKeyByValue(currentRole.role) || status !== currentRole.status
+			nameValidated && (name !== location.name || status !== location.status)
 		)
-	}, [currentRole, role, status])
+	}, [location, name, status, nameValidated])
 
 	const closeHandler = () => {
 		setErrorMessage('')
+		setName('')
 		setIsRemove(false)
 
 		if (success) {
 			setSuccess(false)
-			setEditUserSuccess(true)
+			setEditLocationSuccess(true)
 		}
 
 		setOpenModal(false)
@@ -99,19 +100,19 @@ const EditUserModal = ({
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div
 					className={`relative w-full rounded-lg bg-white p-6 shadow ${
-						success ? 'max-w-sm text-center' : 'max-w-3xl'
+						success ? 'max-w-sm text-center' : 'max-w-2xl'
 					}`}
 				>
 					{success ? (
 						<>
 							<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
 							<h2 className='mt-6 mb-2 text-green-600'>
-								User {isRemove ? 'Removed' : 'Info Updated'}!
+								Location {isRemove ? 'Removed' : 'Updated'}!
 							</h2>
 							{isRemove ? (
-								<p>The user has been removed.</p>
+								<p>The location has been removed.</p>
 							) : (
-								<p>The user information has been updated.</p>
+								<p>The location have been updated.</p>
 							)}
 							<button
 								className='button button-solid mt-6 w-32 justify-center'
@@ -123,7 +124,7 @@ const EditUserModal = ({
 					) : (
 						<>
 							<div className='mb-6 flex justify-between border-b border-gray-200 pb-3'>
-								<h4>Edit User Information</h4>
+								<h4>Edit Location</h4>
 								<XIcon
 									className='h-5 w-5 cursor-pointer hover:text-indigo-600'
 									onClick={closeHandler}
@@ -138,36 +139,27 @@ const EditUserModal = ({
 							)}
 
 							<form
-								onSubmit={editUserHandler}
+								onSubmit={editLocationHandler}
 								spellCheck='false'
 								autoComplete='off'
 							>
-								<StaticUserInfo user={user} />
-
-								<div className='mb-6 flex space-x-6'>
-									<div className='flex-1'>
-										<div className='flex items-baseline justify-between'>
-											<label htmlFor='lab'>Current Lab</label>
-											{currentRole.lab.status === 'Not In Use' && (
-												<p className='mb-2 text-xs font-medium text-red-600'>
-													Not In Use
-												</p>
-											)}
-										</div>
-										<input
-											className='w-full'
-											type='text'
-											name='lab'
-											id='lab'
-											readOnly
-											value={currentRole.lab.labName}
+								<div className='mb-3 flex space-x-6'>
+									<div className='w-2/3'>
+										<label htmlFor='location' className='required-input-label'>
+											Location Name
+										</label>
+										<NameField
+											id='location'
+											placeholder='Enter location name (e.g Cabinet A)'
+											required={true}
+											value={name}
+											setValue={setName}
+											validated={nameValidated}
+											setValidated={setNameValidated}
 										/>
-										<p className='mt-2 text-xs text-gray-400'>
-											Current lab cannot be changed.
-										</p>
 									</div>
 
-									<div className='flex-1'>
+									<div className='w-1/3'>
 										<label
 											htmlFor='statusSelection'
 											className='required-input-label'
@@ -181,66 +173,23 @@ const EditUserModal = ({
 											value={status}
 											onChange={(e) => setStatus(e.target.value)}
 										>
-											<option value='Active'>Active</option>
-											<option value='Pending'>Pending</option>
-											<option value='Deactivated'>Deactivated</option>
+											<option value='In Use'>In Use</option>
+											<option value='Not In Use'>Not In Use</option>
 										</select>
 										<p className='mt-2 text-xs text-gray-400'>
-											User status for the current lab.
+											Status for the location.
 										</p>
 									</div>
-
-									<div className='flex-1'>
-										<label
-											htmlFor='roleSelection'
-											className='required-input-label'
-										>
-											Role
-										</label>
-										<select
-											className='w-full'
-											id='roleSelection'
-											required
-											value={role}
-											onChange={(e) => setRole(e.target.value)}
-										>
-											<option value={Object.keys(ROLES_LIST)[2]}>
-												Postgraduate
-											</option>
-											<option value={Object.keys(ROLES_LIST)[3]}>
-												Undergraduate
-											</option>
-											<option value={Object.keys(ROLES_LIST)[4]}>Guest</option>
-										</select>
-										<p className='mt-2 text-xs text-gray-400'>
-											User role for the current lab.
-										</p>
-									</div>
-								</div>
-
-								<div className='mb-9 flex items-center justify-between space-x-6 text-sm text-gray-500'>
-									<p>
-										Registered At:{' '}
-										<span className='font-semibold'>
-											{FormatDate(user.createdAt)}
-										</span>
-									</p>
-									<p>
-										Last Updated:{' '}
-										<span className='font-semibold'>
-											{FormatDate(user.lastUpdated)}
-										</span>
-									</p>
 								</div>
 
 								{isRemove ? (
 									<div className='flex items-center justify-end'>
 										<div className='mr-auto'>
 											<p className='font-medium text-gray-900'>
-												Confirm remove user from the current lab?
+												Confirm remove location?
 											</p>
 											<p className='mt-1 flex items-center text-sm font-medium text-red-600'>
-												<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}
+												<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />
 												This action is irreversible!
 											</p>
 										</div>
@@ -260,19 +209,15 @@ const EditUserModal = ({
 											onClick={() => setIsRemove(true)}
 											className='mr-auto cursor-pointer self-end text-sm font-medium text-red-600 transition hover:text-red-700'
 										>
-											Remove User
+											Remove Location
 										</span>
 										<span
 											onClick={closeHandler}
-											className='cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'
+											className='mr-6 cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'
 										>
 											Cancel
 										</span>
-										<button
-											className='ml-6 w-40'
-											type='submit'
-											disabled={!allowed}
-										>
+										<button className='w-40' type='submit' disabled={!allowed}>
 											Update
 										</button>
 									</div>
@@ -286,4 +231,4 @@ const EditUserModal = ({
 	)
 }
 
-export default EditUserModal
+export default EditLocationModal

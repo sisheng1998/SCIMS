@@ -147,7 +147,7 @@ const ChangePasswordModal = ({ openModal, setOpenModal }) => {
 									setValidated={setNewPasswordValidated}
 								/>
 
-								<div className='flex items-center justify-end'>
+								<div className='mt-9 flex items-center justify-end'>
 									<span
 										onClick={closeHandler}
 										className='cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'

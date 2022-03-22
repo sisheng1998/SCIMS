@@ -105,7 +105,7 @@ const UpdateAvatarModal = ({ openModal, setOpenModal }) => {
 											setImage={setImage}
 											setErrorMessage={setErrorMessage}
 										/>
-										<p className='mt-2 mb-6 text-xs text-gray-400'>
+										<p className='mt-2 text-xs text-gray-400'>
 											Only JPG, JPEG, and PNG are supported. Max file size: 5
 											MB.
 										</p>
@@ -114,7 +114,7 @@ const UpdateAvatarModal = ({ openModal, setOpenModal }) => {
 									<RenderImage image={image} setImage={setImage} />
 								)}
 
-								<div className='flex items-center justify-end'>
+								<div className='mt-9 flex items-center justify-end'>
 									<span
 										onClick={closeHandler}
 										className='cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'

@@ -117,7 +117,7 @@ const ChangePasswordModal = ({ user, openModal, setOpenModal }) => {
 									setValidated={setUSMEmailValidated}
 								/>
 
-								<p className='mb-6 flex items-center text-xs font-medium text-indigo-600'>
+								<p className='mb-9 flex items-center text-xs font-medium text-indigo-600'>
 									<ExclamationCircleIcon className='mr-1.5 h-4 w-4 shrink-0 stroke-2' />
 									A verification email will be sent to your new email address
 									after the email changed.

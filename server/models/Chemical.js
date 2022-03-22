@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 
 const ChemicalSchema = new Schema(
 	{
-		casNo: {
+		CAS: {
 			type: String,
 			required: true,
 		},
@@ -20,11 +20,15 @@ const ChemicalSchema = new Schema(
 			required: true,
 		},
 		amount: {
-			type: Double,
+			type: Number,
 			required: true,
 		},
 		containerSize: {
-			type: Double,
+			type: Number,
+			required: true,
+		},
+		minAmount: {
+			type: Number,
 			required: true,
 		},
 		lab: {
@@ -37,12 +41,23 @@ const ChemicalSchema = new Schema(
 		},
 		location: {
 			type: Schema.Types.ObjectId,
-			ref: 'Location',
+			ref: 'Lab',
 		},
+		storageGroup: String,
 		status: {
 			type: String,
 			default: 'Normal',
 		},
+		SDS: String,
+		QRCode: String,
+		classifications: [String],
+		securities: [String],
+		supplier: String,
+		brand: String,
+		dateIn: Date,
+		dateOpen: Date,
+		expirationDate: Date,
+		notes: String,
 		createdAt: {
 			type: Date,
 			immutable: true,

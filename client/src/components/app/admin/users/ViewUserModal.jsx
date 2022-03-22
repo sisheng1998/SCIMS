@@ -107,7 +107,7 @@ const ViewUserModal = ({ user, openModal, setOpenModal }) => {
 						</div>
 					</div>
 
-					<div className='mb-6 flex items-center justify-between space-x-6 text-sm text-gray-500'>
+					<div className='mb-9 flex items-center justify-between space-x-6 text-sm text-gray-500'>
 						<p>
 							Registered At:{' '}
 							<span className='font-semibold'>

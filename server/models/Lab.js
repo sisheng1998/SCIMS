@@ -24,6 +24,15 @@ const LabSchema = new Schema(
 				ref: 'Chemical',
 			},
 		],
+		locations: [
+			{
+				name: String,
+				status: {
+					type: String,
+					default: 'In Use',
+				},
+			},
+		],
 		status: {
 			type: String,
 			default: 'In Use',

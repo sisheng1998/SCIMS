@@ -5,6 +5,8 @@ const ROLES_LIST = require('../config/roles_list')
 const verifyRoles = require('../middleware/verifyRoles')
 const { uploadAvatar } = require('../middleware/uploadFile')
 
+const { getChemicals } = require('../controllers/chemical')
+
 const {
 	getUsers,
 	addUser,
@@ -21,6 +23,12 @@ const {
 	updateAvatar,
 } = require('../controllers/profile')
 
+const {
+	addLocation,
+	editLocation,
+	removeLocation,
+} = require('../controllers/settings')
+
 // Users
 router.route('/users').post(verifyRoles(ROLES_LIST.guest), getUsers)
 router.route('/user').post(verifyRoles(ROLES_LIST.labOwner), addUser)
@@ -30,6 +38,9 @@ router
 router.route('/user').put(verifyRoles(ROLES_LIST.labOwner), updateUser)
 router.route('/user').delete(verifyRoles(ROLES_LIST.labOwner), removeUser)
 
+// Inventory
+router.route('/chemicals').post(verifyRoles(ROLES_LIST.guest), getChemicals)
+
 // Profile
 router.route('/profile').get(getProfile)
 router.route('/profile').post(updateProfile)
@@ -38,5 +49,12 @@ router.route('/profile/password').post(changePassword)
 router
 	.route('/profile/avatar')
 	.post(uploadAvatar.single('avatar'), updateAvatar)
+
+// Settings
+router.route('/location').post(verifyRoles(ROLES_LIST.labOwner), addLocation)
+router.route('/location').put(verifyRoles(ROLES_LIST.labOwner), editLocation)
+router
+	.route('/location')
+	.delete(verifyRoles(ROLES_LIST.labOwner), removeLocation)
 
 module.exports = router
