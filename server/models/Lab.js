@@ -27,10 +27,6 @@ const LabSchema = new Schema(
 		locations: [
 			{
 				name: String,
-				status: {
-					type: String,
-					default: 'In Use',
-				},
 			},
 		],
 		status: {

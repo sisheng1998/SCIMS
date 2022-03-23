@@ -43,9 +43,9 @@ exports.addLocation = async (req, res, next) => {
 }
 
 exports.editLocation = async (req, res, next) => {
-	const { labId, locationId, name, status } = req.body
+	const { labId, locationId, name } = req.body
 
-	if (!labId || !locationId || !name || !status) {
+	if (!labId || !locationId || !name) {
 		return next(new ErrorResponse('Missing value for required field.', 400))
 	}
 
@@ -70,7 +70,6 @@ exports.editLocation = async (req, res, next) => {
 			{
 				$set: {
 					'locations.$[el].name': name,
-					'locations.$[el].status': status,
 					lastUpdated: Date.now(),
 				},
 			},

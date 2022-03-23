@@ -5,7 +5,7 @@ const tableHeaders = ['Code', 'Description']
 
 const StorageGroupsSection = () => {
 	return (
-		<div className='mt-3 mb-6 overflow-hidden rounded-lg border border-gray-300 bg-gray-50 shadow'>
+		<div className='mb-6 w-full max-w-3xl overflow-hidden rounded-lg border border-gray-200 bg-gray-50 shadow-sm'>
 			<div className='overflow-x-auto'>
 				<div className='border-b border-gray-200'>
 					<table className='min-w-full divide-y divide-gray-200'>

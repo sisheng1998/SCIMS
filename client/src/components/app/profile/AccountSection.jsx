@@ -8,44 +8,42 @@ const AccountSection = ({ user }) => {
 
 	return (
 		<>
-			<div className='my-3 rounded-lg border border-gray-300 bg-white p-6 shadow'>
-				<div className='flex items-end justify-between'>
-					<label htmlFor='email'>
-						Email Address
-						<span
-							className={`ml-2 rounded-full px-2 py-1 text-xs font-medium ${
-								user.isEmailVerified
-									? 'bg-green-100 text-green-600'
-									: 'bg-red-100 text-red-600'
-							}`}
-						>
-							{user.isEmailVerified ? 'Verified' : 'Not Verified'}
-						</span>
-					</label>
-					<button
-						className='mb-2 text-sm font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
-						onClick={() => setOpenChangeEmailModal(true)}
+			<div className='flex items-end justify-between'>
+				<label htmlFor='email'>
+					Email Address
+					<span
+						className={`ml-2 rounded-full px-2 py-1 text-xs font-medium ${
+							user.isEmailVerified
+								? 'bg-green-100 text-green-600'
+								: 'bg-red-100 text-red-600'
+						}`}
 					>
-						Change Email
-					</button>
-				</div>
-				<input
-					className='mb-6 w-full'
-					type='text'
-					name='email'
-					id='email'
-					readOnly
-					value={user.email}
-				/>
-
-				<label htmlFor='password'>Password</label>
+						{user.isEmailVerified ? 'Verified' : 'Not Verified'}
+					</span>
+				</label>
 				<button
-					className='button button-outline w-full max-w-xs justify-center px-4 py-3'
-					onClick={() => setOpenChangePasswordModal(true)}
+					className='mb-2 text-sm font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+					onClick={() => setOpenChangeEmailModal(true)}
 				>
-					Change Password
+					Change Email
 				</button>
 			</div>
+			<input
+				className='mb-6 w-full'
+				type='text'
+				name='email'
+				id='email'
+				readOnly
+				value={user.email}
+			/>
+
+			<label htmlFor='password'>Password</label>
+			<button
+				className='button button-outline w-full max-w-xs justify-center px-4 py-3'
+				onClick={() => setOpenChangePasswordModal(true)}
+			>
+				Change Password
+			</button>
 
 			{openChangePasswordModal && (
 				<ChangePasswordModal

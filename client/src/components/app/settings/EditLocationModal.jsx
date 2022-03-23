@@ -21,7 +21,6 @@ const EditLocationModal = ({
 	const labId = auth.currentLabId
 	const locationId = location._id
 	const [name, setName] = useState(location.name)
-	const [status, setStatus] = useState(location.status)
 
 	const [nameValidated, setNameValidated] = useState(false)
 
@@ -55,7 +54,6 @@ const EditLocationModal = ({
 					labId,
 					locationId,
 					name,
-					status,
 				})
 				setSuccess(true)
 			} catch (error) {
@@ -72,10 +70,8 @@ const EditLocationModal = ({
 
 	useEffect(() => {
 		setErrorMessage('')
-		setAllowed(
-			nameValidated && (name !== location.name || status !== location.status)
-		)
-	}, [location, name, status, nameValidated])
+		setAllowed(nameValidated && name !== location.name)
+	}, [location, name, nameValidated])
 
 	const closeHandler = () => {
 		setErrorMessage('')
@@ -100,7 +96,7 @@ const EditLocationModal = ({
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div
 					className={`relative w-full rounded-lg bg-white p-6 shadow ${
-						success ? 'max-w-sm text-center' : 'max-w-2xl'
+						success ? 'max-w-sm text-center' : 'max-w-xl'
 					}`}
 				>
 					{success ? (
@@ -143,47 +139,21 @@ const EditLocationModal = ({
 								spellCheck='false'
 								autoComplete='off'
 							>
-								<div className='mb-3 flex space-x-6'>
-									<div className='w-2/3'>
-										<label htmlFor='location' className='required-input-label'>
-											Location Name
-										</label>
-										<NameField
-											id='location'
-											placeholder='Enter location name (e.g Cabinet A)'
-											required={true}
-											value={name}
-											setValue={setName}
-											validated={nameValidated}
-											setValidated={setNameValidated}
-										/>
-									</div>
-
-									<div className='w-1/3'>
-										<label
-											htmlFor='statusSelection'
-											className='required-input-label'
-										>
-											Status
-										</label>
-										<select
-											className='w-full'
-											id='statusSelection'
-											required
-											value={status}
-											onChange={(e) => setStatus(e.target.value)}
-										>
-											<option value='In Use'>In Use</option>
-											<option value='Not In Use'>Not In Use</option>
-										</select>
-										<p className='mt-2 text-xs text-gray-400'>
-											Status for the location.
-										</p>
-									</div>
-								</div>
+								<label htmlFor='location' className='required-input-label'>
+									Location Name
+								</label>
+								<NameField
+									id='location'
+									placeholder='Enter location name (e.g Cabinet A)'
+									required={true}
+									value={name}
+									setValue={setName}
+									validated={nameValidated}
+									setValidated={setNameValidated}
+								/>
 
 								{isRemove ? (
-									<div className='flex items-center justify-end'>
+									<div className='mt-9 flex items-center justify-end'>
 										<div className='mr-auto'>
 											<p className='font-medium text-gray-900'>
 												Confirm remove location?
@@ -204,7 +174,7 @@ const EditLocationModal = ({
 										</button>
 									</div>
 								) : (
-									<div className='flex items-center justify-end'>
+									<div className='mt-9 flex items-center justify-end'>
 										<span
 											onClick={() => setIsRemove(true)}
 											className='mr-auto cursor-pointer self-end text-sm font-medium text-red-600 transition hover:text-red-700'

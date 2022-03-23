@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react'
 
 const NAME_REGEX = /^[a-zA-Z,.'-/]+( [a-zA-Z,.'-/]+)*$/
+const NAME_REGEX_WITH_NUMBER = /^[a-zA-Z0-9,.'-/]+( [a-zA-Z0-9,.'-/]+)*$/
 
 const NameField = (props) => {
 	useEffect(() => {
-		const result = NAME_REGEX.test(props.value)
+		const result = props.withNumber
+			? NAME_REGEX_WITH_NUMBER.test(props.value)
+			: NAME_REGEX.test(props.value)
 		props.setValidated(result && props.value.length > 2)
 	}, [props])
 
@@ -30,7 +33,10 @@ const NameField = (props) => {
 
 			<p className='mt-2 text-xs text-gray-400'>
 				{!props.value || (!props.showValidated && props.validated) ? (
-					<span>Only alphabets, spaces, and symbols (-/,'.) are allowed.</span>
+					<span>
+						Only alphabets, {props.withNumber ? 'numbers, ' : ''}spaces, and
+						symbols (-/,'.) are allowed.
+					</span>
 				) : props.validated ? (
 					<span className='text-green-600'>Looks good!</span>
 				) : (

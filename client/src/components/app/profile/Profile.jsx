@@ -58,18 +58,49 @@ const Profile = () => {
 				</p>
 			</Title>
 
-			<div className='mx-auto w-full max-w-3xl'>
-				<h4>Account Info</h4>
-				<AccountSection user={user} />
-				<p className='mb-12 text-sm text-gray-500'>
-					Registered At:{' '}
-					<span className='font-semibold'>{FormatDate(user.createdAt)}</span>
-				</p>
+			<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
+				<div className='w-full max-w-md 2xl:max-w-xs'>
+					<h4>Account Info</h4>
+					<p className='text-sm text-gray-500'>Account email and password.</p>
+				</div>
 
-				<h4>Personal Info</h4>
-				<PersonalSection user={user} setRefresh={setRefresh} />
+				<div className='mb-9 w-full max-w-3xl'>
+					<div className='rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+						<AccountSection user={user} />
+					</div>
 
-				<h4>Labs Info</h4>
+					<p className='mt-3 text-sm text-gray-500'>
+						Registered At:{' '}
+						<span className='font-semibold'>{FormatDate(user.createdAt)}</span>
+					</p>
+				</div>
+			</div>
+
+			<hr className='mb-6 border-gray-200' />
+
+			<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
+				<div className='w-full max-w-md 2xl:max-w-xs'>
+					<h4>Personal Info</h4>
+					<p className='text-sm text-gray-500'>
+						This information will be displayed publicly.
+					</p>
+				</div>
+
+				<div className='mb-9 w-full max-w-3xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+					<PersonalSection user={user} setRefresh={setRefresh} />
+				</div>
+			</div>
+
+			<hr className='mb-6 border-gray-200' />
+
+			<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
+				<div className='w-full max-w-md 2xl:max-w-xs'>
+					<h4>Labs Info</h4>
+					<p className='text-sm text-gray-500'>
+						User role and status in each lab.
+					</p>
+				</div>
+
 				<LabsSection user={user} />
 			</div>
 		</>

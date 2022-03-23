@@ -29,6 +29,7 @@ import Notification from './components/app/notification/Notification'
 import Profile from './components/app/profile/Profile'
 import PendingApproval from './components/app/PendingApproval'
 import ApplyNewLab from './components/app/ApplyNewLab'
+import AddChemical from './components/app/inventory/AddChemical'
 
 // Admin
 import AdminDashboard from './components/app/admin/dashboard/Dashboard'
@@ -54,6 +55,17 @@ const App = () => {
 						<Route exact path='/labs' element={<Labs />} />
 						<Route exact path='/notification' element={<Notification />} />
 						<Route exact path='/profile' element={<Profile />} />
+
+						{/* Accessible by postgraduate or lab owner or admin only */}
+						<Route
+							element={<Authorization minRole={ROLES_LIST.postgraduate} />}
+						>
+							<Route
+								exact
+								path='/inventory/new-chemical'
+								element={<AddChemical />}
+							/>
+						</Route>
 
 						{/* Accessible by lab owner or admin only */}
 						<Route element={<Authorization minRole={ROLES_LIST.labOwner} />}>

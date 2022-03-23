@@ -6,6 +6,7 @@ import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import LoadingScreen from '../../utils/LoadingScreen'
 import { ExclamationIcon } from '@heroicons/react/outline'
+import ChemicalsTable from './ChemicalsTable'
 
 const Inventory = () => {
 	const { auth } = useAuth()
@@ -17,7 +18,8 @@ const Inventory = () => {
 
 	const axiosPrivate = useAxiosPrivate()
 
-	const [lab, setLab] = useState('')
+	const [locations, setLocations] = useState('')
+	const [chemicals, setChemicals] = useState('')
 
 	const [isLoading, setIsLoading] = useState(true)
 	const [refresh, setRefresh] = useState(false)
@@ -45,7 +47,14 @@ const Inventory = () => {
 					}
 				)
 				if (isMounted) {
-					setLab(data.data)
+					const processedData = data.data.chemicals.map((chemical, index) => {
+						return {
+							...chemical,
+							index: index,
+						}
+					})
+					setChemicals(processedData)
+					setLocations(data.data.locations)
 					setIsLoading(false)
 				}
 			} catch (error) {
@@ -65,7 +74,7 @@ const Inventory = () => {
 		<LoadingScreen />
 	) : (
 		<>
-			{lab.locations.length === 0 ? (
+			{locations.length === 0 ? (
 				<div className='auth-card mt-6 self-center text-center'>
 					<ExclamationIcon className='mx-auto h-16 w-16 rounded-full bg-yellow-100 p-2 text-yellow-600' />
 					<h2 className='mt-6 mb-2 text-yellow-600'>Lab Setup Required</h2>
@@ -88,8 +97,14 @@ const Inventory = () => {
 						hasButton={auth.currentRole >= ROLES_LIST.postgraduate}
 						hasRefreshButton={true}
 						buttonText='Add Chemical'
-						buttonAction={() => {}}
+						buttonAction={() => navigate('/inventory/new-chemical')}
 						setRefresh={setRefresh}
+					/>
+
+					<ChemicalsTable
+						data={chemicals}
+						locations={locations}
+						setEditUserSuccess={setRefresh}
 					/>
 				</>
 			)}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import EditLocationModal from './EditLocationModal'
 
-const tableHeaders = ['Location', 'Status', 'Action']
+const tableHeaders = ['Location', 'Action']
 
 const LocationsSection = ({ locations, setEditLocationSuccess }) => {
 	const [location, setLocation] = useState('')
@@ -14,7 +14,7 @@ const LocationsSection = ({ locations, setEditLocationSuccess }) => {
 
 	return (
 		<>
-			<div className='mt-3 mb-12 overflow-hidden rounded-lg border border-gray-300 bg-gray-50 shadow'>
+			<div className='overflow-hidden rounded-lg border border-gray-200 bg-gray-50 shadow-sm'>
 				<div className='overflow-x-auto'>
 					<div className='border-b border-gray-200'>
 						<table className='min-w-full divide-y divide-gray-200'>
@@ -50,17 +50,6 @@ const LocationsSection = ({ locations, setEditLocationSuccess }) => {
 										.map((location) => (
 											<tr key={location._id}>
 												<td className='px-6 py-4'>{location.name}</td>
-												<td className='px-6 py-4'>
-													<span
-														className={`inline-flex rounded-full px-3 py-1 font-medium ${
-															location.status === 'In Use'
-																? 'bg-green-100 text-green-600'
-																: 'bg-red-100 text-red-600'
-														}`}
-													>
-														{location.status}
-													</span>
-												</td>
 												<td className='px-6 py-4'>
 													<button
 														onClick={() => editLocationHandler(location)}
