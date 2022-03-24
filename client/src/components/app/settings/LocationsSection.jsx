@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import EditLocationModal from './EditLocationModal'
+import STORAGE_GROUPS from '../../../config/storage_groups'
 
-const tableHeaders = ['Location', 'Action']
+const tableHeaders = ['Location', 'Storage Group(s)', 'Action']
 
 const LocationsSection = ({ locations, setEditLocationSuccess }) => {
 	const [location, setLocation] = useState('')
@@ -50,6 +51,14 @@ const LocationsSection = ({ locations, setEditLocationSuccess }) => {
 										.map((location) => (
 											<tr key={location._id}>
 												<td className='px-6 py-4'>{location.name}</td>
+												<td className='px-6 py-4'>
+													{location.storageGroups.length ===
+													STORAGE_GROUPS.length
+														? 'All storage groups'
+														: location.storageGroups.map(
+																(group, index) => (index ? ', ' : '') + group
+														  )}
+												</td>
 												<td className='px-6 py-4'>
 													<button
 														onClick={() => editLocationHandler(location)}

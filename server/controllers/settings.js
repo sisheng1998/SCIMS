@@ -2,9 +2,9 @@ const ErrorResponse = require('../utils/errorResponse')
 const Lab = require('../models/Lab')
 
 exports.addLocation = async (req, res, next) => {
-	const { labId, name } = req.body
+	const { labId, name, storageGroups } = req.body
 
-	if (!labId || !name) {
+	if (!labId || !name || storageGroups.length === 0) {
 		return next(new ErrorResponse('Missing value for required field.', 400))
 	}
 
@@ -26,6 +26,7 @@ exports.addLocation = async (req, res, next) => {
 			$push: {
 				locations: {
 					name,
+					storageGroups,
 				},
 			},
 			$set: {
@@ -43,9 +44,9 @@ exports.addLocation = async (req, res, next) => {
 }
 
 exports.editLocation = async (req, res, next) => {
-	const { labId, locationId, name } = req.body
+	const { labId, locationId, name, storageGroups } = req.body
 
-	if (!labId || !locationId || !name) {
+	if (!labId || !locationId || !name || storageGroups.length === 0) {
 		return next(new ErrorResponse('Missing value for required field.', 400))
 	}
 
@@ -70,6 +71,7 @@ exports.editLocation = async (req, res, next) => {
 			{
 				$set: {
 					'locations.$[el].name': name,
+					'locations.$[el].storageGroups': storageGroups,
 					lastUpdated: Date.now(),
 				},
 			},

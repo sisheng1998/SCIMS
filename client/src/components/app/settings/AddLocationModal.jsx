@@ -8,6 +8,7 @@ import {
 import useAuth from '../../../hooks/useAuth'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import NameField from '../../validations/NameField'
+import StorageGroupsField from '../../validations/StorageGroupsField'
 
 const AddLocationModal = ({
 	openModal,
@@ -19,8 +20,10 @@ const AddLocationModal = ({
 
 	const labId = auth.currentLabId
 	const [name, setName] = useState('')
+	const [storageGroups, setStorageGroups] = useState([])
 	const [nameValidated, setNameValidated] = useState(false)
 
+	const [allowed, setAllowed] = useState(false)
 	const [success, setSuccess] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
 
@@ -31,6 +34,7 @@ const AddLocationModal = ({
 			await axiosPrivate.post('/api/private/location', {
 				labId,
 				name,
+				storageGroups,
 			})
 			setSuccess(true)
 		} catch (error) {
@@ -46,11 +50,13 @@ const AddLocationModal = ({
 
 	useEffect(() => {
 		setErrorMessage('')
-	}, [name])
+		setAllowed(nameValidated && storageGroups.length !== 0)
+	}, [name, nameValidated, storageGroups])
 
 	const closeHandler = () => {
 		setErrorMessage('')
 		setName('')
+		setStorageGroups([])
 
 		if (success) {
 			setSuccess(false)
@@ -118,7 +124,16 @@ const AddLocationModal = ({
 									setValue={setName}
 									validated={nameValidated}
 									setValidated={setNameValidated}
+									withNumber={true}
 									showValidated={true}
+								/>
+
+								<label htmlFor='storageGroups' className='required-input-label'>
+									Storage Group(s)
+								</label>
+								<StorageGroupsField
+									value={storageGroups}
+									setValue={setStorageGroups}
 								/>
 
 								<div className='mt-9 flex items-center justify-end'>
@@ -128,11 +143,7 @@ const AddLocationModal = ({
 									>
 										Cancel
 									</span>
-									<button
-										className='w-40'
-										type='submit'
-										disabled={!nameValidated}
-									>
+									<button className='w-40' type='submit' disabled={!allowed}>
 										Add Location
 									</button>
 								</div>

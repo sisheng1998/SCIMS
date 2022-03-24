@@ -1,52 +1,52 @@
 const STORAGE_GROUPS = [
 	{
 		code: 'A',
-		description: 'Compatible Organic Bases',
+		description: 'Compatible organic bases',
 	},
 	{
 		code: 'B',
-		description: 'Compatible Pyrophoric and Water Reactive Materials',
+		description: 'Compatible pyrophoric and water reactive materials',
 	},
 	{
 		code: 'C',
-		description: 'Compatible Inorganic Bases',
+		description: 'Compatible inorganic bases',
 	},
 	{
 		code: 'D',
-		description: 'Compatible Organic Acids',
+		description: 'Compatible organic acids',
 	},
 	{
 		code: 'E',
-		description: 'Compatible Oxidizers including Peroxides',
+		description: 'Compatible oxidizers including peroxides',
 	},
 	{
 		code: 'F',
 		description:
-			'Compatible Inorganic Acids not including Oxidizers or Combustibles',
+			'Compatible inorganic acids not including oxidizers or combustibles',
 	},
 	{
 		code: 'G',
-		description: 'Not Intrinsically Reactive or Flammable or Combustible',
+		description: 'Not intrinsically reactive or flammable or combustible',
 	},
 	{
 		code: 'I',
-		description: 'Compatible Strong, Oxidizing Acids',
+		description: 'Compatible strong, oxidizing acids',
 	},
 	{
 		code: 'J',
-		description: 'Poison Compressed Gases',
+		description: 'Poison compressed gases',
 	},
 	{
 		code: 'K',
-		description: 'Compatible Explosive or other highly unstable materials',
+		description: 'Compatible explosive or other highly unstable materials',
 	},
 	{
 		code: 'L',
-		description: 'Non-Reactive Flammables and Combustibles, including solvents',
+		description: 'Non-reactive flammables and combustibles, including solvents',
 	},
 	{
 		code: 'X',
-		description: 'Incompatible with ALL Other Storage Groups ',
+		description: 'Incompatible with all other storage groups',
 	},
 ]
 

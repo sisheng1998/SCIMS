@@ -8,6 +8,7 @@ import {
 import useAuth from '../../../hooks/useAuth'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import NameField from '../../validations/NameField'
+import StorageGroupsField from '../../validations/StorageGroupsField'
 
 const EditLocationModal = ({
 	location,
@@ -21,6 +22,7 @@ const EditLocationModal = ({
 	const labId = auth.currentLabId
 	const locationId = location._id
 	const [name, setName] = useState(location.name)
+	const [storageGroups, setStorageGroups] = useState(location.storageGroups)
 
 	const [nameValidated, setNameValidated] = useState(false)
 
@@ -54,6 +56,7 @@ const EditLocationModal = ({
 					labId,
 					locationId,
 					name,
+					storageGroups,
 				})
 				setSuccess(true)
 			} catch (error) {
@@ -70,8 +73,13 @@ const EditLocationModal = ({
 
 	useEffect(() => {
 		setErrorMessage('')
-		setAllowed(nameValidated && name !== location.name)
-	}, [location, name, nameValidated])
+		setAllowed(
+			nameValidated &&
+				storageGroups.length !== 0 &&
+				(name !== location.name ||
+					storageGroups.join('') !== location.storageGroups.join(''))
+		)
+	}, [location, name, nameValidated, storageGroups])
 
 	const closeHandler = () => {
 		setErrorMessage('')
@@ -150,6 +158,15 @@ const EditLocationModal = ({
 									setValue={setName}
 									validated={nameValidated}
 									setValidated={setNameValidated}
+									withNumber={true}
+								/>
+
+								<label htmlFor='storageGroups' className='required-input-label'>
+									Storage Group(s)
+								</label>
+								<StorageGroupsField
+									value={storageGroups}
+									setValue={setStorageGroups}
 								/>
 
 								{isRemove ? (

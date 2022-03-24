@@ -3,6 +3,7 @@ import { Listbox } from '@headlessui/react'
 import { CheckIcon } from '@heroicons/react/outline'
 import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
+import { useNavigate } from 'react-router-dom'
 
 const allLabs = {
 	lab: { _id: ROLES_LIST.admin.toString(), labName: 'All Labs' },
@@ -11,6 +12,7 @@ const allLabs = {
 
 const LabSelection = () => {
 	const { auth, setAuth } = useAuth()
+	const navigate = useNavigate()
 
 	// Check whether user is admin
 	const isAdmin = auth.roles.some(
@@ -74,6 +76,7 @@ const LabSelection = () => {
 									? 'pointer-events-none font-semibold text-indigo-600'
 									: ''
 							}`}
+							onClick={() => navigate('/admin')}
 						>
 							All Labs
 							{auth.currentLabId === ROLES_LIST.admin.toString() && (
@@ -97,6 +100,7 @@ const LabSelection = () => {
 												? 'pointer-events-none font-semibold text-indigo-600'
 												: ''
 										}`}
+										onClick={() => navigate('/')}
 									>
 										{role.lab.labName}
 										{auth.currentLabId === role.lab._id && (

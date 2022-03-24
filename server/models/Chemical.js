@@ -3,6 +3,7 @@ const Schema = mongoose.Schema
 
 const ChemicalSchema = new Schema(
 	{
+		QRCode: String,
 		CAS: {
 			type: String,
 			required: true,
@@ -48,15 +49,14 @@ const ChemicalSchema = new Schema(
 			type: String,
 			default: 'Normal',
 		},
+		dateIn: Date,
+		dateOpen: Date,
+		expirationDate: Date,
 		SDS: String,
-		QRCode: String,
 		classifications: [String],
 		securities: [String],
 		supplier: String,
 		brand: String,
-		dateIn: Date,
-		dateOpen: Date,
-		expirationDate: Date,
 		notes: String,
 		createdAt: {
 			type: Date,

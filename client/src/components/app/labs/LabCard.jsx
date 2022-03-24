@@ -2,9 +2,11 @@ import React from 'react'
 import GetRoleName from '../../utils/GetRoleName'
 import useAuth from '../../../hooks/useAuth'
 import { SwitchHorizontalIcon } from '@heroicons/react/outline'
+import { useNavigate } from 'react-router-dom'
 
 const LabCard = ({ role }) => {
 	const { auth, setAuth } = useAuth()
+	const navigate = useNavigate()
 
 	const enableSwitch =
 		role.lab._id !== auth.currentLabId &&
@@ -32,6 +34,7 @@ const LabCard = ({ role }) => {
 				currentRole: role.role,
 			}
 		})
+		navigate('/')
 	}
 
 	return (
