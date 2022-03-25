@@ -160,7 +160,7 @@ const EditUserModal = ({
 											name='lab'
 											id='lab'
 											readOnly
-											value={currentRole.lab.labName}
+											value={'Lab ' + currentRole.lab.labName}
 										/>
 										<p className='mt-2 text-xs text-gray-400'>
 											Current lab cannot be changed.

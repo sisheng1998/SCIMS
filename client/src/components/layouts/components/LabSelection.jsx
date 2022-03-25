@@ -55,7 +55,9 @@ const LabSelection = () => {
 			onChange={setSelected}
 		>
 			<Listbox.Button className='flex items-center rounded-full bg-gray-100 py-1 px-3 text-sm font-medium text-gray-500 outline-gray-300 hover:bg-gray-200 hover:text-gray-600'>
-				{selected.lab.labName}
+				{selected.lab.labName === 'All Labs'
+					? selected.lab.labName
+					: 'Lab ' + selected.lab.labName}
 				<svg width='6' height='3' className='ml-2 overflow-visible'>
 					<path
 						d='M0 0L3 3L6 0'
@@ -102,7 +104,7 @@ const LabSelection = () => {
 										}`}
 										onClick={() => navigate('/')}
 									>
-										{role.lab.labName}
+										{'Lab ' + role.lab.labName}
 										{auth.currentLabId === role.lab._id && (
 											<CheckIcon className='ml-2 h-4 w-4 stroke-2' />
 										)}

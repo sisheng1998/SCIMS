@@ -193,7 +193,7 @@ const LabsTable = (props) => {
 
 										return (
 											<tr key={lab._id}>
-												<td className='px-6 py-4'>{lab.labName}</td>
+												<td className='px-6 py-4'>{'Lab ' + lab.labName}</td>
 
 												<td className='px-6 py-4'>
 													<div className='flex items-center space-x-3'>

@@ -48,7 +48,7 @@ const LabCard = ({ role }) => {
 						>
 							Name
 						</label>
-						<h4>{role.lab.labName}</h4>
+						<h4>{'Lab ' + role.lab.labName}</h4>
 					</div>
 
 					{enableSwitch && (

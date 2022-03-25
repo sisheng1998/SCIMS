@@ -46,7 +46,7 @@ const StorageInfoSection = ({ lab, users, setChemicalData, setValidated }) => {
 						name='lab'
 						id='lab'
 						readOnly
-						value={lab.labName}
+						value={'Lab ' + lab.labName}
 					/>
 					<p className='mt-2 text-xs text-gray-400'>
 						Lab that storing the chemical.

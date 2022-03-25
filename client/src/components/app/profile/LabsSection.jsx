@@ -52,7 +52,7 @@ const LabsSection = ({ user }) => {
 										return (
 											<tr key={role.lab._id}>
 												<td className='px-6 py-4'>
-													{role.lab.labName}
+													{'Lab ' + role.lab.labName}
 													{role.lab.status === 'Not In Use' && (
 														<span className='ml-2 text-xs font-medium text-red-600'>
 															Not In Use

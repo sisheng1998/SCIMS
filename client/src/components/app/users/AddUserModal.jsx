@@ -225,7 +225,7 @@ const AddUserModal = ({
 											name='lab'
 											id='lab'
 											readOnly
-											value={labName}
+											value={'Lab ' + labName}
 										/>
 										<p className='mt-2 text-xs text-gray-400'>
 											Current lab cannot be changed.

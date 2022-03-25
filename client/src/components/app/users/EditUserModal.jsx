@@ -153,7 +153,7 @@ const EditUserModal = ({
 											name='lab'
 											id='lab'
 											readOnly
-											value={auth.currentLabName}
+											value={'Lab ' + auth.currentLabName}
 										/>
 										{isEdit && (
 											<p className='mt-2 text-xs text-gray-400'>

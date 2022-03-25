@@ -160,7 +160,7 @@ const LabSearchableSelect = ({
 					}`}
 				>
 					{selectedId ? (
-						selectedOption.labName
+						'Lab ' + selectedOption.labName
 					) : (
 						<span className='text-gray-400'>Select lab</span>
 					)}
@@ -207,7 +207,7 @@ const LabSearchableSelect = ({
 											}`}
 										>
 											<span className={selected ? 'font-medium' : ''}>
-												{option.labName}
+												{'Lab ' + option.labName}
 											</span>
 
 											{selected && (

@@ -168,7 +168,7 @@ const UsersTable = (props) => {
 							)
 							.map((lab) => (
 								<option key={lab._id} value={lab.labName}>
-									{lab.labName}
+									{'Lab ' + lab.labName}
 								</option>
 							))}
 						<option value='-'>No Lab</option>
@@ -274,7 +274,7 @@ const UsersTable = (props) => {
 																		key={role.lab._id}
 																		className='flex items-center'
 																	>
-																		<p>{role.lab.labName}</p>
+																		<p>{'Lab ' + role.lab.labName}</p>
 																		{!(
 																			user.email === auth.email ||
 																			role.role === ROLES_LIST.admin ||

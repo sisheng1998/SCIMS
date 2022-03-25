@@ -1,52 +1,59 @@
 const STORAGE_GROUPS = [
 	{
 		code: 'A',
-		description: 'Compatible organic bases',
+		description: 'Compatible Organic Bases',
+		allowed: ['A', 'D', 'G', 'L'],
 	},
 	{
 		code: 'B',
-		description: 'Compatible pyrophoric and water reactive materials',
+		description: 'Compatible Pyrophoric and Water Reactive Materials',
+		allowed: ['B'],
 	},
 	{
 		code: 'C',
-		description: 'Compatible inorganic bases',
+		description: 'Compatible Inorganic Bases',
+		allowed: ['C', 'E', 'F', 'G'],
 	},
 	{
 		code: 'D',
-		description: 'Compatible organic acids',
+		description: 'Compatible Organic Acids',
+		allowed: ['A', 'D', 'G', 'L'],
 	},
 	{
 		code: 'E',
-		description: 'Compatible oxidizers including peroxides',
+		description: 'Compatible Oxidizers including Peroxides',
+		allowed: ['C', 'E', 'F', 'G'],
 	},
 	{
 		code: 'F',
 		description:
-			'Compatible inorganic acids not including oxidizers or combustibles',
+			'Compatible Inorganic Acids not including Oxidizers or Combustibles',
+		allowed: ['C', 'E', 'F', 'G'],
 	},
 	{
 		code: 'G',
-		description: 'Not intrinsically reactive or flammable or combustible',
-	},
-	{
-		code: 'I',
-		description: 'Compatible strong, oxidizing acids',
+		description: 'Not Intrinsically Reactive or Flammable or Combustible',
+		allowed: ['A', 'C', 'D', 'E', 'F', 'G', 'L'],
 	},
 	{
 		code: 'J',
-		description: 'Poison compressed gases',
+		description: 'Poison Compressed Gases',
+		allowed: ['J'],
 	},
 	{
 		code: 'K',
-		description: 'Compatible explosive or other highly unstable materials',
+		description: 'Compatible Explosive or other Highly Unstable Materials',
+		allowed: ['K'],
 	},
 	{
 		code: 'L',
-		description: 'Non-reactive flammables and combustibles, including solvents',
+		description: 'Non-Reactive Flammables and Combustibles, including solvents',
+		allowed: ['A', 'D', 'G', 'L'],
 	},
 	{
 		code: 'X',
-		description: 'Incompatible with all other storage groups',
+		description: 'Incompatible with All Other Storage Groups',
+		allowed: ['X'],
 	},
 ]
 

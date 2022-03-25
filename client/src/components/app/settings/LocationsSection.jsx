@@ -54,7 +54,7 @@ const LocationsSection = ({ locations, setEditLocationSuccess }) => {
 												<td className='px-6 py-4'>
 													{location.storageGroups.length ===
 													STORAGE_GROUPS.length
-														? 'All storage groups'
+														? 'Any storage groups'
 														: location.storageGroups.map(
 																(group, index) => (index ? ', ' : '') + group
 														  )}

@@ -80,7 +80,7 @@ const ViewUserModal = ({ user, openModal, setOpenModal }) => {
 													return (
 														<tr key={role.lab._id}>
 															<td className='px-3 py-2'>
-																{role.lab.labName}
+																{'Lab ' + role.lab.labName}
 																{role.lab.status === 'Not In Use' && (
 																	<span className='ml-2 text-xs font-medium text-red-600'>
 																		Not In Use
