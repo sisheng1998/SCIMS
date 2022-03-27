@@ -20,11 +20,11 @@ const ChemicalSchema = new Schema(
 			type: String,
 			required: true,
 		},
-		amount: {
+		containerSize: {
 			type: Number,
 			required: true,
 		},
-		containerSize: {
+		amount: {
 			type: Number,
 			required: true,
 		},
@@ -40,10 +40,7 @@ const ChemicalSchema = new Schema(
 			type: Schema.Types.ObjectId,
 			ref: 'User',
 		},
-		location: {
-			type: Schema.Types.ObjectId,
-			ref: 'Lab',
-		},
+		locationId: String,
 		storageGroup: String,
 		status: {
 			type: String,

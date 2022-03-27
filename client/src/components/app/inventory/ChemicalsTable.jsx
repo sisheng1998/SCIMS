@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react'
-//import ROLES_LIST from '../../../config/roles_list'
+import ROLES_LIST from '../../../config/roles_list'
 import useAuth from '../../../hooks/useAuth'
 import SortData from '../components/SortData'
 import SortButton from '../components/SortButton'
@@ -7,6 +7,9 @@ import Filters from '../components/Filters'
 import Pagination from '../components/Pagination'
 import ImageLightBox from '../../utils/ImageLightBox'
 import { PencilAltIcon } from '@heroicons/react/outline'
+import { FormatChemicalDate } from '../../utils/FormatDate'
+import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
+import { useNavigate } from 'react-router-dom'
 
 const tableHeaders = [
 	{
@@ -48,6 +51,7 @@ const tableHeaders = [
 
 const ChemicalsTable = (props) => {
 	const { auth } = useAuth()
+	const navigate = useNavigate()
 
 	const [QRCodeInfo, setQRCodeInfo] = useState('')
 	const [openViewImageModal, setOpenViewImageModal] = useState(false)
@@ -247,13 +251,20 @@ const ChemicalsTable = (props) => {
 												<td className='px-6 py-4'>{chemical.location}</td>
 												<td className='space-y-0.5 px-6 py-4 '>
 													<div className='flex items-center'>
-														<p>{chemical.amount + ' ' + chemical.unit}</p>
-														<button
-															onClick={() => {}}
-															className='ml-2 text-gray-400 transition hover:text-indigo-700 focus:outline-none'
-														>
-															<PencilAltIcon className='h-5 w-5' />
-														</button>
+														<p>
+															{FormatAmountWithUnit(
+																chemical.amount,
+																chemical.unit
+															)}
+														</p>
+														{auth.currentRole >= ROLES_LIST.undergraduate && (
+															<button
+																onClick={() => {}}
+																className='ml-2 text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+															>
+																<PencilAltIcon className='h-5 w-5' />
+															</button>
+														)}
 													</div>
 												</td>
 
@@ -266,15 +277,19 @@ const ChemicalsTable = (props) => {
 												</td>
 
 												<td className='px-6 py-4 capitalize'>
-													{chemical.expirationDate}
+													{FormatChemicalDate(chemical.expirationDate)}
 												</td>
 
 												<td className='px-6 py-4 text-center'>
 													<button
-														onClick={() => {}}
+														onClick={() =>
+															navigate(`/inventory/${chemical._id}`)
+														}
 														className='flex font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
 													>
-														View
+														{auth.currentRole >= ROLES_LIST.postgraduate
+															? 'Edit'
+															: 'View'}
 													</button>
 												</td>
 											</tr>

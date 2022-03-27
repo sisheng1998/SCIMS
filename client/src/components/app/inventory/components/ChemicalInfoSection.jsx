@@ -3,14 +3,20 @@ import CASField from '../../../validations/CASField'
 import NameField from '../../../validations/NameField'
 import NumberWithUnitField from '../../../validations/NumberWithUnitField'
 
-const ChemicalInfoSection = ({ setChemicalData, setValidated }) => {
-	const [CAS, setCAS] = useState('')
-	const [name, setName] = useState('')
-	const [state, setState] = useState('')
-	const [unit, setUnit] = useState('')
-	const [containerSize, setContainerSize] = useState('')
-	const [amount, setAmount] = useState('')
-	const [minAmount, setMinAmount] = useState('')
+const ChemicalInfoSection = ({ chemical, setChemicalData, setValidated }) => {
+	const [CAS, setCAS] = useState(chemical ? chemical.CAS : '')
+	const [name, setName] = useState(chemical ? chemical.name : '')
+	const [state, setState] = useState(chemical ? chemical.state : '')
+	const [unit, setUnit] = useState(chemical ? chemical.unit : '')
+	const [containerSize, setContainerSize] = useState(
+		chemical ? Number(chemical.containerSize).toFixed(1) : ''
+	)
+	const [amount, setAmount] = useState(
+		chemical ? Number(chemical.amount).toFixed(1) : ''
+	)
+	const [minAmount, setMinAmount] = useState(
+		chemical ? Number(chemical.minAmount).toFixed(1) : ''
+	)
 
 	const [CASValidated, setCASValidated] = useState(false)
 	const [nameValidated, setNameValidated] = useState(false)
@@ -73,7 +79,7 @@ const ChemicalInfoSection = ({ setChemicalData, setValidated }) => {
 						setValue={setCAS}
 						validated={CASValidated}
 						setValidated={setCASValidated}
-						showValidated={true}
+						showValidated={chemical ? false : true}
 					/>
 				</div>
 
@@ -90,13 +96,13 @@ const ChemicalInfoSection = ({ setChemicalData, setValidated }) => {
 						validated={nameValidated}
 						setValidated={setNameValidated}
 						withNumber={true}
-						showValidated={true}
+						showValidated={chemical ? false : true}
 					/>
 				</div>
 			</div>
 
 			<div className='mb-6 flex space-x-6'>
-				<div className='w-1/3'>
+				<div className='w-1/4'>
 					<label htmlFor='stateSelection' className='required-input-label'>
 						State
 					</label>
@@ -115,7 +121,7 @@ const ChemicalInfoSection = ({ setChemicalData, setValidated }) => {
 					<p className='mt-2 text-xs text-gray-400'>State of the chemical.</p>
 				</div>
 
-				<div className='w-1/3'>
+				<div className='w-1/4'>
 					<label htmlFor='unitSelection' className='required-input-label'>
 						Unit
 					</label>
@@ -135,10 +141,8 @@ const ChemicalInfoSection = ({ setChemicalData, setValidated }) => {
 					</select>
 					<p className='mt-2 text-xs text-gray-400'>Unit of the chemical.</p>
 				</div>
-			</div>
 
-			<div className='flex space-x-6'>
-				<div className='w-1/3'>
+				<div className='w-2/5'>
 					<label htmlFor='containerSize' className='required-input-label'>
 						Container Size
 					</label>
@@ -151,11 +155,13 @@ const ChemicalInfoSection = ({ setChemicalData, setValidated }) => {
 						validated={containerSizeValidated}
 						setValidated={setContainerSizeValidated}
 						unit={unit}
-						showValidated={true}
+						showValidated={chemical ? false : true}
 					/>
 				</div>
+			</div>
 
-				<div className='w-1/3'>
+			<div className='flex space-x-6'>
+				<div className='w-2/5'>
 					<label htmlFor='amount' className='required-input-label'>
 						Amount
 					</label>
@@ -168,11 +174,12 @@ const ChemicalInfoSection = ({ setChemicalData, setValidated }) => {
 						validated={amountValidated}
 						setValidated={setAmountValidated}
 						unit={unit}
-						showValidated={true}
+						maxValue={containerSize}
+						showValidated={chemical ? false : true}
 					/>
 				</div>
 
-				<div className='w-1/3'>
+				<div className='w-2/5'>
 					<label htmlFor='minAmount' className='required-input-label'>
 						Minimum Amount <span className='text-xs'>(for notification)</span>
 					</label>
@@ -186,7 +193,8 @@ const ChemicalInfoSection = ({ setChemicalData, setValidated }) => {
 						validated={minAmountValidated}
 						setValidated={setMinAmountValidated}
 						unit={unit}
-						showValidated={true}
+						maxValue={containerSize}
+						showValidated={chemical ? false : true}
 					/>
 				</div>
 			</div>

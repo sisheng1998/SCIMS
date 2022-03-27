@@ -1,5 +1,6 @@
 const ErrorResponse = require('../utils/errorResponse')
 const Lab = require('../models/Lab')
+const Chemical = require('../models/Chemical')
 
 exports.addLocation = async (req, res, next) => {
 	const { labId, name, storageGroups } = req.body
@@ -94,14 +95,28 @@ exports.removeLocation = async (req, res, next) => {
 		return next(new ErrorResponse('Missing required value.', 400))
 	}
 
+	const foundLab = await Lab.findById(labId)
+	if (!foundLab) {
+		return next(new ErrorResponse('Lab not found.', 404))
+	}
+
 	try {
-		await Lab.updateOne(
-			{ _id: labId },
+		await Lab.updateOne(foundLab, {
+			$pull: {
+				locations: {
+					_id: locationId,
+				},
+			},
+			$set: {
+				lastUpdated: Date.now(),
+			},
+		})
+
+		await Chemical.updateMany(
+			{ locationId: locationId },
 			{
-				$pull: {
-					locations: {
-						_id: locationId,
-					},
+				$unset: {
+					locationId: '',
 				},
 				$set: {
 					lastUpdated: Date.now(),
@@ -114,6 +129,7 @@ exports.removeLocation = async (req, res, next) => {
 			data: 'Location removed.',
 		})
 	} catch (error) {
+		console.log(error)
 		next(error)
 	}
 }

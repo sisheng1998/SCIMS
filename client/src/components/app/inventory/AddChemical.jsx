@@ -5,8 +5,10 @@ import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import ChemicalInfoSection from './components/ChemicalInfoSection'
 import StorageInfoSection from './components/StorageInfoSection'
+import ExtraInfoSection from './components/ExtraInfoSection'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import LoadingScreen from '../../utils/LoadingScreen'
+import { ExclamationCircleIcon } from '@heroicons/react/outline'
 
 const AddChemical = () => {
 	const { auth } = useAuth()
@@ -88,18 +90,27 @@ const AddChemical = () => {
 	}, [axiosPrivate, auth.currentLabId, refresh, navigate])
 
 	const [chemicalData, setChemicalData] = useState({ labId: auth.currentLabId })
-
 	const [validated, setValidated] = useState({})
+	const [errorMessage, setErrorMessage] = useState('')
 
 	const disabled = Object.values(validated).some((val) => val === false)
 
 	const submitHandler = async (e) => {
 		e.preventDefault()
+		console.log(chemicalData)
 
 		try {
-			console.log(chemicalData)
+			const { data } = await axiosPrivate.post(
+				'/api/private/chemical',
+				chemicalData
+			)
+			console.log(data.chemicalId)
 		} catch (error) {
-			console.log(error)
+			if (error.response?.status === 500) {
+				setErrorMessage('Server not responding. Please try again later.')
+			} else {
+				setErrorMessage('Oops. Something went wrong. Please try again later.')
+			}
 		}
 	}
 
@@ -116,13 +127,20 @@ const AddChemical = () => {
 			<form onSubmit={submitHandler} spellCheck='false' autoComplete='off'>
 				<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
 					<div className='w-full max-w-md 2xl:max-w-xs'>
-						<h4>Chemical Info</h4>
+						<h4>Basic Info</h4>
 						<p className='text-sm text-gray-500'>
 							Basic information of the chemical.
 						</p>
 					</div>
 
 					<div className='mb-9 w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+						{errorMessage && (
+							<p className='mb-6 flex items-center text-sm font-medium text-red-600'>
+								<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}
+								{errorMessage}
+							</p>
+						)}
+
 						<ChemicalInfoSection
 							setChemicalData={setChemicalData}
 							setValidated={setValidated}
@@ -150,9 +168,36 @@ const AddChemical = () => {
 					</div>
 				</div>
 
-				<button className='w-40' type='submit' disabled={disabled}>
-					Add Chemical
-				</button>
+				<hr className='mb-6 border-gray-200' />
+
+				<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
+					<div className='w-full max-w-md 2xl:max-w-xs'>
+						<h4>Extra Info</h4>
+						<p className='text-sm text-gray-500'>
+							Extra information for the chemical.
+						</p>
+					</div>
+
+					<div className='mb-9 w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+						<ExtraInfoSection
+							setChemicalData={setChemicalData}
+							setValidated={setValidated}
+						/>
+
+						<div className='mt-9 flex items-center justify-end'>
+							<span
+								onClick={() => navigate('/inventory')}
+								className='cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'
+							>
+								Cancel
+							</span>
+
+							<button className='ml-6 w-40' type='submit' disabled={disabled}>
+								Add Chemical
+							</button>
+						</div>
+					</div>
+				</div>
 			</form>
 		</>
 	)

@@ -3,17 +3,62 @@ import useAuth from '../../../../hooks/useAuth'
 import UserSearchableSelect from '../../../utils/SearchableSelect'
 import STORAGE_GROUPS from '../../../../config/storage_groups'
 
-const StorageInfoSection = ({ lab, users, setChemicalData, setValidated }) => {
+const StorageInfoSection = ({
+	lab,
+	users,
+	chemical,
+	setChemicalData,
+	setValidated,
+}) => {
 	const { auth } = useAuth()
 
-	const [ownerId, setOwnerId] = useState(auth.id)
-	const [location, setLocation] = useState('')
-	const [locationIndex, setLocationIndex] = useState('')
-	const [storageGroup, setStorageGroup] = useState('')
+	let initialLocation = ''
+	let initialLocationIndex = ''
+
+	if (lab && chemical && chemical.locationId) {
+		lab.locations.forEach((location, index) => {
+			if (location._id === chemical.locationId) {
+				initialLocation = location
+				initialLocationIndex = index
+			}
+		})
+	}
+
+	const [ownerId, setOwnerId] = useState(
+		chemical ? chemical.owner._id : auth.id
+	)
+	const [location, setLocation] = useState(initialLocation)
+	const [locationIndex, setLocationIndex] = useState(initialLocationIndex)
+	const [storageGroup, setStorageGroup] = useState(
+		chemical ? chemical.storageGroup : ''
+	)
+
+	const today = new Date()
+	const [dateIn, setDateIn] = useState(
+		chemical
+			? new Date(chemical.dateIn).toLocaleDateString('en-CA')
+			: today.toLocaleDateString('en-CA')
+	)
+	const [dateOpen, setDateOpen] = useState(
+		chemical ? new Date(chemical.dateOpen).toLocaleDateString('en-CA') : ''
+	)
+	const [expirationDate, setExpirationDate] = useState(
+		chemical
+			? new Date(chemical.expirationDate).toLocaleDateString('en-CA')
+			: ''
+	)
 
 	useEffect(() => {
 		setChemicalData((prev) => {
-			return { ...prev, ownerId, locationId: location?._id, storageGroup }
+			return {
+				...prev,
+				ownerId,
+				locationId: location?._id,
+				storageGroup,
+				dateIn,
+				dateOpen,
+				expirationDate,
+			}
 		})
 
 		setValidated((prev) => {
@@ -22,7 +67,16 @@ const StorageInfoSection = ({ lab, users, setChemicalData, setValidated }) => {
 				locationValidated: location?._id ? true : false,
 			}
 		})
-	}, [ownerId, location, storageGroup, setChemicalData, setValidated])
+	}, [
+		ownerId,
+		location,
+		storageGroup,
+		setChemicalData,
+		setValidated,
+		dateIn,
+		dateOpen,
+		expirationDate,
+	])
 
 	const locationChangeHandler = (e) => {
 		setStorageGroup('')
@@ -115,6 +169,57 @@ const StorageInfoSection = ({ lab, users, setChemicalData, setValidated }) => {
 						options={users}
 					/>
 					<p className='mt-2 text-xs text-gray-400'>Owner of the chemical.</p>
+				</div>
+			</div>
+
+			<div className='flex space-x-6'>
+				<div className='mb-6 w-1/3'>
+					<label htmlFor='dateIn' className='required-input-label'>
+						Date In
+					</label>
+					<input
+						className='w-full'
+						type='date'
+						name='dateIn'
+						id='dateIn'
+						required
+						value={dateIn}
+						onChange={(e) => setDateIn(e.target.value)}
+					/>
+					<p className='mt-2 text-xs text-gray-400'>
+						Date of chemical received.
+					</p>
+				</div>
+
+				<div className='mb-6 w-1/3'>
+					<label htmlFor='dateOpen'>Date Open</label>
+					<input
+						className='w-full'
+						type='date'
+						name='dateOpen'
+						id='dateOpen'
+						value={dateOpen}
+						onChange={(e) => setDateOpen(e.target.value)}
+					/>
+					<p className='mt-2 text-xs text-gray-400'>Date of chemical opened.</p>
+				</div>
+
+				<div className='mb-6 w-1/3'>
+					<label htmlFor='expirationDate' className='required-input-label'>
+						Expiration Date
+					</label>
+					<input
+						className='w-full'
+						type='date'
+						name='expirationDate'
+						id='expirationDate'
+						required
+						value={expirationDate}
+						onChange={(e) => setExpirationDate(e.target.value)}
+					/>
+					<p className='mt-2 text-xs text-gray-400'>
+						Date of chemical expired.
+					</p>
 				</div>
 			</div>
 		</>

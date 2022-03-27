@@ -5,8 +5,6 @@ const ROLES_LIST = require('../config/roles_list')
 const verifyRoles = require('../middleware/verifyRoles')
 const { uploadAvatar } = require('../middleware/uploadFile')
 
-const { getChemicals } = require('../controllers/chemical')
-
 const {
 	getUsers,
 	addUser,
@@ -14,6 +12,12 @@ const {
 	removeUser,
 	addExistingUser,
 } = require('../controllers/user')
+
+const {
+	getChemicals,
+	addChemical,
+	getChemicalInfo,
+} = require('../controllers/chemical')
 
 const {
 	getProfile,
@@ -40,6 +44,12 @@ router.route('/user').delete(verifyRoles(ROLES_LIST.labOwner), removeUser)
 
 // Inventory
 router.route('/chemicals').post(verifyRoles(ROLES_LIST.guest), getChemicals)
+router
+	.route('/chemical')
+	.post(verifyRoles(ROLES_LIST.postgraduate), addChemical)
+router
+	.route('/chemical/:chemicalId')
+	.put(verifyRoles(ROLES_LIST.guest), getChemicalInfo)
 
 // Profile
 router.route('/profile').get(getProfile)

@@ -131,6 +131,12 @@
 		@apply rounded border-gray-300 text-indigo-600 focus:ring-indigo-500;
 	}
 
+	input[type='date']::-webkit-calendar-picker-indicator {
+		filter: invert(45%) sepia(8%) saturate(593%) hue-rotate(182deg)
+			brightness(96%) contrast(93%);
+		@apply cursor-pointer;
+	}
+
 	svg * {
 		stroke-width: 1.5;
 	}

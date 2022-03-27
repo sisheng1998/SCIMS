@@ -5,7 +5,13 @@ const NUMBER_REGEX = /^\d{1,}(\.\d{1})?$/
 const NumberWithUnitField = (props) => {
 	useEffect(() => {
 		const result = NUMBER_REGEX.test(props.value)
-		props.setValidated(result)
+		if (props.maxValue) {
+			props.setValidated(
+				result && Number(props.value) <= Number(props.maxValue)
+			)
+		} else {
+			props.setValidated(result)
+		}
 	}, [props])
 
 	return (
@@ -41,7 +47,11 @@ const NumberWithUnitField = (props) => {
 				) : props.validated ? (
 					<span className='text-green-600'>Looks good!</span>
 				) : (
-					<span className='text-red-600'>Please enter a valid number.</span>
+					<span className='text-red-600'>
+						{props.maxValue && Number(props.value) > Number(props.maxValue)
+							? "The amount can't exceed the container size."
+							: 'Please enter numbers with 1 decimal place only.'}
+					</span>
 				)}
 			</p>
 		</>

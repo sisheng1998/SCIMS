@@ -47,13 +47,21 @@ const Inventory = () => {
 					}
 				)
 				if (isMounted) {
-					const processedData = data.data.chemicals.map((chemical, index) => {
-						return {
-							...chemical,
-							index: index,
-						}
-					})
-					setChemicals(processedData)
+					if (data.data.locations.length !== 0) {
+						const processedData = data.data.chemicals.map((chemical, index) => {
+							const location = data.data.locations.filter(
+								(location) => location._id === chemical.locationId
+							)
+
+							return {
+								...chemical,
+								location: location.length !== 0 ? location[0].name : '-',
+								index: index,
+							}
+						})
+						setChemicals(processedData)
+					}
+
 					setLocations(data.data.locations)
 					setIsLoading(false)
 				}

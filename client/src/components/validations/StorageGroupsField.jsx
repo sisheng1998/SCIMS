@@ -1,6 +1,43 @@
 import React, { useState } from 'react'
 import STORAGE_GROUPS from '../../config/storage_groups'
 
+const getAllowedOptions = (checkedState, value) => {
+	let allowedOptions = []
+
+	value.length === 0
+		? (allowedOptions = '')
+		: checkedState.forEach((checked, index) => {
+				if (
+					checked &&
+					allowedOptions.join('') !== STORAGE_GROUPS[index].allowed.join('')
+				) {
+					if (allowedOptions.length === 0) {
+						allowedOptions = STORAGE_GROUPS[index].allowed
+					} else {
+						allowedOptions = [
+							...allowedOptions,
+							...STORAGE_GROUPS[index].allowed,
+						]
+
+						const uniqueElements = new Set(allowedOptions)
+
+						const filteredElements = allowedOptions.filter((item) => {
+							if (uniqueElements.has(item)) {
+								uniqueElements.delete(item)
+								return ''
+							} else {
+								return item
+							}
+						})
+
+						allowedOptions = [...new Set(filteredElements)]
+					}
+				}
+		  })
+
+	return allowedOptions
+}
+
 const StorageGroupsField = ({ value, setValue }) => {
 	const [anyChecked, setAnyChecked] = useState(
 		STORAGE_GROUPS.length === value.length
@@ -14,7 +51,11 @@ const StorageGroupsField = ({ value, setValue }) => {
 			: () => STORAGE_GROUPS.map((group) => value.includes(group.code))
 
 	const [checkedState, setCheckedState] = useState(initialCheckedState)
-	const [allowed, setAllowed] = useState('')
+
+	const initialAllowed =
+		value.length === 0 ? '' : getAllowedOptions(checkedState, value)
+
+	const [allowed, setAllowed] = useState(initialAllowed)
 
 	const anyOnChangeHandler = () => {
 		setCheckedState(Array(STORAGE_GROUPS.length).fill(false))
@@ -43,44 +84,7 @@ const StorageGroupsField = ({ value, setValue }) => {
 
 		setValue(updatedValues.sort())
 
-		setAllowedOptions(updatedCheckedState, updatedValues)
-	}
-
-	const setAllowedOptions = (updatedCheckedState, updatedValues) => {
-		let allowedOptions = []
-
-		updatedValues.length === 0
-			? (allowedOptions = '')
-			: updatedCheckedState.forEach((checked, index) => {
-					if (
-						checked &&
-						allowedOptions.join('') !== STORAGE_GROUPS[index].allowed.join('')
-					) {
-						if (allowedOptions.length === 0) {
-							allowedOptions = STORAGE_GROUPS[index].allowed
-						} else {
-							allowedOptions = [
-								...allowedOptions,
-								...STORAGE_GROUPS[index].allowed,
-							]
-
-							const uniqueElements = new Set(allowedOptions)
-
-							const filteredElements = allowedOptions.filter((item) => {
-								if (uniqueElements.has(item)) {
-									uniqueElements.delete(item)
-									return ''
-								} else {
-									return item
-								}
-							})
-
-							allowedOptions = [...new Set(filteredElements)]
-						}
-					}
-			  })
-
-		setAllowed(allowedOptions)
+		setAllowed(getAllowedOptions(updatedCheckedState, updatedValues))
 	}
 
 	return (

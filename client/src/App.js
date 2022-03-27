@@ -30,6 +30,7 @@ import Profile from './components/app/profile/Profile'
 import PendingApproval from './components/app/PendingApproval'
 import ApplyNewLab from './components/app/ApplyNewLab'
 import AddChemical from './components/app/inventory/AddChemical'
+import ChemicalInfo from './components/app/inventory/ChemicalInfo'
 
 // Admin
 import AdminDashboard from './components/app/admin/dashboard/Dashboard'
@@ -55,6 +56,13 @@ const App = () => {
 						<Route exact path='/labs' element={<Labs />} />
 						<Route exact path='/notification' element={<Notification />} />
 						<Route exact path='/profile' element={<Profile />} />
+
+						{/* Allow view only by Guest and Undergraduate, edit by postgraduate and above */}
+						<Route
+							exact
+							path='/inventory/:chemicalId'
+							element={<ChemicalInfo />}
+						/>
 
 						{/* Accessible by postgraduate or lab owner or admin only */}
 						<Route
