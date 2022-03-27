@@ -70,18 +70,16 @@ const ExtraInfoSection = ({ chemical, setChemicalData, setValidated }) => {
 				</div>
 			</div>
 
-			<div className='flex flex-col'>
-				<label htmlFor='notes'>Notes</label>
-				<textarea
-					className='block w-full'
-					name='notes'
-					id='notes'
-					placeholder='Notes for the chemical'
-					rows='5'
-					value={notes}
-					onChange={(e) => setNotes(e.target.value)}
-				></textarea>
-			</div>
+			<label htmlFor='notes'>Notes</label>
+			<textarea
+				className='block w-full'
+				name='notes'
+				id='notes'
+				placeholder='Notes for the chemical'
+				rows='5'
+				value={notes}
+				onChange={(e) => setNotes(e.target.value)}
+			></textarea>
 		</>
 	)
 }

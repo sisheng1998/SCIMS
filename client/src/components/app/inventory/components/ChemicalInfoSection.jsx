@@ -142,7 +142,7 @@ const ChemicalInfoSection = ({ chemical, setChemicalData, setValidated }) => {
 					<p className='mt-2 text-xs text-gray-400'>Unit of the chemical.</p>
 				</div>
 
-				<div className='w-2/5'>
+				<div className='w-1/3'>
 					<label htmlFor='containerSize' className='required-input-label'>
 						Container Size
 					</label>
@@ -161,7 +161,7 @@ const ChemicalInfoSection = ({ chemical, setChemicalData, setValidated }) => {
 			</div>
 
 			<div className='flex space-x-6'>
-				<div className='w-2/5'>
+				<div className='w-1/3'>
 					<label htmlFor='amount' className='required-input-label'>
 						Amount
 					</label>
@@ -179,7 +179,7 @@ const ChemicalInfoSection = ({ chemical, setChemicalData, setValidated }) => {
 					/>
 				</div>
 
-				<div className='w-2/5'>
+				<div className='w-1/3'>
 					<label htmlFor='minAmount' className='required-input-label'>
 						Minimum Amount <span className='text-xs'>(for notification)</span>
 					</label>

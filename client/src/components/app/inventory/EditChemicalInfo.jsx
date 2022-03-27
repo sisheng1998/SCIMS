@@ -6,12 +6,16 @@ import StorageInfoSection from './components/StorageInfoSection'
 import ExtraInfoSection from './components/ExtraInfoSection'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
 import FormatDate from '../../utils/FormatDate'
+import SafetyAndSecuritySection from './components/SafetyAndSecuritySection'
 
 const EditChemicalInfo = ({ chemical, labData, usersData }) => {
 	const navigate = useNavigate()
 	const axiosPrivate = useAxiosPrivate()
 
 	const [chemicalData, setChemicalData] = useState(chemical)
+
+	const initialSDS = chemical.SDS ? chemical.SDS : ''
+	const [SDS, setSDS] = useState(initialSDS)
 	const [validated, setValidated] = useState({})
 	const [errorMessage, setErrorMessage] = useState('')
 
@@ -21,6 +25,9 @@ const EditChemicalInfo = ({ chemical, labData, usersData }) => {
 		e.preventDefault()
 
 		try {
+			if (chemicalData.dateOpen === '') {
+				delete chemicalData.dateOpen
+			}
 			console.log(chemicalData)
 			// const { data } = await axiosPrivate.post(
 			// 	'/api/private/chemical',
@@ -85,6 +92,27 @@ const EditChemicalInfo = ({ chemical, labData, usersData }) => {
 					<StorageInfoSection
 						lab={labData}
 						users={usersData}
+						chemical={chemicalData}
+						setChemicalData={setChemicalData}
+						setValidated={setValidated}
+					/>
+				</div>
+			</div>
+
+			<hr className='mb-6 border-gray-200' />
+
+			<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
+				<div className='w-full max-w-md 2xl:max-w-xs'>
+					<h4>Safety/Security Info</h4>
+					<p className='text-sm text-gray-500'>
+						Security and classification of the chemical.
+					</p>
+				</div>
+
+				<div className='mb-9 w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+					<SafetyAndSecuritySection
+						SDS={SDS}
+						setSDS={setSDS}
 						chemical={chemicalData}
 						setChemicalData={setChemicalData}
 						setValidated={setValidated}

@@ -5,10 +5,12 @@ import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import ChemicalInfoSection from './components/ChemicalInfoSection'
 import StorageInfoSection from './components/StorageInfoSection'
+import SafetyAndSecuritySection from './components/SafetyAndSecuritySection'
 import ExtraInfoSection from './components/ExtraInfoSection'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import LoadingScreen from '../../utils/LoadingScreen'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
+import SuccessMessageModal from './components/SuccessMessageModal'
 
 const AddChemical = () => {
 	const { auth } = useAuth()
@@ -23,14 +25,8 @@ const AddChemical = () => {
 	const [usersData, setUsersData] = useState('')
 
 	const [isLoading, setIsLoading] = useState(true)
-	const [refresh, setRefresh] = useState(false)
 
 	useEffect(() => {
-		if (refresh) {
-			setRefresh(false)
-			return
-		}
-
 		let isMounted = true
 		const controller = new AbortController()
 
@@ -87,24 +83,37 @@ const AddChemical = () => {
 			isMounted = false
 			controller.abort()
 		}
-	}, [axiosPrivate, auth.currentLabId, refresh, navigate])
+	}, [axiosPrivate, auth.currentLabId, navigate])
 
 	const [chemicalData, setChemicalData] = useState({ labId: auth.currentLabId })
+	const [chemicalId, setChemicalId] = useState('')
+	const [SDS, setSDS] = useState('')
+
 	const [validated, setValidated] = useState({})
 	const [errorMessage, setErrorMessage] = useState('')
+	const [openModal, setOpenModal] = useState(false)
 
 	const disabled = Object.values(validated).some((val) => val === false)
 
 	const submitHandler = async (e) => {
 		e.preventDefault()
-		console.log(chemicalData)
+		setErrorMessage('')
 
 		try {
+			if (chemicalData.dateOpen === '') {
+				delete chemicalData.dateOpen
+			}
+
+			const formData = new FormData()
+			formData.append('chemicalInfo', JSON.stringify(chemicalData))
+			formData.append('SDS', SDS)
+
 			const { data } = await axiosPrivate.post(
 				'/api/private/chemical',
-				chemicalData
+				formData
 			)
-			console.log(data.chemicalId)
+			setChemicalId(data.chemicalId)
+			setOpenModal(true)
 		} catch (error) {
 			if (error.response?.status === 500) {
 				setErrorMessage('Server not responding. Please try again later.')
@@ -134,13 +143,6 @@ const AddChemical = () => {
 					</div>
 
 					<div className='mb-9 w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
-						{errorMessage && (
-							<p className='mb-6 flex items-center text-sm font-medium text-red-600'>
-								<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}
-								{errorMessage}
-							</p>
-						)}
-
 						<ChemicalInfoSection
 							setChemicalData={setChemicalData}
 							setValidated={setValidated}
@@ -172,6 +174,26 @@ const AddChemical = () => {
 
 				<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
 					<div className='w-full max-w-md 2xl:max-w-xs'>
+						<h4>Safety/Security Info</h4>
+						<p className='text-sm text-gray-500'>
+							Security and classification of the chemical.
+						</p>
+					</div>
+
+					<div className='mb-9 w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+						<SafetyAndSecuritySection
+							SDS={SDS}
+							setSDS={setSDS}
+							setChemicalData={setChemicalData}
+							setValidated={setValidated}
+						/>
+					</div>
+				</div>
+
+				<hr className='mb-6 border-gray-200' />
+
+				<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
+					<div className='w-full max-w-md 2xl:max-w-xs'>
 						<h4>Extra Info</h4>
 						<p className='text-sm text-gray-500'>
 							Extra information for the chemical.
@@ -184,7 +206,13 @@ const AddChemical = () => {
 							setValidated={setValidated}
 						/>
 
-						<div className='mt-9 flex items-center justify-end'>
+						<div className='mt-9 flex items-center justify-end space-x-6'>
+							{errorMessage && (
+								<p className='mr-auto flex items-center text-sm font-medium text-red-600'>
+									<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}
+									{errorMessage}
+								</p>
+							)}
 							<span
 								onClick={() => navigate('/inventory')}
 								className='cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'
@@ -199,6 +227,14 @@ const AddChemical = () => {
 					</div>
 				</div>
 			</form>
+
+			{openModal && chemicalId && (
+				<SuccessMessageModal
+					chemicalId={chemicalId}
+					openModal={openModal}
+					setOpenModal={setOpenModal}
+				/>
+			)}
 		</>
 	)
 }

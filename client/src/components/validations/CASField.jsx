@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-const CAS_REGEX = /\b[1-9]{1}[0-9]{1,6}-\d{2}-\d\b/
+const CAS_REGEX = /^\b[1-9]{1}[0-9]{1,6}-\d{2}-\d\b$/
 
 const CASField = (props) => {
 	useEffect(() => {

@@ -3,7 +3,7 @@ const router = express.Router()
 
 const ROLES_LIST = require('../config/roles_list')
 const verifyRoles = require('../middleware/verifyRoles')
-const { uploadAvatar } = require('../middleware/uploadFile')
+const { uploadAvatar, uploadSDS } = require('../middleware/uploadFile')
 
 const {
 	getUsers,
@@ -46,7 +46,11 @@ router.route('/user').delete(verifyRoles(ROLES_LIST.labOwner), removeUser)
 router.route('/chemicals').post(verifyRoles(ROLES_LIST.guest), getChemicals)
 router
 	.route('/chemical')
-	.post(verifyRoles(ROLES_LIST.postgraduate), addChemical)
+	.post(
+		verifyRoles(ROLES_LIST.postgraduate),
+		uploadSDS.single('SDS'),
+		addChemical
+	)
 router
 	.route('/chemical/:chemicalId')
 	.put(verifyRoles(ROLES_LIST.guest), getChemicalInfo)

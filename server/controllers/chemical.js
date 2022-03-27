@@ -34,6 +34,8 @@ exports.getChemicals = async (req, res, next) => {
 }
 
 exports.addChemical = async (req, res, next) => {
+	const url = req.protocol + '://' + req.get('host')
+
 	const {
 		CAS,
 		name,
@@ -49,10 +51,12 @@ exports.addChemical = async (req, res, next) => {
 		dateIn,
 		dateOpen,
 		expirationDate,
+		classifications,
+		securities,
 		supplier,
 		brand,
 		notes,
-	} = req.body
+	} = JSON.parse(req.body.chemicalInfo)
 
 	if (
 		!CAS ||
@@ -111,6 +115,9 @@ exports.addChemical = async (req, res, next) => {
 					dateIn,
 					dateOpen,
 					expirationDate,
+					SDS: url + '/public/SDSs/' + req.file.filename,
+					classifications,
+					securities,
 					supplier,
 					brand,
 					notes,
@@ -150,9 +157,13 @@ exports.addChemical = async (req, res, next) => {
 
 exports.getChemicalInfo = async (req, res, next) => {
 	const chemicalId = ObjectId(req.params.chemicalId)
+	const labId = req.body.labId
 
 	try {
-		const foundChemical = await Chemical.findById(chemicalId)
+		const foundChemical = await Chemical.findOne({
+			_id: chemicalId,
+			lab: labId,
+		})
 			.populate({
 				path: 'lab',
 				select: labInfo,
@@ -162,6 +173,7 @@ exports.getChemicalInfo = async (req, res, next) => {
 				},
 			})
 			.populate('owner', 'name email')
+
 		if (!foundChemical) {
 			return next(new ErrorResponse('Chemical not found.', 404))
 		}

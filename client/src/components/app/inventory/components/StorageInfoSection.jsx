@@ -35,15 +35,17 @@ const StorageInfoSection = ({
 
 	const today = new Date()
 	const [dateIn, setDateIn] = useState(
-		chemical
+		chemical && chemical.dateIn
 			? new Date(chemical.dateIn).toLocaleDateString('en-CA')
 			: today.toLocaleDateString('en-CA')
 	)
 	const [dateOpen, setDateOpen] = useState(
-		chemical ? new Date(chemical.dateOpen).toLocaleDateString('en-CA') : ''
+		chemical && chemical.dateOpen
+			? new Date(chemical.dateOpen).toLocaleDateString('en-CA')
+			: ''
 	)
 	const [expirationDate, setExpirationDate] = useState(
-		chemical
+		chemical && chemical.expirationDate
 			? new Date(chemical.expirationDate).toLocaleDateString('en-CA')
 			: ''
 	)
@@ -65,6 +67,8 @@ const StorageInfoSection = ({
 			return {
 				...prev,
 				locationValidated: location?._id ? true : false,
+				dateInValidated: dateIn ? true : false,
+				expirationDateValidated: expirationDate ? true : false,
 			}
 		})
 	}, [

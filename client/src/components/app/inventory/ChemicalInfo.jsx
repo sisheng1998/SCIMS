@@ -4,9 +4,10 @@ import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import LoadingScreen from '../../utils/LoadingScreen'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import EditChemicalInfo from './EditChemicalInfo'
 import FormatDate from '../../utils/FormatDate'
+import { ExclamationIcon } from '@heroicons/react/outline'
 
 const ChemicalInfo = () => {
 	const { auth } = useAuth()
@@ -80,7 +81,6 @@ const ChemicalInfo = () => {
 					setIsLoading(false)
 				}
 			} catch (error) {
-				console.log(error)
 				setSuccess(false)
 				setIsLoading(false)
 			}
@@ -100,11 +100,7 @@ const ChemicalInfo = () => {
 		<>
 			{success ? (
 				<>
-					<Title
-						title={chemical.name}
-						hasButton={false}
-						hasRefreshButton={false}
-					>
+					<Title title='Chemical' hasButton={false} hasRefreshButton={false}>
 						<p className='self-end text-sm text-gray-500'>
 							Last Updated:{' '}
 							<span className='font-semibold'>
@@ -120,9 +116,14 @@ const ChemicalInfo = () => {
 					/>
 				</>
 			) : (
-				<>
-					<p>Chemical not found</p>
-				</>
+				<div className='auth-card mt-6 self-center text-center'>
+					<ExclamationIcon className='mx-auto h-16 w-16 rounded-full bg-yellow-100 p-2 text-yellow-600' />
+					<h2 className='mt-6 mb-2 text-yellow-600'>Chemical Not Found</h2>
+					<p>The chemical does not exist in the current lab.</p>
+					<p className='mt-6'>
+						Back to <Link to='/inventory'>Inventory</Link>
+					</p>
+				</div>
 			)}
 		</>
 	)
