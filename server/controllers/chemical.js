@@ -4,6 +4,7 @@ const Lab = require('../models/Lab')
 const Chemical = require('../models/Chemical')
 const { startSession } = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId
+const generateQRCode = require('../utils/generateQRCode')
 
 const labOption = 'chemicals locations'
 const chemicalOption =
@@ -124,6 +125,18 @@ exports.addChemical = async (req, res, next) => {
 				},
 			],
 			{ session }
+		)
+
+		const QRCode = await generateQRCode(chemical[0]._id)
+
+		await Chemical.updateOne(
+			chemical[0],
+			{
+				$set: {
+					QRCode,
+				},
+			},
+			{ new: true, session }
 		)
 
 		await Lab.updateOne(

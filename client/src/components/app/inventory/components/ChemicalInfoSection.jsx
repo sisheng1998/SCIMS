@@ -69,37 +69,85 @@ const ChemicalInfoSection = ({ chemical, setChemicalData, setValidated }) => {
 
 	return (
 		<>
-			<div className='flex space-x-6'>
-				<div className='w-2/5'>
-					<label htmlFor='CAS' className='required-input-label'>
-						CAS No.
-					</label>
-					<CASField
-						value={CAS}
-						setValue={setCAS}
-						validated={CASValidated}
-						setValidated={setCASValidated}
-						showValidated={chemical ? false : true}
-					/>
-				</div>
+			{chemical && chemical.QRCode ? (
+				<div className='flex space-x-10'>
+					<div className='mb-6'>
+						<label htmlFor='qrCode'>QR Code</label>
+						<img
+							src={chemical.QRCode}
+							alt='QRCode'
+							className='h-48 w-48 object-cover'
+							height='500'
+							width='500'
+							draggable={false}
+						/>
+					</div>
 
-				<div className='w-3/5'>
-					<label htmlFor='name' className='required-input-label'>
-						Name of Chemical
-					</label>
-					<NameField
-						id='name'
-						placeholder='Enter chemical name'
-						required={true}
-						value={name}
-						setValue={setName}
-						validated={nameValidated}
-						setValidated={setNameValidated}
-						withNumber={true}
-						showValidated={chemical ? false : true}
-					/>
+					<div className='w-3/5'>
+						<div>
+							<label htmlFor='CAS' className='required-input-label'>
+								CAS No.
+							</label>
+							<CASField
+								value={CAS}
+								setValue={setCAS}
+								validated={CASValidated}
+								setValidated={setCASValidated}
+								showValidated={chemical ? false : true}
+							/>
+						</div>
+
+						<div>
+							<label htmlFor='name' className='required-input-label'>
+								Name of Chemical
+							</label>
+							<NameField
+								id='name'
+								placeholder='Enter chemical name'
+								required={true}
+								value={name}
+								setValue={setName}
+								validated={nameValidated}
+								setValidated={setNameValidated}
+								withNumber={true}
+								showValidated={chemical ? false : true}
+							/>
+						</div>
+					</div>
 				</div>
-			</div>
+			) : (
+				<div className='flex space-x-6'>
+					<div className='w-2/5'>
+						<label htmlFor='CAS' className='required-input-label'>
+							CAS No.
+						</label>
+						<CASField
+							value={CAS}
+							setValue={setCAS}
+							validated={CASValidated}
+							setValidated={setCASValidated}
+							showValidated={chemical ? false : true}
+						/>
+					</div>
+
+					<div className='w-3/5'>
+						<label htmlFor='name' className='required-input-label'>
+							Name of Chemical
+						</label>
+						<NameField
+							id='name'
+							placeholder='Enter chemical name'
+							required={true}
+							value={name}
+							setValue={setName}
+							validated={nameValidated}
+							setValidated={setNameValidated}
+							withNumber={true}
+							showValidated={chemical ? false : true}
+						/>
+					</div>
+				</div>
+			)}
 
 			<div className='mb-6 flex space-x-6'>
 				<div className='w-1/4'>

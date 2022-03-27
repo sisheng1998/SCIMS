@@ -230,17 +230,22 @@ const ChemicalsTable = (props) => {
 
 												<td className='px-6 py-4'>
 													<div className='flex items-center space-x-3'>
-														<img
-															src={chemical.QRCode}
-															alt='QRCode'
-															className='h-12 w-12 cursor-pointer rounded-full object-cover'
-															height='64'
-															width='64'
-															draggable={false}
-															onClick={() =>
-																viewImageHandler(chemical.name, chemical.QRCode)
-															}
-														/>
+														{chemical.QRCode && (
+															<img
+																src={chemical.QRCode}
+																alt='QRCode'
+																className='h-8 w-8 cursor-pointer object-cover'
+																height='64'
+																width='64'
+																draggable={false}
+																onClick={() =>
+																	viewImageHandler(
+																		chemical.name,
+																		chemical.QRCode
+																	)
+																}
+															/>
+														)}
 
 														<p className='font-medium leading-5'>
 															{chemical.name}

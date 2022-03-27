@@ -8,7 +8,7 @@ const RenderPDF = ({ PDF, setPDF }) => {
 			{PDF.toString().toLowerCase().endsWith('.pdf') ? (
 				<p>
 					<a href={PDF} target='_blank' rel='noreferrer'>
-						{PDF}
+						{PDF.split('/').pop()}
 					</a>
 				</p>
 			) : (
