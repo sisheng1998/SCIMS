@@ -2,8 +2,20 @@ import React, { useState, useEffect } from 'react'
 import CASField from '../../../validations/CASField'
 import NameField from '../../../validations/NameField'
 import NumberWithUnitField from '../../../validations/NumberWithUnitField'
+import ImageLightBox from '../../../utils/ImageLightBox'
+import ConvertUnit from '../../../utils/ConvertUnit'
+import useAuth from '../../../../hooks/useAuth'
+import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 
-const ChemicalInfoSection = ({ chemical, setChemicalData, setValidated }) => {
+const ChemicalInfoSection = ({
+	chemical,
+	setSDS,
+	setChemicalData,
+	setValidated,
+}) => {
+	const { auth } = useAuth()
+	const axiosPrivate = useAxiosPrivate()
+
 	const [CAS, setCAS] = useState(chemical ? chemical.CAS : '')
 	const [name, setName] = useState(chemical ? chemical.name : '')
 	const [state, setState] = useState(chemical ? chemical.state : '')
@@ -18,11 +30,27 @@ const ChemicalInfoSection = ({ chemical, setChemicalData, setValidated }) => {
 		chemical ? Number(chemical.minAmount).toFixed(1) : ''
 	)
 
-	const [CASValidated, setCASValidated] = useState(false)
+	const [CASValidated, setCASValidated] = useState(chemical ? true : false)
 	const [nameValidated, setNameValidated] = useState(false)
 	const [containerSizeValidated, setContainerSizeValidated] = useState(false)
 	const [amountValidated, setAmountValidated] = useState(false)
 	const [minAmountValidated, setMinAmountValidated] = useState(false)
+
+	const [QRCodeInfo, setQRCodeInfo] = useState('')
+	const [openViewImageModal, setOpenViewImageModal] = useState(false)
+
+	let classes = ''
+
+	if (chemical) {
+		if (chemical.status === 'Normal') {
+			classes = 'bg-green-100 text-green-600'
+		} else if (chemical.status === 'Expired') {
+			classes = 'bg-red-100 text-red-600'
+		} else {
+			// Low Amount / Expiring Soon
+			classes = 'bg-yellow-100 text-yellow-600'
+		}
+	}
 
 	useEffect(() => {
 		setChemicalData((prev) => {
@@ -67,76 +95,132 @@ const ChemicalInfoSection = ({ chemical, setChemicalData, setValidated }) => {
 		setValidated,
 	])
 
+	useEffect(() => {
+		if (!chemical && CAS && CASValidated) {
+			let isMounted = true
+			const controller = new AbortController()
+
+			setChemicalData((prev) => {
+				return {
+					...prev,
+					SDSLink: '',
+					classifications: [],
+					securities: [],
+				}
+			})
+			setSDS('')
+
+			const getCASInfo = async () => {
+				try {
+					const { data } = await axiosPrivate.put(
+						'/api/private/cas',
+						{
+							labId: auth.currentLabId,
+							CAS: CAS,
+						},
+						{
+							signal: controller.signal,
+						}
+					)
+					if (isMounted) {
+						setChemicalData((prev) => {
+							return {
+								...prev,
+								SDSLink: data.data.SDS,
+								classifications: data.data.classifications,
+								securities: data.data.securities,
+							}
+						})
+						setSDS(data.data.SDS)
+					}
+				} catch (error) {
+					return
+				}
+			}
+
+			getCASInfo()
+
+			return () => {
+				isMounted = false
+				controller.abort()
+			}
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [CAS, CASValidated])
+
+	const unitChangeHandler = (e) => {
+		const selectedUnit = e.target.value
+
+		containerSizeValidated &&
+			setContainerSize((prev) => ConvertUnit(prev, unit, selectedUnit))
+		amountValidated &&
+			setAmount((prev) => ConvertUnit(prev, unit, selectedUnit))
+		minAmountValidated &&
+			setMinAmount((prev) => ConvertUnit(prev, unit, selectedUnit))
+
+		setUnit(selectedUnit)
+	}
+
+	const viewImageHandler = (name, imageSrc) => {
+		setQRCodeInfo({ name, imageSrc })
+		setOpenViewImageModal(true)
+	}
+
 	return (
 		<>
-			{chemical && chemical.QRCode ? (
-				<div className='flex space-x-10'>
-					<div className='mb-6'>
-						<label htmlFor='qrCode'>QR Code</label>
+			{chemical ? (
+				<>
+					<div className='mb-3 flex space-x-6'>
+						<div className='w-1/3'>
+							<label htmlFor='CAS' className='mb-1'>
+								CAS No.
+							</label>
+							<p className='text-lg'>{chemical.CAS}</p>
+						</div>
+
+						<div className='flex-1'>
+							<label htmlFor='status' className='mb-1'>
+								Status
+							</label>
+							<span
+								className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${classes}`}
+							>
+								{chemical.status}
+							</span>
+						</div>
+
 						<img
 							src={chemical.QRCode}
 							alt='QRCode'
-							className='h-48 w-48 object-cover'
-							height='500'
-							width='500'
+							className='h-14 w-14 cursor-pointer object-cover'
+							height='200'
+							width='200'
 							draggable={false}
+							onClick={() => viewImageHandler(chemical.name, chemical.QRCode)}
 						/>
 					</div>
 
-					<div className='w-3/5'>
-						<div className='mb-6 flex space-x-6'>
-							<div className='flex-1'>
-								<label htmlFor='CAS'>CAS No.</label>
-								<input
-									className='w-full'
-									type='text'
-									name='CAS'
-									id='CAS'
-									value={chemical.CAS}
-									readOnly
-								/>
-								<p className='mt-2 text-xs text-gray-400'>
-									CAS number cannot be changed.
-								</p>
-							</div>
-
-							<div className='flex-1'>
-								<label htmlFor='status'>Status</label>
-								<input
-									className='w-full'
-									type='text'
-									name='status'
-									id='status'
-									value={chemical.status}
-									readOnly
-								/>
-								<p className='mt-2 text-xs text-gray-400'>
-									Status of the chemical.
-								</p>
-							</div>
-						</div>
-
-						<div>
-							<label htmlFor='name' className='required-input-label'>
-								Name of Chemical
-							</label>
-							<NameField
-								id='name'
-								placeholder='Enter chemical name'
-								required={true}
-								value={name}
-								setValue={setName}
-								validated={nameValidated}
-								setValidated={setNameValidated}
-								withNumber={true}
-								showValidated={chemical ? false : true}
-							/>
-						</div>
+					<div className='w-2/3'>
+						<label htmlFor='name' className='required-input-label'>
+							Name of Chemical
+						</label>
+						<NameField
+							id='name'
+							placeholder='Enter chemical name'
+							required={true}
+							value={name}
+							setValue={setName}
+							validated={nameValidated}
+							setValidated={setNameValidated}
+							withNumber={true}
+							showValidated={chemical ? false : true}
+						/>
 					</div>
-				</div>
+				</>
 			) : (
 				<div className='flex space-x-6'>
-					<div className='w-2/5'>
+					<div className='w-1/3'>
 						<label htmlFor='CAS' className='required-input-label'>
 							CAS No.
 						</label>
@@ -169,7 +253,7 @@ const ChemicalInfoSection = ({ chemical, setChemicalData, setValidated }) => {
 			)}
 
 			<div className='mb-6 flex space-x-6'>
-				<div className='w-1/4'>
+				<div className='w-1/5'>
 					<label htmlFor='stateSelection' className='required-input-label'>
 						State
 					</label>
@@ -188,7 +272,7 @@ const ChemicalInfoSection = ({ chemical, setChemicalData, setValidated }) => {
 					<p className='mt-2 text-xs text-gray-400'>State of the chemical.</p>
 				</div>
 
-				<div className='w-1/4'>
+				<div className='w-1/5'>
 					<label htmlFor='unitSelection' className='required-input-label'>
 						Unit
 					</label>
@@ -197,7 +281,7 @@ const ChemicalInfoSection = ({ chemical, setChemicalData, setValidated }) => {
 						id='unitSelection'
 						required
 						value={unit}
-						onChange={(e) => setUnit(e.target.value)}
+						onChange={unitChangeHandler}
 					>
 						<option value=''>Select</option>
 						<option value='kg'>kg</option>
@@ -265,6 +349,15 @@ const ChemicalInfoSection = ({ chemical, setChemicalData, setValidated }) => {
 					/>
 				</div>
 			</div>
+
+			{openViewImageModal && QRCodeInfo && (
+				<ImageLightBox
+					object={QRCodeInfo}
+					type='QRCode'
+					openModal={openViewImageModal}
+					setOpenModal={setOpenViewImageModal}
+				/>
+			)}
 		</>
 	)
 }

@@ -15,7 +15,7 @@ const Sidebar = () => {
 	return (
 		<nav
 			id='sidebar'
-			className='group fixed left-0 top-0 bottom-0 flex w-max flex-col border-r border-gray-300 bg-white pb-4 pt-[calc(71px+16px)] shadow-md hover:shadow-lg'
+			className='group fixed left-0 top-0 bottom-0 z-[8] flex w-max flex-col border-r border-gray-300 bg-white pb-4 pt-[calc(71px+16px)] shadow-md hover:shadow-lg'
 		>
 			{menus.map((menu, index) =>
 				auth.currentRole >= menu.minRole ? (

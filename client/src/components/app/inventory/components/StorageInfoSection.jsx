@@ -95,8 +95,22 @@ const StorageInfoSection = ({
 
 	return (
 		<>
-			<div className='flex space-x-6'>
-				<div className='mb-6 w-1/3'>
+			<div className='mb-6 flex space-x-6'>
+				<div className='w-2/3'>
+					<label htmlFor='userSelection' className='required-input-label'>
+						Owner
+					</label>
+					<UserSearchableSelect
+						selectedId={ownerId}
+						setSelectedId={setOwnerId}
+						options={users}
+					/>
+					<p className='mt-2 text-xs text-gray-400'>Owner of the chemical.</p>
+				</div>
+			</div>
+
+			<div className='mb-6 flex space-x-6'>
+				<div className='w-1/3'>
 					<label htmlFor='lab'>Lab</label>
 					<input
 						className='w-full'
@@ -111,7 +125,7 @@ const StorageInfoSection = ({
 					</p>
 				</div>
 
-				<div className='mb-6 w-1/3'>
+				<div className='w-1/3'>
 					<label htmlFor='locationSelection' className='required-input-label'>
 						Location
 					</label>
@@ -138,7 +152,7 @@ const StorageInfoSection = ({
 					</p>
 				</div>
 
-				<div className='mb-6 w-1/3'>
+				<div className='w-1/3'>
 					<label htmlFor='storageGroupSelection'>Storage Group</label>
 					<select
 						className='w-full'
@@ -163,21 +177,7 @@ const StorageInfoSection = ({
 			</div>
 
 			<div className='flex space-x-6'>
-				<div className='mb-6 w-3/4'>
-					<label htmlFor='userSelection' className='required-input-label'>
-						Owner
-					</label>
-					<UserSearchableSelect
-						selectedId={ownerId}
-						setSelectedId={setOwnerId}
-						options={users}
-					/>
-					<p className='mt-2 text-xs text-gray-400'>Owner of the chemical.</p>
-				</div>
-			</div>
-
-			<div className='flex space-x-6'>
-				<div className='mb-6 w-1/3'>
+				<div className='w-1/3'>
 					<label htmlFor='dateIn' className='required-input-label'>
 						Date In
 					</label>
@@ -195,7 +195,7 @@ const StorageInfoSection = ({
 					</p>
 				</div>
 
-				<div className='mb-6 w-1/3'>
+				<div className='w-1/3'>
 					<label htmlFor='dateOpen'>Date Open</label>
 					<input
 						className='w-full'
@@ -208,7 +208,7 @@ const StorageInfoSection = ({
 					<p className='mt-2 text-xs text-gray-400'>Date of chemical opened.</p>
 				</div>
 
-				<div className='mb-6 w-1/3'>
+				<div className='w-1/3'>
 					<label htmlFor='expirationDate' className='required-input-label'>
 						Expiration Date
 					</label>

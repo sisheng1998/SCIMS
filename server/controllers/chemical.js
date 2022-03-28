@@ -11,6 +11,7 @@ const chemicalOption =
 	'QRCode CAS name unit containerSize amount expirationDate locationId status lastUpdated'
 const UserInfo = 'name email isEmailVerified roles.lab roles.role roles.status'
 const labInfo = 'labName labOwner labUsers locations'
+const CASOption = 'CAS SDS classifications securities'
 
 exports.getChemicals = async (req, res, next) => {
 	const labId = req.body.labId
@@ -57,6 +58,7 @@ exports.addChemical = async (req, res, next) => {
 		supplier,
 		brand,
 		notes,
+		SDSLink,
 	} = JSON.parse(req.body.chemicalInfo)
 
 	if (
@@ -132,7 +134,7 @@ exports.addChemical = async (req, res, next) => {
 					dateIn,
 					dateOpen,
 					expirationDate,
-					SDS: url + '/public/SDSs/' + req.file.filename,
+					SDS: SDSLink ? SDSLink : url + '/public/SDSs/' + req.file.filename,
 					classifications,
 					securities,
 					supplier,
@@ -175,6 +177,132 @@ exports.addChemical = async (req, res, next) => {
 			success: true,
 			data: 'New chemical added.',
 			chemicalId: chemical[0]._id,
+		})
+	} catch (error) {
+		await session.abortTransaction()
+		session.endSession()
+
+		next(error)
+	}
+}
+
+exports.updateChemical = async (req, res, next) => {
+	const {
+		_id,
+		name,
+		state,
+		unit,
+		containerSize,
+		amount,
+		minAmount,
+		labId,
+		ownerId,
+		locationId,
+		storageGroup,
+		dateIn,
+		dateOpen,
+		expirationDate,
+		classifications,
+		securities,
+		supplier,
+		brand,
+		notes,
+	} = req.body
+
+	if (
+		!_id ||
+		!name ||
+		!state ||
+		!unit ||
+		!containerSize ||
+		!amount ||
+		!minAmount ||
+		!labId ||
+		!ownerId ||
+		!locationId ||
+		!dateIn ||
+		!expirationDate
+	) {
+		return next(new ErrorResponse('Missing value for required field.', 400))
+	}
+
+	const foundChemical = await Chemical.findById(_id)
+	if (!foundChemical) {
+		return next(new ErrorResponse('Chemical not found.', 404))
+	}
+
+	const foundLab = await Lab.findById(labId)
+	if (!foundLab) {
+		return next(new ErrorResponse('Lab not found.', 404))
+	}
+
+	const foundUser = await User.findById(ownerId)
+	if (!foundUser) {
+		return next(new ErrorResponse('User not found.', 404))
+	}
+
+	const foundLocation = foundLab.locations.filter((location) =>
+		location._id.equals(locationId)
+	)
+	if (foundLocation.length === 0) {
+		return next(new ErrorResponse('Location not found.', 404))
+	}
+
+	const session = await startSession()
+
+	try {
+		session.startTransaction()
+
+		let status = 'Normal'
+		if (Number(amount) <= Number(minAmount)) {
+			status = 'Low Amount'
+		}
+
+		const today = new Date()
+		if (new Date(expirationDate) < today) {
+			status = 'Expired'
+		} else {
+			const thirtyDaysFromNow = new Date(today.setDate(today.getDate() + 30))
+			if (new Date(expirationDate) < thirtyDaysFromNow) {
+				status = 'Expiring Soon'
+			}
+		}
+
+		await Chemical.updateOne(
+			foundChemical,
+			{
+				$set: {
+					name,
+					state,
+					unit,
+					containerSize,
+					amount,
+					minAmount,
+					lab: foundLab._id,
+					owner: foundUser._id,
+					locationId: foundLocation[0]._id,
+					storageGroup,
+					status,
+					dateIn,
+					dateOpen,
+					expirationDate,
+					classifications,
+					securities,
+					supplier,
+					brand,
+					notes,
+					lastUpdated: Date.now(),
+				},
+			},
+			{ new: true, session }
+		)
+
+		await session.commitTransaction()
+		session.endSession()
+
+		res.status(201).json({
+			success: true,
+			data: 'Chemical updated.',
 		})
 	} catch (error) {
 		await session.abortTransaction()
@@ -254,5 +382,75 @@ exports.updateAmount = async (req, res, next) => {
 		})
 	} catch (error) {
 		next(error)
+	}
+}
+
+exports.removeChemical = async (req, res, next) => {
+	const { chemicalId, labId } = req.body
+
+	if (!chemicalId || !labId) {
+		return next(new ErrorResponse('Missing required value.', 400))
+	}
+
+	const session = await startSession()
+
+	try {
+		session.startTransaction()
+
+		await Chemical.deleteOne({ _id: chemicalId }, { session })
+
+		await Lab.updateOne(
+			{ _id: labId },
+			{
+				$pull: {
+					chemicals: chemicalId,
+				},
+				$set: {
+					lastUpdated: Date.now(),
+				},
+			},
+			{ new: true, session }
+		)
+
+		await session.commitTransaction()
+		session.endSession()
+
+		res.status(200).json({
+			success: true,
+			data: 'Chemical removed.',
+		})
+	} catch (error) {
+		await session.abortTransaction()
+		session.endSession()
+
+		next(error)
+	}
+}
+
+exports.getCASInfo = async (req, res, next) => {
+	const { CAS } = req.body
+	if (!CAS) {
+		return next(new ErrorResponse('Missing required value.', 400))
+	}
+
+	try {
+		const foundChemical = await Chemical.findOne(
+			{
+				CAS,
+				SDS: { $exists: true, $ne: '' },
+				classifications: { $exists: true, $ne: [] },
+			},
+			CASOption
+		)
+		if (!foundChemical) {
+			return next(new ErrorResponse('Chemical not found.', 404))
+		}
+
+		res.status(200).json({
+			success: true,
+			data: foundChemical,
+		})
+	} catch (error) {
+		return next(new ErrorResponse('Chemical not found.', 404))
 	}
 }

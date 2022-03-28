@@ -113,6 +113,7 @@ const ChemicalInfo = () => {
 						chemical={chemical}
 						labData={labData}
 						usersData={usersData}
+						setEditSuccess={setRefresh}
 					/>
 				</>
 			) : (

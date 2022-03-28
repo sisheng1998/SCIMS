@@ -89,7 +89,7 @@ const Inventory = () => {
 					<p>The current lab needs to setup before use.</p>
 					<p className='mt-6'>
 						{auth.currentRole >= ROLES_LIST.labOwner
-							? 'Kindly navigate to Settings and define the locations for storing the chemicals.'
+							? 'Kindly navigate to settings and define the locations for storing the chemicals.'
 							: 'Kindly contact the lab owner to complete the setup for the current lab.'}
 					</p>
 					{auth.currentRole >= ROLES_LIST.labOwner && (

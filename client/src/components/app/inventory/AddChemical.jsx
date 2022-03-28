@@ -106,7 +106,7 @@ const AddChemical = () => {
 
 			const formData = new FormData()
 			formData.append('chemicalInfo', JSON.stringify(chemicalData))
-			formData.append('SDS', SDS)
+			!chemicalData.SDSLink && formData.append('SDS', SDS)
 
 			const { data } = await axiosPrivate.post(
 				'/api/private/chemical',
@@ -142,15 +142,16 @@ const AddChemical = () => {
 						</p>
 					</div>
 
-					<div className='mb-9 w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+					<div className='w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:max-w-full'>
 						<ChemicalInfoSection
+							setSDS={setSDS}
 							setChemicalData={setChemicalData}
 							setValidated={setValidated}
 						/>
 					</div>
 				</div>
 
-				<hr className='mb-6 border-gray-200' />
+				<hr className='mb-6 mt-9 border-gray-200' />
 
 				<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
 					<div className='w-full max-w-md 2xl:max-w-xs'>
@@ -160,7 +161,7 @@ const AddChemical = () => {
 						</p>
 					</div>
 
-					<div className='mb-9 w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+					<div className='w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:max-w-full'>
 						<StorageInfoSection
 							lab={labData}
 							users={usersData}
@@ -170,7 +171,7 @@ const AddChemical = () => {
 					</div>
 				</div>
 
-				<hr className='mb-6 border-gray-200' />
+				<hr className='mb-6 mt-9 border-gray-200' />
 
 				<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
 					<div className='w-full max-w-md 2xl:max-w-xs'>
@@ -180,19 +181,20 @@ const AddChemical = () => {
 						</p>
 					</div>
 
-					<div className='mb-9 w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+					<div className='w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:max-w-full'>
 						<SafetyAndSecuritySection
 							SDS={SDS}
 							setSDS={setSDS}
+							chemicalData={chemicalData}
 							setChemicalData={setChemicalData}
 							setValidated={setValidated}
 						/>
 					</div>
 				</div>
 
-				<hr className='mb-6 border-gray-200' />
+				<hr className='mb-6 mt-9 border-gray-200' />
 
-				<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
+				<div className='mb-6 flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
 					<div className='w-full max-w-md 2xl:max-w-xs'>
 						<h4>Extra Info</h4>
 						<p className='text-sm text-gray-500'>
@@ -200,7 +202,7 @@ const AddChemical = () => {
 						</p>
 					</div>
 
-					<div className='mb-9 w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+					<div className='w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:max-w-full'>
 						<ExtraInfoSection
 							setChemicalData={setChemicalData}
 							setValidated={setValidated}
@@ -231,6 +233,7 @@ const AddChemical = () => {
 			{openModal && chemicalId && (
 				<SuccessMessageModal
 					chemicalId={chemicalId}
+					type='Add'
 					openModal={openModal}
 					setOpenModal={setOpenModal}
 				/>

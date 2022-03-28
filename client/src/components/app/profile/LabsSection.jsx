@@ -5,11 +5,11 @@ const tableHeaders = ['Name', 'Status', 'Role']
 
 const LabsSection = ({ user }) => {
 	return (
-		<div className='mb-6 w-full max-w-3xl overflow-hidden rounded-lg border border-gray-200 bg-gray-50 shadow-sm'>
+		<div className='w-full max-w-4xl overflow-hidden rounded-lg border border-gray-200 bg-gray-50 shadow-sm xl:max-w-full'>
 			<div className='overflow-x-auto'>
 				<div className='border-b border-gray-200'>
 					<table className='min-w-full divide-y divide-gray-200'>
-						<thead className='sticky top-0 bg-gray-50'>
+						<thead className='bg-gray-50'>
 							<tr>
 								{tableHeaders.map((title, index) => (
 									<th

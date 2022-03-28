@@ -79,7 +79,7 @@ const Settings = () => {
 					</p>
 				</div>
 
-				<div className='mb-9 w-full max-w-3xl'>
+				<div className='w-full max-w-4xl xl:max-w-full'>
 					<LocationsSection
 						locations={locations}
 						setEditLocationSuccess={setRefresh}
@@ -94,10 +94,10 @@ const Settings = () => {
 				</div>
 			</div>
 
-			<hr className='mb-6 border-gray-200' />
+			<hr className='mb-6 mt-9 border-gray-200' />
 
-			<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
-				<div className='w-full max-w-md 2xl:max-w-xs'>
+			<div className='mb-6 flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
+				<div className='w-full max-w-md xl:max-w-full 2xl:max-w-xs'>
 					<h4>Storage Groups</h4>
 					<p className='text-sm text-gray-500'>
 						A group of chemicals that will not react violently if&nbsp;mixed.

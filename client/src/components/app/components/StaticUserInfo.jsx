@@ -68,7 +68,8 @@ const StaticUserInfo = ({ user }) => {
 
 			{openViewImageModal && avatarInfo && (
 				<ImageLightBox
-					user={avatarInfo}
+					object={avatarInfo}
+					type='Avatar'
 					openModal={openViewImageModal}
 					setOpenModal={setOpenViewImageModal}
 				/>

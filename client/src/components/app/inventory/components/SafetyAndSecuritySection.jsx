@@ -12,6 +12,7 @@ const SafetyAndSecuritySection = ({
 	SDS,
 	setSDS,
 	chemical,
+	chemicalData,
 	setChemicalData,
 	setValidated,
 }) => {
@@ -49,14 +50,11 @@ const SafetyAndSecuritySection = ({
 				</p>
 			)}
 
-			<label
-				htmlFor='SDS'
-				className={chemical && chemical.SDS ? '' : 'required-input-label'}
-			>
-				Safety Data Sheet (SDS)
-			</label>
 			{!SDS ? (
 				<>
+					<label htmlFor='SDS' className='required-input-label'>
+						Safety Data Sheet (SDS)
+					</label>
 					<PDFDropZone setPDF={setSDS} setErrorMessage={setErrorMessage} />
 					<p className='mt-2 text-xs text-gray-400'>
 						Only PDF is supported. Max file size: 5 MB.
@@ -64,12 +62,26 @@ const SafetyAndSecuritySection = ({
 				</>
 			) : (
 				<>
+					<label
+						htmlFor='SDS'
+						className={
+							SDS.toString().toLowerCase().endsWith('.pdf')
+								? 'mb-1'
+								: 'required-input-label'
+						}
+					>
+						Safety Data Sheet (SDS)
+					</label>
 					<RenderPDF PDF={SDS} setPDF={setSDS} />
 
 					<label htmlFor='classification'>Classification</label>
 					<SafetySecurityField
 						lists={CLASSIFICATION_LIST}
-						value={classifications}
+						value={
+							chemicalData && chemicalData.classifications.length !== 0
+								? chemicalData.classifications
+								: classifications
+						}
 						setValue={setClassifications}
 					/>
 
@@ -78,7 +90,11 @@ const SafetyAndSecuritySection = ({
 					</label>
 					<SafetySecurityField
 						lists={SECURITY_LIST}
-						value={securities}
+						value={
+							chemicalData && chemicalData.securities.length !== 0
+								? chemicalData.securities
+								: securities
+						}
 						setValue={setSecurities}
 					/>
 				</>

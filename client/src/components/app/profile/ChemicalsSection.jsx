@@ -2,15 +2,15 @@ import React from 'react'
 import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
 import { FormatChemicalDate } from '../../utils/FormatDate'
 
-const tableHeaders = ['Lab', 'CAS', 'Status', 'Amount', 'Exp. Date']
+const tableHeaders = ['Lab', 'CAS No.', 'Amount', 'Status', 'Exp. Date']
 
 const ChemicalsSection = ({ chemicals }) => {
 	return (
-		<div className='mb-6 w-full max-w-3xl overflow-hidden rounded-lg border border-gray-200 bg-gray-50 shadow-sm'>
+		<div className='w-full max-w-4xl overflow-hidden rounded-lg border border-gray-200 bg-gray-50 shadow-sm xl:max-w-full'>
 			<div className='overflow-x-auto'>
 				<div className='border-b border-gray-200'>
 					<table className='min-w-full divide-y divide-gray-200'>
-						<thead className='sticky top-0 bg-gray-50'>
+						<thead className='bg-gray-50'>
 							<tr>
 								{tableHeaders.map((title, index) => (
 									<th
@@ -45,17 +45,19 @@ const ChemicalsSection = ({ chemicals }) => {
 
 									return (
 										<tr key={chemical._id}>
-											<td className='px-6 py-4'>{chemical.lab.labName}</td>
+											<td className='px-6 py-4'>
+												{'Lab ' + chemical.lab.labName}
+											</td>
 											<td className='px-6 py-4'>{chemical.CAS}</td>
+											<td className='px-6 py-4'>
+												{FormatAmountWithUnit(chemical.amount, chemical.unit)}
+											</td>
 											<td className='px-6 py-4'>
 												<span
 													className={`inline-flex rounded-full px-3 py-1 font-medium ${classes}`}
 												>
 													{chemical.status}
 												</span>
-											</td>
-											<td className='px-6 py-4'>
-												{FormatAmountWithUnit(chemical.amount, chemical.unit)}
 											</td>
 											<td className='px-6 py-4'>
 												{FormatChemicalDate(chemical.expirationDate)}

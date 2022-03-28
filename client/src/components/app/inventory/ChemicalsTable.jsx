@@ -239,17 +239,12 @@ const ChemicalsTable = (props) => {
 
 												<td className='px-6 py-4'>
 													<div className='flex items-center space-x-2'>
-														{chemical.QRCode && (
-															<QrcodeIcon
-																className='h-6 w-6 cursor-pointer text-gray-400 transition hover:text-indigo-700 focus:outline-none'
-																onClick={() =>
-																	viewImageHandler(
-																		chemical.name,
-																		chemical.QRCode
-																	)
-																}
-															/>
-														)}
+														<QrcodeIcon
+															className='h-6 w-6 cursor-pointer text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+															onClick={() =>
+																viewImageHandler(chemical.name, chemical.QRCode)
+															}
+														/>
 
 														<p>{chemical.name}</p>
 													</div>
@@ -322,7 +317,8 @@ const ChemicalsTable = (props) => {
 
 			{openViewImageModal && QRCodeInfo && (
 				<ImageLightBox
-					user={QRCodeInfo}
+					object={QRCodeInfo}
+					type='QRCode'
 					openModal={openViewImageModal}
 					setOpenModal={setOpenViewImageModal}
 				/>

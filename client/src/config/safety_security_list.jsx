@@ -8,7 +8,6 @@ const CLASSIFICATION_LIST = [
 	'Flammable',
 	'Oxidizer',
 	'Compressed Gas',
-	'Other',
 ]
 
 const SECURITY_LIST = ['CWC', 'Theft', 'Other']

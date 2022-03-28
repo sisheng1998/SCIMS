@@ -190,7 +190,7 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 												name='labName'
 												id='labName'
 												readOnly
-												value={labName}
+												value={'Lab ' + labName}
 											/>
 										)}
 									</div>

@@ -67,7 +67,7 @@ const Profile = () => {
 					<p className='text-sm text-gray-500'>Account email and password.</p>
 				</div>
 
-				<div className='mb-9 w-full max-w-3xl'>
+				<div className='w-full max-w-4xl xl:max-w-full'>
 					<div className='rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
 						<AccountSection user={user} />
 					</div>
@@ -79,7 +79,7 @@ const Profile = () => {
 				</div>
 			</div>
 
-			<hr className='mb-6 border-gray-200' />
+			<hr className='mb-6 mt-9 border-gray-200' />
 
 			<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
 				<div className='w-full max-w-md 2xl:max-w-xs'>
@@ -89,12 +89,12 @@ const Profile = () => {
 					</p>
 				</div>
 
-				<div className='mb-9 w-full max-w-3xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+				<div className='w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:max-w-full'>
 					<PersonalSection user={user} setRefresh={setRefresh} />
 				</div>
 			</div>
 
-			<hr className='mb-6 border-gray-200' />
+			<hr className='mb-6 mt-9 border-gray-200' />
 
 			<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
 				<div className='w-full max-w-md 2xl:max-w-xs'>
@@ -109,9 +109,9 @@ const Profile = () => {
 
 			{chemicals && chemicals.length !== 0 && (
 				<>
-					<hr className='mb-6 mt-3 border-gray-200' />
+					<hr className='mb-6 mt-9 border-gray-200' />
 
-					<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
+					<div className='mb-6 flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
 						<div className='w-full max-w-md 2xl:max-w-xs'>
 							<h4>Chemicals Info</h4>
 							<p className='text-sm text-gray-500'>List of owned chemicals.</p>

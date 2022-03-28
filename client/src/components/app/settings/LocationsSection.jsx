@@ -19,7 +19,7 @@ const LocationsSection = ({ locations, setEditLocationSuccess }) => {
 				<div className='overflow-x-auto'>
 					<div className='border-b border-gray-200'>
 						<table className='min-w-full divide-y divide-gray-200'>
-							<thead className='sticky top-0 bg-gray-50'>
+							<thead className='bg-gray-50'>
 								<tr>
 									{tableHeaders.map((title, index) => (
 										<th

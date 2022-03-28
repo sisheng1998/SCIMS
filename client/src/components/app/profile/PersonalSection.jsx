@@ -31,7 +31,7 @@ const PersonalSection = ({ user, setRefresh }) => {
 
 			<label htmlFor='matricNo'>Matric/Staff Number</label>
 			<input
-				className='mb-6 w-full'
+				className='mb-6 w-1/3'
 				type='text'
 				name='matricNo'
 				id='matricNo'
@@ -43,7 +43,7 @@ const PersonalSection = ({ user, setRefresh }) => {
 				Full Name <span className='text-xs'>(as per IC/Passport)</span>
 			</label>
 			<input
-				className='mb-6 w-full'
+				className='mb-6 w-2/3'
 				type='text'
 				name='name'
 				id='name'
@@ -53,7 +53,7 @@ const PersonalSection = ({ user, setRefresh }) => {
 
 			<label htmlFor='altEmail'>Alternative Email Address</label>
 			<input
-				className='mb-9 w-full'
+				className='mb-9 w-2/3'
 				type='text'
 				name='altEmail'
 				id='altEmail'
@@ -62,7 +62,7 @@ const PersonalSection = ({ user, setRefresh }) => {
 			/>
 
 			<button
-				className='button button-outline w-full max-w-xs justify-center px-4 py-3'
+				className='button button-outline block w-full max-w-xs justify-center px-4 py-3'
 				onClick={() => setOpenEditPersonalInfoModal(true)}
 			>
 				Edit Personal Info

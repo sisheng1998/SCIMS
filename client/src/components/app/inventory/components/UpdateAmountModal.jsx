@@ -93,7 +93,7 @@ const UpdateAmountModal = ({
 					) : (
 						<>
 							<div className='mb-6 flex justify-between border-b border-gray-200 pb-3'>
-								<h4>Chemical Usage</h4>
+								<h4>Update Chemical Amount</h4>
 								<XIcon
 									className='h-5 w-5 cursor-pointer hover:text-indigo-600'
 									onClick={closeHandler}
