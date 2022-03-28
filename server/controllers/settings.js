@@ -1,6 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse')
 const Lab = require('../models/Lab')
 const Chemical = require('../models/Chemical')
+const { startSession } = require('mongoose')
 
 exports.addLocation = async (req, res, next) => {
 	const { labId, name, storageGroups } = req.body
@@ -100,17 +101,25 @@ exports.removeLocation = async (req, res, next) => {
 		return next(new ErrorResponse('Lab not found.', 404))
 	}
 
+	const session = await startSession()
+
 	try {
-		await Lab.updateOne(foundLab, {
-			$pull: {
-				locations: {
-					_id: locationId,
+		session.startTransaction()
+
+		await Lab.updateOne(
+			foundLab,
+			{
+				$pull: {
+					locations: {
+						_id: locationId,
+					},
+				},
+				$set: {
+					lastUpdated: Date.now(),
 				},
 			},
-			$set: {
-				lastUpdated: Date.now(),
-			},
-		})
+			{ new: true, session }
+		)
 
 		await Chemical.updateMany(
 			{ locationId: locationId },
@@ -119,17 +128,24 @@ exports.removeLocation = async (req, res, next) => {
 					locationId: '',
 				},
 				$set: {
+					storageGroup: '',
 					lastUpdated: Date.now(),
 				},
-			}
+			},
+			{ new: true, session }
 		)
+
+		await session.commitTransaction()
+		session.endSession()
 
 		res.status(200).json({
 			success: true,
 			data: 'Location removed.',
 		})
 	} catch (error) {
-		console.log(error)
+		await session.abortTransaction()
+		session.endSession()
+
 		next(error)
 	}
 }

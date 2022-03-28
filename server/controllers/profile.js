@@ -1,9 +1,12 @@
 const ErrorResponse = require('../utils/errorResponse')
 const User = require('../models/User')
+const Chemical = require('../models/Chemical')
 const { sendVerificationEmail } = require('./auth')
 
 const UserInfo =
 	'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status'
+const ChemicalInfo = 'CAS lab amount unit expirationDate status'
+const LabInfo = 'labName'
 
 exports.getProfile = async (req, res, next) => {
 	try {
@@ -16,9 +19,15 @@ exports.getProfile = async (req, res, next) => {
 			return next(new ErrorResponse('User not found.', 404))
 		}
 
+		const chemicals = await Chemical.find(
+			{ owner: user._id },
+			ChemicalInfo
+		).populate('lab', LabInfo)
+
 		res.status(200).json({
 			success: true,
 			user,
+			chemicals,
 		})
 	} catch (error) {
 		return next(new ErrorResponse('User not found.', 404))

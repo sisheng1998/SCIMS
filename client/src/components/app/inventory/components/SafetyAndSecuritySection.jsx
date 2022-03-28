@@ -49,7 +49,10 @@ const SafetyAndSecuritySection = ({
 				</p>
 			)}
 
-			<label htmlFor='SDS' className='required-input-label'>
+			<label
+				htmlFor='SDS'
+				className={chemical && chemical.SDS ? '' : 'required-input-label'}
+			>
 				Safety Data Sheet (SDS)
 			</label>
 			{!SDS ? (

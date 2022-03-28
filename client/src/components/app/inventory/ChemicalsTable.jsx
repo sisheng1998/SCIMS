@@ -6,10 +6,11 @@ import SortButton from '../components/SortButton'
 import Filters from '../components/Filters'
 import Pagination from '../components/Pagination'
 import ImageLightBox from '../../utils/ImageLightBox'
-import { PencilAltIcon } from '@heroicons/react/outline'
+import { PencilAltIcon, QrcodeIcon } from '@heroicons/react/outline'
 import { FormatChemicalDate } from '../../utils/FormatDate'
 import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
 import { useNavigate } from 'react-router-dom'
+import UpdateAmountModal from './components/UpdateAmountModal'
 
 const tableHeaders = [
 	{
@@ -29,7 +30,7 @@ const tableHeaders = [
 	},
 	{
 		key: 'amount',
-		label: 'Remaining Amount',
+		label: 'Amount',
 		sortable: false,
 	},
 	{
@@ -39,7 +40,7 @@ const tableHeaders = [
 	},
 	{
 		key: 'expirationDate',
-		label: 'Expiration Date',
+		label: 'Exp. Date',
 		sortable: true,
 	},
 	{
@@ -55,6 +56,9 @@ const ChemicalsTable = (props) => {
 
 	const [QRCodeInfo, setQRCodeInfo] = useState('')
 	const [openViewImageModal, setOpenViewImageModal] = useState(false)
+
+	const [chemicalInfo, setChemicalInfo] = useState('')
+	const [openUpdateAmountModal, setOpenUpdateAmountModal] = useState(false)
 
 	const [sortKey, setSortKey] = useState('index')
 	const [sortOrder, setSortOrder] = useState('asc')
@@ -116,6 +120,11 @@ const ChemicalsTable = (props) => {
 	const viewImageHandler = (name, imageSrc) => {
 		setQRCodeInfo({ name, imageSrc })
 		setOpenViewImageModal(true)
+	}
+
+	const updateAmountHandler = (chemical) => {
+		setChemicalInfo(chemical)
+		setOpenUpdateAmountModal(true)
 	}
 
 	return (
@@ -229,15 +238,10 @@ const ChemicalsTable = (props) => {
 												<td className='px-6 py-4'>{chemical.CAS}</td>
 
 												<td className='px-6 py-4'>
-													<div className='flex items-center space-x-3'>
+													<div className='flex items-center space-x-2'>
 														{chemical.QRCode && (
-															<img
-																src={chemical.QRCode}
-																alt='QRCode'
-																className='h-8 w-8 cursor-pointer object-cover'
-																height='64'
-																width='64'
-																draggable={false}
+															<QrcodeIcon
+																className='h-6 w-6 cursor-pointer text-gray-400 transition hover:text-indigo-700 focus:outline-none'
 																onClick={() =>
 																	viewImageHandler(
 																		chemical.name,
@@ -247,9 +251,7 @@ const ChemicalsTable = (props) => {
 															/>
 														)}
 
-														<p className='font-medium leading-5'>
-															{chemical.name}
-														</p>
+														<p>{chemical.name}</p>
 													</div>
 												</td>
 
@@ -264,7 +266,7 @@ const ChemicalsTable = (props) => {
 														</p>
 														{auth.currentRole >= ROLES_LIST.undergraduate && (
 															<button
-																onClick={() => {}}
+																onClick={() => updateAmountHandler(chemical)}
 																className='ml-2 text-gray-400 transition hover:text-indigo-700 focus:outline-none'
 															>
 																<PencilAltIcon className='h-5 w-5' />
@@ -323,6 +325,15 @@ const ChemicalsTable = (props) => {
 					user={QRCodeInfo}
 					openModal={openViewImageModal}
 					setOpenModal={setOpenViewImageModal}
+				/>
+			)}
+
+			{openUpdateAmountModal && chemicalInfo && (
+				<UpdateAmountModal
+					chemical={chemicalInfo}
+					openModal={openUpdateAmountModal}
+					setOpenModal={setOpenUpdateAmountModal}
+					setUpdateAmountSuccess={props.setUpdateAmountSuccess}
 				/>
 			)}
 		</>

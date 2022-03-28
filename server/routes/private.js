@@ -17,6 +17,7 @@ const {
 	getChemicals,
 	addChemical,
 	getChemicalInfo,
+	updateAmount,
 } = require('../controllers/chemical')
 
 const {
@@ -54,6 +55,9 @@ router
 router
 	.route('/chemical/:chemicalId')
 	.put(verifyRoles(ROLES_LIST.guest), getChemicalInfo)
+router
+	.route('/chemical/usage')
+	.post(verifyRoles(ROLES_LIST.undergraduate), updateAmount)
 
 // Profile
 router.route('/profile').get(getProfile)

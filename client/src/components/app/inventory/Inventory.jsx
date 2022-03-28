@@ -112,7 +112,7 @@ const Inventory = () => {
 					<ChemicalsTable
 						data={chemicals}
 						locations={locations}
-						setEditUserSuccess={setRefresh}
+						setUpdateAmountSuccess={setRefresh}
 					/>
 				</>
 			)}

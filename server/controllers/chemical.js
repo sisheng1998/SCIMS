@@ -8,7 +8,7 @@ const generateQRCode = require('../utils/generateQRCode')
 
 const labOption = 'chemicals locations'
 const chemicalOption =
-	'QRCode CAS name unit containerSize amount expirationDate locationId status'
+	'QRCode CAS name unit containerSize amount expirationDate locationId status lastUpdated'
 const UserInfo = 'name email isEmailVerified roles.lab roles.role roles.status'
 const labInfo = 'labName labOwner labUsers locations'
 
@@ -99,6 +99,21 @@ exports.addChemical = async (req, res, next) => {
 	try {
 		session.startTransaction()
 
+		let status = 'Normal'
+		if (Number(amount) <= Number(minAmount)) {
+			status = 'Low Amount'
+		}
+
+		const today = new Date()
+		if (new Date(expirationDate) < today) {
+			status = 'Expired'
+		} else {
+			const thirtyDaysFromNow = new Date(today.setDate(today.getDate() + 30))
+			if (new Date(expirationDate) < thirtyDaysFromNow) {
+				status = 'Expiring Soon'
+			}
+		}
+
 		const chemical = await Chemical.create(
 			[
 				{
@@ -113,6 +128,7 @@ exports.addChemical = async (req, res, next) => {
 					owner: foundUser._id,
 					locationId: foundLocation[0]._id,
 					storageGroup,
+					status,
 					dateIn,
 					dateOpen,
 					expirationDate,
@@ -194,6 +210,47 @@ exports.getChemicalInfo = async (req, res, next) => {
 		res.status(201).json({
 			success: true,
 			data: foundChemical,
+		})
+	} catch (error) {
+		next(error)
+	}
+}
+
+exports.updateAmount = async (req, res, next) => {
+	const { chemicalId, amount } = req.body
+
+	try {
+		const foundChemical = await Chemical.findById(chemicalId)
+
+		if (!foundChemical) {
+			return next(new ErrorResponse('Chemical not found.', 404))
+		}
+
+		if (
+			foundChemical.status === 'Normal' &&
+			Number(amount) <= foundChemical.minAmount
+		) {
+			const status = 'Low Amount'
+
+			await Chemical.updateOne(foundChemical, {
+				$set: {
+					status,
+					amount,
+					lastUpdated: Date.now(),
+				},
+			})
+		} else {
+			await Chemical.updateOne(foundChemical, {
+				$set: {
+					amount,
+					lastUpdated: Date.now(),
+				},
+			})
+		}
+
+		res.status(201).json({
+			success: true,
+			data: 'Chemical amount updated.',
 		})
 	} catch (error) {
 		next(error)

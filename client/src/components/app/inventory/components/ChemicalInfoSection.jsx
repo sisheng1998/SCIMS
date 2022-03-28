@@ -84,17 +84,36 @@ const ChemicalInfoSection = ({ chemical, setChemicalData, setValidated }) => {
 					</div>
 
 					<div className='w-3/5'>
-						<div>
-							<label htmlFor='CAS' className='required-input-label'>
-								CAS No.
-							</label>
-							<CASField
-								value={CAS}
-								setValue={setCAS}
-								validated={CASValidated}
-								setValidated={setCASValidated}
-								showValidated={chemical ? false : true}
-							/>
+						<div className='mb-6 flex space-x-6'>
+							<div className='flex-1'>
+								<label htmlFor='CAS'>CAS No.</label>
+								<input
+									className='w-full'
+									type='text'
+									name='CAS'
+									id='CAS'
+									value={chemical.CAS}
+									readOnly
+								/>
+								<p className='mt-2 text-xs text-gray-400'>
+									CAS number cannot be changed.
+								</p>
+							</div>
+
+							<div className='flex-1'>
+								<label htmlFor='status'>Status</label>
+								<input
+									className='w-full'
+									type='text'
+									name='status'
+									id='status'
+									value={chemical.status}
+									readOnly
+								/>
+								<p className='mt-2 text-xs text-gray-400'>
+									Status of the chemical.
+								</p>
+							</div>
 						</div>
 
 						<div>

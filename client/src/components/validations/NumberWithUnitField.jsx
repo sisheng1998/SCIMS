@@ -49,7 +49,9 @@ const NumberWithUnitField = (props) => {
 				) : (
 					<span className='text-red-600'>
 						{props.maxValue && Number(props.value) > Number(props.maxValue)
-							? "The amount can't exceed the container size."
+							? `The amount can't exceed the ${
+									props.usage ? 'current amount' : 'container size'
+							  }.`
 							: 'Please enter numbers with 1 decimal place only.'}
 					</span>
 				)}
