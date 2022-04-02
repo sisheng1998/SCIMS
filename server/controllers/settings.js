@@ -128,7 +128,6 @@ exports.removeLocation = async (req, res, next) => {
 					locationId: '',
 				},
 				$set: {
-					storageGroup: '',
 					lastUpdated: Date.now(),
 				},
 			},

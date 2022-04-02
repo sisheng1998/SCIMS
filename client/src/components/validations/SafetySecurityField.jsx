@@ -30,14 +30,14 @@ const SafetySecurityField = ({ lists, value, setValue }) => {
 					<input
 						className='cursor-pointer'
 						type='checkbox'
-						id={list.replace(/\W/g, '')}
+						id={list === 'Other' ? list + index : list.replace(/\W/g, '')}
 						value={list}
 						checked={checkedState[index]}
 						onChange={(e) => onChangeHandler(e, index)}
 					/>
 					<label
 						className='mb-0 cursor-pointer pl-2 font-normal'
-						htmlFor={list.replace(/\W/g, '')}
+						htmlFor={list === 'Other' ? list + index : list.replace(/\W/g, '')}
 					>
 						{list}
 					</label>

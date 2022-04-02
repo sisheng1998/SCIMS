@@ -4,6 +4,8 @@ import { CheckIcon } from '@heroicons/react/outline'
 import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import { useNavigate } from 'react-router-dom'
+import GetChemicals from '../../app/components/GetChemicals'
+import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 
 const allLabs = {
 	lab: { _id: ROLES_LIST.admin.toString(), labName: 'All Labs' },
@@ -11,6 +13,7 @@ const allLabs = {
 }
 
 const LabSelection = () => {
+	const axiosPrivate = useAxiosPrivate()
 	const { auth, setAuth } = useAuth()
 	const navigate = useNavigate()
 
@@ -36,16 +39,25 @@ const LabSelection = () => {
 	}, [isAdmin, currentLab, auth.roles, index])
 
 	useEffect(() => {
-		localStorage.setItem('currentLab', selected.lab._id)
-		setAuth((prev) => {
-			return {
-				...prev,
-				currentLabId: selected.lab._id,
-				currentLabName: selected.lab.labName,
-				currentRole: selected.role,
-			}
-		})
-	}, [selected, setAuth])
+		const getAuth = async () => {
+			let chemicals = []
+			if (selected.lab._id !== ROLES_LIST.admin.toString())
+				chemicals = await GetChemicals(axiosPrivate, selected.lab._id)
+
+			localStorage.setItem('currentLab', selected.lab._id)
+			setAuth((prev) => {
+				return {
+					...prev,
+					chemicals,
+					currentLabId: selected.lab._id,
+					currentLabName: selected.lab.labName,
+					currentRole: selected.role,
+				}
+			})
+		}
+
+		getAuth()
+	}, [selected, setAuth, axiosPrivate])
 
 	return (
 		<Listbox

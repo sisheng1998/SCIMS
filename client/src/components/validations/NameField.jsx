@@ -35,7 +35,7 @@ const NameField = (props) => {
 				{!props.value || (!props.showValidated && props.validated) ? (
 					<span>
 						Only alphabets, {props.withNumber ? 'numbers, ' : ''}spaces, and
-						symbols (-/,'.) are allowed.
+						symbols {props.withNumber ? "(-/,'.+) " : "(-/,'.) "}are allowed.
 					</span>
 				) : props.validated ? (
 					<span className='text-green-600'>Looks good!</span>

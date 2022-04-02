@@ -9,7 +9,7 @@ import { ExclamationIcon } from '@heroicons/react/outline'
 import ChemicalsTable from './ChemicalsTable'
 
 const Inventory = () => {
-	const { auth } = useAuth()
+	const { auth, setAuth } = useAuth()
 	const navigate = useNavigate()
 
 	useEffect(() => {
@@ -47,6 +47,13 @@ const Inventory = () => {
 					}
 				)
 				if (isMounted) {
+					setAuth((prev) => {
+						return {
+							...prev,
+							chemicals: data.data.chemicals,
+						}
+					})
+
 					if (data.data.locations.length !== 0) {
 						const processedData = data.data.chemicals.map((chemical, index) => {
 							const location = data.data.locations.filter(
@@ -76,7 +83,7 @@ const Inventory = () => {
 			isMounted = false
 			controller.abort()
 		}
-	}, [axiosPrivate, auth.currentLabId, refresh])
+	}, [axiosPrivate, auth.currentLabId, refresh, setAuth])
 
 	return isLoading ? (
 		<LoadingScreen />

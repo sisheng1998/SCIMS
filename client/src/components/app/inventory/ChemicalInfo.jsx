@@ -109,12 +109,21 @@ const ChemicalInfo = () => {
 						</p>
 					</Title>
 
-					<EditChemicalInfo
-						chemical={chemical}
-						labData={labData}
-						usersData={usersData}
-						setEditSuccess={setRefresh}
-					/>
+					{auth.currentRole >= ROLES_LIST.postgraduate ? (
+						<EditChemicalInfo
+							chemical={chemical}
+							labData={labData}
+							usersData={usersData}
+							setEditSuccess={setRefresh}
+						/>
+					) : (
+						<EditChemicalInfo
+							chemical={chemical}
+							labData={labData}
+							usersData={usersData}
+							setEditSuccess={setRefresh}
+						/>
+					)}
 				</>
 			) : (
 				<div className='auth-card mt-6 self-center text-center'>

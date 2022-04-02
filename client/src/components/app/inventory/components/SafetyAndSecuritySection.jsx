@@ -74,7 +74,7 @@ const SafetyAndSecuritySection = ({
 					</label>
 					<RenderPDF PDF={SDS} setPDF={setSDS} />
 
-					<label htmlFor='classification'>Classification</label>
+					<label htmlFor='classification'>GHS Classification</label>
 					<SafetySecurityField
 						lists={CLASSIFICATION_LIST}
 						value={

@@ -10,6 +10,7 @@ const Dashboard = () => {
 	useEffect(() => {
 		auth.currentLabId !== ROLES_LIST.admin.toString() && navigate('/')
 	}, [auth.currentLabId, navigate])
+	console.log(auth)
 
 	return <div>Admin Dashboard</div>
 }

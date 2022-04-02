@@ -438,7 +438,8 @@ exports.getCASInfo = async (req, res, next) => {
 			{
 				CAS,
 				SDS: { $exists: true, $ne: '' },
-				classifications: { $exists: true, $ne: [] },
+				classifications: { $exists: true },
+				securities: { $exists: true },
 			},
 			CASOption
 		)

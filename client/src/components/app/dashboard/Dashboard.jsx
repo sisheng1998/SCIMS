@@ -12,6 +12,7 @@ const Dashboard = () => {
 	useEffect(() => {
 		auth.currentLabId === ROLES_LIST.admin.toString() && navigate('/admin')
 	}, [auth.currentLabId, navigate])
+	console.log(auth)
 
 	//const axiosPrivate = useAxiosPrivate()
 
