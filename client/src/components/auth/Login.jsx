@@ -5,7 +5,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import USMEmailField from '../validations/USMEmailField'
 import LoginPasswordField from '../validations/LoginPasswordField'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
-import GetLetterPicture from '../utils/GetLetterPicture'
 
 const Login = () => {
 	const { setAuth } = useAuth()
@@ -43,11 +42,7 @@ const Login = () => {
 			const roles = data.roles
 			const id = data.id
 			const name = data.name
-			let avatar = data.avatar
-
-			if (!avatar) {
-				avatar = GetLetterPicture(name)
-			}
+			const avatar = data.avatar
 
 			setAuth((prev) => {
 				return { ...prev, email, accessToken, roles, id, name, avatar }

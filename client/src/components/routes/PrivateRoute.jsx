@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate, Navigate, Outlet } from 'react-router-dom'
+import { useNavigate, Navigate, Outlet, useLocation } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
 import ROLES_LIST from '../../config/roles_list'
 
@@ -9,6 +9,7 @@ const allLabs = {
 }
 
 const PrivateRoute = () => {
+	const { pathname } = useLocation()
 	const { auth, setAuth } = useAuth()
 	const [isLoading, setIsLoading] = useState(true)
 	const navigate = useNavigate()
@@ -23,8 +24,11 @@ const PrivateRoute = () => {
 			return role.status === 'Active' && role.lab.status === 'In Use'
 		})
 
-		// Not yet approve by any lab owner or din't have any lab
-		if (!activeRole) {
+		if (!auth.avatar || pathname === '/profile-update') {
+			setIsLoading(false)
+			navigate('/profile-update')
+		} else if (!activeRole) {
+			// Not yet approve by any lab owner or din't have any lab
 			setIsLoading(false)
 			navigate('/pending-approval')
 		} else {

@@ -195,7 +195,7 @@ const Register = () => {
 						</div>
 
 						<div className={nextStep ? 'block' : 'hidden'}>
-							<div className='mb-7'>
+							<div className='mb-6'>
 								<p
 									onClick={() => setNextStep(false)}
 									className='inline-flex cursor-pointer items-center font-semibold text-indigo-600 transition hover:text-indigo-700'

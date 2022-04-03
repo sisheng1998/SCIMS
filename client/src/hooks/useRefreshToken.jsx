@@ -1,6 +1,5 @@
 import axios from 'axios'
 import useAuth from './useAuth'
-import GetLetterPicture from '../components/utils/GetLetterPicture'
 
 const useRefreshToken = () => {
 	const { setAuth } = useAuth()
@@ -17,11 +16,7 @@ const useRefreshToken = () => {
 		const roles = data.roles
 		const id = data.id
 		const name = data.name
-		let avatar = data.avatar
-
-		if (!avatar) {
-			avatar = GetLetterPicture(name)
-		}
+		const avatar = data.avatar
 
 		setAuth((prev) => {
 			return { ...prev, email, accessToken, roles, id, name, avatar }

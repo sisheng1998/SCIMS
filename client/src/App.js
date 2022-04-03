@@ -29,6 +29,7 @@ import Settings from './components/app/settings/Settings'
 import Notification from './components/app/notification/Notification'
 import Profile from './components/app/profile/Profile'
 import PendingApproval from './components/app/PendingApproval'
+import ProfileUpdate from './components/app/ProfileUpdate'
 import ApplyNewLab from './components/app/ApplyNewLab'
 import AddChemical from './components/app/inventory/AddChemical'
 import ChemicalInfo from './components/app/inventory/ChemicalInfo'
@@ -94,6 +95,8 @@ const App = () => {
 					</Route>
 
 					<Route element={<AuthLayout />}>
+						{/* Haven't complete profile */}
+						<Route exact path='/profile-update' element={<ProfileUpdate />} />
 						{/* Haven't approved by lab owner */}
 						<Route
 							exact

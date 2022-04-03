@@ -152,7 +152,7 @@
 
 @layer components {
 	.auth-card {
-		@apply w-full max-w-md rounded-lg bg-white p-8 shadow;
+		@apply w-full max-w-md rounded-lg bg-white p-6 shadow;
 	}
 
 	.required-input-label {

@@ -8,7 +8,7 @@ const AccountSection = ({ user }) => {
 
 	return (
 		<>
-			<div className='w-2/3'>
+			<div className='w-full max-w-lg'>
 				<div className='flex items-end justify-between'>
 					<label htmlFor='email'>
 						Email Address
@@ -41,7 +41,7 @@ const AccountSection = ({ user }) => {
 
 			<label htmlFor='password'>Password</label>
 			<button
-				className='button button-outline w-full max-w-xs justify-center px-4 py-3'
+				className='button button-outline w-60 justify-center px-4 py-3'
 				onClick={() => setOpenChangePasswordModal(true)}
 			>
 				Change Password

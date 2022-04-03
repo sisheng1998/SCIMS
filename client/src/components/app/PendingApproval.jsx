@@ -30,9 +30,10 @@ const PendingApproval = () => {
 				<p>Your account status:</p>
 				<h2 className='text-yellow-600'>Pending Approval</h2>
 				<p className='my-6'>Kindly wait for the approval from the lab owner.</p>
-				<Link to='/apply-new-lab' className='text-sm'>
-					Apply for other lab?
-				</Link>
+				<p className='text-sm'>
+					You may <Link to='/apply-new-lab'>apply for other lab</Link> or{' '}
+					<Link to='/profile-update'>update your profile</Link>.
+				</p>
 			</div>
 
 			<p className='mt-6 text-center'>

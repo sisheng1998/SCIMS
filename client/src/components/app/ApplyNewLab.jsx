@@ -7,6 +7,7 @@ import {
 	LogoutIcon,
 	CheckIcon,
 	ExclamationCircleIcon,
+	ArrowLeftIcon,
 } from '@heroicons/react/outline'
 import LabSelectionField from '../validations/LabSelectionField'
 import LoadingScreen from '../utils/LoadingScreen'
@@ -96,6 +97,15 @@ const PendingApproval = () => {
 							spellCheck='false'
 							autoComplete='off'
 						>
+							<div className='mb-6'>
+								<p
+									onClick={() => navigate('/pending-approval')}
+									className='inline-flex cursor-pointer items-center font-semibold text-indigo-600 transition hover:text-indigo-700'
+								>
+									<ArrowLeftIcon className='mr-1 h-4 w-4' />
+									Return
+								</p>
+							</div>
 							<label htmlFor='labSelection' className='required-input-label'>
 								Lab
 							</label>
