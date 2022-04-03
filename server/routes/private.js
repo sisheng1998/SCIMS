@@ -8,6 +8,7 @@ const { uploadAvatar, uploadSDS } = require('../middleware/uploadFile')
 const {
 	getUsers,
 	addUser,
+	userApproval,
 	updateUser,
 	removeUser,
 	addExistingUser,
@@ -40,6 +41,9 @@ const {
 // Users
 router.route('/users').post(verifyRoles(ROLES_LIST.guest), getUsers)
 router.route('/user').post(verifyRoles(ROLES_LIST.labOwner), addUser)
+router
+	.route('/user/approval')
+	.post(verifyRoles(ROLES_LIST.labOwner), userApproval)
 router
 	.route('/existing-user')
 	.post(verifyRoles(ROLES_LIST.labOwner), addExistingUser)

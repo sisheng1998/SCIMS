@@ -5,7 +5,7 @@ const FormatDate = (value) => {
 		month: 'numeric',
 		hour: 'numeric',
 		minute: 'numeric',
-		hour12: true,
+		hourCycle: 'h12',
 	}
 
 	const formattedDate = new Date(value)

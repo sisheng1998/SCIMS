@@ -89,7 +89,7 @@ const ViewUserModal = ({ user, openModal, setOpenModal }) => {
 															</td>
 															<td className='px-3 py-2'>
 																<span
-																	className={`inline-flex rounded-full px-3 py-1 font-medium ${classes}`}
+																	className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${classes}`}
 																>
 																	{role.status}
 																</span>

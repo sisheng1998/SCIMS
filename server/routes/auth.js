@@ -5,6 +5,7 @@ const {
 	register,
 	emailVerification,
 	sendEmailVerification,
+	changeEmail,
 	login,
 	logout,
 	forgotPassword,
@@ -18,6 +19,7 @@ const {
 router.route('/register').post(register)
 router.route('/verify-email/:emailVerificationToken').put(emailVerification)
 router.route('/verify-email').put(sendEmailVerification)
+router.route('/change-email').put(changeEmail)
 router.route('/login').post(login)
 router.route('/logout').put(logout)
 router.route('/forgot-password').post(forgotPassword)

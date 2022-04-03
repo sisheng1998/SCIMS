@@ -195,6 +195,10 @@
 		@apply bg-red-600 hover:bg-red-700 focus:ring-red-500;
 	}
 
+	.button-green {
+		@apply bg-green-600 hover:bg-green-700 focus:ring-green-500;
+	}
+
 	.read-only {
 		@apply bg-gray-50 text-gray-500 !shadow-none focus:!ring-0;
 	}

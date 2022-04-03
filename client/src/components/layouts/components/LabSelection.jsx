@@ -12,7 +12,7 @@ const allLabs = {
 	role: ROLES_LIST.admin,
 }
 
-const LabSelection = () => {
+const LabSelection = ({ searchRef }) => {
 	const axiosPrivate = useAxiosPrivate()
 	const { auth, setAuth } = useAuth()
 	const navigate = useNavigate()
@@ -57,7 +57,11 @@ const LabSelection = () => {
 		}
 
 		getAuth()
-	}, [selected, setAuth, axiosPrivate])
+
+		if (searchRef.current) {
+			searchRef.current.value = ''
+		}
+	}, [selected, setAuth, axiosPrivate, searchRef])
 
 	return (
 		<Listbox

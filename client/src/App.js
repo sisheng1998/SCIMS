@@ -15,6 +15,7 @@ import ForgotPassword from './components/auth/ForgotPassword'
 import ResetPassword from './components/auth/ResetPassword'
 import EmailVerification from './components/auth/EmailVerification'
 import SendEmailVerification from './components/auth/SendEmailVerification'
+import ChangeEmail from './components/auth/ChangeEmail'
 
 // Application
 import Dashboard from './components/app/dashboard/Dashboard'
@@ -125,6 +126,7 @@ const App = () => {
 							path='/verify-email'
 							element={<SendEmailVerification />}
 						/>
+						<Route exact path='/change-email' element={<ChangeEmail />} />
 
 						{/* Redirect all to login page */}
 						<Route path='*' element={<Navigate to='/login' />} />

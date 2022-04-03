@@ -73,12 +73,22 @@ const SendEmailVerification = () => {
 						</p>
 
 						<p className='text-sm'>
-							Didn't receive any email?{' '}
+							Didn't receive any email?
+							<br />
 							<span
 								onClick={sendEmailHandler}
 								className='cursor-pointer font-semibold text-indigo-600 transition hover:text-indigo-700'
 							>
 								Resend Verification Email
+							</span>{' '}
+							or{' '}
+							<span
+								onClick={() =>
+									navigate('/change-email', { state: { email: email } })
+								}
+								className='cursor-pointer font-semibold text-indigo-600 transition hover:text-indigo-700'
+							>
+								Change Email
 							</span>
 						</p>
 					</>

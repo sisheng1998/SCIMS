@@ -9,6 +9,7 @@ import {
 	ExclamationCircleIcon,
 } from '@heroicons/react/outline'
 import LabSelectionField from '../validations/LabSelectionField'
+import LoadingScreen from '../utils/LoadingScreen'
 
 const PendingApproval = () => {
 	const navigate = useNavigate()
@@ -62,7 +63,11 @@ const PendingApproval = () => {
 		}
 	}
 
-	return isLoading ? null : (
+	return isLoading ? (
+		<div className='auth-card mt-8'>
+			<LoadingScreen />
+		</div>
+	) : (
 		<>
 			{success ? null : <h1 className='my-6 text-center'>Apply New Lab</h1>}
 

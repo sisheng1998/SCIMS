@@ -2,6 +2,8 @@ const ErrorResponse = require('../utils/errorResponse')
 const Lab = require('../models/Lab')
 const User = require('../models/User')
 const ROLES_LIST = require('../config/roles_list')
+const { startSession } = require('mongoose')
+const sendEmail = require('../utils/sendEmail')
 
 const UserInfo =
 	'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status'
@@ -91,6 +93,104 @@ exports.addUser = async (req, res, next) => {
 		if (error.code === 11000 && error.keyPattern.hasOwnProperty('matricNo')) {
 			return next(new ErrorResponse('Matric number existed.', 409))
 		}
+
+		next(error)
+	}
+}
+
+exports.userApproval = async (req, res, next) => {
+	const { userId, labId, role, message, approve } = req.body
+
+	if (!userId || !labId) {
+		return next(new ErrorResponse('Missing value for required field.', 400))
+	}
+
+	const foundUser = await User.findById(userId)
+	if (!foundUser) {
+		return next(new ErrorResponse('User not found.', 404))
+	}
+
+	const foundLab = await Lab.findById(labId)
+	if (!foundLab) {
+		return next(new ErrorResponse('Lab not found.', 404))
+	}
+
+	const session = await startSession()
+
+	try {
+		session.startTransaction()
+
+		let emailMessage = `
+			<p>Lab: <strong>Lab ${foundLab.labName}</strong></p>
+			<p>Status: <strong>${approve ? 'Approved' : 'Declined'}</strong></p>
+			<p>Message from the lab owner: <strong>${message ? message : '-'}</strong></p>
+		`
+
+		if (approve) {
+			await User.updateOne(
+				foundUser,
+				{
+					$set: {
+						'roles.$[el].role': role,
+						'roles.$[el].status': 'Active',
+						lastUpdated: Date.now(),
+					},
+				},
+				{ arrayFilters: [{ 'el.lab': labId }], new: true, session }
+			)
+
+			emailMessage =
+				emailMessage + `<p>You are able to access the lab from the system.</p>`
+		} else {
+			await User.updateOne(
+				foundUser,
+				{
+					$pull: {
+						roles: {
+							lab: labId,
+						},
+					},
+					$set: {
+						lastUpdated: Date.now(),
+					},
+				},
+				{ new: true, session }
+			)
+
+			await Lab.updateOne(
+				foundLab,
+				{
+					$pull: {
+						labUsers: userId,
+					},
+					$set: {
+						lastUpdated: Date.now(),
+					},
+				},
+				{ new: true, session }
+			)
+
+			emailMessage =
+				emailMessage +
+				`<p>You may try to apply for the lab again after fulfilled the requirement (if any from the lab owner's message).</p>`
+		}
+
+		await sendEmail({
+			to: foundUser.email,
+			subject: '[SCIMS] User Request Approval Result',
+			text: emailMessage,
+		})
+
+		await session.commitTransaction()
+		session.endSession()
+
+		res.status(200).json({
+			success: true,
+			data: 'User approval success.',
+		})
+	} catch (error) {
+		await session.abortTransaction()
+		session.endSession()
 
 		next(error)
 	}

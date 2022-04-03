@@ -90,12 +90,47 @@ exports.emailVerification = async (req, res, next) => {
 exports.sendEmailVerification = async (req, res, next) => {
 	const { email } = req.body
 
+	if (!email) {
+		return next(new ErrorResponse('Missing value.', 400))
+	}
+
 	try {
 		const user = await User.findOne({ email })
 
 		if (!user) {
 			return next(new ErrorResponse('User not found.', 404))
 		}
+
+		const emailVerificationToken = user.getEmailVerificationToken()
+
+		await user.save()
+
+		sendVerificationEmail(user, emailVerificationToken, res, next)
+	} catch (error) {
+		next(error)
+	}
+}
+
+exports.changeEmail = async (req, res, next) => {
+	const { email, newEmail } = req.body
+
+	if (!email || !newEmail) {
+		return next(new ErrorResponse('Missing value.', 400))
+	}
+
+	const duplicate = await User.findOne({ email: newEmail })
+	if (duplicate) {
+		return next(new ErrorResponse('Email registered.', 409))
+	}
+
+	try {
+		const user = await User.findOne({ email })
+
+		if (!user) {
+			return next(new ErrorResponse('User not found.', 404))
+		}
+
+		user.email = newEmail
 
 		const emailVerificationToken = user.getEmailVerificationToken()
 
@@ -401,7 +436,7 @@ const sendVerificationEmail = async (
 	const emailVerificationUrl = `${process.env.DOMAIN_NAME}/verify-email/${emailVerificationToken}`
 
 	const message = `
-			<h1>You have registered an account with this email.</h1>
+			<p>You have an account registered with this email.</p>
 			<p>Please click the verification link below to verify your email.</p>
 			<a clicktracking=off href=${emailVerificationUrl}>${emailVerificationUrl}</a>
 		`

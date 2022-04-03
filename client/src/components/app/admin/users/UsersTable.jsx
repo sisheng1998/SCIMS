@@ -278,7 +278,8 @@ const UsersTable = (props) => {
 																		{!(
 																			user.email === auth.email ||
 																			role.role === ROLES_LIST.admin ||
-																			role.role === ROLES_LIST.labOwner
+																			role.role === ROLES_LIST.labOwner ||
+																			role.status === 'Pending'
 																		) && (
 																			<button
 																				onClick={() =>

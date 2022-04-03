@@ -5,13 +5,11 @@ import Title from '../components/Title'
 import AccountSection from './AccountSection'
 import PersonalSection from './PersonalSection'
 import LabsSection from './LabsSection'
-import ChemicalsSection from './ChemicalsSection'
 import FormatDate from '../../utils/FormatDate'
 
 const Profile = () => {
 	const axiosPrivate = useAxiosPrivate()
 	const [user, setUser] = useState('')
-	const [chemicals, setChemicals] = useState([])
 
 	const [isLoading, setIsLoading] = useState(true)
 	const [refresh, setRefresh] = useState(false)
@@ -34,7 +32,6 @@ const Profile = () => {
 				})
 				if (isMounted) {
 					setUser(data.user)
-					setChemicals(data.chemicals)
 					setIsLoading(false)
 				}
 			} catch (error) {
@@ -107,20 +104,7 @@ const Profile = () => {
 				<LabsSection user={user} />
 			</div>
 
-			{chemicals && chemicals.length !== 0 && (
-				<>
-					<hr className='mb-6 mt-9 border-gray-200' />
-
-					<div className='mb-6 flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
-						<div className='w-full max-w-md 2xl:max-w-xs'>
-							<h4>Chemicals Info</h4>
-							<p className='text-sm text-gray-500'>List of owned chemicals.</p>
-						</div>
-
-						<ChemicalsSection chemicals={chemicals} />
-					</div>
-				</>
-			)}
+			<hr className='mb-6 border-0' />
 		</>
 	)
 }

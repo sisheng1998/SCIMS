@@ -6,6 +6,7 @@ import SortButton from '../components/SortButton'
 import Filters from '../components/Filters'
 import Pagination from '../components/Pagination'
 import EditUserModal from './EditUserModal'
+import UserApprovalModal from './UserApprovalModal'
 import GetLetterPicture from '../../utils/GetLetterPicture'
 import ImageLightBox from '../../utils/ImageLightBox'
 
@@ -44,6 +45,7 @@ const UsersTable = (props) => {
 	const [avatarInfo, setAvatarInfo] = useState('')
 	const [isEdit, setIsEdit] = useState(false)
 	const [openEditUserModal, setOpenEditUserModal] = useState(false)
+	const [openUserApprovalModal, setOpenUserApprovalModal] = useState(false)
 	const [openViewImageModal, setOpenViewImageModal] = useState(false)
 
 	const [sortKey, setSortKey] = useState('index')
@@ -106,7 +108,12 @@ const UsersTable = (props) => {
 	const editUserHandler = (userData, isEdit) => {
 		setUserData(userData)
 		setIsEdit(isEdit)
-		setOpenEditUserModal(true)
+
+		if (isEdit && userData.status === 'Pending') {
+			setOpenUserApprovalModal(true)
+		} else {
+			setOpenEditUserModal(true)
+		}
 	}
 
 	const viewImageHandler = (name, imageSrc) => {
@@ -256,7 +263,8 @@ const UsersTable = (props) => {
 												<td className='px-6 py-4 text-center'>
 													{auth.currentRole >= ROLES_LIST.labOwner ? (
 														auth.email === user.email ||
-														user.roleValue >= ROLES_LIST.labOwner ? (
+														user.roleValue >= ROLES_LIST.labOwner ||
+														!user.avatar ? (
 															<button
 																onClick={() => editUserHandler(user, false)}
 																className='flex font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
@@ -308,6 +316,15 @@ const UsersTable = (props) => {
 					openModal={openEditUserModal}
 					setOpenModal={setOpenEditUserModal}
 					setEditUserSuccess={props.setEditUserSuccess}
+				/>
+			)}
+
+			{openUserApprovalModal && userData && (
+				<UserApprovalModal
+					user={userData}
+					openModal={openUserApprovalModal}
+					setOpenModal={setOpenUserApprovalModal}
+					setUserApprovalSuccess={props.setEditUserSuccess}
 				/>
 			)}
 

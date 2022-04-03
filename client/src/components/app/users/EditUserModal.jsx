@@ -179,7 +179,6 @@ const EditUserModal = ({
 													onChange={(e) => setStatus(e.target.value)}
 												>
 													<option value='Active'>Active</option>
-													<option value='Pending'>Pending</option>
 													<option value='Deactivated'>Deactivated</option>
 												</select>
 												<p className='mt-2 text-xs text-gray-400'>
@@ -193,7 +192,11 @@ const EditUserModal = ({
 												name='statusSelection'
 												id='statusSelection'
 												readOnly
-												value={user.status}
+												value={
+													user.avatar
+														? user.status
+														: 'Pending Profile Completion'
+												}
 											/>
 										)}
 									</div>
