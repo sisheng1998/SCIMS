@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import useAuth from '../../../../hooks/useAuth'
-import UserSearchableSelect from '../../../utils/SearchableSelect'
 import STORAGE_GROUPS from '../../../../config/storage_groups'
 
 const StorageInfoSection = ({
 	lab,
-	users,
 	chemical,
 	setChemicalData,
 	setValidated,
 }) => {
-	const { auth } = useAuth()
-
 	let initialLocation = ''
 	let initialLocationIndex = ''
 
@@ -24,9 +19,6 @@ const StorageInfoSection = ({
 		})
 	}
 
-	const [ownerId, setOwnerId] = useState(
-		chemical ? chemical.owner._id : auth.id
-	)
 	const [location, setLocation] = useState(initialLocation)
 	const [locationIndex, setLocationIndex] = useState(initialLocationIndex)
 	const [storageGroup, setStorageGroup] = useState(
@@ -54,7 +46,6 @@ const StorageInfoSection = ({
 		setChemicalData((prev) => {
 			return {
 				...prev,
-				ownerId,
 				locationId: location?._id,
 				storageGroup,
 				dateIn,
@@ -72,7 +63,6 @@ const StorageInfoSection = ({
 			}
 		})
 	}, [
-		ownerId,
 		location,
 		storageGroup,
 		setChemicalData,
@@ -95,20 +85,6 @@ const StorageInfoSection = ({
 
 	return (
 		<>
-			<div className='mb-6 flex space-x-6'>
-				<div className='w-2/3'>
-					<label htmlFor='userSelection' className='required-input-label'>
-						Owner
-					</label>
-					<UserSearchableSelect
-						selectedId={ownerId}
-						setSelectedId={setOwnerId}
-						options={users}
-					/>
-					<p className='mt-2 text-xs text-gray-400'>Owner of the chemical.</p>
-				</div>
-			</div>
-
 			<div className='mb-6 flex space-x-6'>
 				<div className='w-1/3'>
 					<label htmlFor='lab'>Lab</label>

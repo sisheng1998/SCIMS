@@ -21,13 +21,13 @@ const ChemicalInfoSection = ({
 	const [state, setState] = useState(chemical ? chemical.state : '')
 	const [unit, setUnit] = useState(chemical ? chemical.unit : '')
 	const [containerSize, setContainerSize] = useState(
-		chemical ? Number(chemical.containerSize).toFixed(1) : ''
+		chemical ? Number(chemical.containerSize).toFixed(2) : ''
 	)
 	const [amount, setAmount] = useState(
-		chemical ? Number(chemical.amount).toFixed(1) : ''
+		chemical ? Number(chemical.amount).toFixed(2) : ''
 	)
 	const [minAmount, setMinAmount] = useState(
-		chemical ? Number(chemical.minAmount).toFixed(1) : ''
+		chemical ? Number(chemical.minAmount).toFixed(2) : ''
 	)
 
 	const [CASValidated, setCASValidated] = useState(chemical ? true : false)

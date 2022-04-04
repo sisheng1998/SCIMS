@@ -23,7 +23,7 @@ exports.getUsers = async (req, res, next) => {
 		// Get all existing users that are not in the current lab - for lab owner or admin to add existing user to their lab
 		if (res.locals.user.role >= ROLES_LIST.labOwner) {
 			const otherUsers = await User.find(
-				{ 'roles.lab': { $ne: labId } },
+				{ isEmailVerified: true, 'roles.lab': { $ne: labId } },
 				'name email'
 			)
 
@@ -55,41 +55,72 @@ exports.addUser = async (req, res, next) => {
 		return next(new ErrorResponse('Email registered.', 409))
 	}
 
+	const foundLab = await Lab.findById(labId)
+	if (!foundLab) {
+		return next(new ErrorResponse('Lab not found.', 404))
+	}
+
+	const session = await startSession()
+
 	try {
-		const foundLab = await Lab.findById(labId)
-		if (!foundLab) {
-			return next(new ErrorResponse('Lab not found.', 404))
-		}
+		session.startTransaction()
 
-		const user = await User.create({
-			name,
-			email,
-			matricNo,
-			password,
-			roles: {
-				lab: foundLab._id,
-				role,
-				status: 'Active',
+		const user = await User.create(
+			[
+				{
+					name,
+					email,
+					matricNo,
+					password,
+					roles: {
+						lab: foundLab._id,
+						role,
+					},
+				},
+			],
+			{ session }
+		)
+
+		await Lab.updateOne(
+			foundLab,
+			{
+				$push: {
+					labUsers: user[0]._id,
+				},
+				$set: {
+					lastUpdated: Date.now(),
+				},
 			},
-			isEmailVerified: true,
+			{ new: true, session }
+		)
+
+		const emailVerificationToken = user[0].getEmailVerificationToken()
+		await user[0].save()
+
+		const emailVerificationUrl = `${process.env.DOMAIN_NAME}/verify-email/${emailVerificationToken}`
+
+		const message = `
+			<p>You have an account registered with this email.</p>
+			<p>Please click the verification link below to verify your email.</p>
+			<a clicktracking=off href=${emailVerificationUrl}>${emailVerificationUrl}</a>`
+
+		await sendEmail({
+			to: user[0].email,
+			subject: '[SCIMS] Email Verification Request',
+			text: message,
 		})
 
-		await Lab.updateOne(foundLab, {
-			$push: {
-				labUsers: user._id,
-			},
-			$set: {
-				lastUpdated: Date.now(),
-			},
-		})
-
-		await user.save()
+		await session.commitTransaction()
+		session.endSession()
 
 		res.status(201).json({
 			success: true,
 			data: 'New user created.',
 		})
 	} catch (error) {
+		await session.abortTransaction()
+		session.endSession()
+
 		if (error.code === 11000 && error.keyPattern.hasOwnProperty('matricNo')) {
 			return next(new ErrorResponse('Matric number existed.', 409))
 		}
@@ -121,7 +152,7 @@ exports.userApproval = async (req, res, next) => {
 		session.startTransaction()
 
 		let emailMessage = `
-			<p>Lab: <strong>Lab ${foundLab.labName}</strong></p>
+			<p>Lab Name: <strong>Lab ${foundLab.labName}</strong></p>
 			<p>Status: <strong>${approve ? 'Approved' : 'Declined'}</strong></p>
 			<p>Message from the lab owner: <strong>${message ? message : '-'}</strong></p>
 		`
@@ -227,7 +258,6 @@ exports.addExistingUser = async (req, res, next) => {
 				roles: {
 					lab: foundLab._id,
 					role,
-					status: 'Active',
 				},
 			},
 			$set: {

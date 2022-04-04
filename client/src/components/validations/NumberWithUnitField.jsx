@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-const NUMBER_REGEX = /^\d{1,}(\.\d{1})?$/
+const NUMBER_REGEX = /^\d{1,}(\.\d{1,2})?$/
 
 const NumberWithUnitField = (props) => {
 	useEffect(() => {
@@ -43,7 +43,7 @@ const NumberWithUnitField = (props) => {
 
 			<p className='mt-2 text-xs text-gray-400'>
 				{!props.value || (!props.showValidated && props.validated) ? (
-					props.message || 'Numbers with 1 decimal place only.'
+					props.message || 'Numbers with 2 decimal place only.'
 				) : props.validated ? (
 					<span className='text-green-600'>Looks good!</span>
 				) : (
@@ -52,7 +52,7 @@ const NumberWithUnitField = (props) => {
 							? `The amount can't exceed the ${
 									props.usage ? 'current amount' : 'container size'
 							  }.`
-							: 'Please enter numbers with 1 decimal place only.'}
+							: 'Please enter numbers with 2 decimal place only.'}
 					</span>
 				)}
 			</p>

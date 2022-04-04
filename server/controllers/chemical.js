@@ -1,5 +1,4 @@
 const ErrorResponse = require('../utils/errorResponse')
-const User = require('../models/User')
 const Lab = require('../models/Lab')
 const Chemical = require('../models/Chemical')
 const { startSession } = require('mongoose')
@@ -9,8 +8,6 @@ const generateQRCode = require('../utils/generateQRCode')
 const labOption = 'chemicals locations'
 const chemicalOption =
 	'QRCode CAS name unit containerSize amount expirationDate locationId status lastUpdated'
-const UserInfo = 'name email isEmailVerified roles.lab roles.role roles.status'
-const labInfo = 'labName labOwner labUsers locations'
 const CASOption = 'CAS SDS classifications securities'
 
 exports.getChemicals = async (req, res, next) => {
@@ -47,7 +44,6 @@ exports.addChemical = async (req, res, next) => {
 		amount,
 		minAmount,
 		labId,
-		ownerId,
 		locationId,
 		storageGroup,
 		dateIn,
@@ -70,7 +66,6 @@ exports.addChemical = async (req, res, next) => {
 		!amount ||
 		!minAmount ||
 		!labId ||
-		!ownerId ||
 		!locationId ||
 		!dateIn ||
 		!expirationDate
@@ -81,11 +76,6 @@ exports.addChemical = async (req, res, next) => {
 	const foundLab = await Lab.findById(labId)
 	if (!foundLab) {
 		return next(new ErrorResponse('Lab not found.', 404))
-	}
-
-	const foundUser = await User.findById(ownerId)
-	if (!foundUser) {
-		return next(new ErrorResponse('User not found.', 404))
 	}
 
 	const foundLocation = foundLab.locations.filter((location) =>
@@ -127,7 +117,6 @@ exports.addChemical = async (req, res, next) => {
 					amount,
 					minAmount,
 					lab: foundLab._id,
-					owner: foundUser._id,
 					locationId: foundLocation[0]._id,
 					storageGroup,
 					status,
@@ -196,7 +185,6 @@ exports.updateChemical = async (req, res, next) => {
 		amount,
 		minAmount,
 		labId,
-		ownerId,
 		locationId,
 		storageGroup,
 		dateIn,
@@ -218,7 +206,6 @@ exports.updateChemical = async (req, res, next) => {
 		!amount ||
 		!minAmount ||
 		!labId ||
-		!ownerId ||
 		!locationId ||
 		!dateIn ||
 		!expirationDate
@@ -234,11 +221,6 @@ exports.updateChemical = async (req, res, next) => {
 	const foundLab = await Lab.findById(labId)
 	if (!foundLab) {
 		return next(new ErrorResponse('Lab not found.', 404))
-	}
-
-	const foundUser = await User.findById(ownerId)
-	if (!foundUser) {
-		return next(new ErrorResponse('User not found.', 404))
 	}
 
 	const foundLocation = foundLab.locations.filter((location) =>
@@ -279,7 +261,6 @@ exports.updateChemical = async (req, res, next) => {
 					amount,
 					minAmount,
 					lab: foundLab._id,
-					owner: foundUser._id,
 					locationId: foundLocation[0]._id,
 					storageGroup,
 					status,
@@ -320,16 +301,7 @@ exports.getChemicalInfo = async (req, res, next) => {
 		const foundChemical = await Chemical.findOne({
 			_id: chemicalId,
 			lab: labId,
-		})
-			.populate({
-				path: 'lab',
-				select: labInfo,
-				populate: {
-					path: 'labUsers labOwner',
-					select: UserInfo,
-				},
-			})
-			.populate('owner', 'name email')
+		}).populate('lab', 'labName locations')
 
 		if (!foundChemical) {
 			return next(new ErrorResponse('Chemical not found.', 404))

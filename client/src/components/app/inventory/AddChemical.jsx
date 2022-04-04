@@ -22,7 +22,6 @@ const AddChemical = () => {
 
 	const axiosPrivate = useAxiosPrivate()
 	const [labData, setLabData] = useState('')
-	const [usersData, setUsersData] = useState('')
 
 	const [isLoading, setIsLoading] = useState(true)
 
@@ -45,31 +44,7 @@ const AddChemical = () => {
 				)
 				if (isMounted) {
 					data.data.locations.length === 0 && navigate('/inventory')
-
 					setLabData(data.data)
-
-					data.data.labUsers.unshift(data.data.labOwner)
-					const processedData = data.data.labUsers
-						.map((user) => {
-							const currentRole = user.roles.find((role) => {
-								return role.lab === data.data._id
-							})
-
-							return {
-								...user,
-								roleValue: currentRole.role,
-								status: currentRole.status,
-							}
-						})
-						.filter(
-							(user) =>
-								user.isEmailVerified &&
-								user.roleValue !== ROLES_LIST.guest &&
-								user.status === 'Active'
-						)
-					// LabUsers array
-					setUsersData(processedData)
-
 					setIsLoading(false)
 				}
 			} catch (error) {
@@ -164,7 +139,6 @@ const AddChemical = () => {
 					<div className='w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:max-w-full'>
 						<StorageInfoSection
 							lab={labData}
-							users={usersData}
 							setChemicalData={setChemicalData}
 							setValidated={setValidated}
 						/>

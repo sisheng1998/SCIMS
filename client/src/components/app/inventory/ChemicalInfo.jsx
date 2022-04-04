@@ -16,7 +16,6 @@ const ChemicalInfo = () => {
 
 	const [chemical, setChemical] = useState('')
 	const [labData, setLabData] = useState('')
-	const [usersData, setUsersData] = useState('')
 
 	const [success, setSuccess] = useState('')
 	const [isLoading, setIsLoading] = useState(true)
@@ -51,32 +50,10 @@ const ChemicalInfo = () => {
 					}
 				)
 				if (isMounted) {
+					console.log(data.data)
 					const { lab, ...chemicalInfo } = data.data
 					setChemical(chemicalInfo)
 					setLabData(lab)
-
-					lab.labUsers.unshift(lab.labOwner)
-					const processedUsersData = lab.labUsers
-						.map((user) => {
-							const currentRole = user.roles.find((role) => {
-								return role.lab === lab._id
-							})
-
-							return {
-								...user,
-								roleValue: currentRole.role,
-								status: currentRole.status,
-							}
-						})
-						.filter(
-							(user) =>
-								user.isEmailVerified &&
-								user.roleValue !== ROLES_LIST.guest &&
-								user.status === 'Active'
-						)
-					// LabUsers array
-					setUsersData(processedUsersData)
-
 					setSuccess(true)
 					setIsLoading(false)
 				}
@@ -113,14 +90,12 @@ const ChemicalInfo = () => {
 						<EditChemicalInfo
 							chemical={chemical}
 							labData={labData}
-							usersData={usersData}
 							setEditSuccess={setRefresh}
 						/>
 					) : (
 						<EditChemicalInfo
 							chemical={chemical}
 							labData={labData}
-							usersData={usersData}
 							setEditSuccess={setRefresh}
 						/>
 					)}

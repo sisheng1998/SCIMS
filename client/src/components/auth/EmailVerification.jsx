@@ -6,6 +6,7 @@ import { XIcon, CheckIcon } from '@heroicons/react/outline'
 const EmailVerification = () => {
 	const params = useParams()
 	const [success, setSuccess] = useState('')
+	const [profileCompleted, setProfileCompleted] = useState(false)
 
 	useEffect(() => {
 		const verifyEmail = async () => {
@@ -16,11 +17,12 @@ const EmailVerification = () => {
 			}
 
 			try {
-				await axios.put(
+				const { data } = await axios.put(
 					`/api/auth/verify-email/${params.emailVerificationToken}`,
 					config
 				)
 
+				setProfileCompleted(data.avatar ? true : false)
 				setSuccess(true)
 			} catch (error) {
 				setSuccess(false)
@@ -42,6 +44,9 @@ const EmailVerification = () => {
 						<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
 						<h2 className='mt-6 mb-2 text-green-600'>Email Verified!</h2>
 						<p>Your email has been verified.</p>
+						{!profileCompleted && (
+							<p className='mt-6'>Kindly login and complete your profile.</p>
+						)}
 					</>
 				) : (
 					<>

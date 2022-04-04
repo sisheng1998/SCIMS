@@ -49,21 +49,19 @@ const Users = () => {
 				)
 				if (isMounted) {
 					data.data.labUsers.unshift(data.data.labOwner)
-					const processedData = data.data.labUsers
-						.filter((user) => user.isEmailVerified)
-						.map((user, index) => {
-							const currentRole = user.roles.find((role) => {
-								return role.lab === data.data._id
-							})
-
-							return {
-								...user,
-								index: index,
-								role: GetRoleName(currentRole.role),
-								roleValue: currentRole.role,
-								status: currentRole.status,
-							}
+					const processedData = data.data.labUsers.map((user, index) => {
+						const currentRole = user.roles.find((role) => {
+							return role.lab === data.data._id
 						})
+
+						return {
+							...user,
+							index: index,
+							role: GetRoleName(currentRole.role),
+							roleValue: currentRole.role,
+							status: currentRole.status,
+						}
+					})
 					// LabUsers array
 					setUsersData(processedData)
 

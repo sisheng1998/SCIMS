@@ -11,7 +11,7 @@ import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import SuccessMessageModal from './components/SuccessMessageModal'
 
-const EditChemicalInfo = ({ chemical, labData, usersData, setEditSuccess }) => {
+const EditChemicalInfo = ({ chemical, labData, setEditSuccess }) => {
 	const navigate = useNavigate()
 	const axiosPrivate = useAxiosPrivate()
 	const { auth } = useAuth()
@@ -110,7 +110,6 @@ const EditChemicalInfo = ({ chemical, labData, usersData, setEditSuccess }) => {
 					<div className='w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:max-w-full'>
 						<StorageInfoSection
 							lab={labData}
-							users={usersData}
 							chemical={chemicalData}
 							setChemicalData={setChemicalData}
 							setValidated={setValidated}

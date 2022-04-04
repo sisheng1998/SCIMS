@@ -81,6 +81,7 @@ exports.emailVerification = async (req, res, next) => {
 		res.status(201).json({
 			success: true,
 			data: 'Account activated.',
+			avatar: user.avatar,
 		})
 	} catch (error) {
 		next(error)
