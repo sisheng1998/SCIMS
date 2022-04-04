@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
-import { useNavigate } from 'react-router-dom'
 import ChemicalInfoSection from './components/ChemicalInfoSection'
 import StorageInfoSection from './components/StorageInfoSection'
 import ExtraInfoSection from './components/ExtraInfoSection'
@@ -11,8 +10,7 @@ import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import SuccessMessageModal from './components/SuccessMessageModal'
 
-const EditChemicalInfo = ({ chemical, labData, setEditSuccess }) => {
-	const navigate = useNavigate()
+const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 	const axiosPrivate = useAxiosPrivate()
 	const { auth } = useAuth()
 
@@ -198,7 +196,10 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess }) => {
 								)}
 
 								<span
-									onClick={() => navigate('/inventory')}
+									onClick={() => {
+										setEdit(false)
+										window.scrollTo(0, 0)
+									}}
 									className='cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'
 								>
 									Cancel

@@ -36,10 +36,6 @@ const ChemicalSchema = new Schema(
 			type: Schema.Types.ObjectId,
 			ref: 'Lab',
 		},
-		owner: {
-			type: Schema.Types.ObjectId,
-			ref: 'User',
-		},
 		locationId: String,
 		storageGroup: String,
 		status: {

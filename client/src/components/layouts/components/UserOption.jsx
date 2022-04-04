@@ -39,7 +39,7 @@ const UserOption = () => {
 				/>
 			</Menu.Button>
 
-			<Menu.Items className='absolute right-0 top-full mt-2 w-auto rounded-lg bg-white py-2 shadow-md outline-gray-300 ring-1 ring-gray-300'>
+			<Menu.Items className='absolute right-0 top-full mt-2 w-auto min-w-[200px] rounded-lg bg-white py-2 shadow-md outline-gray-300 ring-1 ring-gray-300'>
 				<div className='mb-2 border-b pl-3 pr-6 pt-1 pb-3'>
 					<p className='font-medium capitalize'>
 						{GetRoleName(auth.currentRole)}

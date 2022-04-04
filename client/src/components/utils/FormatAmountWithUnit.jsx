@@ -1,4 +1,3 @@
-const FormatAmountWithUnit = (amount, unit) =>
-	Number(amount).toFixed(2) + ' ' + unit
+const FormatAmountWithUnit = (amount, unit) => amount + ' ' + unit
 
 export default FormatAmountWithUnit

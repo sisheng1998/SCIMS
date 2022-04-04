@@ -282,17 +282,30 @@ const ChemicalsTable = (props) => {
 													{FormatChemicalDate(chemical.expirationDate)}
 												</td>
 
-												<td className='px-6 py-4 text-center'>
+												<td className='space-x-1 px-6 py-4'>
 													<button
 														onClick={() =>
 															navigate(`/inventory/${chemical._id}`)
 														}
-														className='flex font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+														className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
 													>
-														{auth.currentRole >= ROLES_LIST.postgraduate
-															? 'Edit'
-															: 'View'}
+														View
 													</button>
+													{auth.currentRole >= ROLES_LIST.postgraduate && (
+														<>
+															<span>/</span>
+															<button
+																onClick={() =>
+																	navigate(`/inventory/${chemical._id}`, {
+																		state: { edit: true },
+																	})
+																}
+																className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+															>
+																Edit
+															</button>
+														</>
+													)}
 												</td>
 											</tr>
 										)

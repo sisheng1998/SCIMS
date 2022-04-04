@@ -23,6 +23,9 @@ const LabSelection = ({ searchRef }) => {
 	)
 
 	const currentLab = localStorage.getItem('currentLab')
+	if (!currentLab) {
+		window.location.reload(false)
+	}
 
 	const index = auth.roles.findIndex(
 		(role) => role.lab._id === currentLab && role.lab.status === 'In Use'

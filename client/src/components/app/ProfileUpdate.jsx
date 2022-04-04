@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useAuth from '../../hooks/useAuth'
 import useLogout from '../../hooks/useLogout'
 import { ArrowLeftIcon, LogoutIcon } from '@heroicons/react/outline'
 import LoadingScreen from '../utils/LoadingScreen'
@@ -10,25 +9,13 @@ import PersonalSection from './profile/PersonalSection'
 const ProfileUpdate = () => {
 	const navigate = useNavigate()
 	const [isLoading, setIsLoading] = useState(true)
-	const { auth } = useAuth()
 	const logout = useLogout()
-
-	useEffect(() => {
-		const activeRole = auth.roles.find(
-			(role) => role.status === 'Active' && role.lab.status === 'In Use'
-		)
-
-		// Account status is active in any lab
-		return activeRole && navigate('/')
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
 
 	const axiosPrivate = useAxiosPrivate()
 	const [user, setUser] = useState('')
 	const [refresh, setRefresh] = useState(false)
 
-	const profileCompleted = user && user.avatar
+	const profileCompleted = user && user.avatar && user.altEmail
 
 	useEffect(() => {
 		if (refresh) {

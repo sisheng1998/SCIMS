@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import Title from '../components/Title'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import useAuth from '../../../hooks/useAuth'
-import ROLES_LIST from '../../../config/roles_list'
 import LoadingScreen from '../../utils/LoadingScreen'
-import { useParams, Link } from 'react-router-dom'
+import { useLocation, useParams, Link } from 'react-router-dom'
 import EditChemicalInfo from './EditChemicalInfo'
+import ViewChemicalInfo from './ViewChemicalInfo'
 import FormatDate from '../../utils/FormatDate'
 import { ExclamationIcon } from '@heroicons/react/outline'
 
@@ -13,7 +13,10 @@ const ChemicalInfo = () => {
 	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
 	const params = useParams()
+	const { state } = useLocation()
+	const { edit } = state || { edit: false }
 
+	const [isEdit, setIsEdit] = useState(edit)
 	const [chemical, setChemical] = useState('')
 	const [labData, setLabData] = useState('')
 
@@ -50,7 +53,6 @@ const ChemicalInfo = () => {
 					}
 				)
 				if (isMounted) {
-					console.log(data.data)
 					const { lab, ...chemicalInfo } = data.data
 					setChemical(chemicalInfo)
 					setLabData(lab)
@@ -86,17 +88,18 @@ const ChemicalInfo = () => {
 						</p>
 					</Title>
 
-					{auth.currentRole >= ROLES_LIST.postgraduate ? (
+					{isEdit ? (
 						<EditChemicalInfo
 							chemical={chemical}
 							labData={labData}
 							setEditSuccess={setRefresh}
+							setEdit={setIsEdit}
 						/>
 					) : (
-						<EditChemicalInfo
+						<ViewChemicalInfo
 							chemical={chemical}
-							labData={labData}
-							setEditSuccess={setRefresh}
+							lab={labData}
+							setEdit={setIsEdit}
 						/>
 					)}
 				</>

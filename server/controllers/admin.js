@@ -3,6 +3,7 @@ const Lab = require('../models/Lab')
 const User = require('../models/User')
 const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
+const sendEmail = require('../utils/sendEmail')
 
 const UserInfo =
 	'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status'
@@ -30,10 +31,7 @@ exports.getUsers = async (req, res, next) => {
 exports.getLabs = async (req, res, next) => {
 	try {
 		const labs = await Lab.find({}).populate('labOwner', 'name email avatar')
-		const users = await User.find(
-			{ isEmailVerified: true },
-			'name email avatar'
-		)
+		const users = await User.find({}, 'name email avatar')
 
 		res.status(200).json({
 			success: true,
@@ -83,7 +81,6 @@ exports.addLab = async (req, res, next) => {
 						role: ROLES_LIST.labOwner,
 						status: 'Active',
 					},
-					isEmailVerified: true,
 				},
 			],
 			{ session }
@@ -98,6 +95,22 @@ exports.addLab = async (req, res, next) => {
 			},
 			{ new: true, session }
 		)
+
+		const emailVerificationToken = user[0].getEmailVerificationToken()
+		await user[0].save()
+
+		const emailVerificationUrl = `${process.env.DOMAIN_NAME}/verify-email/${emailVerificationToken}`
+
+		const message = `
+			<p>You have an account registered with this email.</p>
+			<p>Please click the verification link below to verify your email.</p>
+			<a clicktracking=off href=${emailVerificationUrl}>${emailVerificationUrl}</a>`
+
+		await sendEmail({
+			to: user[0].email,
+			subject: '[SCIMS] Email Verification Request',
+			text: message,
+		})
 
 		await session.commitTransaction()
 		session.endSession()
