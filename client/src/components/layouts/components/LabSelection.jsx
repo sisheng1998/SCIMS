@@ -30,6 +30,9 @@ const LabSelection = ({ searchRef }) => {
 	const index = auth.roles.findIndex(
 		(role) => role.lab._id === currentLab && role.lab.status === 'In Use'
 	)
+	if (!isAdmin && index === -1) {
+		window.location.reload(false)
+	}
 
 	const [selected, setSelected] = useState(
 		isAdmin && currentLab === allLabs.lab._id ? allLabs : auth.roles[index]

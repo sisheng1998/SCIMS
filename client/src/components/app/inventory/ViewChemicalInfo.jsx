@@ -9,6 +9,7 @@ import {
 	CLASSIFICATION_LIST,
 	SECURITY_LIST,
 } from '../../../config/safety_security_list'
+import { ExclamationIcon } from '@heroicons/react/outline'
 import { PaperClipIcon } from '@heroicons/react/solid'
 
 const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
@@ -28,11 +29,13 @@ const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
 	}
 
 	let chemicalLocation = '-'
+	let allowedStorageGroups = []
 
 	if (lab && chemical && chemical.locationId) {
 		lab.locations.forEach((location) => {
 			if (location._id === chemical.locationId) {
 				chemicalLocation = location.name
+				allowedStorageGroups = location.storageGroups
 			}
 		})
 	}
@@ -62,7 +65,7 @@ const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
 						<img
 							src={chemical.QRCode}
 							alt='QRCode'
-							className='h-14 w-14 cursor-pointer object-cover'
+							className='h-10 w-10 cursor-pointer object-cover'
 							height='200'
 							width='200'
 							draggable={false}
@@ -124,6 +127,11 @@ const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
 							</label>
 							<p className='font-medium'>
 								{FormatAmountWithUnit(chemical.amount, chemical.unit)}
+								{Number(chemical.amount) < Number(chemical.minAmount) && (
+									<span className='tooltip ml-1.5' data-tooltip='Low Amount'>
+										<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
+									</span>
+								)}
 							</p>
 						</div>
 					</div>
@@ -143,7 +151,7 @@ const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
 						Information of storing the chemical.
 					</p>
 
-					<hr className='my-6 border-gray-200' />
+					<hr className='mb-6 mt-4 border-gray-200' />
 
 					<div className='mb-6 flex space-x-6'>
 						<div className='flex-1'>
@@ -157,7 +165,19 @@ const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
 							<label htmlFor='Location' className='mb-0.5 text-gray-500'>
 								Location
 							</label>
-							<p className='font-medium'>{chemicalLocation}</p>
+							<p className='font-medium'>
+								{chemicalLocation}
+								{chemical.storageGroup &&
+									chemicalLocation !== '-' &&
+									!allowedStorageGroups.includes(storageGroup[0].code) && (
+										<span
+											className='tooltip ml-1.5'
+											data-tooltip={`Storage Group ${storageGroup[0].code} is not allowed in this location`}
+										>
+											<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
+										</span>
+									)}
+							</p>
 						</div>
 					</div>
 
@@ -199,6 +219,16 @@ const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
 							</label>
 							<p className='font-medium'>
 								{FormatChemicalDate(chemical.expirationDate)}
+								{chemical.status === 'Expiring Soon' && (
+									<span className='tooltip ml-1.5' data-tooltip='Expiring Soon'>
+										<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
+									</span>
+								)}
+								{chemical.status === 'Expired' && (
+									<span className='tooltip ml-1.5' data-tooltip='Expired'>
+										<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
+									</span>
+								)}
 							</p>
 						</div>
 					</div>
@@ -211,7 +241,7 @@ const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
 						Security and classification of the chemical.
 					</p>
 
-					<hr className='my-6 border-gray-200' />
+					<hr className='mb-6 mt-4 border-gray-200' />
 
 					<div className='mb-6'>
 						<label htmlFor='SDS' className='mb-1 text-gray-500'>
@@ -279,7 +309,7 @@ const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
 						Extra information for the chemical.
 					</p>
 
-					<hr className='my-6 border-gray-200' />
+					<hr className='mb-6 mt-4 border-gray-200' />
 
 					<div className='mb-6 flex space-x-6'>
 						<div className='flex-1'>
@@ -305,7 +335,7 @@ const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
 						<label htmlFor='notes' className='mb-1 text-gray-500'>
 							Notes
 						</label>
-						<pre className='rounded-lg border border-gray-200 py-2 px-3 font-sans font-medium'>
+						<pre className='min-h-[120px] rounded-lg border border-gray-200 py-2 px-3 font-sans font-medium'>
 							{chemical.notes ? chemical.notes : '-'}
 						</pre>
 					</div>

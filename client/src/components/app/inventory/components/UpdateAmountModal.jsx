@@ -4,6 +4,7 @@ import {
 	CheckIcon,
 	XIcon,
 	ExclamationCircleIcon,
+	ExclamationIcon,
 } from '@heroicons/react/outline'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import FormatAmountWithUnit from '../../../utils/FormatAmountWithUnit'
@@ -142,6 +143,14 @@ const UpdateAmountModal = ({
 											Current Amount
 										</label>
 										{FormatAmountWithUnit(chemical.amount, chemical.unit)}
+										{Number(chemical.amount) < Number(chemical.minAmount) && (
+											<span
+												className='tooltip ml-1.5'
+												data-tooltip='Low Amount'
+											>
+												<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
+											</span>
+										)}
 									</div>
 
 									<div>

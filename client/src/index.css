@@ -202,4 +202,34 @@
 	.read-only {
 		@apply bg-gray-50 text-gray-500 !shadow-none focus:!ring-0;
 	}
+
+	.tooltip {
+		@apply relative;
+	}
+
+	.tooltip::before,
+	.tooltip::after {
+		--scale: 0;
+		--arrow-size: 6px;
+		@apply pointer-events-none absolute -top-0.5 left-1/2 origin-bottom -translate-x-1/2 translate-y-[var(--translate-y,0)] scale-[var(--scale)] opacity-0 drop-shadow-sm transition;
+	}
+
+	.tooltip:hover::before,
+	.tooltip:hover::after {
+		--scale: 1;
+		@apply opacity-100;
+	}
+
+	.tooltip::before {
+		--translate-y: calc(-100% - var(--arrow-size));
+		content: attr(data-tooltip) !important;
+		@apply w-max max-w-[180px] rounded-lg bg-gray-700 py-1.5 px-3 text-center text-xs font-medium text-white;
+	}
+
+	.tooltip::after {
+		--translate-y: calc(-1 * var(--arrow-size));
+		content: '' !important;
+		border: var(--arrow-size) solid transparent;
+		@apply origin-top border-t-gray-700;
+	}
 }

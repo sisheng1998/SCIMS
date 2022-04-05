@@ -239,12 +239,17 @@ const ChemicalsTable = (props) => {
 
 												<td className='px-6 py-4'>
 													<div className='flex items-center space-x-2'>
-														<QrcodeIcon
-															className='h-6 w-6 cursor-pointer text-gray-400 transition hover:text-indigo-700 focus:outline-none'
-															onClick={() =>
-																viewImageHandler(chemical.name, chemical.QRCode)
-															}
-														/>
+														<div className='tooltip' data-tooltip='QR Code'>
+															<QrcodeIcon
+																className='h-6 w-6 cursor-pointer text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+																onClick={() =>
+																	viewImageHandler(
+																		chemical.name,
+																		chemical.QRCode
+																	)
+																}
+															/>
+														</div>
 
 														<p>{chemical.name}</p>
 													</div>
@@ -252,7 +257,7 @@ const ChemicalsTable = (props) => {
 
 												<td className='px-6 py-4'>{chemical.location}</td>
 												<td className='space-y-0.5 px-6 py-4 '>
-													<div className='flex items-center'>
+													<div className='flex items-center space-x-2'>
 														<p>
 															{FormatAmountWithUnit(
 																chemical.amount,
@@ -262,7 +267,8 @@ const ChemicalsTable = (props) => {
 														{auth.currentRole >= ROLES_LIST.undergraduate && (
 															<button
 																onClick={() => updateAmountHandler(chemical)}
-																className='ml-2 text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+																className='tooltip text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+																data-tooltip='Update Amount'
 															>
 																<PencilAltIcon className='h-5 w-5' />
 															</button>

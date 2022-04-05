@@ -57,7 +57,10 @@ const LabSelectionField = (props) => {
 					<span className='text-green-600'>
 						The owner of this lab will receive your{' '}
 						{props.checkExist ? '' : 'registration '}request
-						{props.checkExist ? '' : ' after your email verified'}.
+						{props.checkExist
+							? ''
+							: ' after your email verified and profile completed'}
+						.
 					</span>
 				)}
 			</p>

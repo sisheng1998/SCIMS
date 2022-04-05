@@ -29,7 +29,7 @@ const NumberWithUnitField = (props) => {
 					}`}
 					type='number'
 					min='0.0'
-					step='0.1'
+					step='0.01'
 					id={props.id}
 					placeholder={props.placeholder}
 					required={props.required || false}

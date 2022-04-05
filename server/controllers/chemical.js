@@ -7,7 +7,7 @@ const generateQRCode = require('../utils/generateQRCode')
 
 const labOption = 'chemicals locations'
 const chemicalOption =
-	'QRCode CAS name unit containerSize amount expirationDate locationId status lastUpdated'
+	'QRCode CAS name unit containerSize minAmount amount expirationDate locationId status lastUpdated'
 const CASOption = 'CAS SDS classifications securities'
 
 exports.getChemicals = async (req, res, next) => {
