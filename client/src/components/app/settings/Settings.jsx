@@ -1,26 +1,20 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import Title from '../components/Title'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import useAuth from '../../../hooks/useAuth'
-import ROLES_LIST from '../../../config/roles_list'
 import LoadingScreen from '../../utils/LoadingScreen'
+import LabInfoSection from './LabInfoSection'
 import LocationsSection from './LocationsSection'
 import StorageGroupsSection from './StorageGroupsSection'
 import AddLocationModal from './AddLocationModal'
+import FormatDate from '../../utils/FormatDate'
 
 const Settings = () => {
-	const navigate = useNavigate()
 	const { auth } = useAuth()
-
-	useEffect(() => {
-		auth.currentLabId === ROLES_LIST.admin.toString() &&
-			navigate('/admin/settings')
-	}, [auth.currentLabId, navigate])
-
 	const axiosPrivate = useAxiosPrivate()
 
 	const [locations, setLocations] = useState('')
+	const [lab, setLab] = useState('')
 	const [openAddLocationModal, setOpenAddLocationModal] = useState(false)
 
 	const [isLoading, setIsLoading] = useState(true)
@@ -49,7 +43,9 @@ const Settings = () => {
 					}
 				)
 				if (isMounted) {
-					setLocations(data.data.locations)
+					const { locations, ...lab } = data.data
+					setLab(lab)
+					setLocations(locations)
 					setIsLoading(false)
 				}
 			} catch (error) {
@@ -69,7 +65,32 @@ const Settings = () => {
 		<LoadingScreen />
 	) : (
 		<>
-			<Title title='Settings' hasButton={false} hasRefreshButton={false} />
+			<Title title='Settings' hasButton={false} hasRefreshButton={false}>
+				<p className='self-end text-sm text-gray-500'>
+					Last Updated:{' '}
+					<span className='font-semibold'>{FormatDate(lab.lastUpdated)}</span>
+				</p>
+			</Title>
+
+			<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
+				<div className='w-full max-w-md 2xl:max-w-xs xl:max-w-full'>
+					<h4>Lab Info</h4>
+					<p className='text-sm text-gray-500'>Basic information of the lab.</p>
+				</div>
+
+				<div className='w-full max-w-4xl xl:max-w-full'>
+					<div className='rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+						<LabInfoSection lab={lab} />
+					</div>
+
+					<p className='mt-3 text-sm text-gray-500'>
+						Created At:{' '}
+						<span className='font-semibold'>{FormatDate(lab.createdAt)}</span>
+					</p>
+				</div>
+			</div>
+
+			<hr className='mb-6 mt-9 border-gray-200' />
 
 			<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
 				<div className='w-full max-w-md 2xl:max-w-xs'>
@@ -97,7 +118,7 @@ const Settings = () => {
 			<hr className='mb-6 mt-9 border-gray-200' />
 
 			<div className='mb-6 flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
-				<div className='w-full max-w-md xl:max-w-full 2xl:max-w-xs'>
+				<div className='w-full max-w-md 2xl:max-w-xs xl:max-w-full'>
 					<h4>Storage Groups</h4>
 					<p className='text-sm text-gray-500'>
 						A group of chemicals that will not react violently if&nbsp;mixed.

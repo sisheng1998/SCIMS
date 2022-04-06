@@ -5,7 +5,7 @@ const { startSession } = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId
 const generateQRCode = require('../utils/generateQRCode')
 
-const labOption = 'chemicals locations'
+const labOption = 'labName labUsers chemicals locations createdAt lastUpdated'
 const chemicalOption =
 	'QRCode CAS name unit containerSize minAmount amount expirationDate locationId status lastUpdated'
 const CASOption = 'CAS SDS classifications securities'
@@ -295,13 +295,18 @@ exports.updateChemical = async (req, res, next) => {
 
 exports.getChemicalInfo = async (req, res, next) => {
 	const chemicalId = ObjectId(req.params.chemicalId)
-	const labId = req.body.labId
 
 	try {
 		const foundChemical = await Chemical.findOne({
 			_id: chemicalId,
-			lab: labId,
-		}).populate('lab', 'labName locations')
+		}).populate({
+			path: 'lab',
+			select: 'labOwner labName locations',
+			populate: {
+				path: 'labOwner',
+				select: 'name',
+			},
+		})
 
 		if (!foundChemical) {
 			return next(new ErrorResponse('Chemical not found.', 404))

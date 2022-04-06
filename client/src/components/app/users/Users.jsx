@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import AddUserModal from './AddUserModal'
 import Title from '../components/Title'
 import UsersTable from './UsersTable'
@@ -15,15 +14,9 @@ const Users = () => {
 	const [otherUsers, setOtherUsers] = useState('')
 	const [isLoading, setIsLoading] = useState(true)
 	const { auth } = useAuth()
-	const navigate = useNavigate()
 
 	const [openAddUserModal, setOpenAddUserModal] = useState(false)
 	const [refresh, setRefresh] = useState(false)
-
-	useEffect(() => {
-		auth.currentLabId === ROLES_LIST.admin.toString() &&
-			navigate('/admin/users')
-	}, [auth.currentLabId, navigate])
 
 	useEffect(() => {
 		if (refresh) {

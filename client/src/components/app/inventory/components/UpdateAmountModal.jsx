@@ -161,7 +161,7 @@ const UpdateAmountModal = ({
 									</div>
 								</div>
 
-								<div className='my-6 flex items-center justify-between space-x-6 border border-gray-200 bg-gray-50 p-6'>
+								<div className='my-6 flex items-center justify-between space-x-6 rounded-lg border border-gray-200 bg-gray-50 p-6'>
 									<div className='text-center'>
 										<p className='text-xl'>
 											{FormatAmountWithUnit(chemical.amount, chemical.unit)}

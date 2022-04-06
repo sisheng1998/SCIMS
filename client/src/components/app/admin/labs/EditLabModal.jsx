@@ -9,6 +9,7 @@ import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import UserSearchableSelect from '../../../utils/SearchableSelect'
 import LabNameField from '../../../validations/LabNameField'
 import FormatDate from '../../../utils/FormatDate'
+import StaticLabInfo from '../../components/StaticLabInfo'
 
 const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 	const axiosPrivate = useAxiosPrivate()
@@ -94,7 +95,7 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div
 					className={`relative w-full rounded-lg bg-white p-6 shadow ${
-						success ? 'max-w-sm text-center' : 'max-w-3xl'
+						success ? 'max-w-sm text-center' : 'max-w-2xl'
 					}`}
 				>
 					{success ? (
@@ -149,6 +150,10 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 										selectedId={ownerId}
 										setSelectedId={setOwnerId}
 										options={users}
+										fallbackUser={{
+											name: lab.labOwner.name,
+											email: lab.labOwner.email,
+										}}
 									/>
 									{isEdit ? (
 										<p className='mt-2 text-xs text-gray-400'>
@@ -231,33 +236,12 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 									</div>
 								</div>
 
-								<div className='mb-6 flex space-x-6'>
-									<div className='flex-1'>
-										<label htmlFor='numberOfUsers'>No. of Users</label>
-										<input
-											className='w-full'
-											type='text'
-											name='numberOfUsers'
-											id='numberOfUsers'
-											readOnly
-											value={lab.labUsers.length + 1}
-										/>
-									</div>
+								<StaticLabInfo
+									labUsersNo={lab.labUsers.length + 1}
+									chemicalsNo={lab.chemicals.length}
+								/>
 
-									<div className='flex-1'>
-										<label htmlFor='numberOfChemicals'>No. of Chemicals</label>
-										<input
-											className='w-full'
-											type='text'
-											name='numberOfChemicals'
-											id='numberOfChemicals'
-											readOnly
-											value={lab.chemicals.length}
-										/>
-									</div>
-								</div>
-
-								<div className='mb-9 flex items-center justify-between space-x-6 text-sm text-gray-500'>
+								<div className='mb-9 mt-6 flex items-center justify-between space-x-6 text-sm text-gray-500'>
 									<p>
 										Created At:{' '}
 										<span className='font-semibold'>

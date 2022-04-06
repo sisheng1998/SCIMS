@@ -148,3 +148,36 @@ exports.removeLocation = async (req, res, next) => {
 		next(error)
 	}
 }
+
+exports.editLab = async (req, res, next) => {
+	const { labId, labName } = req.body
+
+	if (!labId || !labName) {
+		return next(new ErrorResponse('Missing value.', 400))
+	}
+
+	const foundLab = await Lab.findById(labId)
+	if (!foundLab) {
+		return next(new ErrorResponse('Lab not found.', 404))
+	}
+
+	try {
+		await Lab.updateOne(foundLab, {
+			$set: {
+				labName,
+				lastUpdated: Date.now(),
+			},
+		})
+
+		res.status(200).json({
+			success: true,
+			data: 'Lab information updated.',
+		})
+	} catch (error) {
+		if (error.code === 11000) {
+			return next(new ErrorResponse('Lab name existed.', 409))
+		}
+
+		next(error)
+	}
+}

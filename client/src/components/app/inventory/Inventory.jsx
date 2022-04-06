@@ -11,11 +11,6 @@ import ChemicalsTable from './ChemicalsTable'
 const Inventory = () => {
 	const { auth, setAuth } = useAuth()
 	const navigate = useNavigate()
-
-	useEffect(() => {
-		auth.currentLabId === ROLES_LIST.admin.toString() && navigate('/admin')
-	}, [auth.currentLabId, navigate])
-
 	const axiosPrivate = useAxiosPrivate()
 
 	const [locations, setLocations] = useState('')

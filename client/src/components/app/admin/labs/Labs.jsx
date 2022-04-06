@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import useAuth from '../../../../hooks/useAuth'
-import ROLES_LIST from '../../../../config/roles_list'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import LoadingScreen from '../../../utils/LoadingScreen'
 import Title from '../../components/Title'
@@ -9,13 +6,6 @@ import LabsTable from './LabsTable'
 import AddLabModal from './AddLabModal'
 
 const Labs = () => {
-	const navigate = useNavigate()
-	const { auth } = useAuth()
-
-	useEffect(() => {
-		auth.currentLabId !== ROLES_LIST.admin.toString() && navigate('/')
-	}, [auth.currentLabId, navigate])
-
 	const axiosPrivate = useAxiosPrivate()
 	const [labsData, setLabsData] = useState('')
 	const [users, setUsers] = useState([])

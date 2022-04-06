@@ -16,6 +16,7 @@ const LabSelection = ({ searchRef }) => {
 	const axiosPrivate = useAxiosPrivate()
 	const { auth, setAuth } = useAuth()
 	const navigate = useNavigate()
+	const [redirect, setRedirect] = useState(false)
 
 	// Check whether user is admin
 	const isAdmin = auth.roles.some(
@@ -60,6 +61,13 @@ const LabSelection = ({ searchRef }) => {
 					currentRole: selected.role,
 				}
 			})
+
+			if (redirect) {
+				navigate(
+					selected.lab._id !== ROLES_LIST.admin.toString() ? '/' : '/admin'
+				)
+				setRedirect(!redirect)
+			}
 		}
 
 		getAuth()
@@ -67,7 +75,9 @@ const LabSelection = ({ searchRef }) => {
 		if (searchRef.current) {
 			searchRef.current.value = ''
 		}
-	}, [selected, setAuth, axiosPrivate, searchRef])
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selected])
 
 	return (
 		<Listbox
@@ -100,7 +110,7 @@ const LabSelection = ({ searchRef }) => {
 									? 'pointer-events-none font-semibold text-indigo-600'
 									: ''
 							}`}
-							onClick={() => navigate('/admin')}
+							onClick={() => setRedirect(true)}
 						>
 							All Labs
 							{auth.currentLabId === ROLES_LIST.admin.toString() && (
@@ -124,7 +134,7 @@ const LabSelection = ({ searchRef }) => {
 												? 'pointer-events-none font-semibold text-indigo-600'
 												: ''
 										}`}
-										onClick={() => navigate('/')}
+										onClick={() => setRedirect(true)}
 									>
 										{'Lab ' + role.lab.labName}
 										{auth.currentLabId === role.lab._id && (

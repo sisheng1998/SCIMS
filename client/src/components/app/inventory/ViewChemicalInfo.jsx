@@ -9,13 +9,20 @@ import {
 	CLASSIFICATION_LIST,
 	SECURITY_LIST,
 } from '../../../config/safety_security_list'
-import { ExclamationIcon } from '@heroicons/react/outline'
+import { ExclamationIcon, PencilAltIcon } from '@heroicons/react/outline'
 import { PaperClipIcon } from '@heroicons/react/solid'
+import UpdateAmountModal from './components/UpdateAmountModal'
 
-const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
+const ViewChemicalInfo = ({
+	chemical,
+	lab,
+	setUpdateAmountSuccess,
+	setEdit,
+}) => {
 	const { auth } = useAuth()
 	const [QRCodeInfo, setQRCodeInfo] = useState('')
 	const [openViewImageModal, setOpenViewImageModal] = useState(false)
+	const [openUpdateAmountModal, setOpenUpdateAmountModal] = useState(false)
 
 	let classes = ''
 
@@ -43,6 +50,8 @@ const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
 	const storageGroup =
 		chemical.storageGroup &&
 		STORAGE_GROUPS.filter((group) => group.code === chemical.storageGroup)
+
+	const currentUser = auth.roles.find((role) => role.lab._id === lab._id)
 
 	const viewImageHandler = (name, imageSrc) => {
 		setQRCodeInfo({ name, imageSrc })
@@ -125,12 +134,21 @@ const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
 							<label htmlFor='amount' className='mb-0.5 text-gray-500'>
 								Remaining Amount
 							</label>
-							<p className='font-medium'>
+							<p className='flex items-center font-medium'>
 								{FormatAmountWithUnit(chemical.amount, chemical.unit)}
 								{Number(chemical.amount) < Number(chemical.minAmount) && (
 									<span className='tooltip ml-1.5' data-tooltip='Low Amount'>
 										<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
 									</span>
+								)}
+								{currentUser.role >= ROLES_LIST.undergraduate && (
+									<button
+										onClick={() => setOpenUpdateAmountModal(true)}
+										className='tooltip ml-1.5 text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+										data-tooltip='Update Amount'
+									>
+										<PencilAltIcon className='h-5 w-5' />
+									</button>
 								)}
 							</p>
 						</div>
@@ -155,14 +173,14 @@ const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
 
 					<div className='mb-6 flex space-x-6'>
 						<div className='flex-1'>
-							<label htmlFor='Lab' className='mb-0.5 text-gray-500'>
+							<label htmlFor='lab' className='mb-0.5 text-gray-500'>
 								Lab
 							</label>
 							<p className='font-medium'>{'Lab ' + lab.labName}</p>
 						</div>
 
 						<div className='flex-1'>
-							<label htmlFor='Location' className='mb-0.5 text-gray-500'>
+							<label htmlFor='location' className='mb-0.5 text-gray-500'>
 								Location
 							</label>
 							<p className='font-medium'>
@@ -340,19 +358,20 @@ const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
 						</pre>
 					</div>
 
-					{auth.currentRole >= ROLES_LIST.postgraduate && (
-						<div className='mt-9'>
-							<button
-								className='button button-outline w-60 justify-center px-4 py-3'
-								onClick={() => {
-									setEdit(true)
-									window.scrollTo(0, 0)
-								}}
-							>
-								Edit Chemical Info
-							</button>
-						</div>
-					)}
+					{auth.currentLabId === lab._id &&
+						currentUser.role >= ROLES_LIST.postgraduate && (
+							<div className='mt-9'>
+								<button
+									className='button button-outline w-60 justify-center px-4 py-3'
+									onClick={() => {
+										setEdit(true)
+										window.scrollTo(0, 0)
+									}}
+								>
+									Edit Chemical Info
+								</button>
+							</div>
+						)}
 				</div>
 			</div>
 
@@ -362,6 +381,15 @@ const ViewChemicalInfo = ({ chemical, lab, setEdit }) => {
 					type='QRCode'
 					openModal={openViewImageModal}
 					setOpenModal={setOpenViewImageModal}
+				/>
+			)}
+
+			{openUpdateAmountModal && (
+				<UpdateAmountModal
+					chemical={chemical}
+					openModal={openUpdateAmountModal}
+					setOpenModal={setOpenUpdateAmountModal}
+					setUpdateAmountSuccess={setUpdateAmountSuccess}
 				/>
 			)}
 		</>

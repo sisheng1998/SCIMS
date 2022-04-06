@@ -1,21 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import AddUserModal from './AddUserModal'
 import Title from '../../components/Title'
 import UsersTable from './UsersTable'
-import useAuth from '../../../../hooks/useAuth'
-import ROLES_LIST from '../../../../config/roles_list'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import LoadingScreen from '../../../utils/LoadingScreen'
 
 const Users = () => {
-	const navigate = useNavigate()
-	const { auth } = useAuth()
-
-	useEffect(() => {
-		auth.currentLabId !== ROLES_LIST.admin.toString() && navigate('/users')
-	}, [auth.currentLabId, navigate])
-
 	const axiosPrivate = useAxiosPrivate()
 	const [usersData, setUsersData] = useState('')
 	const [labsData, setLabsData] = useState('')

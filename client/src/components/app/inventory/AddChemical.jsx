@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Title from '../components/Title'
 import useAuth from '../../../hooks/useAuth'
-import ROLES_LIST from '../../../config/roles_list'
 import ChemicalInfoSection from './components/ChemicalInfoSection'
 import StorageInfoSection from './components/StorageInfoSection'
 import SafetyAndSecuritySection from './components/SafetyAndSecuritySection'
@@ -15,14 +14,9 @@ import SuccessMessageModal from './components/SuccessMessageModal'
 const AddChemical = () => {
 	const { auth } = useAuth()
 	const navigate = useNavigate()
-
-	useEffect(() => {
-		auth.currentLabId === ROLES_LIST.admin.toString() && navigate('/admin')
-	}, [auth.currentLabId, navigate])
-
 	const axiosPrivate = useAxiosPrivate()
-	const [labData, setLabData] = useState('')
 
+	const [labData, setLabData] = useState('')
 	const [isLoading, setIsLoading] = useState(true)
 
 	useEffect(() => {

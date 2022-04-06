@@ -23,8 +23,10 @@ const UserSearchableSelect = ({
 	selectedId,
 	setSelectedId,
 	options,
+	fallbackUser,
 }) => {
-	const selectedOption = options.find((options) => options._id === selectedId)
+	const selectedOption =
+		options.find((options) => options._id === selectedId) || fallbackUser
 	const [searchTerm, setSearchTerm] = useState('')
 
 	const filterOptions = useCallback(

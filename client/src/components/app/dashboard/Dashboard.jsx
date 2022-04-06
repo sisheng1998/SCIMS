@@ -1,18 +1,8 @@
-import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import useAuth from '../../../hooks/useAuth'
-import ROLES_LIST from '../../../config/roles_list'
+import React from 'react'
 //import { useState, useEffect } from 'react'
 //import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 
 const Dashboard = () => {
-	const navigate = useNavigate()
-	const { auth } = useAuth()
-
-	useEffect(() => {
-		auth.currentLabId === ROLES_LIST.admin.toString() && navigate('/admin')
-	}, [auth.currentLabId, navigate])
-
 	//const axiosPrivate = useAxiosPrivate()
 
 	//const [active, setActive] = useState('')

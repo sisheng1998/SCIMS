@@ -36,6 +36,7 @@ const {
 	addLocation,
 	editLocation,
 	removeLocation,
+	editLab,
 } = require('../controllers/settings')
 
 // Users
@@ -88,5 +89,6 @@ router.route('/location').put(verifyRoles(ROLES_LIST.labOwner), editLocation)
 router
 	.route('/location')
 	.delete(verifyRoles(ROLES_LIST.labOwner), removeLocation)
+router.route('/lab').put(verifyRoles(ROLES_LIST.labOwner), editLab)
 
 module.exports = router
