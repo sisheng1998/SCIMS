@@ -196,23 +196,21 @@ const UpdateAmountModal = ({
 									</div>
 								</div>
 
-								<div className='w-2/3'>
-									<label htmlFor='usage' className='required-input-label'>
-										Usage <span className='text-xs'>(Amount used)</span>
-									</label>
-									<NumberWithUnitField
-										id='usage'
-										placeholder='Enter chemical usage'
-										required={true}
-										value={usage}
-										setValue={setUsage}
-										validated={usageValidated}
-										setValidated={setUsageValidated}
-										unit={chemical.unit}
-										maxValue={chemical.amount}
-										usage={true}
-									/>
-								</div>
+								<label htmlFor='usage' className='required-input-label'>
+									Usage <span className='text-xs'>(Amount used)</span>
+								</label>
+								<NumberWithUnitField
+									id='usage'
+									placeholder='Enter chemical usage'
+									required={true}
+									value={usage}
+									setValue={setUsage}
+									validated={usageValidated}
+									setValidated={setUsageValidated}
+									unit={chemical.unit}
+									maxValue={chemical.amount}
+									usage={true}
+								/>
 
 								<div className='mt-9 flex items-center justify-end'>
 									<span

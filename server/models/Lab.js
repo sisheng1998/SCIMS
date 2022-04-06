@@ -24,6 +24,12 @@ const LabSchema = new Schema(
 				ref: 'Chemical',
 			},
 		],
+		disposedChemicals: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'Chemical',
+			},
+		],
 		locations: [
 			{
 				name: String,

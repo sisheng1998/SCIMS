@@ -49,7 +49,7 @@ const Pagination = ({
 		paginate(currentPage)
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, itemsPerPage, searchTerm, filterTerms])
+	}, [currentPage, itemsPerPage, searchTerm, filterTerms, totalItems])
 
 	return (
 		<nav className='mb-6 flex items-center justify-between'>

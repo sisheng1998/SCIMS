@@ -14,7 +14,8 @@ const Inventory = () => {
 	const axiosPrivate = useAxiosPrivate()
 
 	const [locations, setLocations] = useState('')
-	const [chemicals, setChemicals] = useState('')
+	const [chemicals, setChemicals] = useState([])
+	const [disposedChemicals, setDisposedChemicals] = useState([])
 
 	const [isLoading, setIsLoading] = useState(true)
 	const [refresh, setRefresh] = useState(false)
@@ -49,19 +50,39 @@ const Inventory = () => {
 						}
 					})
 
-					if (data.data.locations.length !== 0) {
+					if (
+						data.data.locations.length !== 0 &&
+						data.data.chemicals.length !== 0
+					) {
 						const processedData = data.data.chemicals.map((chemical, index) => {
-							const location = data.data.locations.filter(
+							const location = data.data.locations.find(
 								(location) => location._id === chemical.locationId
 							)
 
 							return {
 								...chemical,
-								location: location.length !== 0 ? location[0].name : '-',
+								location: location ? location.name : '-',
 								index: index,
 							}
 						})
 						setChemicals(processedData)
+
+						if (data.data.disposedChemicals.length !== 0) {
+							const disposedData = data.data.disposedChemicals.map(
+								(chemical, index) => {
+									const location = data.data.locations.find(
+										(location) => location._id === chemical.locationId
+									)
+
+									return {
+										...chemical,
+										location: location ? location.name : '-',
+										index: index,
+									}
+								}
+							)
+							setDisposedChemicals(disposedData)
+						}
 					}
 
 					setLocations(data.data.locations)
@@ -115,6 +136,7 @@ const Inventory = () => {
 						data={chemicals}
 						locations={locations}
 						setUpdateAmountSuccess={setRefresh}
+						disposedChemicals={disposedChemicals}
 					/>
 				</>
 			)}

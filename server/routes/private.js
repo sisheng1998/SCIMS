@@ -20,7 +20,7 @@ const {
 	updateChemical,
 	getChemicalInfo,
 	updateAmount,
-	removeChemical,
+	disposeChemical,
 	getCASInfo,
 } = require('../controllers/chemical')
 
@@ -70,8 +70,8 @@ router
 	.route('/chemical/usage')
 	.post(verifyRoles(ROLES_LIST.undergraduate), updateAmount)
 router
-	.route('/chemical')
-	.delete(verifyRoles(ROLES_LIST.labOwner), removeChemical)
+	.route('/chemical/dispose')
+	.post(verifyRoles(ROLES_LIST.labOwner), disposeChemical)
 router.route('/cas').put(getCASInfo)
 
 // Profile

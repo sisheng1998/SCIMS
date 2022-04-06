@@ -40,7 +40,10 @@ const ChemicalInfoSection = ({
 	if (chemical) {
 		if (chemical.status === 'Normal') {
 			classes = 'bg-green-100 text-green-600'
-		} else if (chemical.status === 'Expired') {
+		} else if (
+			chemical.status === 'Expired' ||
+			chemical.status === 'Disposed'
+		) {
 			classes = 'bg-red-100 text-red-600'
 		} else {
 			// Low Amount / Expiring Soon

@@ -21,7 +21,7 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 	const [validated, setValidated] = useState({})
 
 	const [errorMessage, setErrorMessage] = useState('')
-	const [isRemove, setIsRemove] = useState(false)
+	const [isDispose, setIsDispose] = useState(false)
 	const [success, setSuccess] = useState(false)
 	const [openModal, setOpenModal] = useState(false)
 
@@ -31,10 +31,11 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 		e.preventDefault()
 		setErrorMessage('')
 
-		if (isRemove) {
+		if (isDispose) {
 			try {
-				await axiosPrivate.delete('/api/private/chemical', {
-					data: { chemicalId: chemicalData._id, labId: labData._id },
+				await axiosPrivate.post('/api/private/chemical/dispose', {
+					chemicalId: chemicalData._id,
+					labId: labData._id,
 				})
 				setSuccess(true)
 				setOpenModal(true)
@@ -160,11 +161,11 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 							</p>
 						)}
 
-						{isRemove ? (
+						{isDispose ? (
 							<div className='mt-9 flex items-center justify-end'>
 								<div className='mr-auto'>
 									<p className='font-medium text-gray-900'>
-										Confirm remove chemical from the current lab?
+										Confirm dispose chemical for the current lab?
 									</p>
 									<p className='mt-1 flex items-center text-sm font-medium text-red-600'>
 										<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}
@@ -172,7 +173,7 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 									</p>
 								</div>
 								<span
-									onClick={() => setIsRemove(false)}
+									onClick={() => setIsDispose(false)}
 									className='cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'
 								>
 									Cancel
@@ -181,17 +182,17 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 									className='button button-solid button-red ml-6 w-40 justify-center text-lg font-semibold'
 									onClick={submitHandler}
 								>
-									Remove
+									Dispose
 								</button>
 							</div>
 						) : (
 							<div className='mt-9 flex items-center justify-end'>
 								{auth.currentRole >= ROLES_LIST.labOwner && (
 									<span
-										onClick={() => setIsRemove(true)}
+										onClick={() => setIsDispose(true)}
 										className='mr-auto cursor-pointer self-end text-sm font-medium text-red-600 transition hover:text-red-700'
 									>
-										Remove Chemical
+										Dispose Chemical
 									</span>
 								)}
 
@@ -214,15 +215,15 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 				</div>
 			</form>
 
-			{success && openModal && isRemove && (
+			{success && openModal && isDispose && (
 				<SuccessMessageModal
-					type='Remove'
+					type='Dispose'
 					openModal={openModal}
 					setOpenModal={setOpenModal}
 				/>
 			)}
 
-			{success && openModal && !isRemove && (
+			{success && openModal && !isDispose && (
 				<SuccessMessageModal
 					type='Edit'
 					openModal={openModal}

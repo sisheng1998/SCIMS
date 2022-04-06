@@ -24,11 +24,13 @@ const ViewChemicalInfo = ({
 	const [openViewImageModal, setOpenViewImageModal] = useState(false)
 	const [openUpdateAmountModal, setOpenUpdateAmountModal] = useState(false)
 
+	const isDisposed = chemical.status === 'Disposed' ? true : false
+
 	let classes = ''
 
 	if (chemical.status === 'Normal') {
 		classes = 'bg-green-100 text-green-600'
-	} else if (chemical.status === 'Expired') {
+	} else if (chemical.status === 'Expired' || isDisposed) {
 		classes = 'bg-red-100 text-red-600'
 	} else {
 		// Low Amount / Expiring Soon
@@ -141,7 +143,7 @@ const ViewChemicalInfo = ({
 										<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
 									</span>
 								)}
-								{currentUser.role >= ROLES_LIST.undergraduate && (
+								{currentUser.role >= ROLES_LIST.undergraduate && !isDisposed && (
 									<button
 										onClick={() => setOpenUpdateAmountModal(true)}
 										className='tooltip ml-1.5 text-gray-400 transition hover:text-indigo-700 focus:outline-none'
@@ -181,7 +183,7 @@ const ViewChemicalInfo = ({
 
 						<div className='flex-1'>
 							<label htmlFor='location' className='mb-0.5 text-gray-500'>
-								Location
+								{isDisposed ? 'Previous ' : ''}Location
 							</label>
 							<p className='font-medium'>
 								{chemicalLocation}
@@ -359,7 +361,8 @@ const ViewChemicalInfo = ({
 					</div>
 
 					{auth.currentLabId === lab._id &&
-						currentUser.role >= ROLES_LIST.postgraduate && (
+						currentUser.role >= ROLES_LIST.postgraduate &&
+						!isDisposed && (
 							<div className='mt-9'>
 								<button
 									className='button button-outline w-60 justify-center px-4 py-3'

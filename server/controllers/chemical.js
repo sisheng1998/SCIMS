@@ -15,7 +15,7 @@ exports.getChemicals = async (req, res, next) => {
 
 	try {
 		const foundLab = await Lab.findById(labId, labOption).populate(
-			'chemicals',
+			'chemicals disposedChemicals',
 			chemicalOption
 		)
 
@@ -362,11 +362,21 @@ exports.updateAmount = async (req, res, next) => {
 	}
 }
 
-exports.removeChemical = async (req, res, next) => {
+exports.disposeChemical = async (req, res, next) => {
 	const { chemicalId, labId } = req.body
 
 	if (!chemicalId || !labId) {
 		return next(new ErrorResponse('Missing required value.', 400))
+	}
+
+	const foundLab = await Lab.findById(labId)
+	if (!foundLab) {
+		return next(new ErrorResponse('Lab not found.', 404))
+	}
+
+	const foundChemical = await Chemical.findById(chemicalId)
+	if (!foundChemical) {
+		return next(new ErrorResponse('Chemical not found.', 404))
 	}
 
 	const session = await startSession()
@@ -374,13 +384,14 @@ exports.removeChemical = async (req, res, next) => {
 	try {
 		session.startTransaction()
 
-		await Chemical.deleteOne({ _id: chemicalId }, { session })
-
 		await Lab.updateOne(
-			{ _id: labId },
+			foundLab,
 			{
 				$pull: {
 					chemicals: chemicalId,
+				},
+				$push: {
+					disposedChemicals: chemicalId,
 				},
 				$set: {
 					lastUpdated: Date.now(),
@@ -389,12 +400,19 @@ exports.removeChemical = async (req, res, next) => {
 			{ new: true, session }
 		)
 
+		await Chemical.updateOne(foundChemical, {
+			$set: {
+				status: 'Disposed',
+				lastUpdated: Date.now(),
+			},
+		})
+
 		await session.commitTransaction()
 		session.endSession()
 
 		res.status(200).json({
 			success: true,
-			data: 'Chemical removed.',
+			data: 'Chemical disposed.',
 		})
 	} catch (error) {
 		await session.abortTransaction()

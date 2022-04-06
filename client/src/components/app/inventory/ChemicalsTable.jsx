@@ -60,6 +60,8 @@ const ChemicalsTable = (props) => {
 	const [chemicalInfo, setChemicalInfo] = useState('')
 	const [openUpdateAmountModal, setOpenUpdateAmountModal] = useState(false)
 
+	const [viewDisposedChemicals, setViewDisposedChemicals] = useState(false)
+
 	const [sortKey, setSortKey] = useState('index')
 	const [sortOrder, setSortOrder] = useState('asc')
 	const [searchTerm, setSearchTerm] = useState('')
@@ -76,14 +78,22 @@ const ChemicalsTable = (props) => {
 	const sortedData = useCallback(
 		() =>
 			SortData({
-				tableData: props.data,
+				tableData: viewDisposedChemicals ? props.disposedChemicals : props.data,
 				sortKey,
 				reverse: sortOrder === 'desc',
 				searchTerm,
 				searchCols: ['CAS', 'name'],
 				filterTerms,
 			}),
-		[props.data, sortKey, sortOrder, searchTerm, filterTerms]
+		[
+			viewDisposedChemicals,
+			props.data,
+			props.disposedChemicals,
+			sortKey,
+			sortOrder,
+			searchTerm,
+			filterTerms,
+		]
 	)
 
 	const changeSortOrder = (key) => {
@@ -100,6 +110,10 @@ const ChemicalsTable = (props) => {
 	const [currentPage, setCurrentPage] = useState(1)
 	const [itemsPerPage, setItemsPerPage] = useState(10)
 
+	useEffect(() => {
+		setCurrentPage(1)
+	}, [itemsPerPage, searchTerm, filterTerms, viewDisposedChemicals])
+
 	let indexOfLastItem = currentPage * itemsPerPage
 	const indexOfFirstItem = indexOfLastItem - itemsPerPage
 
@@ -112,10 +126,6 @@ const ChemicalsTable = (props) => {
 	const currentItems = results.slice(indexOfFirstItem, indexOfLastItem)
 
 	const paginate = (pageNumber) => setCurrentPage(pageNumber)
-
-	useEffect(() => {
-		setCurrentPage(1)
-	}, [itemsPerPage, searchTerm, filterTerms])
 
 	const viewImageHandler = (name, imageSrc) => {
 		setQRCodeInfo({ name, imageSrc })
@@ -178,6 +188,22 @@ const ChemicalsTable = (props) => {
 						<option value='-'>No Location</option>
 					</select>
 				</div>
+
+				{props.disposedChemicals.length !== 0 && (
+					<label
+						className='mb-0 mr-6 flex cursor-pointer items-center font-normal'
+						htmlFor='showDisposedChemicals'
+					>
+						Disposed Chemicals
+						<input
+							type='checkbox'
+							className='peer hidden'
+							id='showDisposedChemicals'
+							onChange={() => setViewDisposedChemicals(!viewDisposedChemicals)}
+						/>
+						<span className='relative flex before:ml-2 before:h-5 before:w-9 before:rounded-full before:bg-gray-300 before:transition after:absolute after:top-1/2 after:left-0 after:ml-2.5 after:h-4 after:w-4 after:-translate-y-1/2 after:rounded-full after:bg-white after:transition before:peer-checked:bg-indigo-600 after:peer-checked:translate-x-full'></span>
+					</label>
+				)}
 			</Filters>
 
 			<div className='mb-5 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-3 shadow'>
@@ -226,7 +252,10 @@ const ChemicalsTable = (props) => {
 
 										if (chemical.status === 'Normal') {
 											classes = 'bg-green-100 text-green-600'
-										} else if (chemical.status === 'Expired') {
+										} else if (
+											chemical.status === 'Expired' ||
+											chemical.status === 'Disposed'
+										) {
 											classes = 'bg-red-100 text-red-600'
 										} else {
 											// Low Amount / Expiring Soon
@@ -264,15 +293,16 @@ const ChemicalsTable = (props) => {
 																chemical.unit
 															)}
 														</p>
-														{auth.currentRole >= ROLES_LIST.undergraduate && (
-															<button
-																onClick={() => updateAmountHandler(chemical)}
-																className='tooltip text-gray-400 transition hover:text-indigo-700 focus:outline-none'
-																data-tooltip='Update Amount'
-															>
-																<PencilAltIcon className='h-5 w-5' />
-															</button>
-														)}
+														{auth.currentRole >= ROLES_LIST.undergraduate &&
+															!viewDisposedChemicals && (
+																<button
+																	onClick={() => updateAmountHandler(chemical)}
+																	className='tooltip text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+																	data-tooltip='Update Amount'
+																>
+																	<PencilAltIcon className='h-5 w-5' />
+																</button>
+															)}
 													</div>
 												</td>
 
@@ -297,21 +327,22 @@ const ChemicalsTable = (props) => {
 													>
 														View
 													</button>
-													{auth.currentRole >= ROLES_LIST.postgraduate && (
-														<>
-															<span>/</span>
-															<button
-																onClick={() =>
-																	navigate(`/inventory/${chemical._id}`, {
-																		state: { edit: true },
-																	})
-																}
-																className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
-															>
-																Edit
-															</button>
-														</>
-													)}
+													{auth.currentRole >= ROLES_LIST.postgraduate &&
+														!viewDisposedChemicals && (
+															<>
+																<span>/</span>
+																<button
+																	onClick={() =>
+																		navigate(`/inventory/${chemical._id}`, {
+																			state: { edit: true },
+																		})
+																	}
+																	className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+																>
+																	Edit
+																</button>
+															</>
+														)}
 												</td>
 											</tr>
 										)

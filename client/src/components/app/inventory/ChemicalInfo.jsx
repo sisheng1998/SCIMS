@@ -61,14 +61,14 @@ const ChemicalInfo = () => {
 					setChemical(chemicalInfo)
 					setLabData(lab)
 
-					const isAuthorized = auth.roles.some(
+					const currentUser = auth.roles.find(
 						(role) =>
 							role.lab._id === lab._id &&
 							role.lab.status === 'In Use' &&
 							role.status === 'Active'
 					)
 
-					if (isAuthorized) {
+					if (currentUser) {
 						setSuccess(true)
 					} else {
 						setUnauthorized(true)
@@ -78,9 +78,10 @@ const ChemicalInfo = () => {
 					setIsLoading(false)
 				}
 			} catch (error) {
-				setSuccess(false)
-				setNotFound(true)
-				setIsLoading(false)
+				if (error.response?.status === 404) {
+					setNotFound(true)
+					setSuccess(false)
+				}
 			}
 		}
 

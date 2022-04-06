@@ -7,7 +7,7 @@ const StaticLabInfo = ({ labUsersNo, chemicalsNo }) => {
 			<label>No. of Users & Chemicals</label>
 			<div className='flex space-x-12'>
 				<div className='flex items-center space-x-3'>
-					<UserIcon className='h-6 w-6 text-gray-500' />
+					<UserIcon className='h-6 w-6 text-gray-400' />
 					<p className='text-lg font-medium'>
 						{labUsersNo}
 						<span className='ml-1.5 text-sm font-normal'>
@@ -17,7 +17,7 @@ const StaticLabInfo = ({ labUsersNo, chemicalsNo }) => {
 				</div>
 
 				<div className='flex items-center space-x-3'>
-					<BeakerIcon className='h-6 w-6 text-gray-500' />
+					<BeakerIcon className='h-6 w-6 text-gray-400' />
 					<p className='text-lg font-medium'>
 						{chemicalsNo}
 						<span className='ml-1.5 text-sm font-normal'>

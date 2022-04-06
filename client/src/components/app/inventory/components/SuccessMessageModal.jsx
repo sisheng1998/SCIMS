@@ -17,7 +17,7 @@ const SuccessMessageModal = ({
 
 		if (type === 'Add' && chemicalId) {
 			navigate(`/inventory/${chemicalId}`)
-		} else if (type === 'Remove') {
+		} else if (type === 'Dispose') {
 			navigate('/inventory')
 		} else if (type === 'Edit') {
 			setEditSuccess(true)
@@ -42,10 +42,10 @@ const SuccessMessageModal = ({
 						</>
 					)}
 
-					{type === 'Remove' && (
+					{type === 'Dispose' && (
 						<>
-							<h2 className='mt-6 mb-2 text-green-600'>Chemical Removed!</h2>
-							<p>The chemical have been removed.</p>
+							<h2 className='mt-6 mb-2 text-green-600'>Chemical Disposed!</h2>
+							<p>The chemical have been disposed.</p>
 						</>
 					)}
 
