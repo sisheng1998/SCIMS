@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import ImageLightBox from '../../utils/ImageLightBox'
@@ -9,20 +9,34 @@ import {
 	CLASSIFICATION_LIST,
 	SECURITY_LIST,
 } from '../../../config/safety_security_list'
-import { ExclamationIcon, PencilAltIcon } from '@heroicons/react/outline'
+import {
+	ExclamationIcon,
+	PencilAltIcon,
+	ExclamationCircleIcon,
+} from '@heroicons/react/outline'
 import { PaperClipIcon } from '@heroicons/react/solid'
 import UpdateAmountModal from './components/UpdateAmountModal'
+import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
+import SuccessMessageModal from './components/SuccessMessageModal'
 
-const ViewChemicalInfo = ({
-	chemical,
-	lab,
-	setUpdateAmountSuccess,
-	setEdit,
-}) => {
+const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
+	const isMounted = useRef(true)
+	useEffect(() => {
+		return () => {
+			isMounted.current = false
+		}
+	}, [])
+
 	const { auth } = useAuth()
+	const axiosPrivate = useAxiosPrivate()
+
 	const [QRCodeInfo, setQRCodeInfo] = useState('')
 	const [openViewImageModal, setOpenViewImageModal] = useState(false)
 	const [openUpdateAmountModal, setOpenUpdateAmountModal] = useState(false)
+
+	const [success, setSuccess] = useState(false)
+	const [errorMessage, setErrorMessage] = useState('')
+	const [openModal, setOpenModal] = useState(false)
 
 	const isDisposed = chemical.status === 'Disposed' ? true : false
 
@@ -58,6 +72,27 @@ const ViewChemicalInfo = ({
 	const viewImageHandler = (name, imageSrc) => {
 		setQRCodeInfo({ name, imageSrc })
 		setOpenViewImageModal(true)
+	}
+
+	const cancelDisposalHandler = async () => {
+		setErrorMessage('')
+
+		try {
+			await axiosPrivate.post('/api/private/chemical/cancel-disposal', {
+				chemicalId: chemical._id,
+				labId: lab._id,
+			})
+			if (isMounted.current) {
+				setOpenModal(true)
+				setSuccess(true)
+			}
+		} catch (error) {
+			if (error.response?.status === 500) {
+				setErrorMessage('Server not responding. Please try again later.')
+			} else {
+				setErrorMessage('Oops. Something went wrong. Please try again later.')
+			}
+		}
 	}
 
 	return (
@@ -138,11 +173,12 @@ const ViewChemicalInfo = ({
 							</label>
 							<p className='flex items-center font-medium'>
 								{FormatAmountWithUnit(chemical.amount, chemical.unit)}
-								{Number(chemical.amount) < Number(chemical.minAmount) && (
-									<span className='tooltip ml-1.5' data-tooltip='Low Amount'>
-										<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
-									</span>
-								)}
+								{Number(chemical.amount) <= Number(chemical.minAmount) &&
+									!isDisposed && (
+										<span className='tooltip ml-1.5' data-tooltip='Low Amount'>
+											<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
+										</span>
+									)}
 								{currentUser.role >= ROLES_LIST.undergraduate && !isDisposed && (
 									<button
 										onClick={() => setOpenUpdateAmountModal(true)}
@@ -189,7 +225,8 @@ const ViewChemicalInfo = ({
 								{chemicalLocation}
 								{chemical.storageGroup &&
 									chemicalLocation !== '-' &&
-									!allowedStorageGroups.includes(storageGroup[0].code) && (
+									!allowedStorageGroups.includes(storageGroup[0].code) &&
+									!isDisposed && (
 										<span
 											className='tooltip ml-1.5'
 											data-tooltip={`Storage Group ${storageGroup[0].code} is not allowed in this location`}
@@ -239,14 +276,14 @@ const ViewChemicalInfo = ({
 							</label>
 							<p className='font-medium'>
 								{FormatChemicalDate(chemical.expirationDate)}
-								{chemical.status === 'Expiring Soon' && (
-									<span className='tooltip ml-1.5' data-tooltip='Expiring Soon'>
-										<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
-									</span>
-								)}
 								{chemical.status === 'Expired' && (
 									<span className='tooltip ml-1.5' data-tooltip='Expired'>
 										<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
+									</span>
+								)}
+								{chemical.status === 'Expiring Soon' && (
+									<span className='tooltip ml-1.5' data-tooltip='Expiring Soon'>
+										<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
 									</span>
 								)}
 							</p>
@@ -270,9 +307,13 @@ const ViewChemicalInfo = ({
 						<div className='flex items-center justify-between space-x-6 rounded-lg border border-gray-200 py-2 px-3 pr-4 font-medium'>
 							<p className='flex items-center'>
 								<PaperClipIcon className='mr-2 h-5 w-5 text-gray-400' />
-								{chemical.SDS.split('/').pop()}
+								{chemical.SDS}
 							</p>
-							<a href={chemical.SDS} target='_blank' rel='noreferrer'>
+							<a
+								href={auth.SDSPath + chemical.SDS}
+								target='_blank'
+								rel='noreferrer'
+							>
 								View
 							</a>
 						</div>
@@ -360,19 +401,34 @@ const ViewChemicalInfo = ({
 						</pre>
 					</div>
 
+					{errorMessage && (
+						<p className='mt-6 flex items-center text-sm font-medium text-red-600'>
+							<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}
+							{errorMessage}
+						</p>
+					)}
+
 					{auth.currentLabId === lab._id &&
-						currentUser.role >= ROLES_LIST.postgraduate &&
-						!isDisposed && (
+						currentUser.role >= ROLES_LIST.postgraduate && (
 							<div className='mt-9'>
-								<button
-									className='button button-outline w-60 justify-center px-4 py-3'
-									onClick={() => {
-										setEdit(true)
-										window.scrollTo(0, 0)
-									}}
-								>
-									Edit Chemical Info
-								</button>
+								{isDisposed ? (
+									<span
+										className='cursor-pointer text-sm font-medium text-red-600 transition hover:text-red-700'
+										onClick={cancelDisposalHandler}
+									>
+										Cancel Disposal
+									</span>
+								) : (
+									<button
+										className='button button-outline w-60 justify-center px-4 py-3'
+										onClick={() => {
+											setEdit(true)
+											window.scrollTo(0, 0)
+										}}
+									>
+										Edit Chemical Info
+									</button>
+								)}
 							</div>
 						)}
 				</div>
@@ -392,7 +448,16 @@ const ViewChemicalInfo = ({
 					chemical={chemical}
 					openModal={openUpdateAmountModal}
 					setOpenModal={setOpenUpdateAmountModal}
-					setUpdateAmountSuccess={setUpdateAmountSuccess}
+					setUpdateAmountSuccess={setUpdateSuccess}
+				/>
+			)}
+
+			{success && openModal && (
+				<SuccessMessageModal
+					type='Cancel Disposal'
+					openModal={openModal}
+					setOpenModal={setOpenModal}
+					setEditSuccess={setUpdateSuccess}
 				/>
 			)}
 		</>

@@ -136,7 +136,6 @@ exports.changePassword = async (req, res, next) => {
 }
 
 exports.updateAvatar = async (req, res, next) => {
-	const url = req.protocol + '://' + req.get('host')
 	const userId = req.user._id
 
 	try {
@@ -147,7 +146,7 @@ exports.updateAvatar = async (req, res, next) => {
 
 		await User.updateOne(foundUser, {
 			$set: {
-				avatar: url + '/public/avatars/' + req.file.filename,
+				avatar: req.file.filename,
 				lastUpdated: Date.now(),
 			},
 		})

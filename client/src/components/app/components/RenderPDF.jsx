@@ -2,17 +2,20 @@ import React from 'react'
 import FormatBytes from '../../utils/FormatBytes'
 import { DocumentTextIcon } from '@heroicons/react/outline'
 import { PaperClipIcon } from '@heroicons/react/solid'
+import useAuth from '../../../hooks/useAuth'
 
 const RenderPDF = ({ PDF, setPDF }) => {
+	const { auth } = useAuth()
+
 	return (
 		<div className='mb-6'>
 			{PDF.toString().toLowerCase().endsWith('.pdf') ? (
 				<div className='flex items-center justify-between space-x-6 rounded-lg border border-gray-200 py-2 px-3 pr-4 font-medium'>
 					<p className='flex items-center'>
 						<PaperClipIcon className='mr-2 h-5 w-5 text-gray-400' />
-						{PDF.split('/').pop()}
+						{PDF}
 					</p>
-					<a href={PDF} target='_blank' rel='noreferrer'>
+					<a href={auth.SDSPath + PDF} target='_blank' rel='noreferrer'>
 						View
 					</a>
 				</div>

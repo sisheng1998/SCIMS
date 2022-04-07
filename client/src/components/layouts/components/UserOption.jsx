@@ -24,7 +24,9 @@ const UserOption = () => {
 		}
 	}
 
-	const imageSrc = auth.avatar ? auth.avatar : GetLetterPicture(auth.name)
+	const imageSrc = auth.avatar
+		? auth.avatarPath + auth.avatar
+		: GetLetterPicture(auth.name)
 
 	return (
 		<Menu as='div' className='relative flex items-center'>

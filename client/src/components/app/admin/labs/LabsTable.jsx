@@ -188,7 +188,7 @@ const LabsTable = (props) => {
 								) : (
 									currentItems.map((lab) => {
 										const imageSrc = lab.labOwner.avatar
-											? lab.labOwner.avatar
+											? auth.avatarPath + lab.labOwner.avatar
 											: GetLetterPicture(lab.labOwner.name)
 
 										return (

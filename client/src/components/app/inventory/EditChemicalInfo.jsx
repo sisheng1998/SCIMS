@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import ChemicalInfoSection from './components/ChemicalInfoSection'
 import StorageInfoSection from './components/StorageInfoSection'
@@ -11,6 +11,17 @@ import ROLES_LIST from '../../../config/roles_list'
 import SuccessMessageModal from './components/SuccessMessageModal'
 
 const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
+	useEffect(() => {
+		chemical.status === 'Disposed' && setEdit(false)
+	}, [chemical.status, setEdit])
+
+	const isMounted = useRef(true)
+	useEffect(() => {
+		return () => {
+			isMounted.current = false
+		}
+	}, [])
+
 	const axiosPrivate = useAxiosPrivate()
 	const { auth } = useAuth()
 
@@ -37,8 +48,10 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 					chemicalId: chemicalData._id,
 					labId: labData._id,
 				})
-				setSuccess(true)
-				setOpenModal(true)
+				if (isMounted.current) {
+					setOpenModal(true)
+					setSuccess(true)
+				}
 			} catch (error) {
 				if (error.response?.status === 500) {
 					setErrorMessage('Server not responding. Please try again later.')
@@ -55,8 +68,10 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 				chemicalData.labId = labData._id
 
 				await axiosPrivate.put('/api/private/chemical', chemicalData)
-				setSuccess(true)
-				setOpenModal(true)
+				if (isMounted.current) {
+					setOpenModal(true)
+					setSuccess(true)
+				}
 			} catch (error) {
 				if (error.response?.status === 500) {
 					setErrorMessage('Server not responding. Please try again later.')
@@ -167,9 +182,9 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 									<p className='font-medium text-gray-900'>
 										Confirm dispose chemical for the current lab?
 									</p>
-									<p className='mt-1 flex items-center text-sm font-medium text-red-600'>
+									<p className='mt-1 flex items-center text-sm font-medium text-indigo-600'>
 										<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}
-										This action is irreversible!
+										The disposal action can be reverted.
 									</p>
 								</div>
 								<span
@@ -220,6 +235,8 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 					type='Dispose'
 					openModal={openModal}
 					setOpenModal={setOpenModal}
+					setEdit={setEdit}
+					setEditSuccess={setEditSuccess}
 				/>
 			)}
 

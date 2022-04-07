@@ -33,8 +33,6 @@ exports.getChemicals = async (req, res, next) => {
 }
 
 exports.addChemical = async (req, res, next) => {
-	const url = req.protocol + '://' + req.get('host')
-
 	const {
 		CAS,
 		name,
@@ -123,7 +121,7 @@ exports.addChemical = async (req, res, next) => {
 					dateIn,
 					dateOpen,
 					expirationDate,
-					SDS: SDSLink ? SDSLink : url + '/public/SDSs/' + req.file.filename,
+					SDS: SDSLink ? SDSLink : req.file.filename,
 					classifications,
 					securities,
 					supplier,
@@ -400,12 +398,16 @@ exports.disposeChemical = async (req, res, next) => {
 			{ new: true, session }
 		)
 
-		await Chemical.updateOne(foundChemical, {
-			$set: {
-				status: 'Disposed',
-				lastUpdated: Date.now(),
+		await Chemical.updateOne(
+			foundChemical,
+			{
+				$set: {
+					status: 'Disposed',
+					lastUpdated: Date.now(),
+				},
 			},
-		})
+			{ new: true, session }
+		)
 
 		await session.commitTransaction()
 		session.endSession()
@@ -413,6 +415,85 @@ exports.disposeChemical = async (req, res, next) => {
 		res.status(200).json({
 			success: true,
 			data: 'Chemical disposed.',
+		})
+	} catch (error) {
+		await session.abortTransaction()
+		session.endSession()
+
+		next(error)
+	}
+}
+
+exports.cancelDisposal = async (req, res, next) => {
+	const { chemicalId, labId } = req.body
+
+	if (!chemicalId || !labId) {
+		return next(new ErrorResponse('Missing required value.', 400))
+	}
+
+	const foundLab = await Lab.findById(labId)
+	if (!foundLab) {
+		return next(new ErrorResponse('Lab not found.', 404))
+	}
+
+	const foundChemical = await Chemical.findById(chemicalId)
+	if (!foundChemical) {
+		return next(new ErrorResponse('Chemical not found.', 404))
+	}
+
+	const session = await startSession()
+
+	try {
+		session.startTransaction()
+
+		let status = 'Normal'
+		if (Number(foundChemical.amount) <= Number(foundChemical.minAmount)) {
+			status = 'Low Amount'
+		}
+
+		const today = new Date()
+		if (new Date(foundChemical.expirationDate) < today) {
+			status = 'Expired'
+		} else {
+			const thirtyDaysFromNow = new Date(today.setDate(today.getDate() + 30))
+			if (new Date(foundChemical.expirationDate) < thirtyDaysFromNow) {
+				status = 'Expiring Soon'
+			}
+		}
+
+		await Lab.updateOne(
+			foundLab,
+			{
+				$pull: {
+					disposedChemicals: chemicalId,
+				},
+				$push: {
+					chemicals: chemicalId,
+				},
+				$set: {
+					lastUpdated: Date.now(),
+				},
+			},
+			{ new: true, session }
+		)
+
+		await Chemical.updateOne(
+			foundChemical,
+			{
+				$set: {
+					status,
+					lastUpdated: Date.now(),
+				},
+			},
+			{ new: true, session }
+		)
+
+		await session.commitTransaction()
+		session.endSession()
+
+		res.status(200).json({
+			success: true,
+			data: 'Chemical disposal cancelled.',
 		})
 	} catch (error) {
 		await session.abortTransaction()

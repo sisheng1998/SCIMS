@@ -169,7 +169,7 @@ exports.login = async (req, res, next) => {
 			return next(new ErrorResponse('Email not verified.', 403))
 		}
 
-		sendToken(user, rememberMe, 200, res)
+		sendToken(user, rememberMe, 200, req, res)
 	} catch (error) {
 		res.status(500).json({ success: false, error: error.message })
 	}
@@ -273,6 +273,7 @@ exports.resetPassword = async (req, res, next) => {
 
 exports.refreshToken = async (req, res, next) => {
 	const refreshToken = req.cookies.refreshToken
+	const url = req.protocol + '://' + req.get('host')
 
 	if (!refreshToken) {
 		return res.sendStatus(204)
@@ -306,6 +307,8 @@ exports.refreshToken = async (req, res, next) => {
 			id: foundUser._id,
 			name: foundUser.name,
 			avatar: foundUser.avatar,
+			avatarPath: url + '/public/avatars/',
+			SDSPath: url + '/public/SDSs/',
 		})
 	} catch (error) {
 		return next(new ErrorResponse('Invalid refresh token.', 401))
@@ -398,7 +401,9 @@ exports.applyNewLab = async (req, res, next) => {
 	}
 }
 
-const sendToken = async (user, rememberMe, statusCode, res) => {
+const sendToken = async (user, rememberMe, statusCode, req, res) => {
+	const url = req.protocol + '://' + req.get('host')
+
 	const accessToken = user.getAccessToken()
 	const refreshToken = user.getRefreshToken()
 
@@ -425,6 +430,8 @@ const sendToken = async (user, rememberMe, statusCode, res) => {
 		id: user._id,
 		name: user.name,
 		avatar: user.avatar,
+		avatarPath: url + '/public/avatars/',
+		SDSPath: url + '/public/SDSs/',
 	})
 }
 

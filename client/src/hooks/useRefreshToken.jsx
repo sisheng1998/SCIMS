@@ -17,9 +17,21 @@ const useRefreshToken = () => {
 		const id = data.id
 		const name = data.name
 		const avatar = data.avatar
+		const avatarPath = data.avatarPath
+		const SDSPath = data.SDSPath
 
 		setAuth((prev) => {
-			return { ...prev, email, accessToken, roles, id, name, avatar }
+			return {
+				...prev,
+				email,
+				accessToken,
+				roles,
+				id,
+				name,
+				avatar,
+				avatarPath,
+				SDSPath,
+			}
 		})
 
 		return accessToken

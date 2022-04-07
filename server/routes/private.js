@@ -21,6 +21,7 @@ const {
 	getChemicalInfo,
 	updateAmount,
 	disposeChemical,
+	cancelDisposal,
 	getCASInfo,
 } = require('../controllers/chemical')
 
@@ -72,6 +73,9 @@ router
 router
 	.route('/chemical/dispose')
 	.post(verifyRoles(ROLES_LIST.labOwner), disposeChemical)
+router
+	.route('/chemical/cancel-disposal')
+	.post(verifyRoles(ROLES_LIST.labOwner), cancelDisposal)
 router.route('/cas').put(getCASInfo)
 
 // Profile

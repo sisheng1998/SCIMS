@@ -1,10 +1,15 @@
 import React, { useState } from 'react'
 import GetLetterPicture from '../../utils/GetLetterPicture'
 import ImageLightBox from '../../utils/ImageLightBox'
+import useAuth from '../../../hooks/useAuth'
 
 const StaticUserInfo = ({ user }) => {
+	const { auth } = useAuth()
+
 	const name = user.name
-	const imageSrc = user.avatar ? user.avatar : GetLetterPicture(name)
+	const imageSrc = user.avatar
+		? auth.avatarPath + user.avatar
+		: GetLetterPicture(name)
 	const avatarInfo = { name, imageSrc }
 
 	const [openViewImageModal, setOpenViewImageModal] = useState(false)

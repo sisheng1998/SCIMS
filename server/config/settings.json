@@ -1,0 +1,8 @@
+{
+	"EMAIL_HOST": "mail.sisheng.asia",
+	"EMAIL_PORT": 465,
+	"EMAIL_SECURE": true,
+	"EMAIL_USERNAME": "scims@sisheng.asia",
+	"EMAIL_PASSWORD": "Sheng980721",
+	"EMAIL_FROM": "SCIMS <scims@sisheng.asia>"
+}

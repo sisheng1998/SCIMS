@@ -119,7 +119,7 @@ const ChemicalInfo = () => {
 						<ViewChemicalInfo
 							chemical={chemical}
 							lab={labData}
-							setUpdateAmountSuccess={setRefresh}
+							setUpdateSuccess={setRefresh}
 							setEdit={setIsEdit}
 						/>
 					)}

@@ -4,9 +4,12 @@ const User = require('../models/User')
 const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
 const sendEmail = require('../utils/sendEmail')
+const fs = require('fs')
+const path = require('path')
 
 const UserInfo =
 	'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status'
+const SettingsPath = path.resolve(__dirname, '../config/settings.json')
 
 // User
 exports.getUsers = async (req, res, next) => {
@@ -314,6 +317,19 @@ exports.removeLab = async (req, res, next) => {
 		res.status(200).json({
 			success: true,
 			data: 'Lab removed.',
+		})
+	} catch (error) {
+		next(error)
+	}
+}
+
+exports.getSettings = async (req, res, next) => {
+	try {
+		const settings = fs.readFileSync(SettingsPath)
+
+		res.status(200).json({
+			success: true,
+			settings: JSON.parse(settings),
 		})
 	} catch (error) {
 		next(error)

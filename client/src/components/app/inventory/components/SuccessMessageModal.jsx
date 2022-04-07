@@ -8,6 +8,7 @@ const SuccessMessageModal = ({
 	type,
 	openModal,
 	setOpenModal,
+	setEdit,
 	setEditSuccess,
 }) => {
 	const navigate = useNavigate()
@@ -18,8 +19,9 @@ const SuccessMessageModal = ({
 		if (type === 'Add' && chemicalId) {
 			navigate(`/inventory/${chemicalId}`)
 		} else if (type === 'Dispose') {
-			navigate('/inventory')
-		} else if (type === 'Edit') {
+			setEdit(false)
+			setEditSuccess(true)
+		} else if (type === 'Edit' || type === 'Cancel Disposal') {
 			setEditSuccess(true)
 		}
 	}
@@ -46,6 +48,13 @@ const SuccessMessageModal = ({
 						<>
 							<h2 className='mt-6 mb-2 text-green-600'>Chemical Disposed!</h2>
 							<p>The chemical have been disposed.</p>
+						</>
+					)}
+
+					{type === 'Cancel Disposal' && (
+						<>
+							<h2 className='mt-6 mb-2 text-green-600'>Disposal Cancelled!</h2>
+							<p>The chemical's status have been updated.</p>
 						</>
 					)}
 

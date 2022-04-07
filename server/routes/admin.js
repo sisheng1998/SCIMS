@@ -11,6 +11,7 @@ const {
 	addLabWithExistingUser,
 	updateLab,
 	removeLab,
+	getSettings,
 } = require('../controllers/admin')
 
 // Users
@@ -24,5 +25,8 @@ router
 	.post(verifyRoles(ROLES_LIST.admin), addLabWithExistingUser)
 router.route('/lab').put(verifyRoles(ROLES_LIST.admin), updateLab)
 router.route('/lab').delete(verifyRoles(ROLES_LIST.admin), removeLab)
+
+// Setting
+router.route('/settings').get(verifyRoles(ROLES_LIST.admin), getSettings)
 
 module.exports = router
