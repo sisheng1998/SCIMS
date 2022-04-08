@@ -191,7 +191,7 @@ const ChemicalsTable = (props) => {
 
 				{props.disposedChemicals.length !== 0 && (
 					<label
-						className='mb-0 mr-6 flex cursor-pointer items-center font-normal'
+						className='mb-0 mr-6 flex cursor-pointer items-center whitespace-nowrap font-normal'
 						htmlFor='showDisposedChemicals'
 					>
 						Disposed Chemicals
@@ -209,9 +209,15 @@ const ChemicalsTable = (props) => {
 			<div className='mb-5 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-3 shadow'>
 				<div className='overflow-x-auto'>
 					<div className='border-b border-gray-200'>
-						<table className='min-w-full divide-y divide-gray-200'>
+						<table className='min-w-full divide-y divide-gray-200 whitespace-nowrap'>
 							<thead className='bg-gray-50'>
 								<tr>
+									<th
+										scope='col'
+										className='w-10 -translate-y-0.5 p-0 pl-6 text-right'
+									>
+										<input type='checkbox' name='checkAll' id='checkAll' />
+									</th>
 									{tableHeaders.map((header) => (
 										<th
 											scope='col'
@@ -264,6 +270,14 @@ const ChemicalsTable = (props) => {
 
 										return (
 											<tr key={chemical._id}>
+												<td className='w-10 -translate-y-[1px] p-0 pl-6 text-right'>
+													<input
+														type='checkbox'
+														name={chemical._id}
+														id={chemical._id}
+														value={chemical._id}
+													/>
+												</td>
 												<td className='px-6 py-4'>{chemical.CAS}</td>
 
 												<td className='px-6 py-4'>

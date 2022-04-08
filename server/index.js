@@ -8,6 +8,7 @@ const mongoose = require('mongoose')
 const connectDB = require('./config/db')
 const errorHandler = require('./middleware/errorHandler')
 const { verifyUser } = require('./middleware/verifyUser')
+const logEvents = require('./middleware/logEvents')
 const PORT = process.env.PORT || 5000
 
 const app = express()
@@ -56,7 +57,7 @@ mongoose.connection.once('open', () => {
 	)
 
 	process.on('unhandledRejection', (err, promise) => {
-		console.log(`(Error) ${err}`)
+		logEvents(`${err.name}: ${err.message}`, 'connectionErrorLogs.txt')
 		server.close(() => process.exit(1))
 	})
 })

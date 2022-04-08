@@ -18,7 +18,7 @@ const LocationsSection = ({ locations, setEditLocationSuccess }) => {
 			<div className='overflow-hidden rounded-lg border border-gray-200 bg-gray-50 shadow-sm'>
 				<div className='overflow-x-auto'>
 					<div className='border-b border-gray-200'>
-						<table className='min-w-full divide-y divide-gray-200'>
+						<table className='min-w-full divide-y divide-gray-200 whitespace-nowrap'>
 							<thead className='bg-gray-50'>
 								<tr>
 									{tableHeaders.map((title, index) => (

@@ -4,6 +4,7 @@ const Chemical = require('../models/Chemical')
 const { startSession } = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId
 const generateQRCode = require('../utils/generateQRCode')
+const settings = require('../config/settings.json')
 
 const labOption = 'labName labUsers chemicals locations createdAt lastUpdated'
 const chemicalOption =
@@ -98,8 +99,10 @@ exports.addChemical = async (req, res, next) => {
 		if (new Date(expirationDate) < today) {
 			status = 'Expired'
 		} else {
-			const thirtyDaysFromNow = new Date(today.setDate(today.getDate() + 30))
-			if (new Date(expirationDate) < thirtyDaysFromNow) {
+			const future = new Date(
+				today.setDate(today.getDate() + settings.DAY_BEFORE_EXP)
+			)
+			if (new Date(expirationDate) < future) {
 				status = 'Expiring Soon'
 			}
 		}
@@ -242,8 +245,10 @@ exports.updateChemical = async (req, res, next) => {
 		if (new Date(expirationDate) < today) {
 			status = 'Expired'
 		} else {
-			const thirtyDaysFromNow = new Date(today.setDate(today.getDate() + 30))
-			if (new Date(expirationDate) < thirtyDaysFromNow) {
+			const future = new Date(
+				today.setDate(today.getDate() + settings.DAY_BEFORE_EXP)
+			)
+			if (new Date(expirationDate) < future) {
 				status = 'Expiring Soon'
 			}
 		}
@@ -455,8 +460,10 @@ exports.cancelDisposal = async (req, res, next) => {
 		if (new Date(foundChemical.expirationDate) < today) {
 			status = 'Expired'
 		} else {
-			const thirtyDaysFromNow = new Date(today.setDate(today.getDate() + 30))
-			if (new Date(foundChemical.expirationDate) < thirtyDaysFromNow) {
+			const future = new Date(
+				today.setDate(today.getDate() + settings.DAY_BEFORE_EXP)
+			)
+			if (new Date(foundChemical.expirationDate) < future) {
 				status = 'Expiring Soon'
 			}
 		}

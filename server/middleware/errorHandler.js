@@ -1,6 +1,15 @@
 const ErrorResponse = require('../utils/errorResponse')
+const logEvents = require('./logEvents')
 
 const errorHandler = (err, req, res, next) => {
+	if (err.message !== 'Invalid access token.') {
+		logEvents(`${err.name}: ${err.message}`, 'errorLogs.txt')
+		logEvents(
+			`${req.method} ${req.headers.origin} ${req.url}`,
+			'requestLogs.txt'
+		)
+	}
+
 	let error = { ...err }
 
 	error.message = err.message

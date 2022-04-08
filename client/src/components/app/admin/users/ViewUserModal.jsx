@@ -35,7 +35,7 @@ const ViewUserModal = ({ user, openModal, setOpenModal }) => {
 					<div className='mb-6 overflow-hidden rounded-lg border border-gray-300 bg-gray-50 pb-3'>
 						<div className='max-h-48 overflow-x-auto'>
 							<div className='border-b border-gray-200'>
-								<table className='min-w-full divide-y divide-gray-200'>
+								<table className='min-w-full divide-y divide-gray-200 whitespace-nowrap'>
 									<thead className='sticky top-0 bg-gray-50'>
 										<tr>
 											{tableHeaders.map((title, index) => (

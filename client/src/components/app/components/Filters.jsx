@@ -2,7 +2,7 @@ import React from 'react'
 
 const Filters = (props) => {
 	return (
-		<div className='mb-5 flex items-end justify-between text-sm text-gray-500'>
+		<div className='mb-5 flex items-center justify-between text-sm text-gray-500'>
 			<div className='flex items-center'>
 				<div className='flex items-center'>
 					<p>Display</p>
@@ -22,12 +22,12 @@ const Filters = (props) => {
 				{props.children}
 			</div>
 
-			<div className='flex items-center'>
+			<div className='flex w-full max-w-[18rem] items-center'>
 				<p>Search</p>
 				<input
 					type='text'
 					id='searchFilter'
-					className='ml-2 w-60 px-2 py-1 text-sm text-gray-700'
+					className='ml-2 w-full px-2 py-1 text-sm text-gray-700'
 					autoComplete='off'
 					spellCheck='false'
 					placeholder={props.searchPlaceholder}

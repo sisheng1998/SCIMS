@@ -1,8 +1,9 @@
 {
-	"EMAIL_HOST": "mail.sisheng.asia",
-	"EMAIL_PORT": 465,
-	"EMAIL_SECURE": true,
-	"EMAIL_USERNAME": "scims@sisheng.asia",
-	"EMAIL_PASSWORD": "Sheng980721",
-	"EMAIL_FROM": "SCIMS <scims@sisheng.asia>"
+  "FROM_NAME": "SCIMS",
+  "FROM_EMAIL": "scims@sisheng.asia",
+  "EMAIL_HOST": "mail.sisheng.asia",
+  "EMAIL_PORT": 465,
+  "EMAIL_USERNAME": "scims@sisheng.asia",
+  "EMAIL_PASSWORD": "Sheng980721",
+  "DAY_BEFORE_EXP": 30
 }

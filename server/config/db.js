@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const logEvents = require('../middleware/logEvents')
 
 const connectDB = async () => {
 	try {
@@ -7,7 +8,7 @@ const connectDB = async () => {
 			useUnifiedTopology: true,
 		})
 	} catch (error) {
-		console.log(error)
+		logEvents(`${error.name}: ${error.message}`, 'dbErrorLogs.txt')
 	}
 }
 

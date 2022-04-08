@@ -12,6 +12,8 @@ const {
 	updateLab,
 	removeLab,
 	getSettings,
+	updateSettings,
+	sendTestEmail,
 } = require('../controllers/admin')
 
 // Users
@@ -28,5 +30,9 @@ router.route('/lab').delete(verifyRoles(ROLES_LIST.admin), removeLab)
 
 // Setting
 router.route('/settings').get(verifyRoles(ROLES_LIST.admin), getSettings)
+router.route('/settings').put(verifyRoles(ROLES_LIST.admin), updateSettings)
+router
+	.route('/settings/test-email')
+	.put(verifyRoles(ROLES_LIST.admin), sendTestEmail)
 
 module.exports = router

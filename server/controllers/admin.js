@@ -335,3 +335,47 @@ exports.getSettings = async (req, res, next) => {
 		next(error)
 	}
 }
+
+exports.updateSettings = async (req, res, next) => {
+	const settings = req.body
+
+	try {
+		fs.writeFileSync(SettingsPath, JSON.stringify(settings, null, 2))
+
+		res.status(200).json({
+			success: true,
+			data: 'Settings updated.',
+		})
+	} catch (error) {
+		next(error)
+	}
+}
+
+exports.sendTestEmail = async (req, res, next) => {
+	const { emailConfig, testEmail } = req.body
+
+	if (!testEmail) {
+		return next(new ErrorResponse('Missing required value.', 400))
+	}
+
+	const message = `
+			<p>This email is sent to test the email configuration with SMTP.</p>
+			<p>You may proceed to save your email configuration settings if you received this test email.</p>
+		`
+
+	try {
+		await sendEmail({
+			...emailConfig,
+			to: testEmail,
+			subject: '[SCIMS] Test Email',
+			text: message,
+		})
+
+		res.status(200).json({
+			success: true,
+			data: 'Test email sent.',
+		})
+	} catch (error) {
+		next(error)
+	}
+}
