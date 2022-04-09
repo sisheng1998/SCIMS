@@ -8,7 +8,7 @@ const settings = require('../config/settings.json')
 
 const labOption = 'labName labUsers chemicals locations createdAt lastUpdated'
 const chemicalOption =
-	'QRCode CAS name unit containerSize minAmount amount expirationDate locationId status lastUpdated'
+	'QRCode CAS name unit containerSize minAmount amount expirationDate locationId storageGroup status createdAt lastUpdated'
 const CASOption = 'CAS SDS classifications securities'
 
 exports.getChemicals = async (req, res, next) => {
@@ -107,33 +107,33 @@ exports.addChemical = async (req, res, next) => {
 			}
 		}
 
-		const chemical = await Chemical.create(
-			[
-				{
-					CAS,
-					name,
-					state,
-					unit,
-					containerSize,
-					amount,
-					minAmount,
-					lab: foundLab._id,
-					locationId: foundLocation[0]._id,
-					storageGroup,
-					status,
-					dateIn,
-					dateOpen,
-					expirationDate,
-					SDS: SDSLink ? SDSLink : req.file.filename,
-					classifications,
-					securities,
-					supplier,
-					brand,
-					notes,
-				},
-			],
-			{ session }
-		)
+		const chemicalData = {
+			CAS,
+			name,
+			state,
+			unit,
+			containerSize: Number(containerSize).toFixed(2),
+			amount: Number(amount).toFixed(2),
+			minAmount: Number(minAmount).toFixed(2),
+			lab: foundLab._id,
+			locationId: foundLocation[0]._id,
+			storageGroup,
+			status,
+			dateIn,
+			expirationDate,
+			SDS: SDSLink ? SDSLink : req.file.filename,
+			classifications,
+			securities,
+			supplier,
+			brand,
+			notes,
+		}
+
+		if (dateOpen !== '') {
+			chemicalData.dateOpen = dateOpen
+		}
+
+		const chemical = await Chemical.create([chemicalData], { session })
 
 		const QRCode = await generateQRCode(chemical[0]._id)
 
@@ -198,19 +198,7 @@ exports.updateChemical = async (req, res, next) => {
 		notes,
 	} = req.body
 
-	if (
-		!_id ||
-		!name ||
-		!state ||
-		!unit ||
-		!containerSize ||
-		!amount ||
-		!minAmount ||
-		!labId ||
-		!locationId ||
-		!dateIn ||
-		!expirationDate
-	) {
+	if (!_id || !labId || !locationId) {
 		return next(new ErrorResponse('Missing value for required field.', 400))
 	}
 
@@ -253,30 +241,110 @@ exports.updateChemical = async (req, res, next) => {
 			}
 		}
 
+		const updateQuery = { lastUpdated: Date.now() }
+		const removeQuery = {}
+
+		if (status && status !== foundChemical.status) {
+			updateQuery.status = status
+		}
+
+		if (name && name !== foundChemical.name) {
+			updateQuery.name = name
+		}
+
+		if (state && state !== foundChemical.state) {
+			updateQuery.state = state
+		}
+
+		if (unit && unit !== foundChemical.unit) {
+			updateQuery.unit = unit
+		}
+
+		if (
+			containerSize &&
+			Number(containerSize).toFixed(2) !==
+				Number(foundChemical.containerSize).toFixed(2)
+		) {
+			updateQuery.containerSize = Number(containerSize).toFixed(2)
+		}
+
+		if (
+			amount &&
+			Number(amount).toFixed(2) !== Number(foundChemical.amount).toFixed(2)
+		) {
+			updateQuery.amount = Number(amount).toFixed(2)
+		}
+
+		if (
+			minAmount &&
+			Number(minAmount).toFixed(2) !==
+				Number(foundChemical.minAmount).toFixed(2)
+		) {
+			updateQuery.minAmount = Number(minAmount).toFixed(2)
+		}
+
+		if (labId && !foundChemical.lab.equals(labId)) {
+			updateQuery.lab = foundLab._id
+		}
+
+		if (locationId && foundChemical.locationId !== locationId) {
+			updateQuery.locationId = foundLocation[0]._id
+		}
+
+		if (storageGroup !== foundChemical.storageGroup) {
+			updateQuery.storageGroup = storageGroup
+		}
+
+		if (
+			dateIn &&
+			new Date(dateIn).getTime() !== new Date(foundChemical.dateIn).getTime()
+		) {
+			updateQuery.dateIn = dateIn
+		}
+
+		if (dateOpen === '' && foundChemical.dateOpen) {
+			removeQuery.dateOpen = ''
+		} else if (
+			dateOpen &&
+			new Date(dateOpen).getTime() !==
+				new Date(foundChemical.dateOpen).getTime()
+		) {
+			updateQuery.dateOpen = dateOpen
+		}
+
+		if (
+			expirationDate &&
+			new Date(expirationDate).getTime() !==
+				new Date(foundChemical.expirationDate).getTime()
+		) {
+			updateQuery.expirationDate = expirationDate
+		}
+
+		if (classifications.join('') !== foundChemical.classifications.join('')) {
+			updateQuery.classifications = classifications
+		}
+
+		if (securities.join('') !== foundChemical.securities.join('')) {
+			updateQuery.securities = securities
+		}
+
+		if (supplier !== foundChemical.supplier) {
+			updateQuery.supplier = supplier
+		}
+
+		if (brand !== foundChemical.brand) {
+			updateQuery.brand = brand
+		}
+
+		if (notes !== foundChemical.notes) {
+			updateQuery.notes = notes
+		}
+
 		await Chemical.updateOne(
 			foundChemical,
 			{
-				$set: {
-					name,
-					state,
-					unit,
-					containerSize,
-					amount,
-					minAmount,
-					lab: foundLab._id,
-					locationId: foundLocation[0]._id,
-					storageGroup,
-					status,
-					dateIn,
-					dateOpen,
-					expirationDate,
-					classifications,
-					securities,
-					supplier,
-					brand,
-					notes,
-					lastUpdated: Date.now(),
-				},
+				$set: updateQuery,
+				$unset: removeQuery,
 			},
 			{ new: true, session }
 		)
@@ -327,34 +395,35 @@ exports.getChemicalInfo = async (req, res, next) => {
 exports.updateAmount = async (req, res, next) => {
 	const { chemicalId, amount } = req.body
 
-	try {
-		const foundChemical = await Chemical.findById(chemicalId)
+	if (!chemicalId || !amount) {
+		return next(new ErrorResponse('Missing value for required field.', 400))
+	}
 
-		if (!foundChemical) {
-			return next(new ErrorResponse('Chemical not found.', 404))
+	const foundChemical = await Chemical.findById(chemicalId)
+	if (!foundChemical) {
+		return next(new ErrorResponse('Chemical not found.', 404))
+	}
+
+	try {
+		const updateQuery = {
+			amount: Number(amount).toFixed(2),
+			lastUpdated: Date.now(),
 		}
 
 		if (
 			foundChemical.status === 'Normal' &&
 			Number(amount) <= foundChemical.minAmount
 		) {
-			const status = 'Low Amount'
-
-			await Chemical.updateOne(foundChemical, {
-				$set: {
-					status,
-					amount,
-					lastUpdated: Date.now(),
-				},
-			})
-		} else {
-			await Chemical.updateOne(foundChemical, {
-				$set: {
-					amount,
-					lastUpdated: Date.now(),
-				},
-			})
+			updateQuery.status = 'Low Amount'
 		}
+
+		if (!foundChemical.dateOpen) {
+			updateQuery.dateOpen = Date.now()
+		}
+
+		await Chemical.updateOne(foundChemical, {
+			$set: updateQuery,
+		})
 
 		res.status(201).json({
 			success: true,

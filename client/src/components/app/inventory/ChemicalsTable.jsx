@@ -6,7 +6,11 @@ import SortButton from '../components/SortButton'
 import Filters from '../components/Filters'
 import Pagination from '../components/Pagination'
 import ImageLightBox from '../../utils/ImageLightBox'
-import { PencilAltIcon, QrcodeIcon } from '@heroicons/react/outline'
+import {
+	PencilAltIcon,
+	QrcodeIcon,
+	ExclamationIcon,
+} from '@heroicons/react/outline'
 import { FormatChemicalDate } from '../../utils/FormatDate'
 import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
 import { useNavigate } from 'react-router-dom'
@@ -26,6 +30,11 @@ const tableHeaders = [
 	{
 		key: 'location',
 		label: 'Location',
+		sortable: true,
+	},
+	{
+		key: 'storageGroup',
+		label: 'Group',
 		sortable: true,
 	},
 	{
@@ -212,12 +221,6 @@ const ChemicalsTable = (props) => {
 						<table className='min-w-full divide-y divide-gray-200 whitespace-nowrap'>
 							<thead className='bg-gray-50'>
 								<tr>
-									<th
-										scope='col'
-										className='w-10 -translate-y-0.5 p-0 pl-6 text-right'
-									>
-										<input type='checkbox' name='checkAll' id='checkAll' />
-									</th>
 									{tableHeaders.map((header) => (
 										<th
 											scope='col'
@@ -270,14 +273,6 @@ const ChemicalsTable = (props) => {
 
 										return (
 											<tr key={chemical._id}>
-												<td className='w-10 -translate-y-[1px] p-0 pl-6 text-right'>
-													<input
-														type='checkbox'
-														name={chemical._id}
-														id={chemical._id}
-														value={chemical._id}
-													/>
-												</td>
 												<td className='px-6 py-4'>{chemical.CAS}</td>
 
 												<td className='px-6 py-4'>
@@ -298,13 +293,41 @@ const ChemicalsTable = (props) => {
 													</div>
 												</td>
 
-												<td className='px-6 py-4'>{chemical.location}</td>
+												<td className='px-6 py-4'>
+													{chemical.location}
+													{chemical.storageGroup &&
+														chemical.location !== '-' &&
+														!chemical.allowedStorageGroups.includes(
+															chemical.storageGroup
+														) && (
+															<span
+																className='tooltip ml-1.5 whitespace-normal'
+																data-tooltip={`Group ${chemical.storageGroup} is not allowed in this location`}
+															>
+																<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
+															</span>
+														)}
+												</td>
+
+												<td className='px-6 py-4'>
+													{chemical.storageGroup ? chemical.storageGroup : '-'}
+												</td>
+
 												<td className='space-y-0.5 px-6 py-4 '>
 													<div className='flex items-center space-x-2'>
 														<p>
 															{FormatAmountWithUnit(
 																chemical.amount,
 																chemical.unit
+															)}
+															{Number(chemical.amount) <
+																Number(chemical.minAmount) && (
+																<span
+																	className='tooltip ml-1.5'
+																	data-tooltip='Low Amount'
+																>
+																	<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
+																</span>
 															)}
 														</p>
 														{auth.currentRole >= ROLES_LIST.undergraduate &&

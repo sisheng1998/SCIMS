@@ -6,7 +6,7 @@ const logEvents = async (message, logName) => {
 	const today = new Date().toISOString()
 	const logItem = `${today
 		.replace('T', ' ')
-		.substring(0, 19)} (UTC) - ${message}\n`
+		.substring(11, 19)} (UTC) - ${message}\n`
 
 	if (!fs.existsSync(path.join(__dirname, '..', 'logs'))) {
 		await fsPromises.mkdir(path.join(__dirname, '..', 'logs'))

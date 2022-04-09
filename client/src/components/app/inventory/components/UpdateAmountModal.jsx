@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Dialog } from '@headlessui/react'
 import {
 	CheckIcon,
@@ -17,6 +17,13 @@ const UpdateAmountModal = ({
 	setOpenModal,
 	setUpdateAmountSuccess,
 }) => {
+	const isMounted = useRef(true)
+	useEffect(() => {
+		return () => {
+			isMounted.current = false
+		}
+	}, [])
+
 	const axiosPrivate = useAxiosPrivate()
 
 	const chemicalId = chemical._id
@@ -37,7 +44,9 @@ const UpdateAmountModal = ({
 				chemicalId,
 				amount: remainingAmount,
 			})
-			setSuccess(true)
+			if (isMounted.current) {
+				setSuccess(true)
+			}
 		} catch (error) {
 			if (error.response?.status === 500) {
 				setErrorMessage('Server not responding. Please try again later.')
@@ -176,7 +185,10 @@ const UpdateAmountModal = ({
 									<div className='text-center'>
 										<p className='text-xl'>
 											{usage && usageValidated
-												? FormatAmountWithUnit(usage, chemical.unit)
+												? FormatAmountWithUnit(
+														Number(usage).toFixed(2),
+														chemical.unit
+												  )
 												: `-- ${chemical.unit}`}
 										</p>
 										<p className='text-sm font-medium text-gray-500'>Usage</p>
@@ -187,7 +199,10 @@ const UpdateAmountModal = ({
 									<div className='text-center'>
 										<p className='text-xl'>
 											{remainingAmount >= 0 && usageValidated
-												? FormatAmountWithUnit(remainingAmount, chemical.unit)
+												? FormatAmountWithUnit(
+														Number(remainingAmount).toFixed(2),
+														chemical.unit
+												  )
 												: `-- ${chemical.unit}`}
 										</p>
 										<p className='text-sm font-medium text-gray-500'>

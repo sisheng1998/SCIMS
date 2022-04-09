@@ -31,7 +31,7 @@ const Labs = () => {
 					signal: controller.signal,
 				})
 				if (isMounted) {
-					const processedLabData = data.labs.map((lab, index) => ({
+					const processedLabData = data.labs.reverse().map((lab, index) => ({
 						...lab,
 						index: index,
 						ownerName: lab.labOwner.name,

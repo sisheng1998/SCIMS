@@ -1,12 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 const SafetySecurityField = ({ lists, value, setValue }) => {
-	const initialCheckedState =
-		value.length === 0
-			? Array(lists.length).fill(false)
-			: () => lists.map((list) => (value.includes(list) ? true : false))
+	const [checkedState, setCheckedState] = useState(
+		Array(lists.length).fill(false)
+	)
 
-	const [checkedState, setCheckedState] = useState(initialCheckedState)
+	useEffect(() => {
+		const updatedCheckedState =
+			value.length === 0
+				? Array(lists.length).fill(false)
+				: () => lists.map((list) => (value.includes(list) ? true : false))
+		setCheckedState(updatedCheckedState)
+	}, [lists, value])
 
 	const onChangeHandler = (e, position) => {
 		const updatedCheckedState = checkedState.map((checked, index) =>

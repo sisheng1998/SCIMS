@@ -31,7 +31,7 @@ const Users = () => {
 					signal: controller.signal,
 				})
 				if (isMounted) {
-					const processedData = data.users.map((user, index) => ({
+					const processedData = data.users.reverse().map((user, index) => ({
 						...user,
 						index: index,
 					}))

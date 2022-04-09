@@ -229,7 +229,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 									!isDisposed && (
 										<span
 											className='tooltip ml-1.5'
-											data-tooltip={`Storage Group ${storageGroup[0].code} is not allowed in this location`}
+											data-tooltip={`Group ${storageGroup[0].code} is not allowed in this location`}
 										>
 											<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
 										</span>

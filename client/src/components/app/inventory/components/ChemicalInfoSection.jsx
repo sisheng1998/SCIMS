@@ -10,6 +10,8 @@ import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 const ChemicalInfoSection = ({
 	chemical,
 	setSDS,
+	setClassifications,
+	setSecurities,
 	setChemicalData,
 	setValidated,
 }) => {
@@ -103,11 +105,11 @@ const ChemicalInfoSection = ({
 				return {
 					...prev,
 					SDSLink: '',
-					classifications: [],
-					securities: [],
 				}
 			})
 			setSDS('')
+			setClassifications([])
+			setSecurities([])
 
 			const getCASInfo = async () => {
 				try {
@@ -126,11 +128,11 @@ const ChemicalInfoSection = ({
 							return {
 								...prev,
 								SDSLink: data.data.SDS,
-								classifications: data.data.classifications,
-								securities: data.data.securities,
 							}
 						})
 						setSDS(data.data.SDS)
+						setClassifications(data.data.classifications)
+						setSecurities(data.data.securities)
 					}
 				} catch (error) {
 					return

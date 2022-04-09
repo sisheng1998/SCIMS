@@ -54,9 +54,15 @@ const AddChemical = () => {
 		}
 	}, [axiosPrivate, auth.currentLabId, navigate])
 
-	const [chemicalData, setChemicalData] = useState({ labId: auth.currentLabId })
 	const [chemicalId, setChemicalId] = useState('')
 	const [SDS, setSDS] = useState('')
+	const [classifications, setClassifications] = useState([])
+	const [securities, setSecurities] = useState([])
+	const [chemicalData, setChemicalData] = useState({
+		labId: auth.currentLabId,
+		classifications,
+		securities,
+	})
 
 	const [validated, setValidated] = useState({})
 	const [errorMessage, setErrorMessage] = useState('')
@@ -69,10 +75,6 @@ const AddChemical = () => {
 		setErrorMessage('')
 
 		try {
-			if (chemicalData.dateOpen === '') {
-				delete chemicalData.dateOpen
-			}
-
 			const formData = new FormData()
 			formData.append('chemicalInfo', JSON.stringify(chemicalData))
 			!chemicalData.SDSLink && formData.append('SDS', SDS)
@@ -114,6 +116,8 @@ const AddChemical = () => {
 					<div className='w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:max-w-full'>
 						<ChemicalInfoSection
 							setSDS={setSDS}
+							setClassifications={setClassifications}
+							setSecurities={setSecurities}
 							setChemicalData={setChemicalData}
 							setValidated={setValidated}
 						/>
@@ -153,7 +157,10 @@ const AddChemical = () => {
 						<SafetyAndSecuritySection
 							SDS={SDS}
 							setSDS={setSDS}
-							chemicalData={chemicalData}
+							classifications={classifications}
+							setClassifications={setClassifications}
+							securities={securities}
+							setSecurities={setSecurities}
 							setChemicalData={setChemicalData}
 							setValidated={setValidated}
 						/>

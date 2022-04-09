@@ -27,8 +27,13 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 
 	const [chemicalData, setChemicalData] = useState(chemical)
 
-	const initialSDS = chemical.SDS ? chemical.SDS : ''
-	const [SDS, setSDS] = useState(initialSDS)
+	const [SDS, setSDS] = useState(chemical.SDS ? chemical.SDS : '')
+	const [classifications, setClassifications] = useState(
+		chemical.classifications ? chemical.classifications : []
+	)
+	const [securities, setSecurities] = useState(
+		chemical.securities ? chemical.securities : []
+	)
 	const [validated, setValidated] = useState({})
 
 	const [errorMessage, setErrorMessage] = useState('')
@@ -61,10 +66,6 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 			}
 		} else {
 			try {
-				if (chemicalData.dateOpen === '') {
-					delete chemicalData.dateOpen
-				}
-
 				chemicalData.labId = labData._id
 
 				await axiosPrivate.put('/api/private/chemical', chemicalData)
@@ -145,6 +146,10 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 						<SafetyAndSecuritySection
 							SDS={SDS}
 							setSDS={setSDS}
+							classifications={classifications}
+							setClassifications={setClassifications}
+							securities={securities}
+							setSecurities={setSecurities}
 							chemical={chemicalData}
 							setChemicalData={setChemicalData}
 							setValidated={setValidated}

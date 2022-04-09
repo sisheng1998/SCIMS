@@ -11,18 +11,13 @@ import { ExclamationCircleIcon } from '@heroicons/react/outline'
 const SafetyAndSecuritySection = ({
 	SDS,
 	setSDS,
-	chemical,
-	chemicalData,
+	classifications,
+	setClassifications,
+	securities,
+	setSecurities,
 	setChemicalData,
 	setValidated,
 }) => {
-	const [classifications, setClassifications] = useState(
-		chemical ? chemical.classifications : []
-	)
-	const [securities, setSecurities] = useState(
-		chemical ? chemical.securities : []
-	)
-
 	const [errorMessage, setErrorMessage] = useState('')
 
 	useEffect(() => {
@@ -37,9 +32,10 @@ const SafetyAndSecuritySection = ({
 		setValidated((prev) => {
 			return {
 				...prev,
+				SDSValidated: SDS ? true : false,
 			}
 		})
-	}, [classifications, securities, setChemicalData, setValidated])
+	}, [classifications, securities, setChemicalData, setValidated, SDS])
 
 	return (
 		<>
@@ -77,11 +73,7 @@ const SafetyAndSecuritySection = ({
 					<label htmlFor='classification'>GHS Classification</label>
 					<SafetySecurityField
 						lists={CLASSIFICATION_LIST}
-						value={
-							chemicalData && chemicalData.classifications.length !== 0
-								? chemicalData.classifications
-								: classifications
-						}
+						value={classifications}
 						setValue={setClassifications}
 					/>
 
@@ -90,11 +82,7 @@ const SafetyAndSecuritySection = ({
 					</label>
 					<SafetySecurityField
 						lists={SECURITY_LIST}
-						value={
-							chemicalData && chemicalData.securities.length !== 0
-								? chemicalData.securities
-								: securities
-						}
+						value={securities}
 						setValue={setSecurities}
 					/>
 				</>
