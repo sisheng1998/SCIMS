@@ -1,6 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse')
 const Lab = require('../models/Lab')
 const User = require('../models/User')
+const Chemical = require('../models/Chemical')
 const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
 const sendEmail = require('../utils/sendEmail')
@@ -10,6 +11,39 @@ const path = require('path')
 const UserInfo =
 	'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status'
 const SettingsPath = path.resolve(__dirname, '../config/settings.json')
+const days = 90
+
+// Dashboard
+exports.getInfo = async (req, res, next) => {
+	try {
+		const today = new Date()
+		const past = new Date(today.setDate(today.getDate() - days))
+
+		const data = {}
+
+		data.totalUsers = await User.countDocuments({})
+		data.newUsers = await User.countDocuments({
+			createdAt: { $gte: past },
+		})
+
+		data.totalLabs = await Lab.countDocuments({})
+		data.newLabs = await Lab.countDocuments({
+			createdAt: { $gte: past },
+		})
+
+		data.totalChemicals = await Chemical.countDocuments({})
+		data.newChemicals = await Chemical.countDocuments({
+			createdAt: { $gte: past },
+		})
+
+		res.status(200).json({
+			success: true,
+			data,
+		})
+	} catch (error) {
+		next(error)
+	}
+}
 
 // User
 exports.getUsers = async (req, res, next) => {
@@ -323,6 +357,7 @@ exports.removeLab = async (req, res, next) => {
 	}
 }
 
+// Settings
 exports.getSettings = async (req, res, next) => {
 	try {
 		const settings = fs.readFileSync(SettingsPath)

@@ -7,6 +7,7 @@ import ROLES_LIST from '../../../config/roles_list'
 import LoadingScreen from '../../utils/LoadingScreen'
 import { ExclamationIcon } from '@heroicons/react/outline'
 import ChemicalsTable from './ChemicalsTable'
+import ExportQRCodesModal from './components/ExportQRCodesModal'
 
 const Inventory = () => {
 	const { auth, setAuth } = useAuth()
@@ -17,6 +18,7 @@ const Inventory = () => {
 	const [chemicals, setChemicals] = useState([])
 	const [disposedChemicals, setDisposedChemicals] = useState([])
 
+	const [openExportQRCodesModal, setOpenExportQRCodesModal] = useState(false)
 	const [isLoading, setIsLoading] = useState(true)
 	const [refresh, setRefresh] = useState(false)
 
@@ -81,6 +83,9 @@ const Inventory = () => {
 									return {
 										...chemical,
 										location: location ? location.name : '-',
+										allowedStorageGroups: location
+											? location.storageGroups
+											: [],
 										index: index,
 									}
 								})
@@ -132,6 +137,8 @@ const Inventory = () => {
 						hasRefreshButton={true}
 						buttonText='Add Chemical'
 						buttonAction={() => navigate('/inventory/new-chemical')}
+						QRCodes={auth.currentRole >= ROLES_LIST.postgraduate}
+						QRCodesButtonAction={() => setOpenExportQRCodesModal(true)}
 						setRefresh={setRefresh}
 					/>
 
@@ -141,6 +148,14 @@ const Inventory = () => {
 						setUpdateAmountSuccess={setRefresh}
 						disposedChemicals={disposedChemicals}
 					/>
+
+					{openExportQRCodesModal && (
+						<ExportQRCodesModal
+							chemicals={chemicals}
+							openModal={openExportQRCodesModal}
+							setOpenModal={setOpenExportQRCodesModal}
+						/>
+					)}
 				</>
 			)}
 		</>

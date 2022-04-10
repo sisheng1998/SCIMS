@@ -24,12 +24,7 @@ const Header = () => {
 			</div>
 
 			<div className='flex flex-1 items-center justify-end'>
-				{!isAdmin && auth.chemicals && (
-					<>
-						<Search chemicals={auth.chemicals} searchRef={searchRef} />
-						<div className='mx-5 h-6 border-l border-gray-300'></div>
-					</>
-				)}
+				{!isAdmin && <Search searchRef={searchRef} />}
 				<Notification />
 				<UserOption />
 			</div>

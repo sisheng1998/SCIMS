@@ -1,5 +1,5 @@
 import React from 'react'
-import { PlusIcon, RefreshIcon } from '@heroicons/react/outline'
+import { PlusIcon, RefreshIcon, DownloadIcon } from '@heroicons/react/outline'
 
 const Title = (props) => {
 	return (
@@ -7,6 +7,15 @@ const Title = (props) => {
 			<div className='mb-3 flex items-center justify-between'>
 				<h3 className='flex h-10 items-end'>{props.title}</h3>
 				<div className='flex items-center'>
+					{props.QRCodes && (
+						<button
+							onClick={props.QRCodesButtonAction}
+							className='button button-outline mr-4'
+						>
+							<DownloadIcon className='-ml-0.5 mr-1.5 h-3.5 w-3.5 stroke-2' />
+							Export QR Codes
+						</button>
+					)}
 					{props.hasButton && (
 						<button
 							onClick={props.buttonAction}

@@ -91,7 +91,9 @@ const ChemicalInfo = () => {
 			isMounted = false
 			controller.abort()
 		}
-	}, [params, axiosPrivate, auth.currentLabId, auth.roles, refresh])
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [params, axiosPrivate, refresh])
 
 	return isLoading ? (
 		<LoadingScreen />

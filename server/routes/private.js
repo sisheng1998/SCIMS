@@ -5,6 +5,8 @@ const ROLES_LIST = require('../config/roles_list')
 const verifyRoles = require('../middleware/verifyRoles')
 const { uploadAvatar, uploadSDS } = require('../middleware/uploadFile')
 
+const { getInfo } = require('../controllers/dashboard')
+
 const {
 	getUsers,
 	addUser,
@@ -39,6 +41,9 @@ const {
 	removeLocation,
 	editLab,
 } = require('../controllers/settings')
+
+// Dashboard
+router.route('/dashboard').put(verifyRoles(ROLES_LIST.guest), getInfo)
 
 // Users
 router.route('/users').post(verifyRoles(ROLES_LIST.guest), getUsers)

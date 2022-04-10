@@ -38,7 +38,7 @@ const LabCard = ({ role }) => {
 	}
 
 	return (
-		<div className='mb-6 w-1/5 sm:w-full lg:w-1/2 xl:mb-4 xl:w-1/3 2xl:w-1/4'>
+		<div className='mb-6 w-1/5 min-w-max 2xl:w-1/4 xl:mb-4 xl:w-1/3 lg:w-1/2 sm:w-full'>
 			<div className='mr-6 flex h-full flex-col rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow xl:mr-4'>
 				<div className='flex flex-1 items-start justify-between'>
 					<div>

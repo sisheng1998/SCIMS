@@ -1,6 +1,6 @@
 import React from 'react'
 import { Menu } from '@headlessui/react'
-import { UserIcon, BeakerIcon, LogoutIcon } from '@heroicons/react/outline'
+import { UserIcon, ColorSwatchIcon, LogoutIcon } from '@heroicons/react/outline'
 import useLogout from '../../../hooks/useLogout'
 import { useNavigate } from 'react-router-dom'
 import useAuth from '../../../hooks/useAuth'
@@ -64,7 +64,7 @@ const UserOption = () => {
 										<UserIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
 									)}
 									{index === 1 && (
-										<BeakerIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
+										<ColorSwatchIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
 									)}
 									{index === 2 && (
 										<LogoutIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />

@@ -5,6 +5,7 @@ const ROLES_LIST = require('../config/roles_list')
 const verifyRoles = require('../middleware/verifyRoles')
 
 const {
+	getInfo,
 	getUsers,
 	getLabs,
 	addLab,
@@ -15,6 +16,9 @@ const {
 	updateSettings,
 	sendTestEmail,
 } = require('../controllers/admin')
+
+// Dashboard
+router.route('/dashboard').get(verifyRoles(ROLES_LIST.admin), getInfo)
 
 // Users
 router.route('/users').get(verifyRoles(ROLES_LIST.admin), getUsers)
