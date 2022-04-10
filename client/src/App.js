@@ -1,6 +1,7 @@
 import React from 'react'
 import { Navigate, Routes, Route } from 'react-router-dom'
 import ROLES_LIST from './config/roles_list'
+import useMobile from './hooks/useMobile'
 
 // Routing
 import PublicRoute from './components/routes/PublicRoute'
@@ -45,6 +46,8 @@ import AuthLayout from './components/layouts/AuthLayout'
 import AppLayout from './components/layouts/AppLayout'
 
 const App = () => {
+	const isMobile = useMobile()
+
 	return (
 		<Routes>
 			<Route element={<RemainLogin />}>
@@ -54,7 +57,7 @@ const App = () => {
 						{/* Accessible by all roles */}
 						<Route exact path='/' element={<Dashboard />} />
 						<Route exact path='/inventory' element={<Inventory />} />
-						<Route exact path='/users' element={<Users />} />
+						{!isMobile && <Route exact path='/users' element={<Users />} />}
 						<Route exact path='/labs' element={<Labs />} />
 						<Route exact path='/notification' element={<Notification />} />
 						<Route exact path='/profile' element={<Profile />} />

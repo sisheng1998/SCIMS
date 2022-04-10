@@ -76,7 +76,7 @@ const Search = ({ searchRef }) => {
 				<div className='flex items-center rounded-lg hover:shadow-sm'>
 					<Combobox.Input
 						type='text'
-						placeholder='Search inventory'
+						placeholder='Search Inventory'
 						className='w-full pr-8 pl-7 text-sm shadow-none'
 						onChange={(e) => setQuery(e.target.value)}
 						ref={searchRef}

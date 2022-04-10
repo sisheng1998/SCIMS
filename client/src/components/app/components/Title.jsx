@@ -5,7 +5,7 @@ const Title = (props) => {
 	return (
 		<>
 			<div className='mb-3 flex items-center justify-between'>
-				<h3 className='flex h-10 items-end'>{props.title}</h3>
+				<h3 className='flex h-10 items-end lg:h-auto'>{props.title}</h3>
 				<div className='flex items-center'>
 					{props.QRCodes && (
 						<button

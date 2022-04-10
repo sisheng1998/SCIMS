@@ -15,7 +15,7 @@ const ImageLightBox = ({ object, type, openModal, setOpenModal }) => {
 		>
 			<div className='flex min-h-screen items-center justify-center'>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
-				<div className='relative w-full max-w-md'>
+				<div className='relative m-4 w-full max-w-md'>
 					<div className='mb-2 flex justify-between space-x-6 text-white'>
 						<h4 className='text-white'>{object.name}</h4>
 						<button

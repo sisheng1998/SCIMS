@@ -94,7 +94,7 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 			<div className='flex min-h-screen items-center justify-center'>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div
-					className={`relative w-full rounded-lg bg-white p-6 shadow ${
+					className={`relative w-full rounded-lg bg-white p-6 shadow lg:m-4 ${
 						success ? 'max-w-sm text-center' : 'max-w-2xl'
 					}`}
 				>
@@ -279,7 +279,7 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 									</div>
 								) : (
 									<div className='flex items-center justify-end'>
-										{isEdit && (
+										{isEdit && false && (
 											<span
 												onClick={() => setIsRemove(true)}
 												className='mr-auto cursor-pointer self-end text-sm font-medium text-red-600 transition hover:text-red-700'

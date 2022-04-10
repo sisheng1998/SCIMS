@@ -2,13 +2,11 @@ const ErrorResponse = require('../utils/errorResponse')
 const User = require('../models/User')
 const Chemical = require('../models/Chemical')
 
-const days = 90
-
 // Dashboard
 exports.getInfo = async (req, res, next) => {
-	const { labId } = req.body
+	const { labId, days } = req.body
 
-	if (!labId) {
+	if (!labId || !days) {
 		return next(new ErrorResponse('Missing required value.', 400))
 	}
 

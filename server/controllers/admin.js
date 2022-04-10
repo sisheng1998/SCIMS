@@ -11,10 +11,15 @@ const path = require('path')
 const UserInfo =
 	'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status'
 const SettingsPath = path.resolve(__dirname, '../config/settings.json')
-const days = 90
 
 // Dashboard
 exports.getInfo = async (req, res, next) => {
+	const { days } = req.body
+
+	if (!days) {
+		return next(new ErrorResponse('Missing value for required field.', 400))
+	}
+
 	try {
 		const today = new Date()
 		const past = new Date(today.setDate(today.getDate() - days))

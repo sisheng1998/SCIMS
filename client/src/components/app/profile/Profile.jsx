@@ -52,7 +52,7 @@ const Profile = () => {
 	) : (
 		<>
 			<Title title='Profile' hasButton={false} hasRefreshButton={false}>
-				<p className='self-end text-sm text-gray-500'>
+				<p className='self-end text-sm text-gray-500 lg:text-xs'>
 					Last Updated:{' '}
 					<span className='font-semibold'>{FormatDate(user.lastUpdated)}</span>
 				</p>

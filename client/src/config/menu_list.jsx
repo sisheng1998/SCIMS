@@ -3,7 +3,6 @@ import {
 	ViewGridIcon,
 	CubeIcon,
 	ChartBarIcon,
-	//ClipboardCheckIcon,
 	SwitchVerticalIcon,
 	UsersIcon,
 	BeakerIcon,
@@ -29,12 +28,6 @@ const MENU_LIST = [
 		icon: <ChartBarIcon />,
 		minRole: ROLES_LIST.labOwner,
 	},
-	/*{
-		text: 'Stock Check',
-		link: '/stock-check',
-		icon: <ClipboardCheckIcon />,
-		minRole: ROLES_LIST.labOwner,
-	},*/
 	{
 		text: 'Import / Export',
 		link: '/import-export',
