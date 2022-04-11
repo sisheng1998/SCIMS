@@ -59,13 +59,7 @@ router.route('/user').delete(verifyRoles(ROLES_LIST.labOwner), removeUser)
 
 // Inventory
 router.route('/chemicals').post(verifyRoles(ROLES_LIST.guest), getChemicals)
-router
-	.route('/chemical')
-	.post(
-		verifyRoles(ROLES_LIST.postgraduate),
-		uploadSDS.single('SDS'),
-		addChemical
-	)
+router.route('/chemical').post(uploadSDS.single('SDS'), addChemical)
 router
 	.route('/chemical')
 	.put(verifyRoles(ROLES_LIST.postgraduate), updateChemical)

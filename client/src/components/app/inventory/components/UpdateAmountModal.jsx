@@ -10,6 +10,7 @@ import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import FormatAmountWithUnit from '../../../utils/FormatAmountWithUnit'
 import NumberWithUnitField from '../../../validations/NumberWithUnitField'
 import FormatDate from '../../../utils/FormatDate'
+import useAuth from '../../../../hooks/useAuth'
 
 const UpdateAmountModal = ({
 	chemical,
@@ -17,15 +18,17 @@ const UpdateAmountModal = ({
 	setOpenModal,
 	setUpdateAmountSuccess,
 }) => {
+	const { auth } = useAuth()
+
 	const isMounted = useRef(true)
 	useEffect(() => {
 		return () => {
 			isMounted.current = false
 		}
 	}, [])
-
 	const axiosPrivate = useAxiosPrivate()
 
+	const labId = auth.currentLabId
 	const chemicalId = chemical._id
 	const [usage, setUsage] = useState('')
 	const [remainingAmount, setRemainingAmount] = useState('')
@@ -41,6 +44,7 @@ const UpdateAmountModal = ({
 
 		try {
 			await axiosPrivate.post('/api/private/chemical/usage', {
+				labId,
 				chemicalId,
 				amount: remainingAmount,
 			})
@@ -84,7 +88,7 @@ const UpdateAmountModal = ({
 			<div className='flex min-h-screen items-center justify-center'>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div
-					className={`relative w-full rounded-lg bg-white p-6 shadow lg:m-4 ${
+					className={`relative m-4 w-full rounded-lg bg-white p-6 shadow ${
 						success ? 'max-w-sm text-center' : 'max-w-xl'
 					}`}
 				>

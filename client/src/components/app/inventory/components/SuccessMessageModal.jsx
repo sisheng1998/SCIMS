@@ -34,7 +34,7 @@ const SuccessMessageModal = ({
 		>
 			<div className='flex min-h-screen items-center justify-center'>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
-				<div className='relative w-full max-w-sm rounded-lg bg-white p-6 text-center shadow'>
+				<div className='relative m-4 w-full max-w-sm rounded-lg bg-white p-6 text-center shadow'>
 					<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
 
 					{type === 'Add' && (

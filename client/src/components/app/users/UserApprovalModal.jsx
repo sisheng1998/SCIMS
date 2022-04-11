@@ -74,7 +74,7 @@ const UserApprovalModal = ({
 			<div className='flex min-h-screen items-center justify-center'>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div
-					className={`relative w-full rounded-lg bg-white p-6 shadow lg:m-4 ${
+					className={`relative m-4 w-full rounded-lg bg-white p-6 shadow ${
 						success ? 'max-w-sm text-center' : 'max-w-3xl'
 					}`}
 				>
@@ -203,14 +203,14 @@ const UserApprovalModal = ({
 
 								<div className='flex items-center justify-end space-x-4'>
 									<button
-										className='button-green w-32'
+										className='button-green-outline h-11 w-32'
 										type='submit'
 										onClick={() => setApprove(true)}
 									>
 										Approve
 									</button>
 									<button
-										className='button-red w-32'
+										className='button-red-outline h-11 w-32'
 										type='submit'
 										onClick={() => setApprove(false)}
 									>

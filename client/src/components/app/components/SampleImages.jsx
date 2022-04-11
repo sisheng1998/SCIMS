@@ -36,7 +36,7 @@ const SampleImages = () => {
 				>
 					<div className='flex min-h-screen items-center justify-center'>
 						<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
-						<div className='relative w-full max-w-xl rounded-lg bg-white p-6 shadow lg:m-4'>
+						<div className='relative m-4 w-full max-w-xl rounded-lg bg-white p-6 shadow'>
 							<div className='mb-4 flex justify-between'>
 								<h4>Sample Profile Pictures</h4>
 								<button

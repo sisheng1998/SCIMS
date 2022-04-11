@@ -20,7 +20,7 @@ const ViewUserModal = ({ user, openModal, setOpenModal }) => {
 		>
 			<div className='flex min-h-screen items-center justify-center'>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
-				<div className='relative w-full max-w-3xl rounded-lg bg-white p-6 shadow'>
+				<div className='relative m-4 w-full max-w-3xl rounded-lg bg-white p-6 shadow'>
 					<div className='mb-6 flex justify-between border-b border-gray-200 pb-3'>
 						<h4>View User Information</h4>
 						<XIcon
