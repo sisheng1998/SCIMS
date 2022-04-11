@@ -175,26 +175,6 @@ exports.login = async (req, res, next) => {
 	}
 }
 
-exports.logout = async (req, res, next) => {
-	// On client side, the accessToken also being deleted
-
-	const refreshToken = req.cookies.refreshToken
-
-	if (!refreshToken) {
-		return next(new ErrorResponse('Refresh token not found.', 204))
-	}
-
-	res
-		.status(204)
-		.cookie('refreshToken', '', {
-			httpOnly: true,
-			sameSite: 'None',
-			secure: true,
-			maxAge: 0,
-		})
-		.send()
-}
-
 exports.forgotPassword = async (req, res, next) => {
 	const { email } = req.body
 
@@ -272,7 +252,7 @@ exports.resetPassword = async (req, res, next) => {
 }
 
 exports.refreshToken = async (req, res, next) => {
-	const refreshToken = req.cookies.refreshToken
+	const refreshToken = req.body.refreshToken
 	const url = req.protocol + '://' + req.get('host')
 
 	if (!refreshToken) {
@@ -416,13 +396,6 @@ const sendToken = async (user, rememberMe, statusCode, req, res) => {
 	)
 	expiryDate.setHours(0, 0, 0, 0)
 
-	res.cookie('refreshToken', refreshToken, {
-		httpOnly: true,
-		sameSite: 'None',
-		secure: true,
-		expires: user.rememberMe ? expiryDate : false,
-	})
-
 	res.status(statusCode).json({
 		success: true,
 		accessToken: accessToken,
@@ -432,6 +405,8 @@ const sendToken = async (user, rememberMe, statusCode, req, res) => {
 		avatar: user.avatar,
 		avatarPath: url + '/public/avatars/',
 		SDSPath: url + '/public/SDSs/',
+		refreshToken,
+		expires: user.rememberMe ? expiryDate : '',
 	})
 }
 

@@ -43,18 +43,18 @@ const LabSelection = ({ searchRef }) => {
 	}, [isAdmin, currentLab, auth.roles, index])
 
 	useEffect(() => {
-		const getAuth = async () => {
-			localStorage.setItem('currentLab', selected.lab._id)
-			setAuth((prev) => {
-				return {
-					...prev,
-					currentLabId: selected.lab._id,
-					currentLabName: selected.lab.labName,
-					currentRole: selected.role,
-				}
-			})
-
+		const getAuth = () => {
 			if (redirect) {
+				localStorage.setItem('currentLab', selected.lab._id)
+				setAuth((prev) => {
+					return {
+						...prev,
+						currentLabId: selected.lab._id,
+						currentLabName: selected.lab.labName,
+						currentRole: selected.role,
+					}
+				})
+
 				navigate(
 					selected.lab._id !== ROLES_LIST.admin.toString() ? '/' : '/admin'
 				)

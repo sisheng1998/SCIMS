@@ -1,4 +1,3 @@
-import axios from 'axios'
 import useAuth from './useAuth'
 import { useNavigate } from 'react-router-dom'
 
@@ -9,14 +8,10 @@ const useLogout = () => {
 	const logout = async () => {
 		setAuth({})
 
-		try {
-			await axios.put('/api/auth/logout', {
-				withCredentials: true,
-			})
-			navigate('/login')
-		} catch (error) {
-			navigate('/login')
-		}
+		document.cookie =
+			'refreshToken=; secure; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+
+		navigate('/login')
 	}
 
 	return logout

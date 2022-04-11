@@ -9,10 +9,12 @@ import QuickAccessCard from '../components/QuickAccessCard'
 import { UsersIcon, CubeIcon } from '@heroicons/react/outline'
 import Title from '../components/Title'
 import ScanQRCode from '../components/ScanQRCode'
+import useMobile from '../../../hooks/useMobile'
 
 const Dashboard = () => {
 	const navigate = useNavigate()
 	const { auth } = useAuth()
+	const isMobile = useMobile()
 
 	useEffect(() => {
 		auth.currentLabId === ROLES_LIST.admin.toString() && navigate('/admin')
@@ -24,6 +26,10 @@ const Dashboard = () => {
 	const [days, setDays] = useState(30)
 
 	useEffect(() => {
+		if (isMobile) {
+			return
+		}
+
 		let isMounted = true
 		const controller = new AbortController()
 
@@ -53,9 +59,17 @@ const Dashboard = () => {
 			isMounted = false
 			controller.abort()
 		}
-	}, [axiosPrivate, auth.currentLabId, days])
+	}, [axiosPrivate, auth.currentLabId, days, isMobile])
 
-	return isLoading ? (
+	return isMobile ? (
+		<>
+			<div className='mb-6'>
+				<p className='mb-2 text-lg font-medium text-gray-500'>Welcome!</p>
+				<QuickAccessCard />
+			</div>
+			<ScanQRCode />
+		</>
+	) : isLoading ? (
 		<LoadingScreen />
 	) : (
 		<>
@@ -166,8 +180,6 @@ const Dashboard = () => {
 
 				<QuickAccessCard />
 			</div>
-
-			<ScanQRCode />
 		</>
 	)
 }

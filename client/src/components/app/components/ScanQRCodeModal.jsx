@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Dialog } from '@headlessui/react'
-import { XIcon } from '@heroicons/react/outline'
 import { QrReader } from 'react-qr-reader'
 
 const ScanQRCodeModal = ({ openModal, setOpenModal }) => {
@@ -17,18 +16,9 @@ const ScanQRCodeModal = ({ openModal, setOpenModal }) => {
 			className='fixed inset-0 z-10 overflow-y-auto'
 		>
 			<div className='flex min-h-screen items-center justify-center'>
-				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
-				<div className='relative w-full max-w-xl rounded-lg bg-white p-6 shadow lg:m-4'>
-					<div className='mb-4 flex justify-between'>
-						<h4>Sample Profile Pictures</h4>
-						<button
-							className='cursor-pointer hover:text-indigo-600 focus:outline-none'
-							onClick={closeHandler}
-						>
-							<XIcon className='h-5 w-5' />
-						</button>
-					</div>
+				<Dialog.Overlay className='fixed inset-0 bg-black' />
 
+				<div className='z-20 w-full'>
 					<QrReader
 						onResult={(result, error) => {
 							if (!!result) {
@@ -36,17 +26,20 @@ const ScanQRCodeModal = ({ openModal, setOpenModal }) => {
 							}
 
 							if (!!error) {
-								console.info(error)
+								console.log(error.message)
 							}
 						}}
-						scanDelay='1000'
-						style={{ width: '100%' }}
+						scanDelay='100000'
 					/>
-					<p>{data}</p>
+				</div>
 
-					<p className='mt-4 text-xs'>
-						Preferred 500px x 500px (Square), file size less than 100 KB.
-					</p>
+				<div className='fixed left-0 right-0 bottom-0 z-20 w-full border-t border-gray-200 bg-white shadow-[0_-1px_2px_0_rgba(0,0,0,0.05)]'>
+					<button
+						className='h-12 w-full justify-center font-medium text-gray-500'
+						onClick={closeHandler}
+					>
+						Cancel
+					</button>
 				</div>
 			</div>
 		</Dialog>

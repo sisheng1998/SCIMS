@@ -16,6 +16,11 @@ const app = express()
 // Connect DB
 connectDB()
 
+// app.enable('trust proxy')
+// app.use((req, res, next) => {
+// 	req.secure ? next() : res.redirect('https://' + req.headers.host + req.url)
+// })
+
 // Handle options credentials check - before CORS
 app.use(credentials)
 
@@ -42,7 +47,7 @@ app.use(verifyUser)
 app.use('/api/private', require('./routes/private'))
 app.use('/api/admin', require('./routes/admin'))
 
-app.all('*', (req, res) => {
+app.get('*', (req, res) => {
 	res.sendStatus(404)
 })
 

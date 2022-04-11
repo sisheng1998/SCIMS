@@ -1,6 +1,9 @@
 import axios from 'axios'
 import useAuth from './useAuth'
 
+const getCookieValue = (name) =>
+	document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
+
 const useRefreshToken = () => {
 	const { setAuth } = useAuth()
 
@@ -9,7 +12,11 @@ const useRefreshToken = () => {
 	}
 
 	const refresh = async () => {
-		const { data } = await axios.get('/api/auth/refresh-token', config)
+		const { data } = await axios.put(
+			'/api/auth/refresh-token',
+			{ refreshToken: getCookieValue('refreshToken') },
+			config
+		)
 
 		const email = data.email
 		const accessToken = data.accessToken
