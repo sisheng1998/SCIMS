@@ -46,10 +46,6 @@ const Login = () => {
 			const avatarPath = data.avatarPath
 			const SDSPath = data.SDSPath
 
-			document.cookie = `refreshToken=${data.refreshToken}; path=/; secure;${
-				data.expires !== '' ? 'expires=' + new Date(data.expires) + ';' : ''
-			}`
-
 			setAuth((prev) => {
 				return {
 					...prev,

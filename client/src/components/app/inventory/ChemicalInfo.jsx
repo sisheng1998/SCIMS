@@ -7,9 +7,12 @@ import { useLocation, useParams, Link } from 'react-router-dom'
 import EditChemicalInfo from './EditChemicalInfo'
 import ViewChemicalInfo from './ViewChemicalInfo'
 import FormatDate from '../../utils/FormatDate'
-import { ExclamationIcon } from '@heroicons/react/outline'
+import { XIcon, ExclamationIcon } from '@heroicons/react/outline'
+import useMobile from '../../../hooks/useMobile'
+import ScanQRCode from '../components/ScanQRCode'
 
 const ChemicalInfo = () => {
+	const isMobile = useMobile()
 	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
 	const params = useParams()
@@ -22,6 +25,7 @@ const ChemicalInfo = () => {
 
 	const [success, setSuccess] = useState('')
 	const [notFound, setNotFound] = useState(false)
+	const [invalid, setInvalid] = useState(false)
 	const [unauthorized, setUnauthorized] = useState(false)
 	const [isLoading, setIsLoading] = useState(true)
 	const [refresh, setRefresh] = useState(false)
@@ -29,7 +33,8 @@ const ChemicalInfo = () => {
 	useEffect(() => {
 		if (params.chemicalId.length !== 12 && params.chemicalId.length !== 24) {
 			setSuccess(false)
-			setNotFound(true)
+			setInvalid(true)
+			setNotFound(false)
 			setUnauthorized(false)
 			setIsLoading(false)
 			return
@@ -81,6 +86,7 @@ const ChemicalInfo = () => {
 				if (error.response?.status === 404) {
 					setNotFound(true)
 					setSuccess(false)
+					setIsLoading(false)
 				}
 			}
 		}
@@ -110,7 +116,7 @@ const ChemicalInfo = () => {
 						</p>
 					</Title>
 
-					{isEdit ? (
+					{!isMobile && isEdit ? (
 						<EditChemicalInfo
 							chemical={chemical}
 							labData={labData}
@@ -128,19 +134,46 @@ const ChemicalInfo = () => {
 				</>
 			) : (
 				<>
+					{invalid && (
+						<div
+							className={`auth-card self-center text-center ${
+								isMobile ? '' : 'mt-6'
+							}`}
+						>
+							<XIcon className='mx-auto h-16 w-16 rounded-full bg-red-100 p-2 text-red-600' />
+							<h2 className='mt-6 mb-2 text-red-600'>Invalid Link</h2>
+							<p>The link is invalid to get chemical information.</p>
+							{!isMobile && (
+								<p className='mt-6 text-sm'>
+									Back to <Link to='/inventory'>Inventory</Link>
+								</p>
+							)}
+						</div>
+					)}
+
 					{notFound && (
-						<div className='auth-card mt-6 self-center text-center'>
+						<div
+							className={`auth-card self-center text-center ${
+								isMobile ? '' : 'mt-6'
+							}`}
+						>
 							<ExclamationIcon className='mx-auto h-16 w-16 rounded-full bg-yellow-100 p-2 text-yellow-600' />
 							<h2 className='mt-6 mb-2 text-yellow-600'>Chemical Not Found</h2>
 							<p>The chemical does not exist in any lab.</p>
-							<p className='mt-6 text-sm'>
-								Back to <Link to='/inventory'>Inventory</Link>
-							</p>
+							{!isMobile && (
+								<p className='mt-6 text-sm'>
+									Back to <Link to='/inventory'>Inventory</Link>
+								</p>
+							)}
 						</div>
 					)}
 
 					{unauthorized && (
-						<div className='auth-card mt-6 max-w-xl self-center'>
+						<div
+							className={`auth-card max-w-xl self-center ${
+								isMobile ? 'mb-8' : 'mt-6'
+							}`}
+						>
 							<ExclamationIcon className='mx-auto h-16 w-16 rounded-full bg-yellow-100 p-2 text-yellow-600' />
 							<h2 className='mt-6 mb-2 text-center text-yellow-600'>
 								Unauthorized
@@ -209,11 +242,17 @@ const ChemicalInfo = () => {
 							</ol>
 
 							<p className='text-center text-sm'>
-								Back to <Link to='/inventory'>Inventory</Link> or{' '}
+								{!isMobile && (
+									<span>
+										Back to <Link to='/inventory'>Inventory</Link> or{' '}
+									</span>
+								)}
 								<Link to='/labs'>Apply New Lab</Link>
 							</p>
 						</div>
 					)}
+
+					{isMobile && <ScanQRCode />}
 				</>
 			)}
 		</>

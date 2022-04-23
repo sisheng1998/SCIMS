@@ -18,6 +18,7 @@ import { PaperClipIcon } from '@heroicons/react/solid'
 import UpdateAmountModal from './components/UpdateAmountModal'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import SuccessMessageModal from './components/SuccessMessageModal'
+import useMobile from '../../../hooks/useMobile'
 
 const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 	const isMounted = useRef(true)
@@ -27,6 +28,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 		}
 	}, [])
 
+	const isMobile = useMobile()
 	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
 
@@ -121,7 +123,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 
 					<hr className='mb-6 mt-4 border-gray-200' />
 
-					<div className='mb-6 flex space-x-6'>
+					<div className='mb-6 flex space-x-6 lg:flex-col lg:space-x-0 lg:space-y-6'>
 						<div className='flex-1'>
 							<label htmlFor='CAS' className='mb-0.5 text-gray-500'>
 								CAS No.
@@ -179,15 +181,17 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 											<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
 										</span>
 									)}
-								{currentUser.role >= ROLES_LIST.undergraduate && !isDisposed && (
-									<button
-										onClick={() => setOpenUpdateAmountModal(true)}
-										className='tooltip ml-1.5 text-gray-400 transition hover:text-indigo-700 focus:outline-none'
-										data-tooltip='Update Amount'
-									>
-										<PencilAltIcon className='h-5 w-5' />
-									</button>
-								)}
+								{currentUser.role >= ROLES_LIST.undergraduate &&
+									!isDisposed &&
+									!isMobile && (
+										<button
+											onClick={() => setOpenUpdateAmountModal(true)}
+											className='tooltip ml-1.5 text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+											data-tooltip='Update Amount'
+										>
+											<PencilAltIcon className='h-5 w-5' />
+										</button>
+									)}
 							</p>
 						</div>
 					</div>
@@ -209,7 +213,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 
 					<hr className='mb-6 mt-4 border-gray-200' />
 
-					<div className='mb-6 flex space-x-6'>
+					<div className='mb-6 flex space-x-6 lg:flex-col lg:space-x-0 lg:space-y-6'>
 						<div className='flex-1'>
 							<label htmlFor='lab' className='mb-0.5 text-gray-500'>
 								Lab
@@ -249,7 +253,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 						</p>
 					</div>
 
-					<div className='flex space-x-6'>
+					<div className='flex space-x-6 lg:flex-col lg:space-x-0 lg:space-y-6'>
 						<div className='flex-1'>
 							<label htmlFor='dateIn' className='mb-0.5 text-gray-500'>
 								Date In
@@ -372,7 +376,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 
 					<hr className='mb-6 mt-4 border-gray-200' />
 
-					<div className='mb-6 flex space-x-6'>
+					<div className='mb-6 flex space-x-6 lg:flex-col lg:space-x-0 lg:space-y-6'>
 						<div className='flex-1'>
 							<label htmlFor='supplier' className='mb-0.5 text-gray-500'>
 								Supplier Name
@@ -409,7 +413,8 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 					)}
 
 					{auth.currentLabId === lab._id &&
-						currentUser.role >= ROLES_LIST.postgraduate && (
+						currentUser.role >= ROLES_LIST.postgraduate &&
+						!isMobile && (
 							<div className='mt-9'>
 								{isDisposed ? (
 									<span
@@ -433,6 +438,21 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 						)}
 				</div>
 			</div>
+
+			{currentUser.role >= ROLES_LIST.undergraduate && !isDisposed && isMobile && (
+				<div
+					id='updateUsage'
+					className='fixed left-0 right-0 bottom-0 z-10 w-full border-t border-gray-200 bg-white p-4 shadow-[0_-1px_2px_0_rgba(0,0,0,0.05)]'
+				>
+					<button
+						className='button button-solid w-full justify-center shadow-md'
+						onClick={() => setOpenUpdateAmountModal(true)}
+					>
+						<PencilAltIcon className='mr-2 h-6 w-6' />
+						Update Amount
+					</button>
+				</div>
+			)}
 
 			{openViewImageModal && QRCodeInfo && (
 				<ImageLightBox

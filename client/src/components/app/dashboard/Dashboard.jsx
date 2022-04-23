@@ -10,6 +10,7 @@ import { UsersIcon, CubeIcon } from '@heroicons/react/outline'
 import Title from '../components/Title'
 import ScanQRCode from '../components/ScanQRCode'
 import useMobile from '../../../hooks/useMobile'
+import UserInfoCard from '../components/UserInfoCard'
 
 const Dashboard = () => {
 	const navigate = useNavigate()
@@ -63,10 +64,8 @@ const Dashboard = () => {
 
 	return isMobile ? (
 		<>
-			<div className='mb-6'>
-				<p className='mb-2 text-lg font-medium text-gray-500'>Welcome!</p>
-				<QuickAccessCard />
-			</div>
+			<UserInfoCard />
+			<QuickAccessCard />
 			<ScanQRCode />
 		</>
 	) : isLoading ? (

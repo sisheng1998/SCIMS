@@ -11,6 +11,7 @@ import FormatAmountWithUnit from '../../../utils/FormatAmountWithUnit'
 import NumberWithUnitField from '../../../validations/NumberWithUnitField'
 import FormatDate from '../../../utils/FormatDate'
 import useAuth from '../../../../hooks/useAuth'
+import useMobile from '../../../../hooks/useMobile'
 
 const UpdateAmountModal = ({
 	chemical,
@@ -18,6 +19,7 @@ const UpdateAmountModal = ({
 	setOpenModal,
 	setUpdateAmountSuccess,
 }) => {
+	const isMobile = useMobile()
 	const { auth } = useAuth()
 
 	const isMounted = useRef(true)
@@ -126,55 +128,57 @@ const UpdateAmountModal = ({
 								spellCheck='false'
 								autoComplete='off'
 							>
-								<div className='grid grid-cols-3 gap-6'>
-									<div>
-										<label htmlFor='CAS' className='mb-1'>
-											CAS No.
-										</label>
-										{chemical.CAS}
-									</div>
+								{!isMobile && (
+									<div className='grid grid-cols-3 gap-6'>
+										<div>
+											<label htmlFor='CAS' className='mb-1'>
+												CAS No.
+											</label>
+											{chemical.CAS}
+										</div>
 
-									<div className='col-span-2'>
-										<label htmlFor='name' className='mb-1'>
-											Name
-										</label>
-										{chemical.name}
-									</div>
+										<div className='col-span-2'>
+											<label htmlFor='name' className='mb-1'>
+												Name
+											</label>
+											{chemical.name}
+										</div>
 
-									<div>
-										<label htmlFor='containerSize' className='mb-1'>
-											Container Size
-										</label>
-										{FormatAmountWithUnit(
-											chemical.containerSize,
-											chemical.unit
-										)}
-									</div>
+										<div>
+											<label htmlFor='containerSize' className='mb-1'>
+												Container Size
+											</label>
+											{FormatAmountWithUnit(
+												chemical.containerSize,
+												chemical.unit
+											)}
+										</div>
 
-									<div>
-										<label htmlFor='amount' className='mb-1'>
-											Current Amount
-										</label>
-										{FormatAmountWithUnit(chemical.amount, chemical.unit)}
-										{Number(chemical.amount) < Number(chemical.minAmount) && (
-											<span
-												className='tooltip ml-1.5'
-												data-tooltip='Low Amount'
-											>
-												<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
-											</span>
-										)}
-									</div>
+										<div>
+											<label htmlFor='amount' className='mb-1'>
+												Current Amount
+											</label>
+											{FormatAmountWithUnit(chemical.amount, chemical.unit)}
+											{Number(chemical.amount) < Number(chemical.minAmount) && (
+												<span
+													className='tooltip ml-1.5'
+													data-tooltip='Low Amount'
+												>
+													<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
+												</span>
+											)}
+										</div>
 
-									<div>
-										<label htmlFor='lastUpdated' className='mb-1'>
-											Last Updated
-										</label>
-										{FormatDate(chemical.lastUpdated)}
+										<div>
+											<label htmlFor='lastUpdated' className='mb-1'>
+												Last Updated
+											</label>
+											{FormatDate(chemical.lastUpdated)}
+										</div>
 									</div>
-								</div>
+								)}
 
-								<div className='my-6 flex items-center justify-between space-x-6 rounded-lg border border-gray-200 bg-gray-50 p-6'>
+								<div className='my-6 flex items-center justify-between space-x-6 rounded-lg border border-gray-200 bg-gray-50 p-6 lg:mt-0 lg:flex-wrap lg:justify-center lg:space-x-0 lg:p-4'>
 									<div className='text-center'>
 										<p className='text-xl'>
 											{FormatAmountWithUnit(chemical.amount, chemical.unit)}
@@ -184,7 +188,7 @@ const UpdateAmountModal = ({
 										</p>
 									</div>
 
-									<p className='text-gray-400'>-</p>
+									<p className='text-gray-400 lg:!mx-6'>-</p>
 
 									<div className='text-center'>
 										<p className='text-xl'>
@@ -198,7 +202,9 @@ const UpdateAmountModal = ({
 										<p className='text-sm font-medium text-gray-500'>Usage</p>
 									</div>
 
-									<p className='text-gray-400'>=</p>
+									{isMobile && <div className='h-4 basis-full'></div>}
+
+									<p className='text-gray-400 lg:!mr-6'>=</p>
 
 									<div className='text-center'>
 										<p className='text-xl'>

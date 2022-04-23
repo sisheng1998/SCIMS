@@ -9,17 +9,13 @@ const connectDB = require('./config/db')
 const errorHandler = require('./middleware/errorHandler')
 const { verifyUser } = require('./middleware/verifyUser')
 const logEvents = require('./middleware/logEvents')
+const path = require('path')
 const PORT = process.env.PORT || 5000
 
 const app = express()
 
 // Connect DB
 connectDB()
-
-// app.enable('trust proxy')
-// app.use((req, res, next) => {
-// 	req.secure ? next() : res.redirect('https://' + req.headers.host + req.url)
-// })
 
 // Handle options credentials check - before CORS
 app.use(credentials)
@@ -33,8 +29,9 @@ app.use(cookieParser())
 
 // Serve public files
 app.use('/public', express.static('public'))
+//app.use(express.static('client/build')) // Uncomment this for live site
 
-// Connecting Routes
+// Connecting Routes - Comment this for live site
 app.get('/', (req, res, next) => {
 	res.status(200).send('API running.')
 })
@@ -43,13 +40,18 @@ app.get('/', (req, res, next) => {
 app.use('/api/auth', require('./routes/auth'))
 
 // Private Route
-app.use(verifyUser)
-app.use('/api/private', require('./routes/private'))
-app.use('/api/admin', require('./routes/admin'))
+app.use('/api/private', verifyUser, require('./routes/private'))
+app.use('/api/admin', verifyUser, require('./routes/admin'))
 
+// Comment this for live site
 app.get('*', (req, res) => {
 	res.sendStatus(404)
 })
+
+// Let React Handle UI - Uncomment this for live site
+//app.get('*', (req, res) => {
+//	res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+//})
 
 // Error Handler (should be last piece of middleware)
 app.use(errorHandler)

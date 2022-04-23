@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Dialog } from '@headlessui/react'
 import { QrReader } from 'react-qr-reader'
+import { useNavigate } from 'react-router-dom'
 
 const ScanQRCodeModal = ({ openModal, setOpenModal }) => {
-	const [data, setData] = useState('No result')
+	const navigate = useNavigate()
 
 	const closeHandler = () => {
 		setOpenModal(false)
@@ -18,18 +19,16 @@ const ScanQRCodeModal = ({ openModal, setOpenModal }) => {
 			<div className='flex min-h-screen items-center justify-center'>
 				<Dialog.Overlay className='fixed inset-0 bg-black' />
 
-				<div className='z-20 w-full'>
+				<div className='z-20 w-full mb-20'>
 					<QrReader
-						onResult={(result, error) => {
-							if (!!result) {
-								setData(result?.text)
-							}
-
-							if (!!error) {
-								console.log(error.message)
+						onResult={(result) => {
+							if (!!result && result.text) {
+								const location = '/inventory/' + result.text
+								navigate(location)
 							}
 						}}
-						scanDelay='100000'
+						scanDelay='1000'
+						constraints={{facingMode: 'environment'}}
 					/>
 				</div>
 

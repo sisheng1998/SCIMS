@@ -169,10 +169,30 @@ exports.login = async (req, res, next) => {
 			return next(new ErrorResponse('Email not verified.', 403))
 		}
 
-		sendToken(user, rememberMe, 200, req, res)
+		sendToken(user, rememberMe, 200, res)
 	} catch (error) {
 		res.status(500).json({ success: false, error: error.message })
 	}
+}
+
+exports.logout = async (req, res, next) => {
+	// On client side, the accessToken also being deleted
+
+	const refreshToken = req.cookies.refreshToken
+
+	if (!refreshToken) {
+		return next(new ErrorResponse('Refresh token not found.', 204))
+	}
+
+	res
+		.status(204)
+		.cookie('refreshToken', '', {
+			httpOnly: true,
+			sameSite: 'None',
+			secure: true,
+			maxAge: 0,
+		})
+		.send()
 }
 
 exports.forgotPassword = async (req, res, next) => {
@@ -252,8 +272,7 @@ exports.resetPassword = async (req, res, next) => {
 }
 
 exports.refreshToken = async (req, res, next) => {
-	const refreshToken = req.body.refreshToken
-	const url = req.protocol + '://' + req.get('host')
+	const refreshToken = req.cookies.refreshToken
 
 	if (!refreshToken) {
 		return res.sendStatus(204)
@@ -287,8 +306,8 @@ exports.refreshToken = async (req, res, next) => {
 			id: foundUser._id,
 			name: foundUser.name,
 			avatar: foundUser.avatar,
-			avatarPath: url + '/public/avatars/',
-			SDSPath: url + '/public/SDSs/',
+			avatarPath: '/public/avatars/',
+			SDSPath: '/public/SDSs/',
 		})
 	} catch (error) {
 		return next(new ErrorResponse('Invalid refresh token.', 401))
@@ -381,9 +400,7 @@ exports.applyNewLab = async (req, res, next) => {
 	}
 }
 
-const sendToken = async (user, rememberMe, statusCode, req, res) => {
-	const url = req.protocol + '://' + req.get('host')
-
+const sendToken = async (user, rememberMe, statusCode, res) => {
 	const accessToken = user.getAccessToken()
 	const refreshToken = user.getRefreshToken()
 
@@ -396,6 +413,13 @@ const sendToken = async (user, rememberMe, statusCode, req, res) => {
 	)
 	expiryDate.setHours(0, 0, 0, 0)
 
+	res.cookie('refreshToken', refreshToken, {
+		httpOnly: true,
+		sameSite: 'None',
+		secure: true,
+		expires: user.rememberMe ? expiryDate : false,
+	})
+
 	res.status(statusCode).json({
 		success: true,
 		accessToken: accessToken,
@@ -403,10 +427,8 @@ const sendToken = async (user, rememberMe, statusCode, req, res) => {
 		id: user._id,
 		name: user.name,
 		avatar: user.avatar,
-		avatarPath: url + '/public/avatars/',
-		SDSPath: url + '/public/SDSs/',
-		refreshToken,
-		expires: user.rememberMe ? expiryDate : '',
+		avatarPath: '/public/avatars/',
+		SDSPath: '/public/SDSs/',
 	})
 }
 
