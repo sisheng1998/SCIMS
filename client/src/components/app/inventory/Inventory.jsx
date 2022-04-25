@@ -65,32 +65,32 @@ const Inventory = () => {
 
 								return {
 									...chemical,
+									CAS: chemical.CASId.CASNo,
 									location: location ? location.name : '-',
 									allowedStorageGroups: location ? location.storageGroups : [],
 									index: index,
 								}
 							})
 						setChemicals(processedData)
+					}
 
-						if (data.data.disposedChemicals.length !== 0) {
-							const disposedData = data.data.disposedChemicals
-								.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
-								.map((chemical, index) => {
-									const location = data.data.locations.find(
-										(location) => location._id === chemical.locationId
-									)
+					if (data.data.disposedChemicals.length !== 0) {
+						const disposedData = data.data.disposedChemicals
+							.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+							.map((chemical, index) => {
+								const location = data.data.locations.find(
+									(location) => location._id === chemical.locationId
+								)
 
-									return {
-										...chemical,
-										location: location ? location.name : '-',
-										allowedStorageGroups: location
-											? location.storageGroups
-											: [],
-										index: index,
-									}
-								})
-							setDisposedChemicals(disposedData)
-						}
+								return {
+									...chemical,
+									CAS: chemical.CASId.CASNo,
+									location: location ? location.name : '-',
+									allowedStorageGroups: location ? location.storageGroups : [],
+									index: index,
+								}
+							})
+						setDisposedChemicals(disposedData)
 					}
 
 					setLocations(data.data.locations)

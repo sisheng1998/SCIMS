@@ -195,7 +195,7 @@ const ChemicalInfo = () => {
 										<label htmlFor='CAS' className='mb-0.5 text-gray-500'>
 											CAS No.
 										</label>
-										<p className='font-medium'>{chemical.CAS}</p>
+										<p className='font-medium'>{chemical.CASId.CASNo}</p>
 									</div>
 
 									<div className='flex-1'>

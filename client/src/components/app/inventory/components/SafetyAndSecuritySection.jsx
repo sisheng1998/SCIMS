@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import {
 	CLASSIFICATION_LIST,
-	SECURITY_LIST,
+	COC_LIST,
 } from '../../../../config/safety_security_list'
 import SafetySecurityField from '../../../validations/SafetySecurityField'
 import PDFDropZone from '../../components/PDFDropZone'
@@ -13,19 +13,21 @@ const SafetyAndSecuritySection = ({
 	setSDS,
 	classifications,
 	setClassifications,
-	securities,
-	setSecurities,
+	COCs,
+	setCOCs,
 	setChemicalData,
 	setValidated,
 }) => {
 	const [errorMessage, setErrorMessage] = useState('')
 
 	useEffect(() => {
+		if (SDS.toString().toLowerCase().endsWith('.pdf')) return
+
 		setChemicalData((prev) => {
 			return {
 				...prev,
 				classifications,
-				securities,
+				COCs,
 			}
 		})
 
@@ -35,9 +37,55 @@ const SafetyAndSecuritySection = ({
 				SDSValidated: SDS ? true : false,
 			}
 		})
-	}, [classifications, securities, setChemicalData, setValidated, SDS])
+	}, [classifications, COCs, setChemicalData, setValidated, SDS])
 
-	return (
+	return SDS.toString().toLowerCase().endsWith('.pdf') ? (
+		<>
+			<label htmlFor='SDS' className='mb-1'>
+				Safety Data Sheet (SDS)
+			</label>
+			<RenderPDF PDF={SDS} setPDF={setSDS} />
+
+			<div className='mb-4 mt-6'>
+				<label htmlFor='classification'>GHS Classification</label>
+				{classifications.length !== 0
+					? CLASSIFICATION_LIST.filter((classification) =>
+							classifications.includes(classification)
+					  ).map((classification, index) => (
+							<span
+								key={index}
+								className={`mb-2 mr-2 inline-flex rounded-full px-3 py-1 text-sm font-medium ${
+									classification === 'Environment' ||
+									classification === 'Health Hazard' ||
+									classification === 'Irritant' ||
+									classification === 'Acute Toxicity'
+										? 'bg-blue-100 text-blue-600'
+										: 'bg-yellow-100 text-yellow-600'
+								}`}
+							>
+								{classification}
+							</span>
+					  ))
+					: '-'}
+			</div>
+
+			<div>
+				<label htmlFor='coc'>Chemical of Concern</label>
+				{COCs.length !== 0
+					? COC_LIST.filter((security) => COCs.includes(security)).map(
+							(security, index) => (
+								<span
+									key={index}
+									className='mb-2 mr-2 inline-flex rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-600'
+								>
+									{security}
+								</span>
+							)
+					  )
+					: '-'}
+			</div>
+		</>
+	) : (
 		<>
 			{errorMessage && (
 				<p className='mb-6 flex items-center text-sm font-medium text-red-600'>
@@ -58,35 +106,31 @@ const SafetyAndSecuritySection = ({
 				</>
 			) : (
 				<>
-					<label
-						htmlFor='SDS'
-						className={
-							SDS.toString().toLowerCase().endsWith('.pdf')
-								? 'mb-1'
-								: 'required-input-label'
-						}
-					>
+					<label htmlFor='SDS' className='required-input-label'>
 						Safety Data Sheet (SDS)
 					</label>
 					<RenderPDF PDF={SDS} setPDF={setSDS} />
-
-					<label htmlFor='classification'>GHS Classification</label>
-					<SafetySecurityField
-						lists={CLASSIFICATION_LIST}
-						value={classifications}
-						setValue={setClassifications}
-					/>
-
-					<label htmlFor='security' className='mt-6'>
-						Security
-					</label>
-					<SafetySecurityField
-						lists={SECURITY_LIST}
-						value={securities}
-						setValue={setSecurities}
-					/>
 				</>
 			)}
+
+			<label htmlFor='classification' className='mt-6'>
+				GHS Classification
+			</label>
+			<SafetySecurityField
+				lists={CLASSIFICATION_LIST}
+				value={classifications}
+				setValue={setClassifications}
+			/>
+
+			<label htmlFor='coc' className='mt-6'>
+				Chemical of Concern
+			</label>
+			<SafetySecurityField
+				lists={COC_LIST}
+				value={COCs}
+				setValue={setCOCs}
+				isCOC={true}
+			/>
 		</>
 	)
 }

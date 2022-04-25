@@ -134,7 +134,7 @@ const UpdateAmountModal = ({
 											<label htmlFor='CAS' className='mb-1'>
 												CAS No.
 											</label>
-											{chemical.CAS}
+											{chemical.CASId.CASNo}
 										</div>
 
 										<div className='col-span-2'>

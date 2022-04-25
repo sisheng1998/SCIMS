@@ -57,11 +57,11 @@ const AddChemical = () => {
 	const [chemicalId, setChemicalId] = useState('')
 	const [SDS, setSDS] = useState('')
 	const [classifications, setClassifications] = useState([])
-	const [securities, setSecurities] = useState([])
+	const [COCs, setCOCs] = useState([])
 	const [chemicalData, setChemicalData] = useState({
 		labId: auth.currentLabId,
 		classifications,
-		securities,
+		COCs,
 	})
 
 	const [validated, setValidated] = useState({})
@@ -117,7 +117,7 @@ const AddChemical = () => {
 						<ChemicalInfoSection
 							setSDS={setSDS}
 							setClassifications={setClassifications}
-							setSecurities={setSecurities}
+							setCOCs={setCOCs}
 							setChemicalData={setChemicalData}
 							setValidated={setValidated}
 						/>
@@ -159,8 +159,8 @@ const AddChemical = () => {
 							setSDS={setSDS}
 							classifications={classifications}
 							setClassifications={setClassifications}
-							securities={securities}
-							setSecurities={setSecurities}
+							COCs={COCs}
+							setCOCs={setCOCs}
 							setChemicalData={setChemicalData}
 							setValidated={setValidated}
 						/>

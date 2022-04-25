@@ -33,7 +33,7 @@ const SDSStorage = multer.diskStorage({
 			extension = '.pdf'
 		}
 
-		callback(null, JSON.parse(req.body.chemicalInfo).CAS + extension)
+		callback(null, JSON.parse(req.body.chemicalInfo).CASNo + extension)
 	},
 })
 

@@ -11,14 +11,14 @@ const ChemicalInfoSection = ({
 	chemical,
 	setSDS,
 	setClassifications,
-	setSecurities,
+	setCOCs,
 	setChemicalData,
 	setValidated,
 }) => {
 	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
 
-	const [CAS, setCAS] = useState(chemical ? chemical.CAS : '')
+	const [CASNo, setCASNo] = useState(chemical ? chemical.CASId.CASNo : '')
 	const [name, setName] = useState(chemical ? chemical.name : '')
 	const [state, setState] = useState(chemical ? chemical.state : '')
 	const [unit, setUnit] = useState(chemical ? chemical.unit : '')
@@ -28,7 +28,7 @@ const ChemicalInfoSection = ({
 	const [amount, setAmount] = useState(chemical ? chemical.amount : '')
 	const [minAmount, setMinAmount] = useState(chemical ? chemical.minAmount : '')
 
-	const [CASValidated, setCASValidated] = useState(chemical ? true : false)
+	const [CASNoValidated, setCASNoValidated] = useState(chemical ? true : false)
 	const [nameValidated, setNameValidated] = useState(false)
 	const [containerSizeValidated, setContainerSizeValidated] = useState(false)
 	const [amountValidated, setAmountValidated] = useState(false)
@@ -57,7 +57,7 @@ const ChemicalInfoSection = ({
 		setChemicalData((prev) => {
 			return {
 				...prev,
-				CAS,
+				CASNo,
 				name,
 				state,
 				unit,
@@ -70,7 +70,7 @@ const ChemicalInfoSection = ({
 		setValidated((prev) => {
 			return {
 				...prev,
-				CASValidated,
+				CASNoValidated,
 				nameValidated,
 				stateValidated: state !== '',
 				unitValidated: unit !== '',
@@ -80,14 +80,14 @@ const ChemicalInfoSection = ({
 			}
 		})
 	}, [
-		CAS,
+		CASNo,
 		name,
 		state,
 		unit,
 		containerSize,
 		amount,
 		minAmount,
-		CASValidated,
+		CASNoValidated,
 		nameValidated,
 		containerSizeValidated,
 		amountValidated,
@@ -97,7 +97,7 @@ const ChemicalInfoSection = ({
 	])
 
 	useEffect(() => {
-		if (!chemical && CAS && CASValidated) {
+		if (!chemical && CASNo && CASNoValidated) {
 			let isMounted = true
 			const controller = new AbortController()
 
@@ -109,7 +109,7 @@ const ChemicalInfoSection = ({
 			})
 			setSDS('')
 			setClassifications([])
-			setSecurities([])
+			setCOCs([])
 
 			const getCASInfo = async () => {
 				try {
@@ -117,7 +117,7 @@ const ChemicalInfoSection = ({
 						'/api/private/cas',
 						{
 							labId: auth.currentLabId,
-							CAS: CAS,
+							CASNo,
 						},
 						{
 							signal: controller.signal,
@@ -132,7 +132,7 @@ const ChemicalInfoSection = ({
 						})
 						setSDS(data.data.SDS)
 						setClassifications(data.data.classifications)
-						setSecurities(data.data.securities)
+						setCOCs(data.data.COCs)
 					}
 				} catch (error) {
 					return
@@ -148,7 +148,7 @@ const ChemicalInfoSection = ({
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [CAS, CASValidated])
+	}, [CASNo, CASNoValidated])
 
 	const unitChangeHandler = (e) => {
 		const selectedUnit = e.target.value
@@ -177,7 +177,7 @@ const ChemicalInfoSection = ({
 							<label htmlFor='CAS' className='mb-1'>
 								CAS No.
 							</label>
-							<p className='text-lg'>{chemical.CAS}</p>
+							<p className='text-lg'>{chemical.CASId.CASNo}</p>
 						</div>
 
 						<div className='flex-1'>
@@ -226,10 +226,10 @@ const ChemicalInfoSection = ({
 							CAS No.
 						</label>
 						<CASField
-							value={CAS}
-							setValue={setCAS}
-							validated={CASValidated}
-							setValidated={setCASValidated}
+							value={CASNo}
+							setValue={setCASNo}
+							validated={CASNoValidated}
+							setValidated={setCASNoValidated}
 							showValidated={chemical ? false : true}
 						/>
 					</div>

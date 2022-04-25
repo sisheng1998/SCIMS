@@ -1,16 +1,24 @@
 const CLASSIFICATION_LIST = [
-	'Carcinogen',
-	'Health Hazard',
-	'Irritant',
-	'Acute Toxicity',
-	'Corrosive',
 	'Explosive',
 	'Flammable',
 	'Oxidizer',
 	'Compressed Gas',
-	'Other',
+	'Corrosive',
+	'Acute Toxicity',
+	'Irritant',
+	'Health Hazard',
+	'Environment',
 ]
 
-const SECURITY_LIST = ['CWC', 'Theft', 'Other']
+const COC_LIST = ['CWC', 'CFATS', 'EU', 'AG', 'WMD', 'Other']
 
-export { CLASSIFICATION_LIST, SECURITY_LIST }
+const COC_DESCRIPTION = [
+	'Chemical Weapons Convention',
+	'Chemical Facility Anti-Terrorism Standards',
+	'Council Regulation (EC) No 428/2009 of 5 May 2009',
+	'Australia Group',
+	'Weapons of Mass Destruction',
+	'-',
+]
+
+export { CLASSIFICATION_LIST, COC_LIST, COC_DESCRIPTION }

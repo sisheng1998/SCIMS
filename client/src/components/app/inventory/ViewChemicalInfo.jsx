@@ -6,19 +6,15 @@ import FormatDate, { FormatChemicalDate } from '../../utils/FormatDate'
 import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
 import STORAGE_GROUPS from '../../../config/storage_groups'
 import {
-	CLASSIFICATION_LIST,
-	SECURITY_LIST,
-} from '../../../config/safety_security_list'
-import {
 	ExclamationIcon,
 	PencilAltIcon,
 	ExclamationCircleIcon,
 } from '@heroicons/react/outline'
-import { PaperClipIcon } from '@heroicons/react/solid'
 import UpdateAmountModal from './components/UpdateAmountModal'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import SuccessMessageModal from './components/SuccessMessageModal'
 import useMobile from '../../../hooks/useMobile'
+import SafetyAndSecuritySection from './components/SafetyAndSecuritySection'
 
 const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 	const isMounted = useRef(true)
@@ -128,7 +124,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 							<label htmlFor='CAS' className='mb-0.5 text-gray-500'>
 								CAS No.
 							</label>
-							<p className='font-medium'>{chemical.CAS}</p>
+							<p className='font-medium'>{chemical.CASId.CASNo}</p>
 						</div>
 
 						<div className='flex-1'>
@@ -304,67 +300,11 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 
 					<hr className='mb-6 mt-4 border-gray-200' />
 
-					<div className='mb-6'>
-						<label htmlFor='SDS' className='mb-1 text-gray-500'>
-							Safety Data Sheet (SDS)
-						</label>
-						<div className='flex items-center justify-between space-x-6 rounded-lg border border-gray-200 py-2 px-3 pr-4 font-medium'>
-							<p className='flex items-center'>
-								<PaperClipIcon className='mr-2 h-5 w-5 text-gray-400' />
-								{chemical.SDS}
-							</p>
-							<a
-								href={auth.SDSPath + chemical.SDS}
-								target='_blank'
-								rel='noreferrer'
-							>
-								View
-							</a>
-						</div>
-					</div>
-
-					<div className='mb-4'>
-						<label htmlFor='classification' className='mb-1 text-gray-500'>
-							GHS Classification
-						</label>
-						{chemical.classifications.length !== 0
-							? CLASSIFICATION_LIST.filter((classification) =>
-									chemical.classifications.includes(classification)
-							  ).map((classification, index) => (
-									<span
-										key={index}
-										className={`mb-2 mr-2 inline-flex rounded-full px-3 py-1 text-sm font-medium ${
-											classification === 'Carcinogen' ||
-											classification === 'Health Hazard' ||
-											classification === 'Irritant' ||
-											classification === 'Acute Toxicity'
-												? 'bg-blue-100 text-blue-600'
-												: 'bg-yellow-100 text-yellow-600'
-										}`}
-									>
-										{classification}
-									</span>
-							  ))
-							: '-'}
-					</div>
-
-					<div>
-						<label htmlFor='security' className='mb-1 text-gray-500'>
-							Security
-						</label>
-						{chemical.securities.length !== 0
-							? SECURITY_LIST.filter((security) =>
-									chemical.securities.includes(security)
-							  ).map((security, index) => (
-									<span
-										key={index}
-										className='mb-2 mr-2 inline-flex rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-600'
-									>
-										{security}
-									</span>
-							  ))
-							: '-'}
-					</div>
+					<SafetyAndSecuritySection
+						SDS={chemical.CASId.SDS}
+						classifications={chemical.CASId.classifications}
+						COCs={chemical.CASId.COCs}
+					/>
 				</div>
 
 				{/* Extra Info */}

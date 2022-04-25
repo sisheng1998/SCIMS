@@ -244,13 +244,20 @@ const ChemicalsTable = (props) => {
 							</thead>
 
 							<tbody className='divide-y divide-gray-200 bg-white'>
-								{currentItems.length === 0 || props.data.length === 0 ? (
+								{currentItems.length === 0 ||
+								(viewDisposedChemicals
+									? props.disposedChemicals.length === 0
+									: props.data.length === 0) ? (
 									<tr>
 										<td
 											className='px-6 py-4 text-center'
 											colSpan={tableHeaders.length}
 										>
-											{props.data.length === 0
+											{(
+												viewDisposedChemicals
+													? props.disposedChemicals.length === 0
+													: props.data.length === 0
+											)
 												? 'No chemical added.'
 												: 'No record found.'}
 										</td>
@@ -273,7 +280,7 @@ const ChemicalsTable = (props) => {
 
 										return (
 											<tr key={chemical._id}>
-												<td className='px-6 py-4'>{chemical.CAS}</td>
+												<td className='px-6 py-4'>{chemical.CASId.CASNo}</td>
 
 												<td className='px-6 py-4'>
 													<div className='flex items-center space-x-2'>

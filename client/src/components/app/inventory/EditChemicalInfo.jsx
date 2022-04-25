@@ -26,14 +26,6 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 	const { auth } = useAuth()
 
 	const [chemicalData, setChemicalData] = useState(chemical)
-
-	const [SDS, setSDS] = useState(chemical.SDS ? chemical.SDS : '')
-	const [classifications, setClassifications] = useState(
-		chemical.classifications ? chemical.classifications : []
-	)
-	const [securities, setSecurities] = useState(
-		chemical.securities ? chemical.securities : []
-	)
 	const [validated, setValidated] = useState({})
 
 	const [errorMessage, setErrorMessage] = useState('')
@@ -144,15 +136,9 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 
 					<div className='w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:max-w-full'>
 						<SafetyAndSecuritySection
-							SDS={SDS}
-							setSDS={setSDS}
-							classifications={classifications}
-							setClassifications={setClassifications}
-							securities={securities}
-							setSecurities={setSecurities}
-							chemical={chemicalData}
-							setChemicalData={setChemicalData}
-							setValidated={setValidated}
+							SDS={chemical.CASId.SDS}
+							classifications={chemical.CASId.classifications}
+							COCs={chemical.CASId.COCs}
 						/>
 					</div>
 				</div>

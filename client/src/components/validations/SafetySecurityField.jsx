@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import { COC_DESCRIPTION } from '../../config/safety_security_list'
+import { InformationCircleIcon } from '@heroicons/react/outline'
 
-const SafetySecurityField = ({ lists, value, setValue }) => {
+const SafetySecurityField = ({ lists, value, setValue, isCOC }) => {
 	const [checkedState, setCheckedState] = useState(
 		Array(lists.length).fill(false)
 	)
@@ -45,6 +47,14 @@ const SafetySecurityField = ({ lists, value, setValue }) => {
 						htmlFor={list === 'Other' ? list + index : list.replace(/\W/g, '')}
 					>
 						{list}
+						{isCOC && list !== 'Other' && (
+							<span
+								className='tooltip ml-1.5'
+								data-tooltip={COC_DESCRIPTION[index]}
+							>
+								<InformationCircleIcon className='inline-block h-3.5 w-3.5 -translate-y-0.5 stroke-2 text-gray-400' />
+							</span>
+						)}
 					</label>
 				</div>
 			))}

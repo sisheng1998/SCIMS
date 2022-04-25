@@ -8,7 +8,7 @@ const RenderPDF = ({ PDF, setPDF }) => {
 	const { auth } = useAuth()
 
 	return (
-		<div className='mb-6'>
+		<>
 			{PDF.toString().toLowerCase().endsWith('.pdf') ? (
 				<div className='flex items-center justify-between space-x-6 rounded-lg border border-gray-200 py-2 px-3 pr-4 font-medium'>
 					<p className='flex items-center'>
@@ -41,7 +41,7 @@ const RenderPDF = ({ PDF, setPDF }) => {
 					</button>
 				</>
 			)}
-		</div>
+		</>
 	)
 }
 

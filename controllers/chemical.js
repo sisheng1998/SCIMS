@@ -1,24 +1,33 @@
 const ErrorResponse = require('../utils/errorResponse')
 const Lab = require('../models/Lab')
 const Chemical = require('../models/Chemical')
+const CAS = require('../models/CAS')
 const { startSession } = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId
 const generateQRCode = require('../utils/generateQRCode')
 const settings = require('../config/settings.json')
+const COCLists = require('../chemicalData/coc.json')
+const GHSLists = require('../chemicalData/ghs.json')
+const pictograms = require('../chemicalData/pictograms.json')
+
+const getKeysByValue = (object, value) =>
+	Object.keys(object).filter((key) => object[key] === value)
 
 const labOption = 'labName labUsers chemicals locations createdAt lastUpdated'
 const chemicalOption =
-	'QRCode CAS name unit containerSize minAmount amount expirationDate locationId storageGroup status createdAt lastUpdated'
-const CASOption = 'CAS SDS classifications securities'
+	'QRCode CASId name unit containerSize minAmount amount expirationDate locationId storageGroup status createdAt lastUpdated'
 
 exports.getChemicals = async (req, res, next) => {
 	const labId = req.body.labId
 
 	try {
-		const foundLab = await Lab.findById(labId, labOption).populate(
-			'chemicals disposedChemicals',
-			chemicalOption
-		)
+		const foundLab = await Lab.findById(labId, labOption).populate({
+			path: 'chemicals disposedChemicals',
+			select: chemicalOption,
+			populate: {
+				path: 'CASId',
+			},
+		})
 
 		if (!foundLab) {
 			return next(new ErrorResponse('Lab not found.', 404))
@@ -35,7 +44,7 @@ exports.getChemicals = async (req, res, next) => {
 
 exports.addChemical = async (req, res, next) => {
 	const {
-		CAS,
+		CASNo,
 		name,
 		state,
 		unit,
@@ -49,15 +58,14 @@ exports.addChemical = async (req, res, next) => {
 		dateOpen,
 		expirationDate,
 		classifications,
-		securities,
+		COCs,
 		supplier,
 		brand,
 		notes,
-		SDSLink,
 	} = JSON.parse(req.body.chemicalInfo)
 
 	if (
-		!CAS ||
+		!CASNo ||
 		!name ||
 		!state ||
 		!unit ||
@@ -108,7 +116,6 @@ exports.addChemical = async (req, res, next) => {
 		}
 
 		const chemicalData = {
-			CAS,
 			name,
 			state,
 			unit,
@@ -121,12 +128,28 @@ exports.addChemical = async (req, res, next) => {
 			status,
 			dateIn,
 			expirationDate,
-			SDS: SDSLink ? SDSLink : req.file.filename,
-			classifications,
-			securities,
 			supplier,
 			brand,
 			notes,
+		}
+
+		const foundCAS = await CAS.findOne({ CASNo })
+		if (!foundCAS) {
+			const newCAS = await CAS.create(
+				[
+					{
+						CASNo,
+						SDS: req.file.filename,
+						classifications,
+						COCs,
+					},
+				],
+				{ session }
+			)
+
+			chemicalData.CASId = newCAS[0]._id
+		} else {
+			chemicalData.CASId = foundCAS._id
 		}
 
 		if (dateOpen !== '') {
@@ -191,8 +214,6 @@ exports.updateChemical = async (req, res, next) => {
 		dateIn,
 		dateOpen,
 		expirationDate,
-		classifications,
-		securities,
 		supplier,
 		brand,
 		notes,
@@ -320,14 +341,6 @@ exports.updateChemical = async (req, res, next) => {
 			updateQuery.expirationDate = expirationDate
 		}
 
-		if (classifications.join('') !== foundChemical.classifications.join('')) {
-			updateQuery.classifications = classifications
-		}
-
-		if (securities.join('') !== foundChemical.securities.join('')) {
-			updateQuery.securities = securities
-		}
-
 		if (supplier !== foundChemical.supplier) {
 			updateQuery.supplier = supplier
 		}
@@ -370,14 +383,16 @@ exports.getChemicalInfo = async (req, res, next) => {
 	try {
 		const foundChemical = await Chemical.findOne({
 			_id: chemicalId,
-		}).populate({
-			path: 'lab',
-			select: 'labOwner labName locations',
-			populate: {
-				path: 'labOwner',
-				select: 'name',
-			},
 		})
+			.populate('CASId')
+			.populate({
+				path: 'lab',
+				select: 'labOwner labName locations',
+				populate: {
+					path: 'labOwner',
+					select: 'name',
+				},
+			})
 
 		if (!foundChemical) {
 			return next(new ErrorResponse('Chemical not found.', 404))
@@ -580,30 +595,44 @@ exports.cancelDisposal = async (req, res, next) => {
 }
 
 exports.getCASInfo = async (req, res, next) => {
-	const { CAS } = req.body
-	if (!CAS) {
+	const { CASNo } = req.body
+	if (!CASNo) {
 		return next(new ErrorResponse('Missing required value.', 400))
 	}
 
 	try {
-		const foundChemical = await Chemical.findOne(
-			{
-				CAS,
-				SDS: { $exists: true, $ne: '' },
-				classifications: { $exists: true },
-				securities: { $exists: true },
-			},
-			CASOption
-		)
-		if (!foundChemical) {
-			return next(new ErrorResponse('Chemical not found.', 404))
-		}
+		const foundCAS = await CAS.findOne({ CASNo })
 
-		res.status(200).json({
-			success: true,
-			data: foundChemical,
-		})
+		if (!foundCAS) {
+			let CASInfo = { SDS: '', classifications: [], COCs: [] }
+
+			const foundGHSs = GHSLists.find((list) => list.CASNumber.includes(CASNo))
+
+			if (foundGHSs && foundGHSs.pictograms.includes(',')) {
+				const GHSs = foundGHSs.pictograms.split(',')
+
+				CASInfo.classifications = GHSs.filter((GHS) =>
+					GHS.toLowerCase().includes('ghs')
+				).map((GHS) => pictograms[GHS])
+			}
+
+			const foundCOCs = COCLists.find((list) => list.CASNumber === CASNo)
+
+			if (foundCOCs) {
+				CASInfo.COCs = getKeysByValue(foundCOCs, 1)
+			}
+
+			res.status(200).json({
+				success: true,
+				data: CASInfo,
+			})
+		} else {
+			res.status(200).json({
+				success: true,
+				data: foundCAS,
+			})
+		}
 	} catch (error) {
-		return next(new ErrorResponse('Chemical not found.', 404))
+		return next(error)
 	}
 }

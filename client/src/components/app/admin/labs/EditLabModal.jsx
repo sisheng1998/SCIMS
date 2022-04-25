@@ -279,7 +279,7 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 									</div>
 								) : (
 									<div className='flex items-center justify-end'>
-										{isEdit && (
+										{isEdit && lab.chemicals.length === 0 && (
 											<span
 												onClick={() => setIsRemove(true)}
 												className='mr-auto cursor-pointer self-end text-sm font-medium text-red-600 transition hover:text-red-700'

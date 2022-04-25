@@ -56,7 +56,7 @@ const Search = ({ searchRef }) => {
 		? auth.chemicals.filter(
 				(chemical) =>
 					chemical.name.toLowerCase().includes(query.toLowerCase()) ||
-					chemical.CAS.toLowerCase().includes(query.toLowerCase())
+					chemical.CASId.CASNo.toLowerCase().includes(query.toLowerCase())
 		  )
 		: []
 
@@ -103,7 +103,7 @@ const Search = ({ searchRef }) => {
 											active ? 'text-indigo-100' : 'text-gray-500'
 										}`}
 									>
-										{chemical.CAS}
+										{chemical.CASId.CASNo}
 									</span>
 								</p>
 							)}
