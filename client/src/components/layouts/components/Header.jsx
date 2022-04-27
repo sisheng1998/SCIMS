@@ -16,7 +16,7 @@ const Header = () => {
 	const isMobile = useMobile()
 
 	return isMobile ? (
-		<header className='fixed top-0 left-0 right-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white p-4 shadow-sm'>
+		<header className='fixed top-0 left-0 right-0 z-10 flex items-center justify-between border-b border-t border-gray-300 border-t-gray-100 bg-white p-4 shadow-sm'>
 			<div className='mr-6 flex items-center'>
 				<Link className='mr-4' to={isAdmin ? '/admin' : '/'}>
 					<img src={Logo} alt='SCIMS Logo' className='h-7' draggable={false} />
@@ -28,7 +28,7 @@ const Header = () => {
 			<UserOption />
 		</header>
 	) : (
-		<header className='fixed top-0 left-0 right-0 z-10 flex items-center justify-between border-b border-gray-300 bg-white py-4 px-6 shadow-sm xl:px-4'>
+		<header className='fixed top-0 left-0 right-0 z-10 flex items-center justify-between border-b border-t border-gray-300 border-t-gray-100 bg-white py-4 px-6 shadow-sm xl:px-4'>
 			<div className='mr-6 flex items-center'>
 				<Link className='mr-4' to={isAdmin ? '/admin' : '/'}>
 					<img src={Logo} alt='SCIMS Logo' className='h-8' draggable={false} />

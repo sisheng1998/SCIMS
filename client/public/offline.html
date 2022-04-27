@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SCIMS - Smart Chemical Inventory Management System</title>
+		<style>
+			*,
+			*::before,
+			*::after {
+				border: 0 solid #e5e7eb;
+				border-top-color: rgb(229, 231, 235);
+				border-top-style: solid;
+				border-top-width: 0px;
+				border-right-color: rgb(229, 231, 235);
+				border-right-style: solid;
+				border-right-width: 0px;
+				border-bottom-color: rgb(229, 231, 235);
+				border-bottom-style: solid;
+				border-bottom-width: 0px;
+				border-left-color: rgb(229, 231, 235);
+				border-left-style: solid;
+				border-left-width: 0px;
+				border-image-source: initial;
+				border-image-slice: initial;
+				border-image-width: initial;
+				border-image-outset: initial;
+				border-image-repeat: initial;
+				box-sizing: border-box;
+			}
+
+			* {
+				margin: 0;
+			}
+
+			html {
+				--tw-bg-opacity: 1;
+				background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+				--tw-text-opacity: 1;
+				color: rgb(55 65 81 / var(--tw-text-opacity));
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+				line-height: 1.5;
+				-webkit-text-size-adjust: 100%;
+				tab-size: 4;
+				font-family: sans-serif;
+			}
+
+			body {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				min-height: 100vh;
+				padding: 1.5rem;
+				margin: 0;
+			}
+
+			.title {
+				color: rgb(17 24 39);
+			}
+
+			.text {
+				text-align: center;
+				margin: 0.25rem 0 1.5rem;
+			}
+
+			.button {
+				box-shadow: 0 0 #0000, 0 0 #0000, var(--tw-shadow);
+				box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+					var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+				--tw-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+				--tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
+				align-items: center;
+				border-radius: 0.5rem;
+				display: inline-flex;
+				font-size: 1rem;
+				font-weight: 500;
+				line-height: 1.5rem;
+				padding: 0.75rem 1rem;
+				text-align: center;
+				transition-duration: 0.15s;
+				transition-property: color, background-color, border-color, fill, stroke,
+					opacity, box-shadow, -webkit-text-decoration-color, -webkit-transform,
+					-webkit-filter, -webkit-backdrop-filter;
+				transition-property: color, background-color, border-color,
+					text-decoration-color, fill, stroke, opacity, box-shadow, transform,
+					filter, backdrop-filter;
+				transition-property: color, background-color, border-color,
+					text-decoration-color, fill, stroke, opacity, box-shadow, transform,
+					filter, backdrop-filter, -webkit-text-decoration-color,
+					-webkit-transform, -webkit-filter, -webkit-backdrop-filter;
+				transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+				cursor: pointer;
+				-webkit-appearance: button;
+				background-color: transparent;
+				background-image: none;
+				text-transform: none;
+				outline: none;
+				text-decoration: none;
+			}
+
+			.button-outline {
+				--tw-border-opacity: 1;
+				--tw-bg-opacity: 1;
+				--tw-text-opacity: 1;
+				--tw-shadow-color: #eef2ff;
+				--tw-shadow: var(--tw-shadow-colored);
+				background-color: #eef2ff;
+				background-color: rgb(238 242 255 / var(--tw-bg-opacity));
+				border-color: rgb(99 102 241 / var(--tw-border-opacity));
+				border-width: 1px;
+				color: #4f46e5;
+				color: rgb(79 70 229 / var(--tw-text-opacity));
+				font-size: 0.875rem;
+				font-weight: 700;
+				line-height: 1.25rem;
+				padding: 0.5rem 0.75rem;
+			}
+
+			.icon {
+				margin-left: -0.125rem;
+				margin-right: 0.25rem;
+				height: 0.875rem;
+				width: 0.875rem;
+			}
+		</style>
+	</head>
+	<body>
+		<h1 class="title">No Internet</h1>
+		<p class="text">Kindly connect to the Internet.</p>
+		<button class="button button-outline" onclick="window.location.reload()">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="2"
+				stroke="currentColor"
+				aria-hidden="true"
+				class="icon"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+				></path></svg
+			>Refresh
+		</button>
+	</body>
+</html>

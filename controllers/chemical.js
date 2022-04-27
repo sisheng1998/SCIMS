@@ -26,6 +26,7 @@ exports.getChemicals = async (req, res, next) => {
 			select: chemicalOption,
 			populate: {
 				path: 'CASId',
+				model: 'CAS',
 			},
 		})
 

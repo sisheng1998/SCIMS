@@ -2,6 +2,8 @@ import React from 'react'
 import { Navigate, Routes, Route } from 'react-router-dom'
 import ROLES_LIST from './config/roles_list'
 import useMobile from './hooks/useMobile'
+import useNetwork from './hooks/useNetwork'
+import { RefreshIcon } from '@heroicons/react/outline'
 
 // Routing
 import PublicRoute from './components/routes/PublicRoute'
@@ -47,8 +49,9 @@ import AppLayout from './components/layouts/AppLayout'
 
 const App = () => {
 	const isMobile = useMobile()
+	const isOnline = useNetwork()
 
-	return (
+	return isOnline ? (
 		<Routes>
 			<Route element={<RemainLogin />}>
 				{/* Private route */}
@@ -56,7 +59,9 @@ const App = () => {
 					<Route element={<AppLayout />}>
 						{/* Accessible by all roles */}
 						<Route exact path='/' element={<Dashboard />} />
-						<Route exact path='/inventory' element={<Inventory />} />
+						{!isMobile && (
+							<Route exact path='/inventory' element={<Inventory />} />
+						)}
 						{!isMobile && <Route exact path='/users' element={<Users />} />}
 						<Route exact path='/labs' element={<Labs />} />
 						<Route exact path='/notification' element={<Notification />} />
@@ -82,18 +87,35 @@ const App = () => {
 
 						{/* Accessible by lab owner or admin only */}
 						<Route element={<Authorization minRole={ROLES_LIST.labOwner} />}>
-							<Route exact path='/reports' element={<Reports />} />
-							<Route exact path='/stock-check' element={<StockCheck />} />
-							<Route exact path='/import-export' element={<ImportExport />} />
-							<Route exact path='/settings' element={<Settings />} />
+							{!isMobile ? (
+								<>
+									<Route exact path='/reports' element={<Reports />} />
+									<Route
+										exact
+										path='/import-export'
+										element={<ImportExport />}
+									/>
+									<Route exact path='/settings' element={<Settings />} />
+								</>
+							) : (
+								<Route exact path='/stock-check' element={<StockCheck />} />
+							)}
 						</Route>
 
 						{/* Accessible by admin only */}
 						<Route element={<Authorization minRole={ROLES_LIST.admin} />}>
 							<Route exact path='/admin' element={<AdminDashboard />} />
-							<Route exact path='/admin/labs' element={<AdminLabs />} />
-							<Route exact path='/admin/users' element={<AdminUsers />} />
-							<Route exact path='/admin/settings' element={<AdminSettings />} />
+							{!isMobile && (
+								<>
+									<Route exact path='/admin/labs' element={<AdminLabs />} />
+									<Route exact path='/admin/users' element={<AdminUsers />} />
+									<Route
+										exact
+										path='/admin/settings'
+										element={<AdminSettings />}
+									/>
+								</>
+							)}
 						</Route>
 					</Route>
 
@@ -140,6 +162,18 @@ const App = () => {
 				</Route>
 			</Route>
 		</Routes>
+	) : (
+		<main className='flex min-h-screen flex-col items-center justify-center p-4'>
+			<h1 className='font-semibold'>No Internet</h1>
+			<p className='mb-4 mt-1 text-center'>Kindly connect to the Internet.</p>
+			<button
+				onClick={() => window.location.reload()}
+				className='button button-outline'
+			>
+				<RefreshIcon className='-ml-0.5 mr-1 h-3.5 w-3.5 stroke-2' />
+				Refresh
+			</button>
+		</main>
 	)
 }
 

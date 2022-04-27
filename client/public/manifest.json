@@ -1,11 +1,26 @@
 {
+	"name": "SCIMS",
 	"short_name": "SCIMS",
-	"name": "Smart Chemical Inventory Management System",
+	"start_url": ".",
+	"display": "standalone",
+	"background_color": "#f3f4f6",
+	"theme_color": "#ffffff",
+	"orientation": "portrait-primary",
 	"icons": [
 		{
 			"src": "./favicons/favicon.ico",
-			"sizes": "32x32 16x16",
-			"type": "image/x-icon"
+			"type": "image/x-icon",
+			"sizes": "32x32 16x16"
+		},
+		{
+			"src": "./favicons/favicon-32x32.png",
+			"type": "image/png",
+			"sizes": "32x32"
+		},
+		{
+			"src": "./favicons/favicon-16x16.png",
+			"type": "image/png",
+			"sizes": "16x16"
 		},
 		{
 			"src": "./favicons/android-chrome-192x192.png",
@@ -15,11 +30,8 @@
 		{
 			"src": "./favicons/android-chrome-512x512.png",
 			"type": "image/png",
-			"sizes": "512x512"
+			"sizes": "512x512",
+			"purpose": "maskable"
 		}
-	],
-	"start_url": ".",
-	"display": "standalone",
-	"theme_color": "#ffffff",
-	"background_color": "#ffffff"
+	]
 }

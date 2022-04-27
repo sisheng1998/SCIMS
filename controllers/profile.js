@@ -122,6 +122,7 @@ exports.changePassword = async (req, res, next) => {
 		}
 
 		foundUser.password = newPassword
+		foundUser.refreshToken = undefined
 		foundUser.lastUpdated = Date.now()
 
 		await foundUser.save()

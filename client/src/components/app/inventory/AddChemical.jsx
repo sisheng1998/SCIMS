@@ -10,8 +10,10 @@ import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import LoadingScreen from '../../utils/LoadingScreen'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
 import SuccessMessageModal from './components/SuccessMessageModal'
+import useMobile from '../../../hooks/useMobile'
 
 const AddChemical = () => {
+	const isMobile = useMobile()
 	const { auth } = useAuth()
 	const navigate = useNavigate()
 	const axiosPrivate = useAxiosPrivate()
@@ -20,6 +22,10 @@ const AddChemical = () => {
 	const [isLoading, setIsLoading] = useState(true)
 
 	useEffect(() => {
+		if (isMobile) {
+			navigate('/')
+		}
+
 		let isMounted = true
 		const controller = new AbortController()
 
@@ -52,7 +58,7 @@ const AddChemical = () => {
 			isMounted = false
 			controller.abort()
 		}
-	}, [axiosPrivate, auth.currentLabId, navigate])
+	}, [axiosPrivate, auth.currentLabId, navigate, isMobile])
 
 	const [chemicalId, setChemicalId] = useState('')
 	const [SDS, setSDS] = useState('')

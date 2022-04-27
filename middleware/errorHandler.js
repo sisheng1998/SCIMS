@@ -4,7 +4,8 @@ const logEvents = require('./logEvents')
 const errorHandler = (err, req, res, next) => {
 	if (
 		err.message !== 'Invalid access token.' &&
-		err.message !== 'CAS not found.'
+		err.message !== 'CAS not found.' &&
+		err.message !== 'Chemical not found.'
 	) {
 		logEvents(
 			`${req.method} ${req.headers.origin} ${req.url} - ${err.name}: ${err.message}`,

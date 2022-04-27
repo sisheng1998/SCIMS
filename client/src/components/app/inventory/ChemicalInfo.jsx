@@ -76,6 +76,7 @@ const ChemicalInfo = () => {
 					if (currentUser) {
 						setSuccess(true)
 					} else {
+						setInvalid(false)
 						setUnauthorized(true)
 						setNotFound(false)
 						setSuccess(false)
@@ -84,6 +85,8 @@ const ChemicalInfo = () => {
 				}
 			} catch (error) {
 				if (error.response?.status === 404) {
+					setInvalid(false)
+					setUnauthorized(false)
 					setNotFound(true)
 					setSuccess(false)
 					setIsLoading(false)
