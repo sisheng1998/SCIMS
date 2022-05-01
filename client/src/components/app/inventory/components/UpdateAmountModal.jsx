@@ -48,7 +48,7 @@ const UpdateAmountModal = ({
 			await axiosPrivate.post('/api/private/chemical/usage', {
 				labId,
 				chemicalId,
-				amount: remainingAmount,
+				usage,
 			})
 			if (isMounted.current) {
 				setSuccess(true)

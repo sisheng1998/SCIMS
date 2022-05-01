@@ -408,8 +408,9 @@ const sendToken = async (user, rememberMe, statusCode, res) => {
 	user.refreshToken = refreshToken
 	await user.save()
 
+	// 86400000ms = 1 day
 	let expiryDate = new Date(
-		Date.now() + Number(process.env.COOKIE_REFRESH_TOKEN_EXPIRE)
+		Date.now() + Number(process.env.COOKIE_REFRESH_TOKEN_EXPIRE) * 86400000
 	)
 	expiryDate.setHours(0, 0, 0, 0)
 

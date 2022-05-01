@@ -2,16 +2,40 @@ import React, { useState } from 'react'
 import { Dialog } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import { FormatChemicalDate } from '../../../utils/FormatDate'
+import DownloadPDFModal from './DownloadPDFModal'
 
 const tableHeaders = ['CAS No.', 'Name', 'Exp. Date']
 
 const ExportQRCodesModal = ({ chemicals, openModal, setOpenModal }) => {
 	const closeHandler = () => setOpenModal(false)
 	const [searchTerm, setSearchTerm] = useState('')
+	const [selected, setSelected] = useState([])
+	const [generatePDF, setGeneratePDF] = useState(false)
 
 	const match = (CAS, name) =>
 		CAS.toString().toLowerCase().indexOf(searchTerm.toLowerCase()) > -1 ||
 		name.toString().toLowerCase().indexOf(searchTerm.toLowerCase()) > -1
+
+	const searchResults = chemicals.filter(
+		(chemical) =>
+			chemical.CASId.CASNo.toString()
+				.toLowerCase()
+				.indexOf(searchTerm.toLowerCase()) > -1 ||
+			chemical.name.toString().toLowerCase().indexOf(searchTerm.toLowerCase()) >
+				-1
+	)
+
+	const selectChemical = (chemical) =>
+		selected.includes(chemical._id)
+			? setSelected((prev) =>
+					prev.filter((chemicalId) => chemicalId !== chemical._id)
+			  )
+			: setSelected((prev) => [...prev, chemical._id])
+
+	const selectAll = () =>
+		selected.length === chemicals.length
+			? setSelected([])
+			: setSelected(chemicals.map((chemical) => chemical._id))
 
 	return (
 		<Dialog
@@ -57,6 +81,8 @@ const ExportQRCodesModal = ({ chemicals, openModal, setOpenModal }) => {
 													name='all'
 													id='all'
 													className='mb-1 cursor-pointer'
+													checked={selected.length === chemicals.length}
+													onChange={selectAll}
 												/>
 											</th>
 											{tableHeaders.map((title, index) => (
@@ -72,7 +98,7 @@ const ExportQRCodesModal = ({ chemicals, openModal, setOpenModal }) => {
 									</thead>
 
 									<tbody className='divide-y divide-gray-200 bg-white'>
-										{chemicals.length === 0 ? (
+										{chemicals.length === 0 || searchResults.length === 0 ? (
 											<tr>
 												<td
 													className='px-3 py-2 text-center'
@@ -85,19 +111,25 @@ const ExportQRCodesModal = ({ chemicals, openModal, setOpenModal }) => {
 											chemicals.map((chemical) => (
 												<tr
 													key={chemical._id}
-													className={`cursor-pointer hover:bg-indigo-50 ${
+													className={`cursor-pointer ${
+														selected.includes(chemical._id)
+															? 'bg-indigo-50/30'
+															: ''
+													} hover:bg-indigo-50 ${
 														match(chemical.CASId.CASNo, chemical.name)
 															? ''
 															: 'hidden'
 													}`}
+													onClick={() => selectChemical(chemical)}
 												>
 													<td className='w-9 py-2 pl-3 pr-2 text-center'>
 														<input
 															type='checkbox'
 															name={chemical._id}
 															id={chemical._id}
-															value={chemical.QRCode}
 															className='pointer-events-none mb-0.5'
+															checked={selected.includes(chemical._id)}
+															readOnly
 														/>
 													</td>
 
@@ -121,8 +153,8 @@ const ExportQRCodesModal = ({ chemicals, openModal, setOpenModal }) => {
 
 					<div className='mt-9 flex items-center justify-end'>
 						<p className='mr-auto self-end text-sm'>
-							Selected: <span className='font-semibold'>0</span> /{' '}
-							{chemicals.length} chemicals
+							Selected: <span className='font-semibold'>{selected.length}</span>{' '}
+							/ {chemicals.length} chemical{chemicals.length > 1 ? 's' : ''}
 						</p>
 						<span
 							onClick={closeHandler}
@@ -132,13 +164,22 @@ const ExportQRCodesModal = ({ chemicals, openModal, setOpenModal }) => {
 						</span>
 						<button
 							className='button button-solid ml-6 w-40 justify-center'
-							disabled={true}
+							disabled={selected.length === 0}
+							onClick={() => setGeneratePDF(true)}
 						>
 							Export Selection
 						</button>
 					</div>
 				</div>
 			</div>
+			{generatePDF && chemicals.length !== 0 && selected.length !== 0 && (
+				<DownloadPDFModal
+					chemicals={chemicals}
+					selected={selected}
+					openModal={generatePDF}
+					setOpenModal={setGeneratePDF}
+				/>
+			)}
 		</Dialog>
 	)
 }

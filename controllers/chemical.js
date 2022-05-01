@@ -409,9 +409,9 @@ exports.getChemicalInfo = async (req, res, next) => {
 }
 
 exports.updateAmount = async (req, res, next) => {
-	const { chemicalId, amount } = req.body
+	const { chemicalId, usage } = req.body
 
-	if (!chemicalId || !amount) {
+	if (!chemicalId || !usage) {
 		return next(new ErrorResponse('Missing value for required field.', 400))
 	}
 
@@ -421,8 +421,11 @@ exports.updateAmount = async (req, res, next) => {
 	}
 
 	try {
+		const amount = Number(Number(foundChemical.amount) - Number(usage)).toFixed(
+			2
+		)
 		const updateQuery = {
-			amount: Number(amount).toFixed(2),
+			amount,
 			lastUpdated: Date.now(),
 		}
 
