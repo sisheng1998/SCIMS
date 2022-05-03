@@ -4,6 +4,7 @@ import { CheckIcon } from '@heroicons/react/outline'
 import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import { useNavigate } from 'react-router-dom'
+import useMobile from '../../../hooks/useMobile'
 
 const allLabs = {
 	lab: { _id: ROLES_LIST.admin.toString(), labName: 'All Labs' },
@@ -14,11 +15,14 @@ const LabSelection = ({ searchRef }) => {
 	const { auth, setAuth } = useAuth()
 	const navigate = useNavigate()
 	const [redirect, setRedirect] = useState(false)
+	const isMobile = useMobile()
 
 	// Check whether user is admin
-	const isAdmin = auth.roles.some(
-		(role) => role.role === ROLES_LIST.admin && role.status === 'Active'
-	)
+	const isAdmin =
+		!isMobile &&
+		auth.roles.some(
+			(role) => role.role === ROLES_LIST.admin && role.status === 'Active'
+		)
 
 	const currentLab = localStorage.getItem('currentLab')
 	if (!currentLab) {

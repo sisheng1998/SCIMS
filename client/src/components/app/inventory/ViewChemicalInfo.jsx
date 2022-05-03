@@ -95,7 +95,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 
 	return (
 		<>
-			<div className='mx-auto mb-6 w-full max-w-4xl xl:max-w-full'>
+			<div className='mx-auto mb-6 w-full max-w-4xl xl:max-w-full lg:mb-0'>
 				{/* Basic Info */}
 				<div className='rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
 					<div className='flex justify-between'>
@@ -106,15 +106,17 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 							</p>
 						</div>
 
-						<img
-							src={chemical.QRCode}
-							alt='QRCode'
-							className='h-10 w-10 cursor-pointer object-cover'
-							height='200'
-							width='200'
-							draggable={false}
-							onClick={() => viewImageHandler(chemical.name, chemical.QRCode)}
-						/>
+						{!isMobile && (
+							<img
+								src={chemical.QRCode}
+								alt='QRCode'
+								className='h-10 w-10 cursor-pointer object-cover'
+								height='200'
+								width='200'
+								draggable={false}
+								onClick={() => viewImageHandler(chemical.name, chemical.QRCode)}
+							/>
+						)}
 					</div>
 
 					<hr className='mb-6 mt-4 border-gray-200' />
@@ -193,7 +195,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 					</div>
 				</div>
 
-				<p className='mt-3 mb-9 text-sm text-gray-500'>
+				<p className='mt-3 mb-9 text-sm text-gray-500 lg:mb-4 lg:text-xs'>
 					Added At:{' '}
 					<span className='font-semibold'>
 						{FormatDate(chemical.createdAt)}
@@ -201,7 +203,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 				</p>
 
 				{/* Storage Info */}
-				<div className='mb-9 rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+				<div className='mb-9 rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:mb-4'>
 					<h4>Storage Info</h4>
 					<p className='text-sm text-gray-500'>
 						Information of storing the chemical.
@@ -292,7 +294,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 				</div>
 
 				{/* Safety/Security Info */}
-				<div className='mb-9 rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+				<div className='mb-9 rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:mb-4'>
 					<h4>Safety/Security Info</h4>
 					<p className='text-sm text-gray-500'>
 						Security and classification of the chemical.
@@ -382,10 +384,10 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 			{currentUser.role >= ROLES_LIST.undergraduate && !isDisposed && isMobile && (
 				<div
 					id='updateUsage'
-					className='fixed left-0 right-0 bottom-0 z-10 w-full border-t border-gray-200 bg-white p-4 shadow-[0_-1px_2px_0_rgba(0,0,0,0.05)]'
+					className='fixed left-0 right-0 bottom-0 z-20 w-full border-t border-gray-200 bg-white px-4 py-3'
 				>
 					<button
-						className='button button-solid w-full justify-center shadow-md'
+						className='button button-solid w-full justify-center py-2 shadow-md'
 						onClick={() => setOpenUpdateAmountModal(true)}
 					>
 						<PencilAltIcon className='mr-2 h-6 w-6' />

@@ -8,7 +8,7 @@ const Notification = () => {
 
 	return (
 		<button
-			onClick={() => navigate('/notification')}
+			onClick={() => navigate('/notifications')}
 			className='relative mr-3 rounded-lg border border-gray-300 p-2 text-gray-500 outline-gray-300 transition hover:text-indigo-600'
 		>
 			<BellIcon className='h-5 w-5' />

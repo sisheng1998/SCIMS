@@ -70,7 +70,7 @@ const Reports = () => {
 				<ReportsTable data={info} />
 			) : (
 				<div className='auth-card mt-6 self-center text-center'>
-					<h4 className='text-gray-500'>No record yet.</h4>
+					<p className='text-lg'>No record yet.</p>
 				</div>
 			)}
 		</>

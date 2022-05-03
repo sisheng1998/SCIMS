@@ -111,7 +111,7 @@ const ChemicalInfo = () => {
 			{success ? (
 				<>
 					<Title title='Chemical' hasButton={false} hasRefreshButton={false}>
-						<p className='self-end text-sm text-gray-500'>
+						<p className='self-end text-sm text-gray-500 lg:ml-4 lg:text-xs'>
 							Last Updated:{' '}
 							<span className='font-semibold'>
 								{FormatDate(chemical.lastUpdated)}
@@ -145,12 +145,10 @@ const ChemicalInfo = () => {
 						>
 							<XIcon className='mx-auto h-16 w-16 rounded-full bg-red-100 p-2 text-red-600' />
 							<h2 className='mt-6 mb-2 text-red-600'>Invalid Link</h2>
-							<p>The link is invalid to get chemical information.</p>
-							{!isMobile && (
-								<p className='mt-6 text-sm'>
-									Back to <Link to='/inventory'>Inventory</Link>
-								</p>
-							)}
+							<p>The link / QR code is invalid.</p>
+							<p className='mt-6 text-sm'>
+								Back to <Link to='/inventory'>Inventory</Link>
+							</p>
 						</div>
 					)}
 
@@ -163,11 +161,9 @@ const ChemicalInfo = () => {
 							<ExclamationIcon className='mx-auto h-16 w-16 rounded-full bg-yellow-100 p-2 text-yellow-600' />
 							<h2 className='mt-6 mb-2 text-yellow-600'>Chemical Not Found</h2>
 							<p>The chemical does not exist in any lab.</p>
-							{!isMobile && (
-								<p className='mt-6 text-sm'>
-									Back to <Link to='/inventory'>Inventory</Link>
-								</p>
-							)}
+							<p className='mt-6 text-sm'>
+								Back to <Link to='/inventory'>Inventory</Link>
+							</p>
 						</div>
 					)}
 
@@ -193,7 +189,7 @@ const ChemicalInfo = () => {
 
 								<hr className='mb-6 mt-4 border-gray-200' />
 
-								<div className='mb-6 flex space-x-6'>
+								<div className='mb-6 flex space-x-6 lg:flex-col lg:space-x-0 lg:space-y-6'>
 									<div className='flex-1'>
 										<label htmlFor='CAS' className='mb-0.5 text-gray-500'>
 											CAS No.
@@ -209,7 +205,7 @@ const ChemicalInfo = () => {
 									</div>
 								</div>
 
-								<div className='flex space-x-6'>
+								<div className='flex space-x-6 lg:flex-col lg:space-x-0 lg:space-y-6'>
 									<div className='flex-1'>
 										<label htmlFor='lab' className='mb-0.5 text-gray-500'>
 											Lab
@@ -227,7 +223,7 @@ const ChemicalInfo = () => {
 							</div>
 
 							<p className='text-sm text-gray-500'>
-								To view the details of the chemical, you need to:
+								To view the details of the chemical:
 							</p>
 							<ol className='mb-6 ml-4 list-decimal text-sm'>
 								<li>
@@ -245,11 +241,9 @@ const ChemicalInfo = () => {
 							</ol>
 
 							<p className='text-center text-sm'>
-								{!isMobile && (
-									<span>
-										Back to <Link to='/inventory'>Inventory</Link> or{' '}
-									</span>
-								)}
+								<span>
+									Back to <Link to='/inventory'>Inventory</Link> or{' '}
+								</span>
 								<Link to='/labs'>Apply New Lab</Link>
 							</p>
 						</div>

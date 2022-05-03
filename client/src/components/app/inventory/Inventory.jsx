@@ -8,11 +8,13 @@ import LoadingScreen from '../../utils/LoadingScreen'
 import { ExclamationIcon } from '@heroicons/react/outline'
 import ChemicalsTable from './ChemicalsTable'
 import ExportQRCodesModal from './components/ExportQRCodesModal'
+import useMobile from '../../../hooks/useMobile'
 
 const Inventory = () => {
 	const { auth, setAuth } = useAuth()
 	const navigate = useNavigate()
 	const axiosPrivate = useAxiosPrivate()
+	const isMobile = useMobile()
 
 	const [locations, setLocations] = useState('')
 	const [chemicals, setChemicals] = useState([])
@@ -123,7 +125,7 @@ const Inventory = () => {
 							? 'Kindly navigate to settings and define the locations for storing the chemicals.'
 							: 'Kindly contact the lab owner to complete the setup for the current lab.'}
 					</p>
-					{auth.currentRole >= ROLES_LIST.labOwner && (
+					{auth.currentRole >= ROLES_LIST.labOwner && !isMobile && (
 						<p className='mt-6'>
 							Go to <Link to='/settings'>Settings</Link>
 						</p>
@@ -133,11 +135,11 @@ const Inventory = () => {
 				<>
 					<Title
 						title='All Chemicals'
-						hasButton={auth.currentRole >= ROLES_LIST.postgraduate}
+						hasButton={!isMobile && auth.currentRole >= ROLES_LIST.postgraduate}
 						hasRefreshButton={true}
 						buttonText='Add Chemical'
 						buttonAction={() => navigate('/inventory/new-chemical')}
-						QRCodes={auth.currentRole >= ROLES_LIST.postgraduate}
+						QRCodes={!isMobile && auth.currentRole >= ROLES_LIST.postgraduate}
 						QRCodesButtonAction={() => setOpenExportQRCodesModal(true)}
 						setRefresh={setRefresh}
 					/>

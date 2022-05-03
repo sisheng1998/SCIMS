@@ -23,7 +23,7 @@ const AccountSection = ({ user }) => {
 						</span>
 					</label>
 					<button
-						className='mb-2 text-sm font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+						className='mb-2 text-right text-sm font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
 						onClick={() => setOpenChangeEmailModal(true)}
 					>
 						Change Email

@@ -5,17 +5,12 @@ import ROLES_LIST from '../../../../config/roles_list'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import LoadingScreen from '../../../utils/LoadingScreen'
 import InfoCard from '../../components/InfoCard'
-import QuickAccessCard from '../../components/QuickAccessCard'
 import { UsersIcon, BeakerIcon, CubeIcon } from '@heroicons/react/outline'
 import Title from '../../components/Title'
-import ScanQRCode from '../../components/ScanQRCode'
-import useMobile from '../../../../hooks/useMobile'
-import UserInfoCard from '../../components/UserInfoCard'
 
 const Dashboard = () => {
 	const navigate = useNavigate()
 	const { auth } = useAuth()
-	const isMobile = useMobile()
 
 	useEffect(() => {
 		auth.currentLabId !== ROLES_LIST.admin.toString() && navigate('/')
@@ -27,10 +22,6 @@ const Dashboard = () => {
 	const [days, setDays] = useState(30)
 
 	useEffect(() => {
-		if (isMobile) {
-			return
-		}
-
 		let isMounted = true
 		const controller = new AbortController()
 
@@ -62,15 +53,9 @@ const Dashboard = () => {
 			isMounted = false
 			controller.abort()
 		}
-	}, [axiosPrivate, days, isMobile])
+	}, [axiosPrivate, days])
 
-	return isMobile ? (
-		<>
-			<UserInfoCard />
-			<QuickAccessCard />
-			<ScanQRCode />
-		</>
-	) : isLoading ? (
+	return isLoading ? (
 		<LoadingScreen />
 	) : (
 		<>
@@ -130,8 +115,6 @@ const Dashboard = () => {
 						haveLetterS={true}
 					/>
 				</div>
-
-				<QuickAccessCard />
 			</div>
 		</>
 	)

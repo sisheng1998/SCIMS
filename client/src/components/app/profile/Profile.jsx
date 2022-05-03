@@ -58,7 +58,7 @@ const Profile = () => {
 				</p>
 			</Title>
 
-			<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
+			<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6 lg:space-y-4'>
 				<div className='w-full max-w-md 2xl:max-w-xs'>
 					<h4>Account Info</h4>
 					<p className='text-sm text-gray-500'>Account email and password.</p>
@@ -69,16 +69,16 @@ const Profile = () => {
 						<AccountSection user={user} />
 					</div>
 
-					<p className='mt-3 text-sm text-gray-500'>
+					<p className='mt-3 text-sm text-gray-500 lg:text-xs'>
 						Registered At:{' '}
 						<span className='font-semibold'>{FormatDate(user.createdAt)}</span>
 					</p>
 				</div>
 			</div>
 
-			<hr className='mb-6 mt-9 border-gray-200' />
+			<hr className='mb-6 mt-9 border-gray-200 lg:mb-4 lg:mt-6' />
 
-			<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
+			<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6 lg:space-y-4'>
 				<div className='w-full max-w-md 2xl:max-w-xs'>
 					<h4>Personal Info</h4>
 					<p className='text-sm text-gray-500'>
@@ -91,9 +91,9 @@ const Profile = () => {
 				</div>
 			</div>
 
-			<hr className='mb-6 mt-9 border-gray-200' />
+			<hr className='mb-6 mt-9 border-gray-200 lg:mb-4 lg:mt-6' />
 
-			<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
+			<div className='flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6 lg:space-y-4'>
 				<div className='w-full max-w-md 2xl:max-w-xs'>
 					<h4>Labs Info</h4>
 					<p className='text-sm text-gray-500'>
@@ -104,7 +104,7 @@ const Profile = () => {
 				<LabsSection user={user} />
 			</div>
 
-			<hr className='mb-6 border-0' />
+			<hr className='mb-6 border-0 lg:mb-0' />
 		</>
 	)
 }

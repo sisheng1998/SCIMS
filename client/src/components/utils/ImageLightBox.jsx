@@ -11,7 +11,7 @@ const ImageLightBox = ({ object, type, openModal, setOpenModal }) => {
 		<Dialog
 			open={openModal}
 			onClose={() => {}}
-			className='fixed inset-0 z-10 overflow-y-auto'
+			className='fixed inset-0 z-20 overflow-y-auto'
 		>
 			<div className='flex min-h-screen items-center justify-center'>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />

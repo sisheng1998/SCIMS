@@ -37,7 +37,7 @@ const Title = (props) => {
 				</div>
 				{props.children}
 			</div>
-			<hr className='mb-6 border-gray-200' />
+			<hr className='mb-6 border-gray-200 lg:mb-4' />
 		</>
 	)
 }

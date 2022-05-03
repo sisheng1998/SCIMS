@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, Navigate, Outlet, useLocation } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
 import ROLES_LIST from '../../config/roles_list'
+import useMobile from '../../hooks/useMobile'
 
 const allLabs = {
 	lab: { _id: ROLES_LIST.admin.toString(), labName: 'All Labs' },
@@ -13,6 +14,7 @@ const PrivateRoute = () => {
 	const { auth, setAuth } = useAuth()
 	const [isLoading, setIsLoading] = useState(true)
 	const navigate = useNavigate()
+	const isMobile = useMobile()
 
 	useEffect(() => {
 		if (!auth?.accessToken) {
@@ -33,9 +35,11 @@ const PrivateRoute = () => {
 			navigate('/pending-approval')
 		} else {
 			// Check whether user is admin
-			const isAdmin = auth.roles.some((role) => {
-				return role.role === ROLES_LIST.admin && role.status === 'Active'
-			})
+			const isAdmin =
+				!isMobile &&
+				auth.roles.some(
+					(role) => role.role === ROLES_LIST.admin && role.status === 'Active'
+				)
 
 			// Check if local storage has stored current lab
 			const currentLab = localStorage.getItem('currentLab')

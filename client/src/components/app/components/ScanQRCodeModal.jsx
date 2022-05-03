@@ -36,7 +36,7 @@ const ScanQRCodeModal = ({ openModal, setOpenModal }) => {
 		<Dialog
 			open={openModal}
 			onClose={() => {}}
-			className='fixed inset-0 z-10 overflow-hidden'
+			className='fixed inset-0 z-20 overflow-hidden'
 		>
 			<div className='flex min-h-screen justify-center'>
 				<Dialog.Overlay className='fixed inset-0 bg-black' />

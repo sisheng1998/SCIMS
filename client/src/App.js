@@ -29,7 +29,7 @@ import ImportExport from './components/app/import-export/ImportExport'
 import Users from './components/app/users/Users'
 import Labs from './components/app/labs/Labs'
 import Settings from './components/app/settings/Settings'
-import Notification from './components/app/notification/Notification'
+import Notifications from './components/app/notifications/Notifications'
 import Profile from './components/app/profile/Profile'
 import PendingApproval from './components/app/PendingApproval'
 import ProfileUpdate from './components/app/ProfileUpdate'
@@ -59,12 +59,10 @@ const App = () => {
 					<Route element={<AppLayout />}>
 						{/* Accessible by all roles */}
 						<Route exact path='/' element={<Dashboard />} />
-						{!isMobile && (
-							<Route exact path='/inventory' element={<Inventory />} />
-						)}
+						<Route exact path='/inventory' element={<Inventory />} />
 						{!isMobile && <Route exact path='/users' element={<Users />} />}
 						<Route exact path='/labs' element={<Labs />} />
-						<Route exact path='/notification' element={<Notification />} />
+						<Route exact path='/notifications' element={<Notifications />} />
 						<Route exact path='/profile' element={<Profile />} />
 
 						{/* Allow view only by Guest and Undergraduate, edit by postgraduate and above */}
@@ -103,20 +101,18 @@ const App = () => {
 						</Route>
 
 						{/* Accessible by admin only */}
-						<Route element={<Authorization minRole={ROLES_LIST.admin} />}>
-							<Route exact path='/admin' element={<AdminDashboard />} />
-							{!isMobile && (
-								<>
-									<Route exact path='/admin/labs' element={<AdminLabs />} />
-									<Route exact path='/admin/users' element={<AdminUsers />} />
-									<Route
-										exact
-										path='/admin/settings'
-										element={<AdminSettings />}
-									/>
-								</>
-							)}
-						</Route>
+						{!isMobile && (
+							<Route element={<Authorization minRole={ROLES_LIST.admin} />}>
+								<Route exact path='/admin' element={<AdminDashboard />} />
+								<Route exact path='/admin/labs' element={<AdminLabs />} />
+								<Route exact path='/admin/users' element={<AdminUsers />} />
+								<Route
+									exact
+									path='/admin/settings'
+									element={<AdminSettings />}
+								/>
+							</Route>
+						)}
 					</Route>
 
 					<Route element={<AuthLayout />}>

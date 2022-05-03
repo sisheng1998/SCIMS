@@ -7,6 +7,12 @@ import {
 	UsersIcon,
 	BeakerIcon,
 	CogIcon,
+	HomeIcon,
+	QrcodeIcon,
+	ClipboardCheckIcon,
+	UserIcon,
+	ColorSwatchIcon,
+	BellIcon,
 } from '@heroicons/react/outline'
 
 const MENU_LIST = [
@@ -77,4 +83,49 @@ const ADMIN_MENU_LIST = [
 	},
 ]
 
-export { ADMIN_MENU_LIST }
+const MOBILE_MENU_LIST = [
+	{
+		text: 'Home',
+		icon: <HomeIcon />,
+		link: '/',
+		minRole: ROLES_LIST.guest,
+	},
+	{
+		text: 'Inventory',
+		icon: <CubeIcon />,
+		link: '/inventory',
+		minRole: ROLES_LIST.guest,
+	},
+	{
+		text: 'Scan',
+		icon: <QrcodeIcon />,
+		link: '-',
+		minRole: ROLES_LIST.guest,
+	},
+	{
+		text: 'Stock Check',
+		icon: <ClipboardCheckIcon />,
+		link: '/stock-check',
+		minRole: ROLES_LIST.labOwner,
+	},
+	{
+		text: 'Profile',
+		icon: <UserIcon />,
+		link: '/profile',
+		minRole: ROLES_LIST.guest,
+	},
+	{
+		text: 'My Labs',
+		icon: <ColorSwatchIcon />,
+		link: '/labs',
+		minRole: ROLES_LIST.guest,
+	},
+	{
+		text: 'Notifications',
+		icon: <BellIcon />,
+		link: '/notifications',
+		minRole: ROLES_LIST.guest,
+	},
+]
+
+export { ADMIN_MENU_LIST, MOBILE_MENU_LIST }

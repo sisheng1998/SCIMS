@@ -2,14 +2,14 @@ import React from 'react'
 
 const LoadingScreen = () => {
 	return (
-		<div className='flex flex-col items-center p-12'>
+		<div className='flex flex-col items-center p-12 lg:p-6'>
 			<svg
 				xmlns='http://www.w3.org/2000/svg'
 				fill='none'
 				viewBox='0 0 24 24'
 				stroke='currentColor'
 				aria-hidden='true'
-				className='h-16 w-16 animate-spin'
+				className='h-16 w-16 animate-spin lg:h-12 lg:w-12'
 			>
 				<path
 					strokeLinecap='round'
@@ -19,7 +19,9 @@ const LoadingScreen = () => {
 					className='origin-center -scale-x-100'
 				></path>
 			</svg>
-			<p className='mt-4 text-xl font-medium'>Retrieving information...</p>
+			<p className='mt-4 text-xl font-medium lg:text-lg'>
+				Retrieving Information
+			</p>
 		</div>
 	)
 }

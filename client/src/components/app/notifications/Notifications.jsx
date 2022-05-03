@@ -4,9 +4,10 @@ import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import LoadingScreen from '../../utils/LoadingScreen'
 import useAuth from '../../../hooks/useAuth'
 
-const Notification = () => {
+const Notifications = () => {
 	const axiosPrivate = useAxiosPrivate()
 	const { auth } = useAuth()
+
 	const [notifications, setNotifications] = useState('')
 	const [isLoading, setIsLoading] = useState(true)
 
@@ -29,7 +30,7 @@ const Notification = () => {
 				)*/
 				if (isMounted) {
 					setNotifications('')
-					setIsLoading(false)
+					setTimeout(() => setIsLoading(false), 500)
 				}
 			} catch (error) {
 				return
@@ -46,21 +47,16 @@ const Notification = () => {
 
 	return isLoading ? (
 		<LoadingScreen />
-	) : !notifications && false ? (
-		<div className='auth-card mt-6 self-center text-center'>
-			<h4 className='text-gray-500'>No notification yet.</h4>
-		</div>
 	) : (
 		<>
-			{false && (
-				<Title
-					title='Notifications'
-					hasButton={false}
-					hasRefreshButton={false}
-				/>
-			)}
+			<Title title='Notifications' hasButton={false} hasRefreshButton={false} />
+			{!notifications ? (
+				<div className='auth-card mt-6 self-center text-center lg:mt-0'>
+					<p className='text-lg'>No notification yet.</p>
+				</div>
+			) : null}
 		</>
 	)
 }
 
-export default Notification
+export default Notifications

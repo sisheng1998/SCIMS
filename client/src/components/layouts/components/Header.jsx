@@ -12,34 +12,28 @@ import useMobile from '../../../hooks/useMobile'
 const Header = () => {
 	const searchRef = useRef()
 	const { auth } = useAuth()
-	const isAdmin = auth.currentLabId === ROLES_LIST.admin.toString()
 	const isMobile = useMobile()
 
-	return isMobile ? (
-		<header className='fixed top-0 left-0 right-0 z-10 flex items-center justify-between border-b border-t border-gray-300 border-t-gray-200 bg-white p-4 shadow-sm'>
-			<div className='mr-6 flex items-center'>
-				<Link className='mr-4' to={isAdmin ? '/admin' : '/'}>
-					<img src={Logo} alt='SCIMS Logo' className='h-7' draggable={false} />
-				</Link>
+	const isAdmin = !isMobile && auth.currentLabId === ROLES_LIST.admin.toString()
 
-				<LabSelection searchRef={searchRef} />
-			</div>
-
-			<UserOption />
-		</header>
-	) : (
+	return (
 		<header className='fixed top-0 left-0 right-0 z-10 flex items-center justify-between border-b border-t border-gray-300 border-t-gray-200 bg-white py-4 px-6 shadow-sm xl:px-4'>
 			<div className='mr-6 flex items-center'>
 				<Link className='mr-4' to={isAdmin ? '/admin' : '/'}>
-					<img src={Logo} alt='SCIMS Logo' className='h-8' draggable={false} />
+					<img
+						src={Logo}
+						alt='SCIMS Logo'
+						className={isMobile ? 'h-7' : 'h-8'}
+						draggable={false}
+					/>
 				</Link>
 
 				<LabSelection searchRef={searchRef} />
 			</div>
 
 			<div className='flex flex-1 items-center justify-end'>
-				{!isAdmin && <Search searchRef={searchRef} />}
-				<Notification />
+				{!isAdmin && !isMobile && <Search searchRef={searchRef} />}
+				{!isMobile && <Notification />}
 				<UserOption />
 			</div>
 		</header>

@@ -10,11 +10,15 @@ import {
 	PencilAltIcon,
 	QrcodeIcon,
 	ExclamationIcon,
+	LocationMarkerIcon,
+	BeakerIcon,
+	CalendarIcon,
 } from '@heroicons/react/outline'
 import { FormatChemicalDate } from '../../utils/FormatDate'
 import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
 import { useNavigate } from 'react-router-dom'
 import UpdateAmountModal from './components/UpdateAmountModal'
+import useMobile from '../../../hooks/useMobile'
 
 const tableHeaders = [
 	{
@@ -62,6 +66,7 @@ const tableHeaders = [
 const ChemicalsTable = (props) => {
 	const { auth } = useAuth()
 	const navigate = useNavigate()
+	const isMobile = useMobile()
 
 	const [QRCodeInfo, setQRCodeInfo] = useState('')
 	const [openViewImageModal, setOpenViewImageModal] = useState(false)
@@ -156,24 +161,26 @@ const ChemicalsTable = (props) => {
 				setSearchTerm={setSearchTerm}
 				searchPlaceholder='CAS No. / Name'
 			>
-				<div className='mx-6 flex items-center'>
-					<p>Filter</p>
+				<div className='mx-6 flex items-center lg:ml-4 lg:mr-0'>
+					{!isMobile ? <p>Filter</p> : <p>At</p>}
 
-					<select
-						className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
-						name='statusFilter'
-						id='statusFilter'
-						value={filterTerms.status}
-						onChange={(e) =>
-							setFilterTerms((prev) => ({ ...prev, status: e.target.value }))
-						}
-					>
-						<option value=''>Any Status</option>
-						<option value='Normal'>Normal</option>
-						<option value='Low Amount'>Low Amount</option>
-						<option value='Expiring Soon'>Expiring Soon</option>
-						<option value='Expired'>Expired</option>
-					</select>
+					{!isMobile && (
+						<select
+							className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
+							name='statusFilter'
+							id='statusFilter'
+							value={filterTerms.status}
+							onChange={(e) =>
+								setFilterTerms((prev) => ({ ...prev, status: e.target.value }))
+							}
+						>
+							<option value=''>Any Status</option>
+							<option value='Normal'>Normal</option>
+							<option value='Low Amount'>Low Amount</option>
+							<option value='Expiring Soon'>Expiring Soon</option>
+							<option value='Expired'>Expired</option>
+						</select>
+					)}
 
 					<select
 						className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
@@ -200,10 +207,10 @@ const ChemicalsTable = (props) => {
 
 				{props.disposedChemicals.length !== 0 && (
 					<label
-						className='mb-0 mr-6 flex cursor-pointer items-center whitespace-nowrap font-normal'
+						className='mb-0 mr-6 flex cursor-pointer items-center whitespace-nowrap font-normal lg:mt-2 lg:mr-0'
 						htmlFor='showDisposedChemicals'
 					>
-						Disposed Chemicals
+						{isMobile ? 'Show Disposed Chemicals?' : 'Disposed Chemicals'}
 						<input
 							type='checkbox'
 							className='peer hidden'
@@ -215,188 +222,273 @@ const ChemicalsTable = (props) => {
 				)}
 			</Filters>
 
-			<div className='mb-5 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-3 shadow'>
-				<div className='overflow-x-auto'>
-					<div className='border-b border-gray-200'>
-						<table className='min-w-full divide-y divide-gray-200 whitespace-nowrap'>
-							<thead className='bg-gray-50'>
-								<tr>
-									{tableHeaders.map((header) => (
-										<th
-											scope='col'
-											key={header.key}
-											className='px-6 py-3 text-left font-medium text-gray-500'
-										>
-											{header.sortable ? (
-												<SortButton
-													columnKey={header.key}
-													onClick={() => changeSortOrder(header.key)}
-													{...{ sortOrder, sortKey }}
-												>
-													{header.label}
-												</SortButton>
-											) : (
-												header.label
-											)}
-										</th>
-									))}
-								</tr>
-							</thead>
-
-							<tbody className='divide-y divide-gray-200 bg-white'>
-								{currentItems.length === 0 ||
-								(viewDisposedChemicals
+			{isMobile ? (
+				<div className='flex-1'>
+					{currentItems.length === 0 ||
+					(viewDisposedChemicals
+						? props.disposedChemicals.length === 0
+						: props.data.length === 0) ? (
+						<div className='rounded-lg bg-white p-4 text-center shadow'>
+							{(
+								viewDisposedChemicals
 									? props.disposedChemicals.length === 0
-									: props.data.length === 0) ? (
-									<tr>
-										<td
-											className='px-6 py-4 text-center'
-											colSpan={tableHeaders.length}
+									: props.data.length === 0
+							)
+								? 'No chemical added.'
+								: 'No record found.'}
+						</div>
+					) : (
+						currentItems.map((chemical) => {
+							let classes
+
+							if (chemical.status === 'Normal') {
+								classes = 'bg-green-100 text-green-600'
+							} else if (
+								chemical.status === 'Expired' ||
+								chemical.status === 'Disposed'
+							) {
+								classes = 'bg-red-100 text-red-600'
+							} else {
+								// Low Amount / Expiring Soon
+								classes = 'bg-yellow-100 text-yellow-600'
+							}
+
+							return (
+								<div
+									key={chemical._id}
+									className='mb-4 rounded-lg bg-white p-4 text-sm shadow'
+								>
+									<div className='mb-2 flex items-center justify-between'>
+										<p className='text-xs'>
+											<span
+												className={`inline-flex rounded-full px-2 py-0.5 font-medium ${classes}`}
+											>
+												{chemical.status}
+											</span>
+										</p>
+
+										<button
+											onClick={() => navigate(`/inventory/${chemical._id}`)}
+											className='inline-flex items-center font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
 										>
-											{(
-												viewDisposedChemicals
-													? props.disposedChemicals.length === 0
-													: props.data.length === 0
-											)
-												? 'No chemical added.'
-												: 'No record found.'}
-										</td>
+											View Info
+										</button>
+									</div>
+
+									<p className='text-lg font-medium leading-6 text-gray-900'>
+										{chemical.name}
+									</p>
+									<p className='mb-2 text-gray-500'>{chemical.CASId.CASNo}</p>
+
+									<div className='flex flex-wrap items-center'>
+										<p className='mt-2 mr-4 flex items-center'>
+											<LocationMarkerIcon className='mr-1.5 inline-block h-4 w-4 stroke-2 text-indigo-600' />
+											{chemical.location}
+										</p>
+
+										<p className='mt-2 mr-4 flex items-center'>
+											<BeakerIcon className='mr-1.5 inline-block h-4 w-4 stroke-2 text-indigo-600' />
+											{FormatAmountWithUnit(chemical.amount, chemical.unit)}
+										</p>
+
+										<p className='mt-2 flex items-center capitalize'>
+											<CalendarIcon className='mr-1.5 inline-block h-4 w-4 stroke-2 text-indigo-600' />
+											{FormatChemicalDate(chemical.expirationDate)}
+										</p>
+									</div>
+								</div>
+							)
+						})
+					)}
+				</div>
+			) : (
+				<div className='mb-5 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-3 shadow'>
+					<div className='overflow-x-auto'>
+						<div className='border-b border-gray-200'>
+							<table className='min-w-full divide-y divide-gray-200 whitespace-nowrap'>
+								<thead className='bg-gray-50'>
+									<tr>
+										{tableHeaders.map((header) => (
+											<th
+												scope='col'
+												key={header.key}
+												className='px-6 py-3 text-left font-medium text-gray-500'
+											>
+												{header.sortable ? (
+													<SortButton
+														columnKey={header.key}
+														onClick={() => changeSortOrder(header.key)}
+														{...{ sortOrder, sortKey }}
+													>
+														{header.label}
+													</SortButton>
+												) : (
+													header.label
+												)}
+											</th>
+										))}
 									</tr>
-								) : (
-									currentItems.map((chemical) => {
-										let classes
+								</thead>
 
-										if (chemical.status === 'Normal') {
-											classes = 'bg-green-100 text-green-600'
-										} else if (
-											chemical.status === 'Expired' ||
-											chemical.status === 'Disposed'
-										) {
-											classes = 'bg-red-100 text-red-600'
-										} else {
-											// Low Amount / Expiring Soon
-											classes = 'bg-yellow-100 text-yellow-600'
-										}
+								<tbody className='divide-y divide-gray-200 bg-white'>
+									{currentItems.length === 0 ||
+									(viewDisposedChemicals
+										? props.disposedChemicals.length === 0
+										: props.data.length === 0) ? (
+										<tr>
+											<td
+												className='px-6 py-4 text-center'
+												colSpan={tableHeaders.length}
+											>
+												{(
+													viewDisposedChemicals
+														? props.disposedChemicals.length === 0
+														: props.data.length === 0
+												)
+													? 'No chemical added.'
+													: 'No record found.'}
+											</td>
+										</tr>
+									) : (
+										currentItems.map((chemical) => {
+											let classes
 
-										return (
-											<tr key={chemical._id}>
-												<td className='px-6 py-4'>{chemical.CASId.CASNo}</td>
+											if (chemical.status === 'Normal') {
+												classes = 'bg-green-100 text-green-600'
+											} else if (
+												chemical.status === 'Expired' ||
+												chemical.status === 'Disposed'
+											) {
+												classes = 'bg-red-100 text-red-600'
+											} else {
+												// Low Amount / Expiring Soon
+												classes = 'bg-yellow-100 text-yellow-600'
+											}
 
-												<td className='px-6 py-4'>
-													<div className='flex items-center space-x-2'>
-														<div className='tooltip' data-tooltip='QR Code'>
-															<QrcodeIcon
-																className='h-6 w-6 cursor-pointer text-gray-400 transition hover:text-indigo-700 focus:outline-none'
-																onClick={() =>
-																	viewImageHandler(
-																		chemical.name,
-																		chemical.QRCode
-																	)
-																}
-															/>
+											return (
+												<tr key={chemical._id}>
+													<td className='px-6 py-4'>{chemical.CASId.CASNo}</td>
+
+													<td className='px-6 py-4'>
+														<div className='flex items-center space-x-2'>
+															<div className='tooltip' data-tooltip='QR Code'>
+																<QrcodeIcon
+																	className='h-6 w-6 cursor-pointer text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+																	onClick={() =>
+																		viewImageHandler(
+																			chemical.name,
+																			chemical.QRCode
+																		)
+																	}
+																/>
+															</div>
+
+															<p>{chemical.name}</p>
 														</div>
+													</td>
 
-														<p>{chemical.name}</p>
-													</div>
-												</td>
-
-												<td className='px-6 py-4'>
-													{chemical.location}
-													{chemical.storageGroup &&
-														chemical.location !== '-' &&
-														!chemical.allowedStorageGroups.includes(
-															chemical.storageGroup
-														) && (
-															<span
-																className='tooltip ml-1.5 whitespace-normal'
-																data-tooltip={`Group ${chemical.storageGroup} is not allowed in this location`}
-															>
-																<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
-															</span>
-														)}
-												</td>
-
-												<td className='px-6 py-4'>
-													{chemical.storageGroup ? chemical.storageGroup : '-'}
-												</td>
-
-												<td className='space-y-0.5 px-6 py-4 '>
-													<div className='flex items-center space-x-2'>
-														<p>
-															{FormatAmountWithUnit(
-																chemical.amount,
-																chemical.unit
-															)}
-															{Number(chemical.amount) <
-																Number(chemical.minAmount) && (
+													<td className='px-6 py-4'>
+														{chemical.location}
+														{chemical.storageGroup &&
+															chemical.location !== '-' &&
+															!chemical.allowedStorageGroups.includes(
+																chemical.storageGroup
+															) && (
 																<span
-																	className='tooltip ml-1.5'
-																	data-tooltip='Low Amount'
+																	className='tooltip ml-1.5 whitespace-normal'
+																	data-tooltip={`Group ${chemical.storageGroup} is not allowed in this location`}
 																>
-																	<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
+																	<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
 																</span>
 															)}
-														</p>
-														{auth.currentRole >= ROLES_LIST.undergraduate &&
+													</td>
+
+													<td className='px-6 py-4'>
+														{chemical.storageGroup
+															? chemical.storageGroup
+															: '-'}
+													</td>
+
+													<td className='space-y-0.5 px-6 py-4 '>
+														<div className='flex items-center space-x-2'>
+															<p>
+																{FormatAmountWithUnit(
+																	chemical.amount,
+																	chemical.unit
+																)}
+																{Number(chemical.amount) <
+																	Number(chemical.minAmount) && (
+																	<span
+																		className='tooltip ml-1.5'
+																		data-tooltip='Low Amount'
+																	>
+																		<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
+																	</span>
+																)}
+															</p>
+															{auth.currentRole >= ROLES_LIST.undergraduate &&
+																!viewDisposedChemicals && (
+																	<button
+																		onClick={() =>
+																			updateAmountHandler(chemical)
+																		}
+																		className='tooltip text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+																		data-tooltip='Update Amount'
+																	>
+																		<PencilAltIcon className='h-5 w-5' />
+																	</button>
+																)}
+														</div>
+													</td>
+
+													<td className='px-6 py-4'>
+														<span
+															className={`inline-flex rounded-full px-3 py-1 font-medium ${classes}`}
+														>
+															{chemical.status}
+														</span>
+													</td>
+
+													<td className='px-6 py-4 capitalize'>
+														{FormatChemicalDate(chemical.expirationDate)}
+													</td>
+
+													<td className='space-x-1 px-6 py-4'>
+														<button
+															onClick={() =>
+																navigate(`/inventory/${chemical._id}`)
+															}
+															className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+														>
+															View
+														</button>
+														{auth.currentRole >= ROLES_LIST.postgraduate &&
 															!viewDisposedChemicals && (
-																<button
-																	onClick={() => updateAmountHandler(chemical)}
-																	className='tooltip text-gray-400 transition hover:text-indigo-700 focus:outline-none'
-																	data-tooltip='Update Amount'
-																>
-																	<PencilAltIcon className='h-5 w-5' />
-																</button>
+																<>
+																	<span>/</span>
+																	<button
+																		onClick={() =>
+																			navigate(`/inventory/${chemical._id}`, {
+																				state: { edit: true },
+																			})
+																		}
+																		className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+																	>
+																		Edit
+																	</button>
+																</>
 															)}
-													</div>
-												</td>
-
-												<td className='px-6 py-4'>
-													<span
-														className={`inline-flex rounded-full px-3 py-1 font-medium ${classes}`}
-													>
-														{chemical.status}
-													</span>
-												</td>
-
-												<td className='px-6 py-4 capitalize'>
-													{FormatChemicalDate(chemical.expirationDate)}
-												</td>
-
-												<td className='space-x-1 px-6 py-4'>
-													<button
-														onClick={() =>
-															navigate(`/inventory/${chemical._id}`)
-														}
-														className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
-													>
-														View
-													</button>
-													{auth.currentRole >= ROLES_LIST.postgraduate &&
-														!viewDisposedChemicals && (
-															<>
-																<span>/</span>
-																<button
-																	onClick={() =>
-																		navigate(`/inventory/${chemical._id}`, {
-																			state: { edit: true },
-																		})
-																	}
-																	className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
-																>
-																	Edit
-																</button>
-															</>
-														)}
-												</td>
-											</tr>
-										)
-									})
-								)}
-							</tbody>
-						</table>
+													</td>
+												</tr>
+											)
+										})
+									)}
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
-			</div>
+			)}
 
 			<Pagination
 				filterTerms={filterTerms}
