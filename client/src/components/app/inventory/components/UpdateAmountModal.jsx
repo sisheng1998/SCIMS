@@ -109,7 +109,7 @@ const UpdateAmountModal = ({
 					) : (
 						<>
 							<div className='mb-6 flex justify-between border-b border-gray-200 pb-3'>
-								<h4>Update Chemical Amount</h4>
+								<h4>Update Amount</h4>
 								<XIcon
 									className='h-5 w-5 cursor-pointer hover:text-indigo-600'
 									onClick={closeHandler}
@@ -183,9 +183,7 @@ const UpdateAmountModal = ({
 										<p className='text-xl'>
 											{FormatAmountWithUnit(chemical.amount, chemical.unit)}
 										</p>
-										<p className='text-sm font-medium text-gray-500'>
-											Current Amount
-										</p>
+										<p className='text-sm font-medium text-gray-500'>Current</p>
 									</div>
 
 									<p className='text-gray-400 lg:!mx-6'>-</p>
@@ -216,7 +214,7 @@ const UpdateAmountModal = ({
 												: `-- ${chemical.unit}`}
 										</p>
 										<p className='text-sm font-medium text-gray-500'>
-											Remaining Amount
+											Remaining
 										</p>
 									</div>
 								</div>

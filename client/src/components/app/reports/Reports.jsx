@@ -21,16 +21,28 @@ const Reports = () => {
 
 		const getInfo = async () => {
 			try {
-				/*const { data } = await axiosPrivate.put(
-					'/api/private/dashboard',
-					{ labId: auth.currentLabId, days },
+				const { data } = await axiosPrivate.put(
+					'/api/private/user-activity',
+					{ labId: auth.currentLabId },
 					{
 						signal: controller.signal,
 					}
-				)*/
+				)
 				if (isMounted) {
-					setInfo([])
-					setTimeout(() => setIsLoading(false), 500)
+					const processedData = data.data
+						.sort((a, b) => (a.date < b.date ? 1 : -1))
+						.map((log, index) => {
+							return {
+								...log,
+								type: log.usage !== undefined ? 'Usage' : 'Activity',
+								userName: log.user.name,
+								userEmail: log.user.email,
+								index,
+							}
+						})
+
+					setInfo(processedData)
+					setIsLoading(false)
 				}
 			} catch (error) {
 				return

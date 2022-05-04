@@ -35,6 +35,8 @@ const {
 	updateAvatar,
 } = require('../controllers/profile')
 
+const { userActivity } = require('../controllers/report')
+
 const {
 	addLocation,
 	editLocation,
@@ -85,6 +87,11 @@ router.route('/profile/password').post(changePassword)
 router
 	.route('/profile/avatar')
 	.post(uploadAvatar.single('avatar'), updateAvatar)
+
+// Report
+router
+	.route('/user-activity')
+	.put(verifyRoles(ROLES_LIST.labOwner), userActivity)
 
 // Settings
 router.route('/location').post(verifyRoles(ROLES_LIST.labOwner), addLocation)

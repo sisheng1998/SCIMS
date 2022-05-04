@@ -306,6 +306,7 @@ exports.refreshToken = async (req, res, next) => {
 			id: foundUser._id,
 			name: foundUser.name,
 			avatar: foundUser.avatar,
+			notification: foundUser.notification,
 			avatarPath: '/public/avatars/',
 			SDSPath: '/public/SDSs/',
 		})
@@ -428,6 +429,7 @@ const sendToken = async (user, rememberMe, statusCode, res) => {
 		id: user._id,
 		name: user.name,
 		avatar: user.avatar,
+		notification: user.notification,
 		avatarPath: '/public/avatars/',
 		SDSPath: '/public/SDSs/',
 	})

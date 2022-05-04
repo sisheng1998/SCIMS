@@ -8,7 +8,6 @@ import {
 	BeakerIcon,
 	CogIcon,
 	HomeIcon,
-	QrcodeIcon,
 	ClipboardCheckIcon,
 	UserIcon,
 	ColorSwatchIcon,
@@ -94,12 +93,6 @@ const MOBILE_MENU_LIST = [
 		text: 'Inventory',
 		icon: <CubeIcon />,
 		link: '/inventory',
-		minRole: ROLES_LIST.guest,
-	},
-	{
-		text: 'Scan',
-		icon: <QrcodeIcon />,
-		link: '-',
 		minRole: ROLES_LIST.guest,
 	},
 	{

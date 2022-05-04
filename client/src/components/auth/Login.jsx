@@ -43,6 +43,7 @@ const Login = () => {
 			const id = data.id
 			const name = data.name
 			const avatar = data.avatar
+			const notification = data.notification
 			const avatarPath = data.avatarPath
 			const SDSPath = data.SDSPath
 
@@ -55,6 +56,7 @@ const Login = () => {
 					id,
 					name,
 					avatar,
+					notification,
 					avatarPath,
 					SDSPath,
 				}

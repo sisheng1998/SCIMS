@@ -28,7 +28,7 @@ const Title = (props) => {
 					{props.hasRefreshButton && (
 						<button
 							onClick={() => props.setRefresh(true)}
-							className='button button-outline ml-4'
+							className='button button-outline ml-4 lg:py-1.5'
 						>
 							<RefreshIcon className='-ml-0.5 mr-1 h-3.5 w-3.5 stroke-2' />
 							Refresh

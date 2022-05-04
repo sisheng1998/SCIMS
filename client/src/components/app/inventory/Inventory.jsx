@@ -5,12 +5,15 @@ import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import LoadingScreen from '../../utils/LoadingScreen'
-import { ExclamationIcon } from '@heroicons/react/outline'
+import { ExclamationIcon, QrcodeIcon } from '@heroicons/react/outline'
 import ChemicalsTable from './ChemicalsTable'
 import ExportQRCodesModal from './components/ExportQRCodesModal'
 import useMobile from '../../../hooks/useMobile'
+import ScanQRCodeModal from '../components/ScanQRCodeModal'
 
 const Inventory = () => {
+	window.scrollTo(0, 0)
+
 	const { auth, setAuth } = useAuth()
 	const navigate = useNavigate()
 	const axiosPrivate = useAxiosPrivate()
@@ -21,6 +24,7 @@ const Inventory = () => {
 	const [disposedChemicals, setDisposedChemicals] = useState([])
 
 	const [openExportQRCodesModal, setOpenExportQRCodesModal] = useState(false)
+	const [openScanQRCodeModal, setOpenScanQRCodeModal] = useState(false)
 	const [isLoading, setIsLoading] = useState(true)
 	const [refresh, setRefresh] = useState(false)
 
@@ -157,6 +161,25 @@ const Inventory = () => {
 							openModal={openExportQRCodesModal}
 							setOpenModal={setOpenExportQRCodesModal}
 						/>
+					)}
+
+					{isMobile && (
+						<>
+							<button
+								className='button button-solid fixed bottom-2 right-2 z-10 -translate-y-[65px] justify-center py-2 shadow-md'
+								onClick={() => setOpenScanQRCodeModal(true)}
+							>
+								<QrcodeIcon className='-ml-1 mr-1.5 h-5 w-5' />
+								Scan QR Code
+							</button>
+
+							{openScanQRCodeModal && (
+								<ScanQRCodeModal
+									openModal={openScanQRCodeModal}
+									setOpenModal={setOpenScanQRCodeModal}
+								/>
+							)}
+						</>
 					)}
 				</>
 			)}

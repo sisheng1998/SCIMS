@@ -15,7 +15,7 @@ const ScanQRCode = () => {
 					className='button button-solid w-full justify-center py-2 shadow-md'
 					onClick={() => setOpenModal(true)}
 				>
-					<QrcodeIcon className='mr-2 h-6 w-6' />
+					<QrcodeIcon className='mr-1.5 h-6 w-6' />
 					Scan QR Code
 				</button>
 			</div>

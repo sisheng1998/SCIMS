@@ -161,10 +161,9 @@ const ChemicalsTable = (props) => {
 				setSearchTerm={setSearchTerm}
 				searchPlaceholder='CAS No. / Name'
 			>
-				<div className='mx-6 flex items-center lg:ml-4 lg:mr-0'>
-					{!isMobile ? <p>Filter</p> : <p>At</p>}
-
-					{!isMobile && (
+				{!isMobile && (
+					<div className='mx-6 flex items-center lg:ml-4 lg:mr-0'>
+						<p>Filter</p>
 						<select
 							className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
 							name='statusFilter'
@@ -180,37 +179,40 @@ const ChemicalsTable = (props) => {
 							<option value='Expiring Soon'>Expiring Soon</option>
 							<option value='Expired'>Expired</option>
 						</select>
-					)}
 
-					<select
-						className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
-						name='locationFilter'
-						id='locationFilter'
-						value={filterTerms.location}
-						onChange={(e) =>
-							setFilterTerms((prev) => ({ ...prev, location: e.target.value }))
-						}
-					>
-						<option value=''>Any Location</option>
-						{props.locations
-							.sort((a, b) =>
-								a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
-							)
-							.map((location) => (
-								<option key={location._id} value={location.name}>
-									{location.name}
-								</option>
-							))}
-						<option value='-'>No Location</option>
-					</select>
-				</div>
+						<select
+							className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
+							name='locationFilter'
+							id='locationFilter'
+							value={filterTerms.location}
+							onChange={(e) =>
+								setFilterTerms((prev) => ({
+									...prev,
+									location: e.target.value,
+								}))
+							}
+						>
+							<option value=''>Any Location</option>
+							{props.locations
+								.sort((a, b) =>
+									a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
+								)
+								.map((location) => (
+									<option key={location._id} value={location.name}>
+										{location.name}
+									</option>
+								))}
+							<option value='-'>No Location</option>
+						</select>
+					</div>
+				)}
 
 				{props.disposedChemicals.length !== 0 && (
 					<label
-						className='mb-0 mr-6 flex cursor-pointer items-center whitespace-nowrap font-normal lg:mt-2 lg:mr-0'
+						className='mb-0 mr-6 flex cursor-pointer items-center whitespace-nowrap font-normal lg:mr-0 lg:mt-4'
 						htmlFor='showDisposedChemicals'
 					>
-						{isMobile ? 'Show Disposed Chemicals?' : 'Disposed Chemicals'}
+						Disposed Chemicals
 						<input
 							type='checkbox'
 							className='peer hidden'
@@ -223,7 +225,7 @@ const ChemicalsTable = (props) => {
 			</Filters>
 
 			{isMobile ? (
-				<div className='flex-1'>
+				<>
 					{currentItems.length === 0 ||
 					(viewDisposedChemicals
 						? props.disposedChemicals.length === 0
@@ -271,7 +273,7 @@ const ChemicalsTable = (props) => {
 											onClick={() => navigate(`/inventory/${chemical._id}`)}
 											className='inline-flex items-center font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
 										>
-											View Info
+											View
 										</button>
 									</div>
 
@@ -300,7 +302,7 @@ const ChemicalsTable = (props) => {
 							)
 						})
 					)}
-				</div>
+				</>
 			) : (
 				<div className='mb-5 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-3 shadow'>
 					<div className='overflow-x-auto'>

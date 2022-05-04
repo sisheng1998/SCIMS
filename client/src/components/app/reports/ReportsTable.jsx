@@ -6,6 +6,9 @@ import Pagination from '../components/Pagination'
 import ImageLightBox from '../../utils/ImageLightBox'
 import useAuth from '../../../hooks/useAuth'
 import GetLetterPicture from '../../utils/GetLetterPicture'
+import FormatDate from '../../utils/FormatDate'
+import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
+import { useNavigate } from 'react-router-dom'
 
 const tableHeaders = [
 	{
@@ -14,7 +17,7 @@ const tableHeaders = [
 		sortable: true,
 	},
 	{
-		key: 'name',
+		key: 'userName',
 		label: 'User',
 		sortable: true,
 	},
@@ -26,15 +29,23 @@ const tableHeaders = [
 ]
 
 const ReportsTable = (props) => {
+	const navigate = useNavigate()
 	const { auth } = useAuth()
 	const [avatarInfo, setAvatarInfo] = useState('')
 	const [openViewImageModal, setOpenViewImageModal] = useState(false)
+
+	const today = new Date()
+	const past = new Date(new Date().setDate(today.getDate() - 30))
 
 	const [sortKey, setSortKey] = useState('index')
 	const [sortOrder, setSortOrder] = useState('asc')
 	const [searchTerm, setSearchTerm] = useState('')
 	const [filterTerms, setFilterTerms] = useState({
-		days: 30,
+		duration: {
+			option: '',
+			startDate: past.toLocaleDateString('en-CA'),
+			endDate: today.toLocaleDateString('en-CA'),
+		},
 	})
 
 	const sortedData = useCallback(
@@ -44,7 +55,7 @@ const ReportsTable = (props) => {
 				sortKey,
 				reverse: sortOrder === 'desc',
 				searchTerm,
-				searchCols: ['name', 'email'],
+				searchCols: ['userName', 'userEmail'],
 				filterTerms,
 			}),
 		[props.data, sortKey, sortOrder, searchTerm, filterTerms]
@@ -97,20 +108,59 @@ const ReportsTable = (props) => {
 				searchPlaceholder='Name / Email'
 			>
 				<div className='mx-6 flex items-center'>
-					<p>Last</p>
+					<p>Duration</p>
 					<select
 						className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
-						name='daysFilter'
-						id='daysFilter'
-						value={filterTerms.days}
+						name='durationFilter'
+						id='durationFilter'
+						value={filterTerms.duration.option}
 						onChange={(e) =>
-							setFilterTerms((prev) => ({ ...prev, days: e.target.value }))
+							setFilterTerms((prev) => ({
+								...prev,
+								duration: { ...prev.duration, option: e.target.value },
+							}))
 						}
 					>
-						<option value='30'>30 Days</option>
-						<option value='60'>60 Days</option>
-						<option value='90'>90 Days</option>
+						<option value=''>Any</option>
+						<option value='thisMonth'>This Month</option>
+						<option value='lastMonth'>Last Month</option>
+						<option value='custom'>Custom</option>
 					</select>
+
+					{filterTerms.duration.option === 'custom' && (
+						<>
+							<p className='ml-4 mr-2'>Range</p>
+							<input
+								className='p-1 px-2 text-sm text-gray-700'
+								type='date'
+								name='startDate'
+								id='startDate'
+								max={today.toLocaleDateString('en-CA')}
+								value={filterTerms.duration.startDate}
+								onChange={(e) =>
+									setFilterTerms((prev) => ({
+										...prev,
+										duration: { ...prev.duration, startDate: e.target.value },
+									}))
+								}
+							/>
+							<p className='mx-2'>→</p>
+							<input
+								className='p-1 px-2 text-sm text-gray-700'
+								type='date'
+								name='endDate'
+								id='endDate'
+								max={today.toLocaleDateString('en-CA')}
+								value={filterTerms.duration.endDate}
+								onChange={(e) =>
+									setFilterTerms((prev) => ({
+										...prev,
+										duration: { ...prev.duration, endDate: e.target.value },
+									}))
+								}
+							/>
+						</>
+					)}
 				</div>
 			</Filters>
 
@@ -143,7 +193,7 @@ const ReportsTable = (props) => {
 							</thead>
 
 							<tbody className='divide-y divide-gray-200 bg-white'>
-								{true ? (
+								{currentItems.length === 0 ? (
 									<tr>
 										<td
 											className='px-6 py-4 text-center'
@@ -153,17 +203,17 @@ const ReportsTable = (props) => {
 										</td>
 									</tr>
 								) : (
-									currentItems.map((user) => {
-										const imageSrc = user.avatar
-											? auth.avatarPath + user.avatar
-											: GetLetterPicture(user.name)
+									currentItems.map((log) => {
+										const imageSrc = log.user.avatar
+											? auth.avatarPath + log.user.avatar
+											: GetLetterPicture(log.userName)
 
 										return (
-											<tr key={user._id}>
-												<td className='px-6 py-4'>{user.matricNo}</td>
+											<tr key={log._id}>
+												<td className='px-6 py-4'>{FormatDate(log.date)}</td>
 
 												<td className='px-6 py-4'>
-													<div className='flex items-center space-x-3'>
+													<div className='flex w-max items-center space-x-3'>
 														<img
 															src={imageSrc}
 															alt='Avatar'
@@ -172,22 +222,57 @@ const ReportsTable = (props) => {
 															width='64'
 															draggable={false}
 															onClick={() =>
-																viewImageHandler(user.name, imageSrc)
+																viewImageHandler(log.userName, imageSrc)
 															}
 														/>
 
 														<div>
 															<p className='font-medium leading-5'>
-																{user.name}
+																{log.userName}
 															</p>
 															<p className='text-sm leading-4 text-gray-400'>
-																{user.email}
+																{log.userEmail}
 															</p>
 														</div>
 													</div>
 												</td>
 
-												<td className='px-6 py-4 capitalize'>{user.role}</td>
+												<td className='px-6 py-4'>
+													{log.type === 'Usage' ? (
+														<p>
+															Amount of chemical used
+															<span className='ml-1.5 text-sm'>
+																(
+																<span
+																	onClick={() =>
+																		navigate(`/inventory/${log.chemical._id}`)
+																	}
+																	className='inline cursor-pointer font-medium text-indigo-600 transition hover:text-indigo-700'
+																>
+																	{log.chemical.name}
+																</span>
+																)
+															</span>
+															:
+															<span className='ml-1.5 font-medium'>
+																{FormatAmountWithUnit(
+																	log.usage,
+																	log.chemical.unit
+																)}
+															</span>
+															<span className='ml-1.5 text-sm text-gray-500'>
+																({log.originalAmount} →{' '}
+																{FormatAmountWithUnit(
+																	log.originalAmount - log.usage,
+																	log.chemical.unit
+																)}
+																)
+															</span>
+														</p>
+													) : (
+														log.description
+													)}
+												</td>
 											</tr>
 										)
 									})

@@ -12,6 +12,8 @@ import useMobile from '../../../hooks/useMobile'
 import ScanQRCode from '../components/ScanQRCode'
 
 const ChemicalInfo = () => {
+	window.scrollTo(0, 0)
+
 	const isMobile = useMobile()
 	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()

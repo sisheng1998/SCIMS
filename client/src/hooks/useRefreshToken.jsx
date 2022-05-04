@@ -17,6 +17,7 @@ const useRefreshToken = () => {
 		const id = data.id
 		const name = data.name
 		const avatar = data.avatar
+		const notification = data.notification
 		const avatarPath = data.avatarPath
 		const SDSPath = data.SDSPath
 
@@ -29,6 +30,7 @@ const useRefreshToken = () => {
 				id,
 				name,
 				avatar,
+				notification,
 				avatarPath,
 				SDSPath,
 			}

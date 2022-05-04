@@ -182,7 +182,7 @@ const Register = () => {
 							<div className='mt-6 text-right'>
 								<p
 									onClick={() => setNextStep(true)}
-									className={`inline-flex items-center font-semibold text-indigo-600 transition hover:text-indigo-700 ${
+									className={`inline-flex items-center font-medium text-indigo-600 transition hover:text-indigo-700 ${
 										allowNextStep
 											? 'cursor-pointer'
 											: 'pointer-events-none opacity-50'
@@ -198,7 +198,7 @@ const Register = () => {
 							<div className='mb-6'>
 								<p
 									onClick={() => setNextStep(false)}
-									className='inline-flex cursor-pointer items-center font-semibold text-indigo-600 transition hover:text-indigo-700'
+									className='inline-flex cursor-pointer items-center font-medium text-indigo-600 transition hover:text-indigo-700'
 								>
 									<ArrowLeftIcon className='mr-1 h-4 w-4' />
 									Previous

@@ -48,6 +48,10 @@ const UserSchema = new Schema(
 			},
 		],
 		avatar: String,
+		notification: {
+			type: Boolean,
+			default: false,
+		},
 		isEmailVerified: {
 			type: Boolean,
 			default: false,

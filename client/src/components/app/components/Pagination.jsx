@@ -52,7 +52,7 @@ const Pagination = ({
 	}, [currentPage, itemsPerPage, searchTerm, filterTerms, totalItems])
 
 	return (
-		<nav className='mb-6 flex items-center justify-between lg:mb-0 lg:flex-wrap'>
+		<nav className='mb-6 flex items-center justify-between lg:mb-10 lg:flex-wrap'>
 			<p className='text-sm lg:mt-2 lg:mr-4'>
 				Showing{' '}
 				{indexOfFirstItem + 1 === totalItems ? (

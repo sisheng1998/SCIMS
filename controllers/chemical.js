@@ -2,6 +2,7 @@ const ErrorResponse = require('../utils/errorResponse')
 const Lab = require('../models/Lab')
 const Chemical = require('../models/Chemical')
 const CAS = require('../models/CAS')
+const Usage = require('../models/Usage')
 const { startSession } = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId
 const generateQRCode = require('../utils/generateQRCode')
@@ -205,7 +206,6 @@ exports.updateChemical = async (req, res, next) => {
 		_id,
 		name,
 		state,
-		unit,
 		containerSize,
 		amount,
 		minAmount,
@@ -276,10 +276,6 @@ exports.updateChemical = async (req, res, next) => {
 
 		if (state && state !== foundChemical.state) {
 			updateQuery.state = state
-		}
-
-		if (unit && unit !== foundChemical.unit) {
-			updateQuery.unit = unit
 		}
 
 		if (
@@ -420,7 +416,11 @@ exports.updateAmount = async (req, res, next) => {
 		return next(new ErrorResponse('Chemical not found.', 404))
 	}
 
+	const session = await startSession()
+
 	try {
+		session.startTransaction()
+
 		const amount = Number(Number(foundChemical.amount) - Number(usage)).toFixed(
 			2
 		)
@@ -440,15 +440,38 @@ exports.updateAmount = async (req, res, next) => {
 			updateQuery.dateOpen = Date.now()
 		}
 
-		await Chemical.updateOne(foundChemical, {
-			$set: updateQuery,
-		})
+		await Usage.create(
+			[
+				{
+					lab: foundChemical.lab,
+					user: req.user._id,
+					chemical: foundChemical._id,
+					originalAmount: foundChemical.amount,
+					usage: Number(usage).toFixed(2),
+				},
+			],
+			{ session }
+		)
+
+		await Chemical.updateOne(
+			foundChemical,
+			{
+				$set: updateQuery,
+			},
+			{ session }
+		)
+
+		await session.commitTransaction()
+		session.endSession()
 
 		res.status(201).json({
 			success: true,
 			data: 'Chemical amount updated.',
 		})
 	} catch (error) {
+		await session.abortTransaction()
+		session.endSession()
+
 		next(error)
 	}
 }

@@ -34,6 +34,29 @@ const SortData = ({
 						}
 					}
 
+					// Filter for reports
+					if (col === 'duration') {
+						const currentMonth = new Date().getMonth() + 1
+						const loggedMonth = new Date(data['date']).getMonth() + 1
+
+						if (value.option === 'thisMonth') {
+							return loggedMonth === currentMonth
+						} else if (value.option === 'lastMonth') {
+							return loggedMonth === currentMonth - 1
+						} else if (value.option === 'custom') {
+							const loggedDate = new Date(data['date']).toLocaleDateString(
+								'en-CA'
+							)
+							const date = new Date(loggedDate).getTime()
+							const startDate = new Date(value.startDate).getTime()
+							const endDate = new Date(value.endDate).getTime()
+
+							return date <= endDate && date >= startDate
+						}
+
+						return true
+					}
+
 					return (
 						data[col].toString().toLowerCase().indexOf(value.toLowerCase()) > -1
 					)

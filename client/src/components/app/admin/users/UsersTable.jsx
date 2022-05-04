@@ -225,7 +225,7 @@ const UsersTable = (props) => {
 												<td className='px-6 py-4'>{user.matricNo}</td>
 
 												<td className='px-6 py-4'>
-													<div className='flex items-center space-x-3'>
+													<div className='flex w-max items-center space-x-3'>
 														<img
 															src={imageSrc}
 															alt='Avatar'

@@ -9,12 +9,14 @@ import {
 	ExclamationIcon,
 	PencilAltIcon,
 	ExclamationCircleIcon,
+	ArrowLeftIcon,
 } from '@heroicons/react/outline'
 import UpdateAmountModal from './components/UpdateAmountModal'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import SuccessMessageModal from './components/SuccessMessageModal'
 import useMobile from '../../../hooks/useMobile'
 import SafetyAndSecuritySection from './components/SafetyAndSecuritySection'
+import { useNavigate } from 'react-router-dom'
 
 const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 	const isMounted = useRef(true)
@@ -24,6 +26,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 		}
 	}, [])
 
+	const navigate = useNavigate()
 	const isMobile = useMobile()
 	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
@@ -95,6 +98,18 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 
 	return (
 		<>
+			{isMobile && (
+				<div className='mb-2'>
+					<p
+						onClick={() => navigate('/inventory')}
+						className='inline-flex cursor-pointer items-center font-medium text-indigo-600 transition hover:text-indigo-700'
+					>
+						<ArrowLeftIcon className='mr-1 h-4 w-4' />
+						Back to Inventory
+					</p>
+				</div>
+			)}
+
 			<div className='mx-auto mb-6 w-full max-w-4xl xl:max-w-full lg:mb-0'>
 				{/* Basic Info */}
 				<div className='rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
@@ -382,18 +397,13 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 			</div>
 
 			{currentUser.role >= ROLES_LIST.undergraduate && !isDisposed && isMobile && (
-				<div
-					id='updateUsage'
-					className='fixed left-0 right-0 bottom-0 z-20 w-full border-t border-gray-200 bg-white px-4 py-3'
+				<button
+					className='button button-solid fixed bottom-2 right-2 z-10 -translate-y-[65px] justify-center py-2 shadow-md'
+					onClick={() => setOpenUpdateAmountModal(true)}
 				>
-					<button
-						className='button button-solid w-full justify-center py-2 shadow-md'
-						onClick={() => setOpenUpdateAmountModal(true)}
-					>
-						<PencilAltIcon className='mr-2 h-6 w-6' />
-						Update Amount
-					</button>
-				</div>
+					<PencilAltIcon className='-ml-1 mr-1.5 h-5 w-5' />
+					Update Amount
+				</button>
 			)}
 
 			{openViewImageModal && QRCodeInfo && (
