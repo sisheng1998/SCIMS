@@ -210,12 +210,23 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 					</div>
 				</div>
 
-				<p className='mt-3 mb-9 text-sm text-gray-500 lg:mb-4 lg:text-xs'>
-					Added At:{' '}
-					<span className='font-semibold'>
-						{FormatDate(chemical.createdAt)}
-					</span>
-				</p>
+				<div className='mt-3 mb-9 text-sm text-gray-500 lg:mb-4 lg:text-xs'>
+					<p>
+						Added At:{' '}
+						<span className='font-semibold'>
+							{FormatDate(chemical.createdAt)}
+						</span>
+					</p>
+
+					{isDisposed && (
+						<p className='mt-1'>
+							Disposed At:{' '}
+							<span className='font-semibold'>
+								{FormatDate(chemical.disposedDate)}
+							</span>
+						</p>
+					)}
+				</div>
 
 				{/* Storage Info */}
 				<div className='mb-9 rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:mb-4'>

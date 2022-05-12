@@ -16,7 +16,7 @@ const getKeysByValue = (object, value) =>
 
 const labOption = 'labName labUsers chemicals locations createdAt lastUpdated'
 const chemicalOption =
-	'QRCode CASId name unit containerSize minAmount amount expirationDate locationId storageGroup status createdAt lastUpdated'
+	'QRCode CASId name unit containerSize minAmount amount expirationDate disposedDate locationId storageGroup status createdAt lastUpdated'
 
 exports.getChemicals = async (req, res, next) => {
 	const labId = req.body.labId
@@ -519,6 +519,7 @@ exports.disposeChemical = async (req, res, next) => {
 			{
 				$set: {
 					status: 'Disposed',
+					disposedDate: Date.now(),
 					lastUpdated: Date.now(),
 				},
 			},
@@ -601,6 +602,9 @@ exports.cancelDisposal = async (req, res, next) => {
 				$set: {
 					status,
 					lastUpdated: Date.now(),
+				},
+				$unset: {
+					disposedDate: '',
 				},
 			},
 			{ new: true, session }

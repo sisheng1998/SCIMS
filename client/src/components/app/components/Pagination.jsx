@@ -53,7 +53,7 @@ const Pagination = ({
 
 	return (
 		<nav className='mb-6 flex items-center justify-between lg:mb-10 lg:flex-wrap'>
-			<p className='text-sm lg:mt-2 lg:mr-4'>
+			<p className='text-sm lg:mb-2 lg:mr-4'>
 				Showing{' '}
 				{indexOfFirstItem + 1 === totalItems ? (
 					<span className='font-medium'>{indexOfFirstItem + 1}</span>
@@ -68,7 +68,7 @@ const Pagination = ({
 				{totalItems > 1 ? 'results' : 'result'}
 			</p>
 
-			<ul className='flex items-center rounded-lg text-sm font-medium text-gray-500 shadow-sm lg:mt-2'>
+			<ul className='flex items-center rounded-lg text-sm font-medium text-gray-500 shadow-sm lg:mb-2'>
 				<li
 					className={`pointer-events-none inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-l-lg border border-gray-200 bg-white hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 ${
 						currentPage > 1 ? 'pointer-events-auto' : 'text-gray-300'

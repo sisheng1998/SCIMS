@@ -45,6 +45,7 @@ const ChemicalSchema = new Schema(
 		dateIn: Date,
 		dateOpen: Date,
 		expirationDate: Date,
+		disposedDate: Date,
 		supplier: String,
 		brand: String,
 		notes: String,

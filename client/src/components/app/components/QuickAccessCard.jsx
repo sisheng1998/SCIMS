@@ -16,7 +16,7 @@ const QuickAccessCard = () => {
 		<>
 			<p className='mb-2 text-lg font-medium text-gray-500'>Quick Access</p>
 
-			<div className='grid grid-cols-2 gap-4'>
+			<div className='mb-6 grid grid-cols-2 gap-4'>
 				{MOBILE_MENU_LIST.map((menu, index) =>
 					auth.currentRole >= menu.minRole &&
 					menu.text !== 'Home' &&

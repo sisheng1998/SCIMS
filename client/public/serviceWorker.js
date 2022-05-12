@@ -35,3 +35,21 @@ self.addEventListener('fetch', (event) => {
 			)
 	)
 })
+
+// Handle push notifications
+self.addEventListener('push', (event) => {
+	const data = event.data.json()
+
+	self.registration.showNotification(data.title, {
+		body: data.message,
+		icon: './favicons/android-chrome-192x192.png',
+		data: data.url,
+	})
+})
+
+self.addEventListener('notificationclick', (event) => {
+	const notification = event.notification
+
+	notification.close()
+	self.clients.openWindow(notification.data)
+})

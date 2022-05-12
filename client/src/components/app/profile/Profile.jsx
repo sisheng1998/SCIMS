@@ -10,6 +10,7 @@ import FormatDate from '../../utils/FormatDate'
 const Profile = () => {
 	const axiosPrivate = useAxiosPrivate()
 	const [user, setUser] = useState('')
+	const [subscriber, setSubscriber] = useState('')
 
 	const [isLoading, setIsLoading] = useState(true)
 	const [refresh, setRefresh] = useState(false)
@@ -32,6 +33,7 @@ const Profile = () => {
 				})
 				if (isMounted) {
 					setUser(data.user)
+					setSubscriber(data.subscriber)
 					setIsLoading(false)
 				}
 			} catch (error) {
@@ -66,7 +68,7 @@ const Profile = () => {
 
 				<div className='w-full max-w-4xl xl:max-w-full'>
 					<div className='rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
-						<AccountSection user={user} />
+						<AccountSection user={user} subscriber={subscriber} />
 					</div>
 
 					<p className='mt-3 text-sm text-gray-500 lg:text-xs'>
@@ -104,7 +106,7 @@ const Profile = () => {
 				<LabsSection user={user} />
 			</div>
 
-			<hr className='mb-6 border-0 lg:mb-0' />
+			<hr className='mb-6 border-0' />
 		</>
 	)
 }

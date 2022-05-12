@@ -9,6 +9,7 @@ const connectDB = require('./config/db')
 const errorHandler = require('./middleware/errorHandler')
 const { verifyUser } = require('./middleware/verifyUser')
 const logEvents = require('./middleware/logEvents')
+const scheduleJobs = require('./controllers/schedule')
 const path = require('path')
 const PORT = process.env.PORT || 5000
 
@@ -42,6 +43,7 @@ app.use('/api/auth', require('./routes/auth'))
 // Private Route
 app.use('/api/private', verifyUser, require('./routes/private'))
 app.use('/api/admin', verifyUser, require('./routes/admin'))
+app.use('/api/subscribe', verifyUser, require('./routes/subscribe'))
 
 // Comment this for live site
 app.get('*', (req, res) => {
@@ -59,9 +61,12 @@ app.use(errorHandler)
 mongoose.connection.once('open', () => {
 	console.log('Connected to MongoDB')
 
-	const server = app.listen(PORT, () =>
+	const server = app.listen(PORT, () => {
 		console.log(`Server running on Port ${PORT}`)
-	)
+
+		// Scheduled Jobs
+		scheduleJobs()
+	})
 
 	process.on('unhandledRejection', (err, promise) => {
 		logEvents(`${err.name}: ${err.message}`, 'connectionErrorLogs.txt')

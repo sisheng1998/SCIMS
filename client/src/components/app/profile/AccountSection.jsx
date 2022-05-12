@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 import ChangeEmailModal from './ChangeEmailModal'
 import ChangePasswordModal from './ChangePasswordModal'
+import NotificationSection from './NotificationSection'
+import useMobile from '../../../hooks/useMobile'
 
-const AccountSection = ({ user }) => {
+const AccountSection = ({ user, subscriber }) => {
+	const isMobile = useMobile()
 	const [openChangeEmailModal, setOpenChangeEmailModal] = useState(false)
 	const [openChangePasswordModal, setOpenChangePasswordModal] = useState(false)
 
@@ -46,6 +49,8 @@ const AccountSection = ({ user }) => {
 			>
 				Change Password
 			</button>
+
+			{isMobile && <NotificationSection subscriber={subscriber} />}
 
 			{openChangePasswordModal && (
 				<ChangePasswordModal

@@ -8,7 +8,7 @@ const errorHandler = (err, req, res, next) => {
 		err.message !== 'Chemical not found.'
 	) {
 		logEvents(
-			`${req.method} ${req.headers.origin} ${req.url} - ${err.name}: ${err.message}`,
+			`${req.method} ${req.url} - ${err.name}: ${err.message}`,
 			'logs.txt'
 		)
 	}

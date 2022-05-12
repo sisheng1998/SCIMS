@@ -1,6 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse')
 const User = require('../models/User')
 const { sendVerificationEmail } = require('./auth')
+const Subscriber = require('../models/Subscriber')
 
 const UserInfo =
 	'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status'
@@ -16,9 +17,15 @@ exports.getProfile = async (req, res, next) => {
 			return next(new ErrorResponse('User not found.', 404))
 		}
 
+		const subscriber = await Subscriber.findOne(
+			{ user: req.user._id },
+			'endpoint'
+		)
+
 		res.status(200).json({
 			success: true,
 			user,
+			subscriber,
 		})
 	} catch (error) {
 		return next(new ErrorResponse('User not found.', 404))

@@ -20,49 +20,6 @@ import { useNavigate } from 'react-router-dom'
 import UpdateAmountModal from './components/UpdateAmountModal'
 import useMobile from '../../../hooks/useMobile'
 
-const tableHeaders = [
-	{
-		key: 'CAS',
-		label: 'CAS No.',
-		sortable: true,
-	},
-	{
-		key: 'name',
-		label: 'Name',
-		sortable: true,
-	},
-	{
-		key: 'location',
-		label: 'Location',
-		sortable: true,
-	},
-	{
-		key: 'storageGroup',
-		label: 'Group',
-		sortable: true,
-	},
-	{
-		key: 'amount',
-		label: 'Amount',
-		sortable: false,
-	},
-	{
-		key: 'status',
-		label: 'Status',
-		sortable: true,
-	},
-	{
-		key: 'expirationDate',
-		label: 'Exp. Date',
-		sortable: true,
-	},
-	{
-		key: 'action',
-		label: 'Action',
-		sortable: false,
-	},
-]
-
 const ChemicalsTable = (props) => {
 	const { auth } = useAuth()
 	const navigate = useNavigate()
@@ -75,6 +32,49 @@ const ChemicalsTable = (props) => {
 	const [openUpdateAmountModal, setOpenUpdateAmountModal] = useState(false)
 
 	const [viewDisposedChemicals, setViewDisposedChemicals] = useState(false)
+
+	const tableHeaders = [
+		{
+			key: 'CAS',
+			label: 'CAS No.',
+			sortable: true,
+		},
+		{
+			key: 'name',
+			label: 'Name',
+			sortable: true,
+		},
+		{
+			key: 'location',
+			label: 'Location',
+			sortable: true,
+		},
+		{
+			key: 'storageGroup',
+			label: 'Group',
+			sortable: true,
+		},
+		{
+			key: 'amount',
+			label: 'Amount',
+			sortable: false,
+		},
+		{
+			key: 'status',
+			label: 'Status',
+			sortable: true,
+		},
+		{
+			key: viewDisposedChemicals ? 'disposedDate' : 'expirationDate',
+			label: viewDisposedChemicals ? 'Dis. Date' : 'Exp. Date',
+			sortable: true,
+		},
+		{
+			key: 'action',
+			label: 'Action',
+			sortable: false,
+		},
+	]
 
 	const [sortKey, setSortKey] = useState('index')
 	const [sortOrder, setSortOrder] = useState('asc')
@@ -293,11 +293,20 @@ const ChemicalsTable = (props) => {
 											{FormatAmountWithUnit(chemical.amount, chemical.unit)}
 										</p>
 
-										<p className='mt-2 flex items-center capitalize'>
+										<p className='mt-2 flex items-center'>
 											<CalendarIcon className='mr-1.5 inline-block h-4 w-4 stroke-2 text-indigo-600' />
 											{FormatChemicalDate(chemical.expirationDate)}
 										</p>
 									</div>
+
+									{viewDisposedChemicals && (
+										<p className='mt-2 text-xs text-gray-500'>
+											Disposed At:{' '}
+											<span className='font-semibold'>
+												{FormatChemicalDate(chemical.disposedDate)}
+											</span>
+										</p>
+									)}
 								</div>
 							)
 						})
@@ -451,8 +460,12 @@ const ChemicalsTable = (props) => {
 														</span>
 													</td>
 
-													<td className='px-6 py-4 capitalize'>
-														{FormatChemicalDate(chemical.expirationDate)}
+													<td className='px-6 py-4'>
+														{FormatChemicalDate(
+															viewDisposedChemicals
+																? chemical.disposedDate
+																: chemical.expirationDate
+														)}
 													</td>
 
 													<td className='space-x-1 px-6 py-4'>
