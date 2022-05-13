@@ -21,7 +21,16 @@ const SafetyAndSecuritySection = ({
 	const [errorMessage, setErrorMessage] = useState('')
 
 	useEffect(() => {
-		if (SDS.toString().toLowerCase().endsWith('.pdf')) return
+		if (SDS.toString().toLowerCase().endsWith('.pdf')) {
+			setValidated((prev) => {
+				return {
+					...prev,
+					SDSValidated: true,
+				}
+			})
+
+			return
+		}
 
 		setChemicalData((prev) => {
 			return {

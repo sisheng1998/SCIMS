@@ -1,4 +1,4 @@
-const CACHE_NAME = 'static-v2'
+const CACHE_NAME = 'v1.0.0'
 const urlsToCache = ['index.html', 'offline.html']
 
 const self = this

@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
 		fontSize: '8pt',
 		letterSpacing: 0.5,
 		opacity: 0.8,
+		textAlign: 'center',
 	},
 	QRCode: {
 		marginVertical: '10pt',

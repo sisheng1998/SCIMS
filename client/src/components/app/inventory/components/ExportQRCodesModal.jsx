@@ -81,7 +81,10 @@ const ExportQRCodesModal = ({ chemicals, openModal, setOpenModal }) => {
 													name='all'
 													id='all'
 													className='mb-1 cursor-pointer'
-													checked={selected.length === chemicals.length}
+													checked={
+														chemicals.length !== 0 &&
+														selected.length === chemicals.length
+													}
 													onChange={selectAll}
 												/>
 											</th>
