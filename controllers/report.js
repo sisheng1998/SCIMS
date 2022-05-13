@@ -21,13 +21,17 @@ exports.userActivity = async (req, res, next) => {
 			return next(new ErrorResponse('Lab not found.', 404))
 		}
 
-		const Usages = await Usage.find({ lab: labId })
+		const usages = await Usage.find({ lab: labId })
+			.populate('user', UserOption)
+			.populate('chemical', ChemicalOption)
+
+		const activities = await Activity.find({ lab: labId })
 			.populate('user', UserOption)
 			.populate('chemical', ChemicalOption)
 
 		res.status(200).json({
 			success: true,
-			data: [...Usages],
+			data: [...usages, ...activities],
 		})
 	} catch (error) {
 		next(error)

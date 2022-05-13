@@ -11,6 +11,10 @@ const ActivitySchema = new Schema(
 			type: Schema.Types.ObjectId,
 			ref: 'User',
 		},
+		chemical: {
+			type: Schema.Types.ObjectId,
+			ref: 'Chemical',
+		},
 		description: String,
 		date: {
 			type: Date,

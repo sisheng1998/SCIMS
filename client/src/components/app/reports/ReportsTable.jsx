@@ -270,7 +270,21 @@ const ReportsTable = (props) => {
 															</span>
 														</p>
 													) : (
-														log.description
+														<p>
+															{log.description}
+															<span className='ml-1.5 text-sm'>
+																(
+																<span
+																	onClick={() =>
+																		navigate(`/inventory/${log.chemical._id}`)
+																	}
+																	className='inline cursor-pointer font-medium text-indigo-600 transition hover:text-indigo-700'
+																>
+																	{log.chemical.name}
+																</span>
+																)
+															</span>
+														</p>
 													)}
 												</td>
 											</tr>

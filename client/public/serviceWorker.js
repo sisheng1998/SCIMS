@@ -1,4 +1,4 @@
-const CACHE_NAME = 'static-v1'
+const CACHE_NAME = 'static-v2'
 const urlsToCache = ['index.html', 'offline.html']
 
 const self = this
@@ -50,6 +50,35 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
 	const notification = event.notification
 
-	notification.close()
-	self.clients.openWindow(notification.data)
+	event.waitUntil(
+		self.clients
+			.matchAll({
+				type: 'window',
+				includeUncontrolled: true,
+			})
+			.then((clientList) => {
+				if (notification.data) {
+					let client = null
+
+					for (let i = 0; i < clientList.length; i++) {
+						let item = clientList[i]
+
+						if (item.url) {
+							client = item
+							break
+						}
+					}
+
+					if (client && 'navigate' in client) {
+						client.focus()
+						notification.close()
+						return client.navigate(notification.data)
+					} else {
+						notification.close()
+						// if client doesn't have navigate function, try to open a new browser window
+						return self.clients.openWindow(notification.data)
+					}
+				}
+			})
+	)
 })

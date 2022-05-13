@@ -230,7 +230,7 @@ const ChemicalsTable = (props) => {
 					(viewDisposedChemicals
 						? props.disposedChemicals.length === 0
 						: props.data.length === 0) ? (
-						<div className='rounded-lg bg-white p-4 text-center shadow'>
+						<div className='mb-4 rounded-lg bg-white p-4 text-center shadow'>
 							{(
 								viewDisposedChemicals
 									? props.disposedChemicals.length === 0

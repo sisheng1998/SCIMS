@@ -39,7 +39,7 @@ exports.subscribe = async (req, res, next) => {
 
 		const subscription = { endpoint, keys }
 		const payload = JSON.stringify({
-			title: '[SCIMS] Notification Allowed',
+			title: 'Notification Allowed',
 			message:
 				'Important notifications will be sent to this device in the future.',
 			url: '/profile',

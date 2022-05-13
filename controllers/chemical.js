@@ -3,6 +3,10 @@ const Lab = require('../models/Lab')
 const Chemical = require('../models/Chemical')
 const CAS = require('../models/CAS')
 const Usage = require('../models/Usage')
+const Activity = require('../models/Activity')
+const User = require('../models/User')
+const Subscriber = require('../models/Subscriber')
+const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId
 const generateQRCode = require('../utils/generateQRCode')
@@ -10,6 +14,7 @@ const settings = require('../config/settings.json')
 const COCLists = require('../chemicalData/coc.json')
 const GHSLists = require('../chemicalData/ghs.json')
 const pictograms = require('../chemicalData/pictograms.json')
+const sendNotification = require('../utils/sendNotification')
 
 const getKeysByValue = (object, value) =>
 	Object.keys(object).filter((key) => object[key] === value)
@@ -183,6 +188,18 @@ exports.addChemical = async (req, res, next) => {
 				},
 			},
 			{ new: true, session }
+		)
+
+		await Activity.create(
+			[
+				{
+					lab: foundLab._id,
+					user: req.user._id,
+					chemical: chemical[0]._id,
+					description: 'New chemical added',
+				},
+			],
+			{ session }
 		)
 
 		await session.commitTransaction()
@@ -359,6 +376,18 @@ exports.updateChemical = async (req, res, next) => {
 			{ new: true, session }
 		)
 
+		await Activity.create(
+			[
+				{
+					lab: foundLab._id,
+					user: req.user._id,
+					chemical: foundChemical._id,
+					description: 'Chemical info updated',
+				},
+			],
+			{ session }
+		)
+
 		await session.commitTransaction()
 		session.endSession()
 
@@ -434,6 +463,38 @@ exports.updateAmount = async (req, res, next) => {
 			Number(amount) <= foundChemical.minAmount
 		) {
 			updateQuery.status = 'Low Amount'
+
+			const users = await User.find(
+				{
+					roles: {
+						$elemMatch: {
+							lab: { $eq: foundChemical.lab },
+							role: { $gte: ROLES_LIST.postgraduate },
+							status: { $eq: 'Active' },
+						},
+					},
+				},
+				'email'
+			).session(session)
+
+			const subscribers = await Subscriber.find(
+				{ user: { $in: users } },
+				'endpoint keys'
+			).session(session)
+
+			subscribers.forEach((subscriber) => {
+				const subscription = {
+					endpoint: subscriber.endpoint,
+					keys: subscriber.keys,
+				}
+				const payload = JSON.stringify({
+					title: 'Low Amount Alert',
+					message: `${foundChemical.name} reached low amount.`,
+					url: `/inventory/${foundChemical._id}`,
+				})
+
+				sendNotification(subscription, payload)
+			})
 		}
 
 		if (!foundChemical.dateOpen) {
@@ -526,6 +587,18 @@ exports.disposeChemical = async (req, res, next) => {
 			{ new: true, session }
 		)
 
+		await Activity.create(
+			[
+				{
+					lab: foundLab._id,
+					user: req.user._id,
+					chemical: foundChemical._id,
+					description: 'Chemical disposed',
+				},
+			],
+			{ session }
+		)
+
 		await session.commitTransaction()
 		session.endSession()
 
@@ -608,6 +681,18 @@ exports.cancelDisposal = async (req, res, next) => {
 				},
 			},
 			{ new: true, session }
+		)
+
+		await Activity.create(
+			[
+				{
+					lab: foundLab._id,
+					user: req.user._id,
+					chemical: foundChemical._id,
+					description: 'Chemical disposal cancelled',
+				},
+			],
+			{ session }
 		)
 
 		await session.commitTransaction()
