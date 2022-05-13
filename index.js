@@ -12,6 +12,7 @@ const logEvents = require('./middleware/logEvents')
 const scheduleJobs = require('./controllers/schedule')
 const path = require('path')
 const PORT = process.env.PORT || 5000
+const isLiveSite = false // Change this for live site or dev site
 
 const app = express()
 
@@ -30,12 +31,15 @@ app.use(cookieParser())
 
 // Serve public files
 app.use('/public', express.static('public'))
-//app.use(express.static('client/build')) // Uncomment this for live site
 
-// Connecting Routes - Comment this for live site
-app.get('/', (req, res, next) => {
-	res.status(200).send('API running.')
-})
+if (isLiveSite) {
+	app.use(express.static('client/build')) // For live site
+} else {
+	// Connecting Routes - For dev site
+	app.get('/', (req, res, next) => {
+		res.status(200).send('API running.')
+	})
+}
 
 // Public Route
 app.use('/api/auth', require('./routes/auth'))
@@ -45,15 +49,17 @@ app.use('/api/private', verifyUser, require('./routes/private'))
 app.use('/api/admin', verifyUser, require('./routes/admin'))
 app.use('/api/subscribe', verifyUser, require('./routes/subscribe'))
 
-// Comment this for live site
-app.get('*', (req, res) => {
-	res.sendStatus(404)
-})
-
-// Let React Handle UI - Uncomment this for live site
-//app.get('*', (req, res) => {
-//	res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-//})
+if (isLiveSite) {
+	// Let React Handle UI - For live site
+	app.get('*', (req, res) => {
+		res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+	})
+} else {
+	// Other Routes - For dev site
+	app.get('*', (req, res) => {
+		res.sendStatus(404)
+	})
+}
 
 // Error Handler (should be last piece of middleware)
 app.use(errorHandler)
