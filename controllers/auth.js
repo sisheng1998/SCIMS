@@ -211,18 +211,14 @@ exports.forgotPassword = async (req, res, next) => {
 
 		const resetUrl = `${process.env.DOMAIN_NAME}/reset-password/${resetToken}`
 
-		const message = `
-			<h1>You have requested a password reset.</h1>
-			<p>Please click the link below to reset your password.</p>
-			<a clicktracking=off href=${resetUrl}>${resetUrl}</a>
-			<p>The link will be valid for 30 minutes only.</p>
-		`
-
 		try {
-			await sendEmail({
+			sendEmail({
 				to: user.email,
-				subject: '[SCIMS] Password Reset Request',
-				text: message,
+				subject: 'Password Reset Request',
+				template: 'reset_password',
+				context: {
+					url: resetUrl,
+				},
 			})
 
 			res.status(200).json({ success: true, data: 'Email sent.' })
@@ -443,17 +439,14 @@ const sendVerificationEmail = async (
 ) => {
 	const emailVerificationUrl = `${process.env.DOMAIN_NAME}/verify-email/${emailVerificationToken}`
 
-	const message = `
-			<p>You have an account registered with this email.</p>
-			<p>Please click the verification link below to verify your email.</p>
-			<a clicktracking=off href=${emailVerificationUrl}>${emailVerificationUrl}</a>
-		`
-
 	try {
-		await sendEmail({
+		sendEmail({
 			to: user.email,
-			subject: '[SCIMS] Email Verification Request',
-			text: message,
+			subject: 'Email Verification Request',
+			template: 'email_verification',
+			context: {
+				url: emailVerificationUrl,
+			},
 		})
 
 		res.status(201).json({

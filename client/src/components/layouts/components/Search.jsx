@@ -34,7 +34,10 @@ const Search = ({ searchRef }) => {
 					setAuth((prev) => {
 						return {
 							...prev,
-							chemicals: data.data.chemicals,
+							chemicals: [
+								...data.data.chemicals,
+								...data.data.disposedChemicals,
+							],
 						}
 					})
 					setSearchable(true)
@@ -91,22 +94,50 @@ const Search = ({ searchRef }) => {
 				>
 					{filteredChemicals.map((chemical) => (
 						<Combobox.Option key={chemical._id} value={chemical}>
-							{({ active }) => (
-								<p
-									className={`cursor-pointer py-0.5 px-3 ${
-										active ? 'bg-indigo-600 text-white' : ''
-									}`}
-								>
-									{chemical.name}
-									<span
-										className={`text-sx ml-2 font-normal ${
-											active ? 'text-indigo-100' : 'text-gray-500'
+							{({ active }) => {
+								let classes
+
+								if (chemical.status === 'Normal') {
+									classes = 'bg-green-400'
+								} else if (
+									chemical.status === 'Expired' ||
+									chemical.status === 'Disposed'
+								) {
+									classes = 'bg-red-400'
+								} else {
+									// Low Amount / Expiring Soon
+									classes = 'bg-yellow-400'
+								}
+
+								return (
+									<p
+										className={`flex cursor-pointer flex-row items-center py-0.5 px-3 ${
+											active ? 'bg-indigo-600 text-white' : ''
 										}`}
 									>
-										{chemical.CASId.CASNo}
-									</span>
-								</p>
-							)}
+										{chemical.name}
+
+										<span
+											className={`text-sx mx-2 shrink-0 font-normal ${
+												active ? 'text-indigo-100' : 'text-gray-500'
+											}`}
+										>
+											{chemical.CASId.CASNo}
+										</span>
+
+										<span
+											className={`ml-auto flex shrink-0 items-center text-xs font-medium ${
+												active ? 'text-indigo-100' : 'text-gray-500'
+											}`}
+										>
+											<span
+												className={`mr-1.5 h-1.5 w-1.5 rounded-full ${classes}`}
+											></span>
+											{chemical.status}
+										</span>
+									</p>
+								)
+							}}
 						</Combobox.Option>
 					))}
 

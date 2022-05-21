@@ -18,8 +18,8 @@ const Dashboard = () => {
 	const isMobile = useMobile()
 
 	useEffect(() => {
-		auth.currentLabId === !isMobile &&
-			ROLES_LIST.admin.toString() &&
+		!isMobile &&
+			auth.currentLabId === ROLES_LIST.admin.toString() &&
 			navigate('/admin')
 	}, [auth.currentLabId, navigate, isMobile])
 

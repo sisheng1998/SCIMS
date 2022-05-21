@@ -29,6 +29,7 @@ import ImportExport from './components/app/import-export/ImportExport'
 import Users from './components/app/users/Users'
 import Labs from './components/app/labs/Labs'
 import Settings from './components/app/settings/Settings'
+import ActivityLogs from './components/app/activity-logs/ActivityLogs'
 import Notifications from './components/app/notifications/Notifications'
 import Profile from './components/app/profile/Profile'
 import PendingApproval from './components/app/PendingApproval'
@@ -92,6 +93,11 @@ const App = () => {
 										exact
 										path='/import-export'
 										element={<ImportExport />}
+									/>
+									<Route
+										exact
+										path='/activity-logs'
+										element={<ActivityLogs />}
 									/>
 									<Route exact path='/settings' element={<Settings />} />
 								</>

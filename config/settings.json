@@ -1,5 +1,5 @@
 {
-  "FROM_NAME": "SCIMS",
+  "FROM_NAME": "Smart Chemical Inventory Management System",
   "FROM_EMAIL": "scims@sisheng.asia",
   "EMAIL_HOST": "mail.sisheng.asia",
   "EMAIL_PORT": 465,

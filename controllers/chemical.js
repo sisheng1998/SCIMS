@@ -11,9 +11,9 @@ const { startSession } = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId
 const generateQRCode = require('../utils/generateQRCode')
 const settings = require('../config/settings.json')
-const COCLists = require('../chemicalData/coc.json')
-const GHSLists = require('../chemicalData/ghs.json')
-const pictograms = require('../chemicalData/pictograms.json')
+const COCLists = require('../chemical_data/coc.json')
+const GHSLists = require('../chemical_data/ghs.json')
+const pictograms = require('../chemical_data/pictograms.json')
 const sendNotification = require('../utils/sendNotification')
 
 const getKeysByValue = (object, value) =>

@@ -54,7 +54,10 @@ const Inventory = () => {
 					setAuth((prev) => {
 						return {
 							...prev,
-							chemicals: data.data.chemicals,
+							chemicals: [
+								...data.data.chemicals,
+								...data.data.disposedChemicals,
+							],
 						}
 					})
 

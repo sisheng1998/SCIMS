@@ -1,6 +1,8 @@
 const nodemailer = require('nodemailer')
 const settings = require('../config/settings.json')
 const logEvents = require('../middleware/logEvents')
+const hbs = require('nodemailer-express-handlebars')
+const path = require('path')
 
 const sendEmail = (options) => {
 	const EMAIL_FROM = `${
@@ -24,11 +26,26 @@ const sendEmail = (options) => {
 		},
 	})
 
+	transporter.use(
+		'compile',
+		hbs({
+			viewEngine: {
+				extName: '.hbs',
+				partialsDir: path.resolve(__dirname, '../emails'),
+				layoutsDir: path.resolve(__dirname, '../emails'),
+				defaultLayout: 'template.hbs',
+			},
+			viewPath: path.resolve(__dirname, '../emails'),
+			extName: '.hbs',
+		})
+	)
+
 	const mailOptions = {
 		from: EMAIL_FROM,
 		to: options.to,
 		subject: options.subject,
-		html: options.text,
+		template: options.template,
+		context: options.context,
 	}
 
 	transporter.sendMail(mailOptions, (error, info) => {

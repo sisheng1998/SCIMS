@@ -42,28 +42,15 @@ module.exports = async () => {
 				},
 			}
 		)
-
-		const message = `
-			<p>This email will be sent daily.</p>
-		`
-
-		await sendEmail({
-			to: 'sisheng1998@gmail.com',
-			subject: '[SCIMS] Email Test 1',
-			text: message,
-		})
 	})
 
 	// At 08:00 on Monday - Send weekly report to lab owner
 	schedule.scheduleJob('0 8 * * 1', async () => {
-		const message = `
-			<p>This email should be received at Monday morning 8am.</p>
-		`
-
-		await sendEmail({
+		sendEmail({
 			to: 'sisheng1998@gmail.com',
-			subject: '[SCIMS] Email Test 2',
-			text: message,
+			subject: 'Weekly Report',
+			template: 'weekly_report',
+			context: {},
 		})
 	})
 }

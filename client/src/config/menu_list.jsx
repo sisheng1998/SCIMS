@@ -12,6 +12,7 @@ import {
 	UserIcon,
 	ColorSwatchIcon,
 	BellIcon,
+	ClipboardListIcon,
 } from '@heroicons/react/outline'
 
 const MENU_LIST = [
@@ -44,6 +45,12 @@ const MENU_LIST = [
 		link: '/users',
 		icon: <UsersIcon />,
 		minRole: ROLES_LIST.guest,
+	},
+	{
+		text: 'Activity Logs',
+		link: '/activity-logs',
+		icon: <ClipboardListIcon />,
+		minRole: ROLES_LIST.labOwner,
 	},
 	{
 		text: 'Settings',

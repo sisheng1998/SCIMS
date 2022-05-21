@@ -22,12 +22,13 @@ const SafetyAndSecuritySection = ({
 
 	useEffect(() => {
 		if (SDS.toString().toLowerCase().endsWith('.pdf')) {
-			setValidated((prev) => {
-				return {
-					...prev,
-					SDSValidated: true,
-				}
-			})
+			setValidated &&
+				setValidated((prev) => {
+					return {
+						...prev,
+						SDSValidated: true,
+					}
+				})
 
 			return
 		}

@@ -99,15 +99,13 @@ exports.addUser = async (req, res, next) => {
 
 		const emailVerificationUrl = `${process.env.DOMAIN_NAME}/verify-email/${emailVerificationToken}`
 
-		const message = `
-			<p>You have an account registered with this email.</p>
-			<p>Please click the verification link below to verify your email.</p>
-			<a clicktracking=off href=${emailVerificationUrl}>${emailVerificationUrl}</a>`
-
-		await sendEmail({
+		sendEmail({
 			to: user[0].email,
-			subject: '[SCIMS] Email Verification Request',
-			text: message,
+			subject: 'Email Verification Request',
+			template: 'email_verification',
+			context: {
+				url: emailVerificationUrl,
+			},
 		})
 
 		await session.commitTransaction()
@@ -151,12 +149,6 @@ exports.userApproval = async (req, res, next) => {
 	try {
 		session.startTransaction()
 
-		let emailMessage = `
-			<p>Lab Name: <strong>Lab ${foundLab.labName}</strong></p>
-			<p>Status: <strong>${approve ? 'Approved' : 'Declined'}</strong></p>
-			<p>Message from the lab owner: <strong>${message ? message : '-'}</strong></p>
-		`
-
 		if (approve) {
 			await User.updateOne(
 				foundUser,
@@ -169,9 +161,6 @@ exports.userApproval = async (req, res, next) => {
 				},
 				{ arrayFilters: [{ 'el.lab': labId }], new: true, session }
 			)
-
-			emailMessage =
-				emailMessage + `<p>You are able to access the lab from the system.</p>`
 		} else {
 			await User.updateOne(
 				foundUser,
@@ -200,16 +189,17 @@ exports.userApproval = async (req, res, next) => {
 				},
 				{ new: true, session }
 			)
-
-			emailMessage =
-				emailMessage +
-				`<p>You may try to apply for the lab again after fulfilled the requirement (if any from the lab owner's message).</p>`
 		}
 
-		await sendEmail({
+		sendEmail({
 			to: foundUser.email,
-			subject: '[SCIMS] User Request Approval Result',
-			text: emailMessage,
+			subject: 'Lab Approval Result',
+			template: 'lab_approval',
+			context: {
+				lab: foundLab.labName,
+				approve: approve,
+				message: message,
+			},
 		})
 
 		await session.commitTransaction()

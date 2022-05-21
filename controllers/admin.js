@@ -143,15 +143,13 @@ exports.addLab = async (req, res, next) => {
 
 		const emailVerificationUrl = `${process.env.DOMAIN_NAME}/verify-email/${emailVerificationToken}`
 
-		const message = `
-			<p>You have an account registered with this email.</p>
-			<p>Please click the verification link below to verify your email.</p>
-			<a clicktracking=off href=${emailVerificationUrl}>${emailVerificationUrl}</a>`
-
-		await sendEmail({
+		sendEmail({
 			to: user[0].email,
-			subject: '[SCIMS] Email Verification Request',
-			text: message,
+			subject: 'Email Verification Request',
+			template: 'email_verification',
+			context: {
+				url: emailVerificationUrl,
+			},
 		})
 
 		await session.commitTransaction()
@@ -398,17 +396,13 @@ exports.sendTestEmail = async (req, res, next) => {
 		return next(new ErrorResponse('Missing required value.', 400))
 	}
 
-	const message = `
-			<p>This email is sent to test the email configuration with SMTP.</p>
-			<p>You may proceed to save your email configuration settings if you received this test email.</p>
-		`
-
 	try {
-		await sendEmail({
+		sendEmail({
 			...emailConfig,
 			to: testEmail,
-			subject: '[SCIMS] Test Email',
-			text: message,
+			subject: 'Test Email',
+			template: 'test_email',
+			context: {},
 		})
 
 		res.status(200).json({
