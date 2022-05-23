@@ -196,7 +196,7 @@ exports.addChemical = async (req, res, next) => {
 					lab: foundLab._id,
 					user: req.user._id,
 					chemical: chemical[0]._id,
-					description: 'New chemical added',
+					description: 'New chemical added.',
 				},
 			],
 			{ session }
@@ -382,7 +382,7 @@ exports.updateChemical = async (req, res, next) => {
 					lab: foundLab._id,
 					user: req.user._id,
 					chemical: foundChemical._id,
-					description: 'Chemical info updated',
+					description: 'Chemical info updated.',
 				},
 			],
 			{ session }
@@ -450,12 +450,21 @@ exports.updateAmount = async (req, res, next) => {
 	try {
 		session.startTransaction()
 
+		let isNegative = false
+
+		const updateQuery = {
+			lastUpdated: Date.now(),
+		}
+
 		const amount = Number(Number(foundChemical.amount) - Number(usage)).toFixed(
 			2
 		)
-		const updateQuery = {
-			amount,
-			lastUpdated: Date.now(),
+
+		if (Number(amount) < 0) {
+			updateQuery.amount = 0
+			isNegative = true
+		} else {
+			updateQuery.amount = amount
 		}
 
 		if (
@@ -508,7 +517,7 @@ exports.updateAmount = async (req, res, next) => {
 					user: req.user._id,
 					chemical: foundChemical._id,
 					originalAmount: foundChemical.amount,
-					usage: Number(usage).toFixed(2),
+					usage: isNegative ? foundChemical.amount : Number(usage).toFixed(2),
 				},
 			],
 			{ session }
@@ -593,7 +602,7 @@ exports.disposeChemical = async (req, res, next) => {
 					lab: foundLab._id,
 					user: req.user._id,
 					chemical: foundChemical._id,
-					description: 'Chemical disposed',
+					description: 'Chemical disposed.',
 				},
 			],
 			{ session }
@@ -689,7 +698,7 @@ exports.cancelDisposal = async (req, res, next) => {
 					lab: foundLab._id,
 					user: req.user._id,
 					chemical: foundChemical._id,
-					description: 'Chemical disposal cancelled',
+					description: 'Chemical disposal cancelled.',
 				},
 			],
 			{ session }

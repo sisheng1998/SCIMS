@@ -25,7 +25,12 @@ const videoStyle = {
 	objectFit: 'cover',
 }
 
-const ScanQRCodeModal = ({ openModal, setOpenModal }) => {
+const ScanQRCodeModal = ({
+	openModal,
+	setOpenModal,
+	isStockCheck,
+	setScannedChemicalId,
+}) => {
 	const navigate = useNavigate()
 
 	const closeHandler = () => {
@@ -47,7 +52,8 @@ const ScanQRCodeModal = ({ openModal, setOpenModal }) => {
 							const chemicalId = result.text.replace(/[^A-Za-z0-9]/g, '')
 							const location = '/inventory/' + chemicalId
 							setOpenModal(false)
-							navigate(location)
+							if (isStockCheck) setScannedChemicalId(chemicalId)
+							else navigate(location)
 						}
 					}}
 					scanDelay='1000'

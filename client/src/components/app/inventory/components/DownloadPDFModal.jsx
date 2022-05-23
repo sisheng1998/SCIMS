@@ -4,10 +4,15 @@ import { DownloadIcon, XIcon, DocumentTextIcon } from '@heroicons/react/outline'
 import { BlobProvider } from '@react-pdf/renderer'
 import { FormatChemicalDate } from '../../../utils/FormatDate'
 import QRCodesPDF from './QRCodesPDF'
+import useAuth from '../../../../hooks/useAuth'
 
 const DownloadPDFModal = ({ chemicals, selected, openModal, setOpenModal }) => {
+	const { auth } = useAuth()
+
 	const closeHandler = () => setOpenModal(false)
+
 	const fileName = 'chemical_qr_codes'
+	const labName = auth.currentLabName
 
 	return (
 		<Dialog
@@ -39,7 +44,13 @@ const DownloadPDFModal = ({ chemicals, selected, openModal, setOpenModal }) => {
 					</div>
 
 					<BlobProvider
-						document={<QRCodesPDF chemicals={chemicals} selected={selected} />}
+						document={
+							<QRCodesPDF
+								chemicals={chemicals}
+								selected={selected}
+								labName={labName}
+							/>
+						}
 					>
 						{({ loading, url }) =>
 							loading ? (

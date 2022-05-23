@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
 		marginBottom: '4pt',
 		opacity: 0.6,
 		letterSpacing: 0.5,
+		textAlign: 'center',
 	},
 	name: {
 		fontSize: '8pt',
@@ -46,15 +47,22 @@ const styles = StyleSheet.create({
 	label: {
 		fontSize: '6pt',
 		opacity: 0.6,
+		textAlign: 'center',
 	},
 	expDate: {
 		fontSize: '8pt',
 		letterSpacing: 0.5,
 		opacity: 0.8,
 	},
+	location: {
+		fontSize: '7pt',
+		marginTop: '6pt',
+		opacity: 0.7,
+		textAlign: 'center',
+	},
 })
 
-const QRCodesPDF = ({ chemicals, selected }) => {
+const QRCodesPDF = ({ chemicals, selected, labName }) => {
 	const selectedChemicals = chemicals.filter((chemical) =>
 		selected.includes(chemical._id)
 	)
@@ -72,6 +80,9 @@ const QRCodesPDF = ({ chemicals, selected }) => {
 							<Text style={styles.expDate}>
 								{FormatChemicalDate(chemical.expirationDate)}
 							</Text>
+						</Text>
+						<Text style={styles.location}>
+							Lab {labName} • {chemical.location}
 						</Text>
 					</View>
 				))}

@@ -1,5 +1,5 @@
-<p>Here are the result for the lab approval.</p>
-<p class='last'>Lab:</p>
+<p>Here are your lab application result.</p>
+<p class='last'>Lab Name:</p>
 <p><strong>Lab {{lab}}</strong></p>
 <p class='last'>Status:</p>
 <p>
@@ -9,6 +9,10 @@
 		<strong class='status red'>Declined</strong>
 	{{/if}}
 </p>
+{{#if approve}}
+	<p class='last'>Your Role:</p>
+	<p><strong>{{role}}</strong></p>
+{{/if}}
 <p class='last'>Message from the lab owner:</p>
 <p>
 	<strong>

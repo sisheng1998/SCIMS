@@ -191,12 +191,17 @@ exports.userApproval = async (req, res, next) => {
 			)
 		}
 
+		let roleName = 'Guest'
+		if (role === 5555) roleName = 'Postgraduate'
+		else if (role === 3333) roleName = 'Undergraduate'
+
 		sendEmail({
 			to: foundUser.email,
-			subject: 'Lab Approval Result',
-			template: 'lab_approval',
+			subject: 'Lab Application Result',
+			template: 'lab_application_result',
 			context: {
 				lab: foundLab.labName,
+				role: roleName,
 				approve: approve,
 				message: message,
 			},

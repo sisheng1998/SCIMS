@@ -8,12 +8,17 @@ const logEvents = async (message, logName) => {
 		.replace('T', ' ')
 		.substring(11, 19)} (UTC) - ${message}\n`
 
-	if (!fs.existsSync(path.join(__dirname, '..', 'logs'))) {
-		await fsPromises.mkdir(path.join(__dirname, '..', 'logs'))
+	if (!fs.existsSync(path.join(__dirname, '..', 'server_logs'))) {
+		await fsPromises.mkdir(path.join(__dirname, '..', 'server_logs'))
 	}
 
 	await fsPromises.appendFile(
-		path.join(__dirname, '..', 'logs', today.slice(0, 10) + '_' + logName),
+		path.join(
+			__dirname,
+			'..',
+			'server_logs',
+			today.slice(0, 10) + '_' + logName
+		),
 		logItem
 	)
 }

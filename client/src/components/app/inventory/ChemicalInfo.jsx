@@ -227,7 +227,7 @@ const ChemicalInfo = () => {
 							<p className='text-sm text-gray-500'>
 								To view the details of the chemical:
 							</p>
-							<ol className='mb-6 ml-4 list-decimal text-sm'>
+							<ol className='mb-6 ml-4 mt-2 list-decimal space-y-1.5 text-sm'>
 								<li>
 									<span className='font-semibold'>Apply for the lab</span> and{' '}
 									<span className='font-semibold'>get the approval</span> from

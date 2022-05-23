@@ -37,6 +37,8 @@ const {
 
 const { userActivity } = require('../controllers/report')
 
+const { stockCheck } = require('../controllers/stock_check')
+
 const {
 	addLocation,
 	editLocation,
@@ -92,6 +94,9 @@ router
 router
 	.route('/user-activity')
 	.put(verifyRoles(ROLES_LIST.labOwner), userActivity)
+
+// Stock Check
+router.route('/stock-check').post(verifyRoles(ROLES_LIST.labOwner), stockCheck)
 
 // Settings
 router.route('/location').post(verifyRoles(ROLES_LIST.labOwner), addLocation)

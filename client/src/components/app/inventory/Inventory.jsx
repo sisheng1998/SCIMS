@@ -83,7 +83,10 @@ const Inventory = () => {
 						setChemicals(processedData)
 					}
 
-					if (data.data.disposedChemicals.length !== 0) {
+					if (
+						data.data.locations.length !== 0 &&
+						data.data.disposedChemicals.length !== 0
+					) {
 						const disposedData = data.data.disposedChemicals
 							.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
 							.map((chemical, index) => {
