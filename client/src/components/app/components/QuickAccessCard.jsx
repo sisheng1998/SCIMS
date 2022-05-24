@@ -14,7 +14,7 @@ const QuickAccessCard = () => {
 
 	return (
 		<>
-			<p className='mb-2 text-lg font-medium text-gray-500'>Quick Access</p>
+			<p className='mb-2 font-medium text-gray-500'>Quick Access</p>
 
 			<div className='mb-6 grid grid-cols-2 gap-4'>
 				{MOBILE_MENU_LIST.map((menu, index) =>

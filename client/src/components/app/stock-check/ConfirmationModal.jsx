@@ -45,6 +45,9 @@ const ConfirmationModal = ({
 					chemicalId: chemical._id,
 					CASNo: chemical.CASId.CASNo,
 					name: chemical.name,
+					location: chemical.location,
+					unit: chemical.unit,
+					amountInDB: chemical.amount,
 				})
 			)
 

@@ -42,9 +42,12 @@ const StockCheckSchema = new Schema(
 				},
 				CASNo: String,
 				name: String,
+				location: String,
+				unit: String,
+				amountInDB: Number,
 			},
 		],
-		createdAt: {
+		date: {
 			type: Date,
 			immutable: true,
 			default: Date.now,

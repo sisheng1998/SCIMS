@@ -28,34 +28,38 @@ const Filters = (props) => {
 				{props.children}
 			</div>
 
-			{isMobile ? (
-				<div className='relative flex w-full items-center rounded-lg hover:shadow-sm'>
-					<input
-						type='text'
-						id='searchFilter'
-						className='w-full pr-8 pl-7 text-sm shadow-none'
-						autoComplete='off'
-						spellCheck='false'
-						placeholder={props.searchPlaceholder}
-						value={props.searchTerm}
-						onChange={(e) => props.setSearchTerm(e.target.value)}
-					/>
-					<SearchIcon className='pointer-events-none absolute left-2 h-4 w-4 text-gray-400' />
-				</div>
-			) : (
-				<div className='flex w-full max-w-[18rem] items-center'>
-					<p>Search</p>
-					<input
-						type='text'
-						id='searchFilter'
-						className='ml-2 w-full px-2 py-1 text-sm text-gray-700 lg:ml-2.5'
-						autoComplete='off'
-						spellCheck='false'
-						placeholder={props.searchPlaceholder}
-						value={props.searchTerm}
-						onChange={(e) => props.setSearchTerm(e.target.value)}
-					/>
-				</div>
+			{!props.hideSearch && (
+				<>
+					{isMobile ? (
+						<div className='relative flex w-full items-center rounded-lg hover:shadow-sm'>
+							<input
+								type='text'
+								id='searchFilter'
+								className='w-full pr-8 pl-7 text-sm shadow-none'
+								autoComplete='off'
+								spellCheck='false'
+								placeholder={props.searchPlaceholder}
+								value={props.searchTerm}
+								onChange={(e) => props.setSearchTerm(e.target.value)}
+							/>
+							<SearchIcon className='pointer-events-none absolute left-2 h-4 w-4 text-gray-400' />
+						</div>
+					) : (
+						<div className='flex w-full max-w-[18rem] items-center'>
+							<p>Search</p>
+							<input
+								type='text'
+								id='searchFilter'
+								className='ml-2 w-full px-2 py-1 text-sm text-gray-700 lg:ml-2.5'
+								autoComplete='off'
+								spellCheck='false'
+								placeholder={props.searchPlaceholder}
+								value={props.searchTerm}
+								onChange={(e) => props.setSearchTerm(e.target.value)}
+							/>
+						</div>
+					)}
+				</>
 			)}
 		</div>
 	)

@@ -21,7 +21,7 @@ const ActivityLogs = () => {
 		const getInfo = async () => {
 			try {
 				const { data } = await axiosPrivate.put(
-					'/api/private/user-activity',
+					'/api/private/activity-logs',
 					{ labId: auth.currentLabId },
 					{
 						signal: controller.signal,

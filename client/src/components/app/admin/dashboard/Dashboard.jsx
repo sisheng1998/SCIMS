@@ -77,14 +77,12 @@ const Dashboard = () => {
 			</Title>
 
 			<div className='mb-6'>
-				<p className='mb-2 text-lg font-medium text-gray-500'>Overview</p>
+				<p className='mb-2 font-medium text-gray-500'>Overview</p>
 				<div className='-mr-6 flex flex-wrap xl:-mr-4'>
 					<InfoCard
 						info={info.totalLabs}
 						icon={
-							<div className='rounded-full bg-blue-50 p-4'>
-								<BeakerIcon className='h-8 w-8 text-blue-500' />
-							</div>
+							<BeakerIcon className='h-14 w-14 rounded-full bg-blue-50 p-3 text-blue-500' />
 						}
 						text='Total Lab'
 						increment={info.newLabs === 0 ? false : info.newLabs}
@@ -94,9 +92,7 @@ const Dashboard = () => {
 					<InfoCard
 						info={info.totalUsers}
 						icon={
-							<div className='rounded-full bg-purple-50 p-4'>
-								<UsersIcon className='h-8 w-8 text-purple-500' />
-							</div>
+							<UsersIcon className='h-14 w-14 rounded-full bg-purple-50 p-3 text-purple-500' />
 						}
 						text='Total User'
 						increment={info.newUsers === 0 ? false : info.newUsers}
@@ -106,9 +102,7 @@ const Dashboard = () => {
 					<InfoCard
 						info={info.totalChemicals}
 						icon={
-							<div className='rounded-full bg-pink-50 p-4'>
-								<CubeIcon className='h-8 w-8 text-pink-500' />
-							</div>
+							<CubeIcon className='h-14 w-14 rounded-full bg-pink-50 p-3 text-pink-500' />
 						}
 						text='Total Chemical'
 						increment={info.newChemicals === 0 ? false : info.newChemicals}

@@ -1,14 +1,9 @@
 const ErrorResponse = require('../utils/errorResponse')
 const Lab = require('../models/Lab')
-const User = require('../models/User')
-const Chemical = require('../models/Chemical')
-const Activity = require('../models/Activity')
-const Usage = require('../models/Usage')
+const StockCheck = require('../models/StockCheck')
+const ObjectId = require('mongoose').Types.ObjectId
 
-const UserOption = 'name email avatar'
-const ChemicalOption = 'name unit'
-
-exports.userActivity = async (req, res, next) => {
+exports.stockCheckReports = async (req, res, next) => {
 	const { labId } = req.body
 
 	if (!labId) {
@@ -21,17 +16,43 @@ exports.userActivity = async (req, res, next) => {
 			return next(new ErrorResponse('Lab not found.', 404))
 		}
 
-		const usages = await Usage.find({ lab: labId })
-			.populate('user', UserOption)
-			.populate('chemical', ChemicalOption)
-
-		const activities = await Activity.find({ lab: labId })
-			.populate('user', UserOption)
-			.populate('chemical', ChemicalOption)
+		const records = await StockCheck.find({ lab: labId })
 
 		res.status(200).json({
 			success: true,
-			data: [...usages, ...activities],
+			data: records,
+		})
+	} catch (error) {
+		next(error)
+	}
+}
+
+exports.stockCheckReport = async (req, res, next) => {
+	const reportId = ObjectId(req.params.reportId)
+	const { labId } = req.body
+
+	if (!labId || !reportId) {
+		return next(new ErrorResponse('Missing value for required field.', 400))
+	}
+
+	const foundLab = await Lab.findById(labId)
+	if (!foundLab) {
+		return next(new ErrorResponse('Lab not found.', 404))
+	}
+
+	try {
+		const foundReport = await StockCheck.findOne({
+			_id: reportId,
+			lab: foundLab._id,
+		}).populate('lab', 'labName')
+
+		if (!foundReport) {
+			return next(new ErrorResponse('Report not found.', 404))
+		}
+
+		res.status(201).json({
+			success: true,
+			data: foundReport,
 		})
 	} catch (error) {
 		next(error)

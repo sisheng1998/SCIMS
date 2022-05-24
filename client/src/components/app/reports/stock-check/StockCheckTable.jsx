@@ -1,14 +1,11 @@
 import React, { useCallback, useState, useEffect } from 'react'
-import SortData from '../components/SortData'
-import SortButton from '../components/SortButton'
-import Filters from '../components/Filters'
-import Pagination from '../components/Pagination'
-import ImageLightBox from '../../utils/ImageLightBox'
-import useAuth from '../../../hooks/useAuth'
-import GetLetterPicture from '../../utils/GetLetterPicture'
-import FormatDate from '../../utils/FormatDate'
-import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
+import SortData from '../../components/SortData'
+import SortButton from '../../components/SortButton'
+import Filters from '../../components/Filters'
+import Pagination from '../../components/Pagination'
+import FormatDate from '../../../utils/FormatDate'
 import { useNavigate } from 'react-router-dom'
+import StockCheckOverview from './StockCheckOverview'
 
 const tableHeaders = [
 	{
@@ -17,29 +14,25 @@ const tableHeaders = [
 		sortable: true,
 	},
 	{
-		key: 'userName',
-		label: 'User',
-		sortable: true,
+		key: 'overview',
+		label: 'Stock Check Overview',
+		sortable: false,
 	},
 	{
-		key: 'description',
-		label: 'Description',
+		key: 'action',
+		label: 'Action',
 		sortable: false,
 	},
 ]
 
-const ReportsTable = (props) => {
+const StockCheckTable = (props) => {
 	const navigate = useNavigate()
-	const { auth } = useAuth()
-	const [avatarInfo, setAvatarInfo] = useState('')
-	const [openViewImageModal, setOpenViewImageModal] = useState(false)
 
 	const today = new Date()
 	const past = new Date(new Date().setDate(today.getDate() - 30))
 
 	const [sortKey, setSortKey] = useState('index')
 	const [sortOrder, setSortOrder] = useState('asc')
-	const [searchTerm, setSearchTerm] = useState('')
 	const [filterTerms, setFilterTerms] = useState({
 		duration: {
 			option: '',
@@ -54,11 +47,11 @@ const ReportsTable = (props) => {
 				tableData: props.data,
 				sortKey,
 				reverse: sortOrder === 'desc',
-				searchTerm,
-				searchCols: ['userName', 'userEmail'],
+				searchTerm: '',
+				searchCols: ['date'],
 				filterTerms,
 			}),
-		[props.data, sortKey, sortOrder, searchTerm, filterTerms]
+		[props.data, sortKey, sortOrder, filterTerms]
 	)
 
 	const changeSortOrder = (key) => {
@@ -90,12 +83,7 @@ const ReportsTable = (props) => {
 
 	useEffect(() => {
 		setCurrentPage(1)
-	}, [itemsPerPage, searchTerm, filterTerms])
-
-	const viewImageHandler = (name, imageSrc) => {
-		setAvatarInfo({ name, imageSrc })
-		setOpenViewImageModal(true)
-	}
+	}, [itemsPerPage, filterTerms])
 
 	return (
 		<>
@@ -103,9 +91,8 @@ const ReportsTable = (props) => {
 				itemsPerPage={itemsPerPage}
 				setItemsPerPage={setItemsPerPage}
 				results={results}
-				searchTerm={searchTerm}
-				setSearchTerm={setSearchTerm}
-				searchPlaceholder='Name / Email'
+				searchTerm=''
+				hideSearch={true}
 			>
 				<div className='mx-6 flex items-center'>
 					<p>Duration</p>
@@ -203,93 +190,24 @@ const ReportsTable = (props) => {
 										</td>
 									</tr>
 								) : (
-									currentItems.map((log) => {
-										const imageSrc = log.user.avatar
-											? auth.avatarPath + log.user.avatar
-											: GetLetterPicture(log.userName)
+									currentItems.map((report) => (
+										<tr key={report._id}>
+											<td className='px-6 py-4'>{FormatDate(report.date)}</td>
 
-										return (
-											<tr key={log._id}>
-												<td className='px-6 py-4'>{FormatDate(log.date)}</td>
+											<td className='px-6 py-4'>
+												<StockCheckOverview report={report} />
+											</td>
 
-												<td className='px-6 py-4'>
-													<div className='flex w-max items-center space-x-3'>
-														<img
-															src={imageSrc}
-															alt='Avatar'
-															className='h-12 w-12 cursor-pointer rounded-full object-cover'
-															height='64'
-															width='64'
-															draggable={false}
-															onClick={() =>
-																viewImageHandler(log.userName, imageSrc)
-															}
-														/>
-
-														<div>
-															<p className='font-medium leading-5'>
-																{log.userName}
-															</p>
-															<p className='text-sm leading-4 text-gray-400'>
-																{log.userEmail}
-															</p>
-														</div>
-													</div>
-												</td>
-
-												<td className='px-6 py-4'>
-													{log.type === 'Usage' ? (
-														<p>
-															Amount of chemical used
-															<span className='ml-1.5 text-sm'>
-																(
-																<span
-																	onClick={() =>
-																		navigate(`/inventory/${log.chemical._id}`)
-																	}
-																	className='inline cursor-pointer font-medium text-indigo-600 transition hover:text-indigo-700'
-																>
-																	{log.chemical.name}
-																</span>
-																)
-															</span>
-															:
-															<span className='ml-1.5 font-medium'>
-																{FormatAmountWithUnit(
-																	log.usage,
-																	log.chemical.unit
-																)}
-															</span>
-															<span className='ml-1.5 text-sm text-gray-500'>
-																({log.originalAmount} →{' '}
-																{FormatAmountWithUnit(
-																	log.originalAmount - log.usage,
-																	log.chemical.unit
-																)}
-																)
-															</span>
-														</p>
-													) : (
-														<p>
-															{log.description}
-															<span className='ml-1.5 text-sm'>
-																(
-																<span
-																	onClick={() =>
-																		navigate(`/inventory/${log.chemical._id}`)
-																	}
-																	className='inline cursor-pointer font-medium text-indigo-600 transition hover:text-indigo-700'
-																>
-																	{log.chemical.name}
-																</span>
-																)
-															</span>
-														</p>
-													)}
-												</td>
-											</tr>
-										)
-									})
+											<td className='px-6 py-4'>
+												<button
+													onClick={() => navigate(`/reports/${report._id}`)}
+													className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+												>
+													View
+												</button>
+											</td>
+										</tr>
+									))
 								)}
 							</tbody>
 						</table>
@@ -299,7 +217,6 @@ const ReportsTable = (props) => {
 
 			<Pagination
 				filterTerms={filterTerms}
-				searchTerm={searchTerm}
 				indexOfFirstItem={indexOfFirstItem}
 				indexOfLastItem={indexOfLastItem}
 				currentPage={currentPage}
@@ -307,17 +224,8 @@ const ReportsTable = (props) => {
 				totalItems={results.length}
 				paginate={paginate}
 			/>
-
-			{openViewImageModal && avatarInfo && (
-				<ImageLightBox
-					object={avatarInfo}
-					type='Avatar'
-					openModal={openViewImageModal}
-					setOpenModal={setOpenViewImageModal}
-				/>
-			)}
 		</>
 	)
 }
 
-export default ReportsTable
+export default StockCheckTable

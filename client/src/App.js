@@ -37,6 +37,7 @@ import ProfileUpdate from './components/app/ProfileUpdate'
 import ApplyNewLab from './components/app/ApplyNewLab'
 import AddChemical from './components/app/inventory/AddChemical'
 import ChemicalInfo from './components/app/inventory/ChemicalInfo'
+import StockCheckReport from './components/app/reports/stock-check/StockCheckReport'
 
 // Admin
 import AdminDashboard from './components/app/admin/dashboard/Dashboard'
@@ -89,6 +90,11 @@ const App = () => {
 							{!isMobile ? (
 								<>
 									<Route exact path='/reports' element={<Reports />} />
+									<Route
+										exact
+										path='/reports/:reportId'
+										element={<StockCheckReport />}
+									/>
 									<Route
 										exact
 										path='/import-export'

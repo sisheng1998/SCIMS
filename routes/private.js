@@ -35,9 +35,11 @@ const {
 	updateAvatar,
 } = require('../controllers/profile')
 
-const { userActivity } = require('../controllers/report')
+const { userActivity } = require('../controllers/activity_log')
 
 const { stockCheck } = require('../controllers/stock_check')
+
+const { stockCheckReports, stockCheckReport } = require('../controllers/report')
 
 const {
 	addLocation,
@@ -90,13 +92,21 @@ router
 	.route('/profile/avatar')
 	.post(uploadAvatar.single('avatar'), updateAvatar)
 
-// Report
+// Activity Logs
 router
-	.route('/user-activity')
+	.route('/activity-logs')
 	.put(verifyRoles(ROLES_LIST.labOwner), userActivity)
 
 // Stock Check
 router.route('/stock-check').post(verifyRoles(ROLES_LIST.labOwner), stockCheck)
+
+// Reports
+router
+	.route('/stock-check-reports')
+	.put(verifyRoles(ROLES_LIST.labOwner), stockCheckReports)
+router
+	.route('/reports/:reportId')
+	.put(verifyRoles(ROLES_LIST.labOwner), stockCheckReport)
 
 // Settings
 router.route('/location').post(verifyRoles(ROLES_LIST.labOwner), addLocation)
