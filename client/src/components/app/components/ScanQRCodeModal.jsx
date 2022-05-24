@@ -51,12 +51,16 @@ const ScanQRCodeModal = ({
 						if (!!result && result.text) {
 							const chemicalId = result.text.replace(/[^A-Za-z0-9]/g, '')
 							const location = '/inventory/' + chemicalId
-							setOpenModal(false)
-							if (isStockCheck) setScannedChemicalId(chemicalId)
-							else navigate(location)
+
+							setTimeout(() => {
+								setOpenModal(false)
+
+								if (isStockCheck) setScannedChemicalId(chemicalId)
+								else navigate(location)
+							}, 500)
 						}
 					}}
-					scanDelay='1000'
+					scanDelay='1500'
 					constraints={{ facingMode: 'environment' }}
 					containerStyle={containerStyle}
 					videoContainerStyle={videoContainerStyle}

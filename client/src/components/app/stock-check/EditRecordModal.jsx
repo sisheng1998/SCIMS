@@ -130,7 +130,7 @@ const EditRecordModal = ({
 										Cancel
 									</span>
 									<button
-										className='ml-6 w-40'
+										className='ml-6 w-32'
 										type='submit'
 										disabled={!allowed}
 									>

@@ -155,7 +155,7 @@ const ChangePasswordModal = ({ openModal, setOpenModal }) => {
 										Cancel
 									</span>
 									<button
-										className='ml-6 w-40'
+										className='ml-6 w-40 lg:w-32'
 										type='submit'
 										disabled={!allowed}
 									>

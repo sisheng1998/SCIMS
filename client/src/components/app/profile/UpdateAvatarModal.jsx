@@ -121,7 +121,11 @@ const UpdateAvatarModal = ({ openModal, setOpenModal }) => {
 									>
 										Cancel
 									</span>
-									<button className='ml-6 w-40' type='submit' disabled={!image}>
+									<button
+										className='ml-6 w-40 lg:w-32'
+										type='submit'
+										disabled={!image}
+									>
 										Update
 									</button>
 								</div>

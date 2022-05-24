@@ -109,7 +109,7 @@ const RemoveRecordModal = ({
 									>
 										Cancel
 									</span>
-									<button className='button-red ml-6 w-40' type='submit'>
+									<button className='button-red ml-6 w-32' type='submit'>
 										Remove
 									</button>
 								</div>

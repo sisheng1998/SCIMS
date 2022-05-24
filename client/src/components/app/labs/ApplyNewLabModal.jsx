@@ -123,7 +123,11 @@ const ApplyNewLabModal = ({ openModal, setOpenModal }) => {
 									>
 										Cancel
 									</span>
-									<button className='w-40' type='submit' disabled={!allowed}>
+									<button
+										className='w-40 lg:w-32'
+										type='submit'
+										disabled={!allowed}
+									>
 										Apply
 									</button>
 								</div>
