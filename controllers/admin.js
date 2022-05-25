@@ -14,15 +14,9 @@ const SettingsPath = path.resolve(__dirname, '../config/settings.json')
 
 // Dashboard
 exports.getInfo = async (req, res, next) => {
-	const { days } = req.body
-
-	if (!days) {
-		return next(new ErrorResponse('Missing value for required field.', 400))
-	}
-
 	try {
 		const today = new Date()
-		const past = new Date(today.setDate(today.getDate() - days))
+		const past = new Date(today.setDate(today.getDate() - 30))
 
 		const data = {}
 

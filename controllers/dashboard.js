@@ -1,60 +1,74 @@
 const ErrorResponse = require('../utils/errorResponse')
 const User = require('../models/User')
 const Chemical = require('../models/Chemical')
+const Lab = require('../models/Lab')
+const settings = require('../config/settings.json')
 
 // Dashboard
 exports.getInfo = async (req, res, next) => {
-	const { labId, days } = req.body
+	const { labId } = req.body
 
-	if (!labId || !days) {
+	if (!labId) {
 		return next(new ErrorResponse('Missing required value.', 400))
+	}
+
+	const foundLab = await Lab.findById(
+		labId,
+		'chemicals disposedChemicals'
+	).populate('chemicals disposedChemicals', 'name expirationDate')
+
+	if (!foundLab) {
+		return next(new ErrorResponse('Lab not found.', 404))
 	}
 
 	try {
 		const today = new Date()
-		const past = new Date(today.setDate(today.getDate() - days))
+		const past = new Date(today.setDate(today.getDate() - 30))
 
 		const data = {}
 
 		data.totalUsers = await User.countDocuments({
-			roles: { $elemMatch: { lab: labId } },
+			roles: { $elemMatch: { lab: foundLab._id } },
 		})
 		data.newUsers = await User.countDocuments({
-			roles: { $elemMatch: { lab: labId } },
+			roles: { $elemMatch: { lab: foundLab._id } },
 			createdAt: { $gte: past },
 		})
 		data.pendingUsers = await User.countDocuments({
-			roles: { $elemMatch: { lab: labId, status: 'Pending' } },
+			roles: { $elemMatch: { lab: foundLab._id, status: 'Pending' } },
 			lastUpdated: { $gte: past },
 		})
 
 		data.totalChemicals = await Chemical.countDocuments({
-			lab: { $eq: labId },
+			lab: { $eq: foundLab._id },
 		})
 		data.newChemicals = await Chemical.countDocuments({
-			lab: { $eq: labId },
+			lab: { $eq: foundLab._id },
 			createdAt: { $gte: past },
 		})
 		data.lowAmountChemicals = await Chemical.countDocuments({
-			lab: { $eq: labId },
+			lab: { $eq: foundLab._id },
 			status: { $eq: 'Low Amount' },
 			lastUpdated: { $gte: past },
 		})
 		data.expiringChemicals = await Chemical.countDocuments({
-			lab: { $eq: labId },
+			lab: { $eq: foundLab._id },
 			status: { $eq: 'Expiring Soon' },
 			lastUpdated: { $gte: past },
 		})
 		data.expiredChemicals = await Chemical.countDocuments({
-			lab: { $eq: labId },
+			lab: { $eq: foundLab._id },
 			status: { $eq: 'Expired' },
 			lastUpdated: { $gte: past },
 		})
 		data.disposedChemicals = await Chemical.countDocuments({
-			lab: { $eq: labId },
+			lab: { $eq: foundLab._id },
 			status: { $eq: 'Disposed' },
 			lastUpdated: { $gte: past },
 		})
+
+		data.chemicals = [...foundLab.chemicals, ...foundLab.disposedChemicals]
+		data.dayBeforeExp = settings.DAY_BEFORE_EXP
 
 		res.status(200).json({
 			success: true,

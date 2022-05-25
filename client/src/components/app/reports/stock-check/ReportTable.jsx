@@ -225,7 +225,7 @@ const ReportTable = ({ chemicals, locations, type }) => {
 													{chemical.amount !== chemical.amountInDB && (
 														<span
 															className='tooltip ml-1.5 whitespace-normal'
-															data-tooltip={`Actual amount is ${FormatAmountWithUnit(
+															data-tooltip={`The actual amount is ${FormatAmountWithUnit(
 																chemical.amountInDB,
 																chemical.unit
 															)}`}

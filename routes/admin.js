@@ -18,7 +18,7 @@ const {
 } = require('../controllers/admin')
 
 // Dashboard
-router.route('/dashboard').put(verifyRoles(ROLES_LIST.admin), getInfo)
+router.route('/dashboard').get(verifyRoles(ROLES_LIST.admin), getInfo)
 
 // Users
 router.route('/users').get(verifyRoles(ROLES_LIST.admin), getUsers)
