@@ -116,9 +116,9 @@ const ExportQRCodesModal = ({ chemicals, openModal, setOpenModal }) => {
 													key={chemical._id}
 													className={`cursor-pointer ${
 														selected.includes(chemical._id)
-															? 'bg-indigo-50/30'
+															? 'bg-indigo-50'
 															: ''
-													} hover:bg-indigo-50 ${
+													} hover:bg-indigo-50/30 ${
 														match(chemical.CASId.CASNo, chemical.name)
 															? ''
 															: 'hidden'

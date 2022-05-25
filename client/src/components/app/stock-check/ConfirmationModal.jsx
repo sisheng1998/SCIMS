@@ -93,8 +93,8 @@ const ConfirmationModal = ({
 			<div className='flex min-h-screen items-center justify-center'>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div
-					className={`relative m-4 w-full rounded-lg bg-white p-6 shadow ${
-						success ? 'max-w-sm text-center' : 'max-w-3xl'
+					className={`relative m-4 w-full max-w-sm rounded-lg bg-white p-6 shadow ${
+						success ? 'text-center' : ''
 					}`}
 				>
 					{success ? (

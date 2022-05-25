@@ -20,7 +20,7 @@ const StockCheckReport = () => {
 	const params = useParams()
 
 	const [activeTab, setActiveTab] = useState('Tab0')
-	const [report, setReport] = useState('')
+	const [report, setReport] = useState([])
 	const [locations, setLocations] = useState('')
 
 	const [success, setSuccess] = useState('')
@@ -102,7 +102,7 @@ const StockCheckReport = () => {
 						hasRefreshButton={false}
 					/>
 
-					<p className='mb-2 font-medium text-gray-500'>Overview</p>
+					<p className='mb-2 font-medium text-gray-500'>Report Overview</p>
 					<ReportDetails report={report} />
 
 					<div className='mb-6 border-b border-gray-200 text-sm font-medium text-gray-500'>
@@ -127,7 +127,7 @@ const StockCheckReport = () => {
 						<ReportTable
 							chemicals={report.recordedChemicals}
 							locations={locations}
-							isRecordedChemicals={true}
+							type='Recorded'
 						/>
 					)}
 
@@ -135,6 +135,7 @@ const StockCheckReport = () => {
 						<ReportTable
 							chemicals={report.missingChemicals}
 							locations={locations}
+							type='Missing'
 						/>
 					)}
 
@@ -142,6 +143,7 @@ const StockCheckReport = () => {
 						<ReportTable
 							chemicals={report.disposedChemicals}
 							locations={locations}
+							type='Disposed'
 						/>
 					)}
 				</>

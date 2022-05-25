@@ -209,7 +209,7 @@ const ActivityLogsTable = (props) => {
 											: GetLetterPicture(log.userName)
 
 										return (
-											<tr key={log._id}>
+											<tr className='hover:bg-indigo-50/30' key={log._id}>
 												<td className='px-6 py-4'>{FormatDate(log.date)}</td>
 
 												<td className='px-6 py-4'>
@@ -229,6 +229,12 @@ const ActivityLogsTable = (props) => {
 														<div>
 															<p className='font-medium leading-5'>
 																{log.userName}
+																{auth.email.toLowerCase() ===
+																	log.userEmail.toLowerCase() && (
+																	<span className='ml-1.5 text-sm text-indigo-600'>
+																		(You)
+																	</span>
+																)}
 															</p>
 															<p className='text-sm leading-4 text-gray-400'>
 																{log.userEmail}

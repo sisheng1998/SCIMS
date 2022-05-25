@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { Listbox } from '@headlessui/react'
 import { SelectorIcon, CheckIcon } from '@heroicons/react/outline'
+import useAuth from '../../hooks/useAuth'
 
 const FilterOptions = ({ options, searchTerm, searchCols }) => {
 	const filteredOptions = options
@@ -25,6 +26,8 @@ const UserSearchableSelect = ({
 	options,
 	fallbackUser,
 }) => {
+	const { auth } = useAuth()
+
 	const selectedOption =
 		options.find((options) => options._id === selectedId) || fallbackUser
 	const [searchTerm, setSearchTerm] = useState('')
@@ -55,6 +58,10 @@ const UserSearchableSelect = ({
 							<span className='ml-2 text-sm text-gray-500'>
 								{selectedOption.email}
 							</span>
+							{auth.email.toLowerCase() ===
+								selectedOption.email.toLowerCase() && (
+								<span className='ml-1.5 text-sm text-indigo-600'>(You)</span>
+							)}
 						</span>
 					) : (
 						<span className='text-gray-400'>Select user</span>
@@ -105,6 +112,16 @@ const UserSearchableSelect = ({
 											>
 												{option.email}
 											</span>
+											{auth.email.toLowerCase() ===
+												option.email.toLowerCase() && (
+												<span
+													className={`ml-1.5 text-sm ${
+														active ? 'text-white' : 'text-indigo-600'
+													}`}
+												>
+													(You)
+												</span>
+											)}
 										</span>
 
 										{selected && (

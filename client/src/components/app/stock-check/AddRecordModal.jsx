@@ -108,7 +108,9 @@ const AddRecordModal = ({
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div
 					className={`relative m-4 w-full rounded-lg bg-white p-6 shadow ${
-						success ? 'max-w-sm text-center' : 'max-w-xl'
+						success || notFound || invalid || recorded || disposed
+							? 'max-w-sm text-center'
+							: 'max-w-xl'
 					}`}
 				>
 					{success ? (
@@ -126,7 +128,7 @@ const AddRecordModal = ({
 					) : (
 						<>
 							{invalid && (
-								<div className='text-center'>
+								<>
 									<XIcon className='mx-auto h-16 w-16 rounded-full bg-red-100 p-2 text-red-600' />
 									<h2 className='mt-6 mb-2 text-red-600'>Invalid QR Code</h2>
 									<p>The QR code is invalid.</p>
@@ -136,11 +138,11 @@ const AddRecordModal = ({
 									>
 										Okay
 									</button>
-								</div>
+								</>
 							)}
 
 							{recorded && (
-								<div className='text-center'>
+								<>
 									<ExclamationIcon className='mx-auto h-16 w-16 rounded-full bg-yellow-100 p-2 text-yellow-600' />
 									<h2 className='mt-6 mb-2 text-yellow-600'>
 										Recorded Chemical
@@ -152,11 +154,11 @@ const AddRecordModal = ({
 									>
 										Okay
 									</button>
-								</div>
+								</>
 							)}
 
 							{notFound && (
-								<div className='text-center'>
+								<>
 									<ExclamationIcon className='mx-auto h-16 w-16 rounded-full bg-yellow-100 p-2 text-yellow-600' />
 									<h2 className='mt-6 mb-2 text-yellow-600'>
 										Chemical Not Found
@@ -168,11 +170,11 @@ const AddRecordModal = ({
 									>
 										Okay
 									</button>
-								</div>
+								</>
 							)}
 
 							{disposed && (
-								<div className='text-center'>
+								<>
 									<ExclamationIcon className='mx-auto h-16 w-16 rounded-full bg-red-100 p-2 text-red-600' />
 									<h2 className='mt-6 mb-2 text-red-600'>Disposed Chemical</h2>
 									<p>The chemical is already disposed.</p>
@@ -182,7 +184,7 @@ const AddRecordModal = ({
 									>
 										Okay
 									</button>
-								</div>
+								</>
 							)}
 
 							{chemical && (

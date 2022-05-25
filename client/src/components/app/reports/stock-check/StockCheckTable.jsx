@@ -191,7 +191,7 @@ const StockCheckTable = (props) => {
 									</tr>
 								) : (
 									currentItems.map((report) => (
-										<tr key={report._id}>
+										<tr className='hover:bg-indigo-50/30' key={report._id}>
 											<td className='px-6 py-4'>{FormatDate(report.date)}</td>
 
 											<td className='px-6 py-4'>

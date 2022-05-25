@@ -76,9 +76,9 @@ const Dashboard = () => {
 				</div>
 			</Title>
 
-			<div className='mb-6'>
+			<div className='mb-2'>
 				<p className='mb-2 font-medium text-gray-500'>Overview</p>
-				<div className='-mr-6 flex flex-wrap xl:-mr-4'>
+				<div className='-mr-4 flex flex-wrap'>
 					<InfoCard
 						info={info.totalLabs}
 						icon={

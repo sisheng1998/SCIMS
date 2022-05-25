@@ -78,7 +78,10 @@ const ViewUserModal = ({ user, openModal, setOpenModal }) => {
 													}
 
 													return (
-														<tr key={role.lab._id}>
+														<tr
+															className='hover:bg-indigo-50/30'
+															key={role.lab._id}
+														>
 															<td className='px-3 py-2'>
 																{'Lab ' + role.lab.labName}
 																{role.lab.status === 'Not In Use' && (

@@ -10,8 +10,8 @@ import {
 
 const InfoCard = ({ icon, value, text, haveLetterS }) => {
 	return (
-		<div className='mb-6 w-1/5 min-w-max 2xl:w-1/4 xl:mb-4 xl:w-1/3'>
-			<div className='mr-6 flex h-full items-center space-x-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:mr-4'>
+		<div className='mb-4 w-1/5 min-w-max 2xl:w-1/4 xl:w-1/3'>
+			<div className='mr-4 flex h-full items-center space-x-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
 				{icon}
 
 				<div>
@@ -33,7 +33,7 @@ const ReportDetails = ({ report }) => {
 		report.disposedChemicals.length
 
 	return (
-		<div className='-mr-6 flex flex-wrap xl:-mr-4'>
+		<div className='-mr-4 mb-2 flex flex-wrap'>
 			<InfoCard
 				icon={
 					<ClipboardListIcon className='h-14 w-14 rounded-full bg-purple-50 p-3 text-purple-500' />

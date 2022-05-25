@@ -34,7 +34,7 @@ const SortData = ({
 						}
 					}
 
-					// Filter for reports
+					// Filter for activity logs
 					if (col === 'duration') {
 						const currentMonth = new Date().getMonth() + 1
 						const loggedMonth = new Date(data['date']).getMonth() + 1
@@ -52,6 +52,17 @@ const SortData = ({
 							const endDate = new Date(value.endDate).getTime()
 
 							return date <= endDate && date >= startDate
+						}
+
+						return true
+					}
+
+					// Filter for stock check report
+					if (col === 'amount') {
+						if (value === '==') {
+							return data[col] === data['amountInDB']
+						} else if (value === '!=') {
+							return data[col] !== data['amountInDB']
 						}
 
 						return true

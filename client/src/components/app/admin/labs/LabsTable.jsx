@@ -192,7 +192,7 @@ const LabsTable = (props) => {
 											: GetLetterPicture(lab.labOwner.name)
 
 										return (
-											<tr key={lab._id}>
+											<tr className='hover:bg-indigo-50/30' key={lab._id}>
 												<td className='px-6 py-4'>{'Lab ' + lab.labName}</td>
 
 												<td className='px-6 py-4'>
@@ -212,6 +212,12 @@ const LabsTable = (props) => {
 														<div>
 															<p className='font-medium leading-5'>
 																{lab.labOwner.name}
+																{auth.email.toLowerCase() ===
+																	lab.labOwner.email.toLowerCase() && (
+																	<span className='ml-1.5 text-sm text-indigo-600'>
+																		(You)
+																	</span>
+																)}
 															</p>
 															<p className='text-sm leading-4 text-gray-400'>
 																{lab.labOwner.email}

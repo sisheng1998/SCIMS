@@ -50,7 +50,7 @@ const LabsSection = ({ user }) => {
 										}
 
 										return (
-											<tr key={role.lab._id}>
+											<tr className='hover:bg-indigo-50/30' key={role.lab._id}>
 												<td className='px-6 py-4'>
 													{'Lab ' + role.lab.labName}
 													{role.lab.status === 'Not In Use' && (

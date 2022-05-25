@@ -3,10 +3,20 @@ import SortData from '../../components/SortData'
 import SortButton from '../../components/SortButton'
 import Filters from '../../components/Filters'
 import Pagination from '../../components/Pagination'
-import FormatAmountWithUnit from '../../../utils/FormatAmountWithUnit'
 import { useNavigate } from 'react-router-dom'
+import SortChemicals, { NormalSorting } from './SortChemicals'
+import { ExclamationIcon } from '@heroicons/react/outline'
+import FormatAmountWithUnit from '../../../utils/FormatAmountWithUnit'
 
-const ReportTable = ({ chemicals, locations, isRecordedChemicals }) => {
+const ReportTable = ({ chemicals, locations, type }) => {
+	let processedData
+
+	if (type === 'Recorded') {
+		processedData = SortChemicals(chemicals)
+	} else {
+		processedData = NormalSorting(chemicals)
+	}
+
 	const navigate = useNavigate()
 
 	const [sortKey, setSortKey] = useState('index')
@@ -14,6 +24,7 @@ const ReportTable = ({ chemicals, locations, isRecordedChemicals }) => {
 	const [searchTerm, setSearchTerm] = useState('')
 	const [filterTerms, setFilterTerms] = useState({
 		location: '',
+		amount: '',
 	})
 
 	const tableHeaders = [
@@ -31,7 +42,7 @@ const ReportTable = ({ chemicals, locations, isRecordedChemicals }) => {
 		},
 		{
 			key: 'location',
-			label: 'Location',
+			label: type === 'Disposed' ? 'Previous Location' : 'Location',
 			sortable: true,
 			hide: false,
 		},
@@ -39,11 +50,11 @@ const ReportTable = ({ chemicals, locations, isRecordedChemicals }) => {
 			key: 'amount',
 			label: 'Recorded Amount',
 			sortable: false,
-			hide: !isRecordedChemicals,
+			hide: type !== 'Recorded',
 		},
 		{
 			key: 'amountInDB',
-			label: isRecordedChemicals ? 'Actual Amount' : 'Amount',
+			label: type === 'Recorded' ? 'Actual Amount' : 'Amount',
 			sortable: false,
 			hide: false,
 		},
@@ -58,14 +69,14 @@ const ReportTable = ({ chemicals, locations, isRecordedChemicals }) => {
 	const sortedData = useCallback(
 		() =>
 			SortData({
-				tableData: chemicals,
+				tableData: processedData,
 				sortKey,
 				reverse: sortOrder === 'desc',
 				searchTerm,
 				searchCols: ['CASNo', 'name'],
 				filterTerms,
 			}),
-		[chemicals, sortKey, sortOrder, searchTerm, filterTerms]
+		[processedData, sortKey, sortOrder, searchTerm, filterTerms]
 	)
 
 	const changeSortOrder = (key) => {
@@ -111,6 +122,7 @@ const ReportTable = ({ chemicals, locations, isRecordedChemicals }) => {
 			>
 				<div className='mx-6 flex items-center lg:ml-4 lg:mr-0'>
 					<p>Filter</p>
+
 					<select
 						className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
 						name='locationFilter'
@@ -133,6 +145,22 @@ const ReportTable = ({ chemicals, locations, isRecordedChemicals }) => {
 							))}
 						<option value='-'>No Location</option>
 					</select>
+
+					{type === 'Recorded' && (
+						<select
+							className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
+							name='amountFilter'
+							id='amountFilter'
+							value={filterTerms.amount}
+							onChange={(e) =>
+								setFilterTerms((prev) => ({ ...prev, amount: e.target.value }))
+							}
+						>
+							<option value=''>Any Condition</option>
+							<option value='=='>Amount Matched</option>
+							<option value='!='>Amount Mismatched</option>
+						</select>
+					)}
 				</div>
 			</Filters>
 
@@ -173,7 +201,7 @@ const ReportTable = ({ chemicals, locations, isRecordedChemicals }) => {
 										<td
 											className='px-6 py-4 text-center'
 											colSpan={
-												isRecordedChemicals
+												type === 'Recorded'
 													? tableHeaders.length
 													: tableHeaders.length - 1
 											}
@@ -183,13 +211,28 @@ const ReportTable = ({ chemicals, locations, isRecordedChemicals }) => {
 									</tr>
 								) : (
 									currentItems.map((chemical) => (
-										<tr key={chemical.chemicalId}>
+										<tr
+											className='hover:bg-indigo-50/30'
+											key={chemical.chemicalId}
+										>
 											<td className='px-6 py-4'>{chemical.CASNo}</td>
 											<td className='px-6 py-4'>{chemical.name}</td>
 											<td className='px-6 py-4'>{chemical.location}</td>
-											{isRecordedChemicals && (
+											{type === 'Recorded' && (
 												<td className='px-6 py-4'>
 													{FormatAmountWithUnit(chemical.amount, chemical.unit)}
+
+													{chemical.amount !== chemical.amountInDB && (
+														<span
+															className='tooltip ml-1.5 whitespace-normal'
+															data-tooltip={`Actual amount is ${FormatAmountWithUnit(
+																chemical.amountInDB,
+																chemical.unit
+															)}`}
+														>
+															<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
+														</span>
+													)}
 												</td>
 											)}
 											<td className='px-6 py-4'>

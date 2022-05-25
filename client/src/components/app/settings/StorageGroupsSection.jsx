@@ -27,7 +27,7 @@ const StorageGroupsSection = () => {
 
 						<tbody className='divide-y divide-gray-200 bg-white'>
 							{STORAGE_GROUPS.map((group, index) => (
-								<tr key={index}>
+								<tr className='hover:bg-indigo-50/30' key={index}>
 									<td className='px-6 py-4 text-center'>{group.code}</td>
 									<td className='px-6 py-4'>{group.description}</td>
 								</tr>

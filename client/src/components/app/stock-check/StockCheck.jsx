@@ -117,7 +117,7 @@ const StockCheck = () => {
 	return isLoading ? (
 		<LoadingScreen />
 	) : !started ? (
-		<div className='auth-card mb-6'>
+		<div className='auth-card mb-6 self-center'>
 			<h4 className='mb-2'>Stock Check Procedure</h4>
 			<Procedure showFirstStep={true} />
 			<button

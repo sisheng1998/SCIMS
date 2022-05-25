@@ -224,7 +224,7 @@ const UsersTable = (props) => {
 										}
 
 										return (
-											<tr key={user._id}>
+											<tr className='hover:bg-indigo-50/30' key={user._id}>
 												<td className='px-6 py-4'>{user.matricNo}</td>
 
 												<td className='px-6 py-4'>
@@ -244,6 +244,12 @@ const UsersTable = (props) => {
 														<div>
 															<p className='font-medium leading-5'>
 																{user.name}
+																{auth.email.toLowerCase() ===
+																	user.email.toLowerCase() && (
+																	<span className='ml-1.5 text-sm text-indigo-600'>
+																		(You)
+																	</span>
+																)}
 															</p>
 															<p className='text-sm leading-4 text-gray-400'>
 																{user.email}

@@ -49,7 +49,7 @@ const LocationsSection = ({ locations, setEditLocationSuccess }) => {
 											a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
 										)
 										.map((location) => (
-											<tr key={location._id}>
+											<tr className='hover:bg-indigo-50/30' key={location._id}>
 												<td className='px-6 py-4'>{location.name}</td>
 												<td className='px-6 py-4'>
 													{location.storageGroups.length ===

@@ -164,6 +164,7 @@ const ChemicalsTable = (props) => {
 				{!isMobile && (
 					<div className='mx-6 flex items-center lg:ml-4 lg:mr-0'>
 						<p>Filter</p>
+
 						<select
 							className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
 							name='statusFilter'
@@ -377,7 +378,10 @@ const ChemicalsTable = (props) => {
 											}
 
 											return (
-												<tr key={chemical._id}>
+												<tr
+													className='hover:bg-indigo-50/30'
+													key={chemical._id}
+												>
 													<td className='px-6 py-4'>{chemical.CASId.CASNo}</td>
 
 													<td className='px-6 py-4'>

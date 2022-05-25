@@ -5,8 +5,8 @@ const FormatValue = (value) =>
 
 const InfoCard = ({ info, icon, text, increment, haveLetterS }) => {
 	return (
-		<div className='mb-6 w-1/5 min-w-max 2xl:w-1/4 xl:mb-4 xl:w-1/3'>
-			<div className='mr-6 flex h-full items-center space-x-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:mr-4'>
+		<div className='mb-4 w-1/5 min-w-max 2xl:w-1/4 xl:w-1/3'>
+			<div className='mr-4 flex h-full items-center space-x-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
 				{icon}
 				<div>
 					<h3 className='font-semibold text-gray-700'>
