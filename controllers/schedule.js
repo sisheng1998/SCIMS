@@ -6,6 +6,70 @@ const settings = require('../config/settings.json')
 const ROLES_LIST = require('../config/roles_list')
 const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
+const logEvents = require('../middleware/logEvents')
+
+const notifyUsers = (chemicals, type) => {
+	chemicals.forEach(async (chemical) => {
+		if (chemical.lab === null) return
+
+		const users = await User.find(
+			{
+				roles: {
+					$elemMatch: {
+						lab: { $eq: chemical.lab._id },
+						role: { $gte: ROLES_LIST.postgraduate },
+						status: { $eq: 'Active' },
+					},
+				},
+			},
+			'email'
+		)
+
+		users.forEach((user) => {
+			const emailOptions = {
+				to: user.email,
+				subject:
+					type === 'Expired'
+						? 'Alert - Chemical Expired'
+						: 'Alert - Chemical Expiring Soon',
+				template: type === 'Expired' ? 'expired' : 'expiring_soon',
+				context: {
+					lab: chemical.lab.labName,
+					chemicalName: chemical.name,
+					url: `${process.env.DOMAIN_NAME}/inventory/${chemical._id}`,
+				},
+			}
+
+			sendEmail(emailOptions)
+		})
+
+		const subscribers = await Subscriber.find(
+			{ user: { $in: users } },
+			'endpoint keys'
+		)
+
+		subscribers.forEach((subscriber) => {
+			const subscription = {
+				endpoint: subscriber.endpoint,
+				keys: subscriber.keys,
+			}
+
+			const payload = JSON.stringify({
+				title:
+					type === 'Expired'
+						? 'Alert - Chemical Expired'
+						: 'Alert - Chemical Expiring Soon',
+				message:
+					type === 'Expired'
+						? `[Lab ${chemical.lab.labName}] ${chemical.name} expired.`
+						: `[Lab ${chemical.lab.labName}] ${chemical.name} expiring soon.`,
+				url: `/inventory/${chemical._id}`,
+			})
+
+			sendNotification(subscription, payload)
+		})
+	})
+}
 
 module.exports = async () => {
 	// At 00:00 everyday - Update all chemical status
@@ -15,169 +79,79 @@ module.exports = async () => {
 			new Date().setDate(today.getDate() + settings.DAY_BEFORE_EXP)
 		)
 
-		// Handle expired chemicals
-		const expiredChemicals = await Chemical.find(
-			{
-				status: {
-					$nin: ['Disposed', 'Expired'],
-				},
-				expirationDate: {
-					$lt: today,
-				},
-			},
-			'name lab'
-		).populate({
-			path: 'lab',
-			select: 'labName status',
-			match: { status: { $eq: 'In Use' } },
-		})
-
-		await Chemical.updateMany(
-			{
-				status: {
-					$nin: ['Disposed', 'Expired'],
-				},
-				expirationDate: {
-					$lt: today,
-				},
-			},
-			{
-				$set: {
-					status: 'Expired',
-				},
-			}
-		)
-
-		expiredChemicals.forEach(async (chemical) => {
-			if (chemical.lab === null) return
-
-			const users = await User.find(
+		try {
+			// Handle expired chemicals
+			const expiredChemicals = await Chemical.find(
 				{
-					roles: {
-						$elemMatch: {
-							lab: { $eq: chemical.lab._id },
-							role: { $gte: ROLES_LIST.postgraduate },
-							status: { $eq: 'Active' },
-						},
+					status: {
+						$nin: ['Disposed', 'Expired'],
+					},
+					expirationDate: {
+						$lt: today,
 					},
 				},
-				'email'
-			)
-
-			users.forEach((user) => {
-				sendEmail({
-					to: user.email,
-					subject: 'Alert - Chemical Expired',
-					template: 'expired',
-					context: {
-						lab: chemical.lab.labName,
-						chemicalName: chemical.name,
-						url: `${process.env.DOMAIN_NAME}/inventory/${chemical._id}`,
-					},
-				})
+				'name lab'
+			).populate({
+				path: 'lab',
+				select: 'labName status',
+				match: { status: { $eq: 'In Use' } },
 			})
 
-			const subscribers = await Subscriber.find(
-				{ user: { $in: users } },
-				'endpoint keys'
-			)
-
-			subscribers.forEach((subscriber) => {
-				const subscription = {
-					endpoint: subscriber.endpoint,
-					keys: subscriber.keys,
-				}
-				const payload = JSON.stringify({
-					title: 'Alert - Chemical Expired',
-					message: `[Lab ${chemical.lab.labName}] ${chemical.name} expired.`,
-					url: `/inventory/${chemical._id}`,
-				})
-
-				sendNotification(subscription, payload)
-			})
-		})
-
-		// Handle expiring chemicals
-		const expiringChemicals = await Chemical.find(
-			{
-				status: {
-					$nin: ['Expiring Soon', 'Disposed', 'Expired'],
-				},
-				expirationDate: {
-					$lt: future,
-				},
-			},
-			'name lab'
-		).populate({
-			path: 'lab',
-			select: 'labName status',
-			match: { status: { $eq: 'In Use' } },
-		})
-
-		await Chemical.updateMany(
-			{
-				status: {
-					$nin: ['Expiring Soon', 'Disposed', 'Expired'],
-				},
-				expirationDate: {
-					$lt: future,
-				},
-			},
-			{
-				$set: {
-					status: 'Expiring Soon',
-				},
-			}
-		)
-
-		expiringChemicals.forEach(async (chemical) => {
-			if (chemical.lab === null) return
-
-			const users = await User.find(
+			await Chemical.updateMany(
 				{
-					roles: {
-						$elemMatch: {
-							lab: { $eq: chemical.lab._id },
-							role: { $gte: ROLES_LIST.postgraduate },
-							status: { $eq: 'Active' },
-						},
+					status: {
+						$nin: ['Disposed', 'Expired'],
+					},
+					expirationDate: {
+						$lt: today,
 					},
 				},
-				'email'
-			)
-
-			users.forEach((user) => {
-				sendEmail({
-					to: user.email,
-					subject: 'Alert - Chemical Expiring Soon',
-					template: 'expiring_soon',
-					context: {
-						lab: chemical.lab.labName,
-						chemicalName: chemical.name,
-						url: `${process.env.DOMAIN_NAME}/inventory/${chemical._id}`,
+				{
+					$set: {
+						status: 'Expired',
 					},
-				})
-			})
-
-			const subscribers = await Subscriber.find(
-				{ user: { $in: users } },
-				'endpoint keys'
+				}
 			)
 
-			subscribers.forEach((subscriber) => {
-				const subscription = {
-					endpoint: subscriber.endpoint,
-					keys: subscriber.keys,
-				}
-				const payload = JSON.stringify({
-					title: 'Alert - Chemical Expiring Soon',
-					message: `[Lab ${chemical.lab.labName}] ${chemical.name} expiring soon.`,
-					url: `/inventory/${chemical._id}`,
-				})
+			notifyUsers(expiredChemicals, 'Expired')
 
-				sendNotification(subscription, payload)
+			// Handle expiring chemicals
+			const expiringChemicals = await Chemical.find(
+				{
+					status: {
+						$nin: ['Expiring Soon', 'Disposed', 'Expired'],
+					},
+					expirationDate: {
+						$lt: future,
+					},
+				},
+				'name lab'
+			).populate({
+				path: 'lab',
+				select: 'labName status',
+				match: { status: { $eq: 'In Use' } },
 			})
-		})
+
+			await Chemical.updateMany(
+				{
+					status: {
+						$nin: ['Expiring Soon', 'Disposed', 'Expired'],
+					},
+					expirationDate: {
+						$lt: future,
+					},
+				},
+				{
+					$set: {
+						status: 'Expiring Soon',
+					},
+				}
+			)
+
+			notifyUsers(expiringChemicals, 'Expiring Soon')
+		} catch (error) {
+			logEvents(`${error.name}: ${error.message}`, 'scheduleErrorLogs.txt')
+		}
 	})
 
 	// At 08:00 on Monday - Send weekly report to lab owner
