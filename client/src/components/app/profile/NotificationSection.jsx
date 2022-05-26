@@ -23,18 +23,23 @@ const NotificationSection = ({ subscriber }) => {
 	const axiosPrivate = useAxiosPrivate()
 	const [subscribed, setSubscribed] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
+	const [isNavigatorSupported, setIsNavigatorSupported] = useState(false)
 
 	useEffect(() => {
-		navigator.serviceWorker.ready.then((registration) => {
-			registration.pushManager
-				.getSubscription()
-				.then(
-					(subscription) =>
-						subscription &&
-						subscriber &&
-						setSubscribed(subscription.endpoint === subscriber.endpoint)
-				)
-		})
+		if ('serviceWorker' in navigator) {
+			setIsNavigatorSupported(true)
+
+			navigator.serviceWorker.ready.then((registration) => {
+				registration.pushManager
+					.getSubscription()
+					.then(
+						(subscription) =>
+							subscription &&
+							subscriber &&
+							setSubscribed(subscription.endpoint === subscriber.endpoint)
+					)
+			})
+		}
 	}, [subscriber])
 
 	const subscribe = () => {
@@ -85,19 +90,21 @@ const NotificationSection = ({ subscriber }) => {
 
 	return (
 		<>
-			<div className='mt-6 flex items-center justify-between space-x-4 border-t border-gray-200 pt-4'>
-				<p className='text-sm font-medium'>Mobile Push Notification</p>
-				<label className='mb-0 inline-block' htmlFor='subscribe'>
-					<input
-						type='checkbox'
-						className='peer hidden'
-						id='subscribe'
-						onChange={() => (subscribed ? unsubscribe() : subscribe())}
-						checked={subscribed}
-					/>
-					<span className='relative flex before:h-5 before:w-9 before:rounded-full before:bg-gray-300 before:transition after:absolute after:top-1/2 after:left-0 after:ml-0.5 after:h-4 after:w-4 after:-translate-y-1/2 after:rounded-full after:bg-white after:transition before:peer-checked:bg-indigo-600 after:peer-checked:translate-x-full'></span>
-				</label>
-			</div>
+			{isNavigatorSupported && (
+				<div className='mt-6 flex items-center justify-between space-x-4 border-t border-gray-200 pt-4'>
+					<p className='text-sm font-medium'>Mobile Push Notification</p>
+					<label className='mb-0 inline-block' htmlFor='subscribe'>
+						<input
+							type='checkbox'
+							className='peer hidden'
+							id='subscribe'
+							onChange={() => (subscribed ? unsubscribe() : subscribe())}
+							checked={subscribed}
+						/>
+						<span className='relative flex before:h-5 before:w-9 before:rounded-full before:bg-gray-300 before:transition after:absolute after:top-1/2 after:left-0 after:ml-0.5 after:h-4 after:w-4 after:-translate-y-1/2 after:rounded-full after:bg-white after:transition before:peer-checked:bg-indigo-600 after:peer-checked:translate-x-full'></span>
+					</label>
+				</div>
+			)}
 
 			{errorMessage && (
 				<p className='mt-2 flex items-center text-xs font-medium text-red-600'>

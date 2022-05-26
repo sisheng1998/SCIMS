@@ -31,7 +31,7 @@ const Day = ({ day, rowIndex, monthIndex, chemicals, dayBeforeExp }) => {
 	}, [chemicals, day, dayBeforeExp])
 
 	return (
-		<div className='flex flex-col border border-gray-200 p-2'>
+		<div className='flex flex-col border border-gray-200 py-2 px-4'>
 			<div className='flex flex-col items-center'>
 				{rowIndex === 0 && (
 					<p className='mb-1 text-xs font-medium text-gray-500'>
@@ -57,7 +57,7 @@ const Day = ({ day, rowIndex, monthIndex, chemicals, dayBeforeExp }) => {
 						: expiringChemicals.map((chemical) => (
 								<div
 									onClick={() => navigate(`/inventory/${chemical._id}`)}
-									className={`truncate rounded-full bg-yellow-100 px-2.5 py-0.5 font-semibold text-yellow-600 transition ${
+									className={`-ml-4 truncate rounded-tr-full rounded-br-full bg-yellow-100 px-2 py-0.5 font-semibold text-yellow-600 transition ${
 										currentMonth
 											? 'cursor-pointer'
 											: 'pointer-events-none opacity-50'
@@ -73,7 +73,7 @@ const Day = ({ day, rowIndex, monthIndex, chemicals, dayBeforeExp }) => {
 						: expiredChemicals.map((chemical) => (
 								<div
 									onClick={() => navigate(`/inventory/${chemical._id}`)}
-									className={`truncate rounded-full bg-red-100 px-2.5 py-0.5 font-semibold text-red-600 transition ${
+									className={`-ml-4 truncate rounded-tr-full rounded-br-full bg-red-100 px-2 py-0.5 font-semibold text-red-600 transition ${
 										currentMonth
 											? 'cursor-pointer'
 											: 'pointer-events-none opacity-50'

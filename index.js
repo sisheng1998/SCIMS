@@ -70,6 +70,9 @@ mongoose.connection.once('open', () => {
 	const server = app.listen(PORT, () => {
 		console.log(`Server running on Port ${PORT}`)
 
+		// Initialize - Create admin user + first lab if not yet exist
+		//require('./controllers/init')()
+
 		// Scheduled Jobs
 		scheduleJobs()
 	})

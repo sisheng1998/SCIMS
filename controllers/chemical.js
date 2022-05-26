@@ -14,6 +14,7 @@ const settings = require('../config/settings.json')
 const COCLists = require('../chemical_data/coc.json')
 const GHSLists = require('../chemical_data/ghs.json')
 const pictograms = require('../chemical_data/pictograms.json')
+const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
 
 const getKeysByValue = (object, value) =>
@@ -440,7 +441,10 @@ exports.updateAmount = async (req, res, next) => {
 		return next(new ErrorResponse('Missing value for required field.', 400))
 	}
 
-	const foundChemical = await Chemical.findById(chemicalId)
+	const foundChemical = await Chemical.findById(chemicalId).populate(
+		'lab',
+		'labName'
+	)
 	if (!foundChemical) {
 		return next(new ErrorResponse('Chemical not found.', 404))
 	}
@@ -468,16 +472,19 @@ exports.updateAmount = async (req, res, next) => {
 		}
 
 		if (
-			foundChemical.status === 'Normal' &&
+			(foundChemical.status === 'Normal' ||
+				foundChemical.status === 'Expiring Soon') &&
 			Number(amount) <= foundChemical.minAmount
 		) {
-			updateQuery.status = 'Low Amount'
+			if (foundChemical.status !== 'Expiring Soon') {
+				updateQuery.status = 'Low Amount'
+			}
 
 			const users = await User.find(
 				{
 					roles: {
 						$elemMatch: {
-							lab: { $eq: foundChemical.lab },
+							lab: { $eq: foundChemical.lab._id },
 							role: { $gte: ROLES_LIST.postgraduate },
 							status: { $eq: 'Active' },
 						},
@@ -485,6 +492,19 @@ exports.updateAmount = async (req, res, next) => {
 				},
 				'email'
 			).session(session)
+
+			users.forEach((user) => {
+				sendEmail({
+					to: user.email,
+					subject: 'Alert - Chemical Low Amount',
+					template: 'low_amount',
+					context: {
+						lab: foundChemical.lab.labName,
+						chemicalName: foundChemical.name,
+						url: `${process.env.DOMAIN_NAME}/inventory/${foundChemical._id}`,
+					},
+				})
+			})
 
 			const subscribers = await Subscriber.find(
 				{ user: { $in: users } },
@@ -497,8 +517,8 @@ exports.updateAmount = async (req, res, next) => {
 					keys: subscriber.keys,
 				}
 				const payload = JSON.stringify({
-					title: 'Low Amount Alert',
-					message: `${foundChemical.name} reached low amount.`,
+					title: 'Alert - Chemical Reached Low Amount',
+					message: `[Lab ${foundChemical.lab.labName}] ${foundChemical.name} has reached low amount.`,
 					url: `/inventory/${foundChemical._id}`,
 				})
 
@@ -513,7 +533,7 @@ exports.updateAmount = async (req, res, next) => {
 		await Usage.create(
 			[
 				{
-					lab: foundChemical.lab,
+					lab: foundChemical.lab._id,
 					user: req.user._id,
 					chemical: foundChemical._id,
 					originalAmount: foundChemical.amount,

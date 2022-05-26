@@ -6,6 +6,8 @@ const allowedOrigins = [
 	'http://localhost:5000',
 	`http://localhost:${process.env.PORT || 5000}/`,
 	`http://127.0.0.1:${process.env.PORT || 5000}/`,
+	'https://scims.loca.lt/',
+	'https://scims.loca.lt',
 ]
 
 module.exports = allowedOrigins
