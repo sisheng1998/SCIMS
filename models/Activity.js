@@ -16,6 +16,7 @@ const ActivitySchema = new Schema(
 			ref: 'Chemical',
 		},
 		description: String,
+		changes: String,
 		date: {
 			type: Date,
 			default: Date.now,

@@ -112,6 +112,7 @@ exports.addChemical = async (req, res, next) => {
 		}
 
 		const today = new Date()
+		today.setUTCHours(0, 0, 0, 0)
 		if (new Date(expirationDate) < today) {
 			status = 'Expired'
 		} else {
@@ -252,10 +253,10 @@ exports.updateChemical = async (req, res, next) => {
 		return next(new ErrorResponse('Lab not found.', 404))
 	}
 
-	const foundLocation = foundLab.locations.filter((location) =>
+	const foundLocation = foundLab.locations.find((location) =>
 		location._id.equals(locationId)
 	)
-	if (foundLocation.length === 0) {
+	if (!foundLocation) {
 		return next(new ErrorResponse('Location not found.', 404))
 	}
 
@@ -270,6 +271,7 @@ exports.updateChemical = async (req, res, next) => {
 		}
 
 		const today = new Date()
+		today.setUTCHours(0, 0, 0, 0)
 		if (new Date(expirationDate) < today) {
 			status = 'Expired'
 		} else {
@@ -281,8 +283,9 @@ exports.updateChemical = async (req, res, next) => {
 			}
 		}
 
-		const updateQuery = { lastUpdated: Date.now() }
+		const updateQuery = {}
 		const removeQuery = {}
+		let changes = ''
 
 		if (status && status !== foundChemical.status) {
 			updateQuery.status = status
@@ -290,10 +293,12 @@ exports.updateChemical = async (req, res, next) => {
 
 		if (name && name !== foundChemical.name) {
 			updateQuery.name = name
+			changes += `Name:\n${foundChemical.name} → ${name}\n\n`
 		}
 
 		if (state && state !== foundChemical.state) {
 			updateQuery.state = state
+			changes += `State:\n${foundChemical.state} → ${state}\n\n`
 		}
 
 		if (
@@ -302,6 +307,7 @@ exports.updateChemical = async (req, res, next) => {
 				Number(foundChemical.containerSize).toFixed(2)
 		) {
 			updateQuery.containerSize = Number(containerSize).toFixed(2)
+			changes += `Container Size:\n${foundChemical.containerSize} ${foundChemical.unit} → ${containerSize} ${foundChemical.unit}\n\n`
 		}
 
 		if (
@@ -309,6 +315,7 @@ exports.updateChemical = async (req, res, next) => {
 			Number(amount).toFixed(2) !== Number(foundChemical.amount).toFixed(2)
 		) {
 			updateQuery.amount = Number(amount).toFixed(2)
+			changes += `Amount:\n${foundChemical.amount} ${foundChemical.unit} → ${amount} ${foundChemical.unit}\n\n`
 		}
 
 		if (
@@ -317,6 +324,7 @@ exports.updateChemical = async (req, res, next) => {
 				Number(foundChemical.minAmount).toFixed(2)
 		) {
 			updateQuery.minAmount = Number(minAmount).toFixed(2)
+			changes += `Minimum Amount:\n${foundChemical.minAmount} ${foundChemical.unit} → ${minAmount} ${foundChemical.unit}\n\n`
 		}
 
 		if (labId && !foundChemical.lab.equals(labId)) {
@@ -324,11 +332,22 @@ exports.updateChemical = async (req, res, next) => {
 		}
 
 		if (locationId && foundChemical.locationId !== locationId) {
-			updateQuery.locationId = foundLocation[0]._id
+			updateQuery.locationId = foundLocation._id
+
+			const oldLocation = foundLab.locations.find((location) =>
+				location._id.equals(foundChemical.locationId)
+			)
+
+			changes += `Location:\n${oldLocation.name ? oldLocation.name : '-'} → ${
+				foundLocation.name
+			}\n\n`
 		}
 
 		if (storageGroup !== foundChemical.storageGroup) {
 			updateQuery.storageGroup = storageGroup
+			changes += `Storage Group:\n${
+				foundChemical.storageGroup ? 'Group ' + foundChemical.storageGroup : '-'
+			} → ${storageGroup ? 'Group ' + storageGroup : '-'}\n\n`
 		}
 
 		if (
@@ -336,16 +355,27 @@ exports.updateChemical = async (req, res, next) => {
 			new Date(dateIn).getTime() !== new Date(foundChemical.dateIn).getTime()
 		) {
 			updateQuery.dateIn = dateIn
+			changes += `Date In:\n${new Date(foundChemical.dateIn).toLocaleDateString(
+				'en-CA'
+			)} → ${dateIn}\n\n`
 		}
 
 		if (dateOpen === '' && foundChemical.dateOpen) {
 			removeQuery.dateOpen = ''
+			changes += `Date Open:\n${new Date(
+				foundChemical.dateOpen
+			).toLocaleDateString('en-CA')} → -\n\n`
 		} else if (
 			dateOpen &&
 			new Date(dateOpen).getTime() !==
 				new Date(foundChemical.dateOpen).getTime()
 		) {
 			updateQuery.dateOpen = dateOpen
+			changes += `Date Open:\n${
+				foundChemical.dateOpen
+					? new Date(foundChemical.dateOpen).toLocaleDateString('en-CA')
+					: '-'
+			} → ${dateOpen}\n\n`
 		}
 
 		if (
@@ -354,40 +384,57 @@ exports.updateChemical = async (req, res, next) => {
 				new Date(foundChemical.expirationDate).getTime()
 		) {
 			updateQuery.expirationDate = expirationDate
+			changes += `Expiration Date:\n${new Date(
+				foundChemical.expirationDate
+			).toLocaleDateString('en-CA')} → ${expirationDate}\n\n`
 		}
 
 		if (supplier !== foundChemical.supplier) {
 			updateQuery.supplier = supplier
+			changes += `Supplier:\n${
+				foundChemical.supplier ? foundChemical.supplier : '-'
+			} → ${supplier ? supplier : '-'}\n\n`
 		}
 
 		if (brand !== foundChemical.brand) {
 			updateQuery.brand = brand
+			changes += `Brand:\n${
+				foundChemical.brand ? foundChemical.brand : '-'
+			} → ${brand ? brand : '-'}\n\n`
 		}
 
 		if (notes !== foundChemical.notes) {
 			updateQuery.notes = notes
+			changes += `Notes:\n${
+				foundChemical.notes ? foundChemical.notes : '-'
+			}\n↓\n${notes ? notes : '-'}\n\n`
 		}
 
-		await Chemical.updateOne(
-			foundChemical,
-			{
-				$set: updateQuery,
-				$unset: removeQuery,
-			},
-			{ new: true, session }
-		)
+		if (changes !== '') {
+			updateQuery.lastUpdated = Date.now()
 
-		await Activity.create(
-			[
+			await Chemical.updateOne(
+				foundChemical,
 				{
-					lab: foundLab._id,
-					user: req.user._id,
-					chemical: foundChemical._id,
-					description: 'Chemical info updated.',
+					$set: updateQuery,
+					$unset: removeQuery,
 				},
-			],
-			{ session }
-		)
+				{ new: true, session }
+			)
+
+			await Activity.create(
+				[
+					{
+						lab: foundLab._id,
+						user: req.user._id,
+						chemical: foundChemical._id,
+						description: 'Chemical info updated.',
+						changes,
+					},
+				],
+				{ session }
+			)
+		}
 
 		await session.commitTransaction()
 		session.endSession()
@@ -671,6 +718,7 @@ exports.cancelDisposal = async (req, res, next) => {
 		}
 
 		const today = new Date()
+		today.setUTCHours(0, 0, 0, 0)
 		if (new Date(foundChemical.expirationDate) < today) {
 			status = 'Expired'
 		} else {

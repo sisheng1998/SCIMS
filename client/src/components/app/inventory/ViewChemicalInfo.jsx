@@ -323,7 +323,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 				<div className='mb-9 rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:mb-4'>
 					<h4>Safety/Security Info</h4>
 					<p className='text-sm text-gray-500'>
-						Security and classification of the chemical.
+						Security and classifications of the chemical.
 					</p>
 
 					<hr className='mb-6 mt-4 border-gray-200' />

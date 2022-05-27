@@ -13,6 +13,7 @@ import {
 	ColorSwatchIcon,
 	BellIcon,
 	ClipboardListIcon,
+	DocumentTextIcon,
 } from '@heroicons/react/outline'
 
 const MENU_LIST = [
@@ -44,6 +45,12 @@ const MENU_LIST = [
 		text: 'Users',
 		link: '/users',
 		icon: <UsersIcon />,
+		minRole: ROLES_LIST.guest,
+	},
+	{
+		text: 'Safety Data Sheets',
+		link: '/sds',
+		icon: <DocumentTextIcon />,
 		minRole: ROLES_LIST.guest,
 	},
 	{

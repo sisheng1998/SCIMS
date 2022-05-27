@@ -1,32 +1,49 @@
 import React, { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { DocumentAddIcon } from '@heroicons/react/outline'
+import ExtractClassifications from './ExtractClassifications'
 
-const PDFDropZone = ({ setPDF, setErrorMessage }) => {
+const PDFDropZone = ({
+	setPDF,
+	classifications,
+	setClassifications,
+	setErrorMessage,
+}) => {
 	const MAX_SIZE_IN_BYTES = 5242880 // 5MB
 
-	const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
-		if (acceptedFiles.length !== 0) {
-			const PDF = acceptedFiles[0]
+	const onDrop = useCallback(
+		(acceptedFiles, rejectedFiles) => {
+			if (acceptedFiles.length !== 0) {
+				const PDF = acceptedFiles[0]
 
-			if (PDF.size > MAX_SIZE_IN_BYTES) {
-				setErrorMessage('The file size already exceed the limit.')
-			} else if (PDF.type.toLowerCase() !== 'application/pdf') {
-				setErrorMessage('This file format is not supported.')
-			} else {
-				setErrorMessage('')
-				setPDF(PDF)
-			}
-		} else {
-			if (rejectedFiles.length > 1) {
-				setErrorMessage('Only single file is accepted.')
-			} else {
-				setErrorMessage('This file format is not supported.')
-			}
-		}
+				if (PDF.size > MAX_SIZE_IN_BYTES) {
+					setErrorMessage('The file size already exceed the limit.')
+				} else if (PDF.type.toLowerCase() !== 'application/pdf') {
+					setErrorMessage('This file format is not supported.')
+				} else {
+					setErrorMessage('')
 
+					if (classifications.length === 0) {
+						const classifications = ExtractClassifications(PDF)
+
+						if (classifications.length !== 0) {
+							setClassifications(classifications)
+						}
+					}
+
+					setPDF(PDF)
+				}
+			} else {
+				if (rejectedFiles.length > 1) {
+					setErrorMessage('Only single file is accepted.')
+				} else {
+					setErrorMessage('This file format is not supported.')
+				}
+			}
+		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+		[classifications]
+	)
 
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		onDrop,

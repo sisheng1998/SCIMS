@@ -155,7 +155,7 @@ const AddChemical = () => {
 					<div className='w-full max-w-md 2xl:max-w-xs'>
 						<h4>Safety/Security Info</h4>
 						<p className='text-sm text-gray-500'>
-							Security and classification of the chemical.
+							Security and classifications of the chemical.
 						</p>
 					</div>
 

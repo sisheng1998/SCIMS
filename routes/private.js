@@ -41,6 +41,8 @@ const { stockCheck } = require('../controllers/stock_check')
 
 const { stockCheckReports, stockCheckReport } = require('../controllers/report')
 
+const { getSDS, addSDS } = require('../controllers/sds')
+
 const {
 	addLocation,
 	editLocation,
@@ -107,6 +109,10 @@ router
 router
 	.route('/reports/:reportId')
 	.put(verifyRoles(ROLES_LIST.labOwner), stockCheckReport)
+
+// SDS
+router.route('/sds').get(getSDS)
+router.route('/sds/new-sds').post(uploadSDS.single('SDS'), addSDS)
 
 // Settings
 router.route('/location').post(verifyRoles(ROLES_LIST.labOwner), addLocation)

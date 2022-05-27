@@ -68,6 +68,20 @@ const SortData = ({
 						return true
 					}
 
+					// Filter for SDS
+					if (col === 'classifications' || col === 'COCs') {
+						// No classifications or COCs
+						if (value === '-') {
+							return data[col].length === 0
+						}
+
+						if (value !== '' && data[col].length !== 0) {
+							return data[col].some(
+								(security) => security.toLowerCase() === value.toLowerCase()
+							)
+						}
+					}
+
 					return (
 						data[col].toString().toLowerCase().indexOf(value.toLowerCase()) > -1
 					)

@@ -9,6 +9,7 @@ import GetLetterPicture from '../../utils/GetLetterPicture'
 import FormatDate from '../../utils/FormatDate'
 import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
 import { useNavigate } from 'react-router-dom'
+import ChangelogModal from './ChangelogModal'
 
 const tableHeaders = [
 	{
@@ -33,6 +34,9 @@ const ActivityLogsTable = (props) => {
 	const { auth } = useAuth()
 	const [avatarInfo, setAvatarInfo] = useState('')
 	const [openViewImageModal, setOpenViewImageModal] = useState(false)
+
+	const [changelogInfo, setChangelogInfo] = useState('')
+	const [openChangelogModal, setOpenChangelogModal] = useState(false)
 
 	const today = new Date()
 	const past = new Date(new Date().setDate(today.getDate() - 30))
@@ -95,6 +99,11 @@ const ActivityLogsTable = (props) => {
 	const viewImageHandler = (name, imageSrc) => {
 		setAvatarInfo({ name, imageSrc })
 		setOpenViewImageModal(true)
+	}
+
+	const viewChangelogHandler = (changelog, date) => {
+		setChangelogInfo({ changelog, date })
+		setOpenChangelogModal(true)
 	}
 
 	return (
@@ -290,6 +299,22 @@ const ActivityLogsTable = (props) => {
 																</span>
 																)
 															</span>
+															{log.changes && (
+																<span className='ml-1.5 text-sm'>
+																	-
+																	<span
+																		onClick={() =>
+																			viewChangelogHandler(
+																				log.changes,
+																				FormatDate(log.date)
+																			)
+																		}
+																		className='ml-1.5 inline cursor-pointer font-medium text-indigo-600 transition hover:text-indigo-700'
+																	>
+																		View Changelog
+																	</span>
+																</span>
+															)}
 														</p>
 													)}
 												</td>
@@ -320,6 +345,14 @@ const ActivityLogsTable = (props) => {
 					type='Avatar'
 					openModal={openViewImageModal}
 					setOpenModal={setOpenViewImageModal}
+				/>
+			)}
+
+			{openChangelogModal && changelogInfo && (
+				<ChangelogModal
+					info={changelogInfo}
+					openModal={openChangelogModal}
+					setOpenModal={setOpenChangelogModal}
 				/>
 			)}
 		</>

@@ -51,7 +51,7 @@ const Notifications = () => {
 		<>
 			<Title title='Notifications' hasButton={false} hasRefreshButton={false} />
 			{!notifications ? (
-				<div className='auth-card mt-6 self-center text-center lg:mt-0'>
+				<div className='auth-card self-center text-center'>
 					<p className='text-lg'>No notification yet.</p>
 				</div>
 			) : null}

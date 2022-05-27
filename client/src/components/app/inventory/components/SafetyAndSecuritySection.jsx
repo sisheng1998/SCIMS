@@ -57,7 +57,7 @@ const SafetyAndSecuritySection = ({
 			<RenderPDF PDF={SDS} setPDF={setSDS} />
 
 			<div className='mb-4 mt-6'>
-				<label htmlFor='classification'>GHS Classification</label>
+				<label htmlFor='classification'>GHS Classifications</label>
 				{classifications.length !== 0
 					? CLASSIFICATION_LIST.filter((classification) =>
 							classifications.includes(classification)
@@ -65,10 +65,10 @@ const SafetyAndSecuritySection = ({
 							<span
 								key={index}
 								className={`mb-2 mr-2 inline-flex rounded-full px-3 py-1 text-sm font-medium ${
-									classification === 'Environment' ||
-									classification === 'Health Hazard' ||
-									classification === 'Irritant' ||
-									classification === 'Acute Toxicity'
+									classification === CLASSIFICATION_LIST[8] ||
+									classification === CLASSIFICATION_LIST[7] ||
+									classification === CLASSIFICATION_LIST[6] ||
+									classification === CLASSIFICATION_LIST[5]
 										? 'bg-blue-100 text-blue-600'
 										: 'bg-yellow-100 text-yellow-600'
 								}`}
@@ -80,7 +80,7 @@ const SafetyAndSecuritySection = ({
 			</div>
 
 			<div>
-				<label htmlFor='coc'>Chemical of Concern</label>
+				<label htmlFor='coc'>Chemical of Concerns</label>
 				{COCs.length !== 0
 					? COC_LIST.filter((security) => COCs.includes(security)).map(
 							(security, index) => (
@@ -109,7 +109,12 @@ const SafetyAndSecuritySection = ({
 					<label htmlFor='SDS' className='required-input-label'>
 						Safety Data Sheet (SDS)
 					</label>
-					<PDFDropZone setPDF={setSDS} setErrorMessage={setErrorMessage} />
+					<PDFDropZone
+						setPDF={setSDS}
+						classifications={classifications}
+						setClassifications={setClassifications}
+						setErrorMessage={setErrorMessage}
+					/>
 					<p className='mt-2 text-xs text-gray-400'>
 						Only PDF is supported. Max file size: 5 MB.
 					</p>
@@ -124,7 +129,7 @@ const SafetyAndSecuritySection = ({
 			)}
 
 			<label htmlFor='classification' className='mt-6'>
-				GHS Classification
+				GHS Classifications
 			</label>
 			<SafetySecurityField
 				lists={CLASSIFICATION_LIST}
@@ -133,7 +138,7 @@ const SafetyAndSecuritySection = ({
 			/>
 
 			<label htmlFor='coc' className='mt-6'>
-				Chemical of Concern
+				Chemical of Concerns
 			</label>
 			<SafetySecurityField
 				lists={COC_LIST}
