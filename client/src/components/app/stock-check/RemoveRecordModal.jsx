@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Dialog } from '@headlessui/react'
 import { CheckIcon, XIcon } from '@heroicons/react/outline'
 import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
@@ -13,6 +13,7 @@ const RemoveRecordModal = ({
 }) => {
 	const { auth } = useAuth()
 	const storageName = auth.currentLabId + '_chemicals'
+	const divRef = useRef(null)
 
 	const [success, setSuccess] = useState(false)
 
@@ -39,9 +40,13 @@ const RemoveRecordModal = ({
 		<Dialog
 			open={openModal}
 			onClose={() => {}}
+			initialFocus={divRef}
 			className='fixed inset-0 z-20 overflow-y-auto'
 		>
-			<div className='flex min-h-screen items-center justify-center'>
+			<div
+				ref={divRef}
+				className='flex min-h-screen items-center justify-center'
+			>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div
 					className={`relative m-4 w-full rounded-lg bg-white p-6 shadow ${

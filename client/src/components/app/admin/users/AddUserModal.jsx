@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Dialog } from '@headlessui/react'
 import UserSearchableSelect from '../../../utils/SearchableSelect'
 import {
@@ -21,6 +21,7 @@ const AddUserModal = ({
 }) => {
 	const axiosPrivate = useAxiosPrivate()
 	const { auth } = useAuth()
+	const divRef = useRef(null)
 
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
@@ -145,9 +146,13 @@ const AddUserModal = ({
 		<Dialog
 			open={openModal}
 			onClose={() => {}}
+			initialFocus={divRef}
 			className='fixed inset-0 z-10 overflow-y-auto'
 		>
-			<div className='flex min-h-screen items-center justify-center'>
+			<div
+				ref={divRef}
+				className='flex min-h-screen items-center justify-center'
+			>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div
 					className={`relative m-4 w-full rounded-lg bg-white p-6 shadow ${

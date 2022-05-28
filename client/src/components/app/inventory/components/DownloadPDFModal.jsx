@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Dialog } from '@headlessui/react'
 import { DownloadIcon, XIcon, DocumentTextIcon } from '@heroicons/react/outline'
 import { BlobProvider } from '@react-pdf/renderer'
@@ -8,6 +8,7 @@ import useAuth from '../../../../hooks/useAuth'
 
 const DownloadPDFModal = ({ chemicals, selected, openModal, setOpenModal }) => {
 	const { auth } = useAuth()
+	const divRef = useRef(null)
 
 	const closeHandler = () => setOpenModal(false)
 
@@ -18,9 +19,13 @@ const DownloadPDFModal = ({ chemicals, selected, openModal, setOpenModal }) => {
 		<Dialog
 			open={openModal}
 			onClose={() => {}}
+			initialFocus={divRef}
 			className='fixed inset-0 z-10 overflow-y-auto'
 		>
-			<div className='flex min-h-screen items-center justify-center'>
+			<div
+				ref={divRef}
+				className='flex min-h-screen items-center justify-center'
+			>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div className='relative m-4 w-full max-w-xs rounded-lg bg-white p-6 text-center shadow'>
 					<div className='mb-6 flex justify-between border-b border-gray-200 pb-3'>

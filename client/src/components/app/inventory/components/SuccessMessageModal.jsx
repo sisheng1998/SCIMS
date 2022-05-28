@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Dialog } from '@headlessui/react'
 import { useNavigate } from 'react-router-dom'
 import { CheckIcon } from '@heroicons/react/outline'
@@ -12,6 +12,7 @@ const SuccessMessageModal = ({
 	setEditSuccess,
 }) => {
 	const navigate = useNavigate()
+	const divRef = useRef(null)
 
 	const closeHandler = () => {
 		setOpenModal(false)
@@ -30,9 +31,13 @@ const SuccessMessageModal = ({
 		<Dialog
 			open={openModal}
 			onClose={() => {}}
+			initialFocus={divRef}
 			className='fixed inset-0 z-10 overflow-y-auto'
 		>
-			<div className='flex min-h-screen items-center justify-center'>
+			<div
+				ref={divRef}
+				className='flex min-h-screen items-center justify-center'
+			>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div className='relative m-4 w-full max-w-sm rounded-lg bg-white p-6 text-center shadow'>
 					<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />

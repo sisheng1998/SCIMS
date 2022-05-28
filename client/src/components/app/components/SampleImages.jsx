@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Dialog } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import Image1 from '././../../../images/img-1.jpg'
@@ -11,11 +11,10 @@ import Image6 from '././../../../images/img-6.jpg'
 const images = [Image1, Image2, Image3, Image4, Image5, Image6]
 
 const SampleImages = () => {
+	const divRef = useRef(null)
 	const [openModal, setOpenModal] = useState(false)
 
-	const closeHandler = () => {
-		setOpenModal(false)
-	}
+	const closeHandler = () => setOpenModal(false)
 
 	return (
 		<>
@@ -32,9 +31,13 @@ const SampleImages = () => {
 				<Dialog
 					open={openModal}
 					onClose={() => {}}
+					initialFocus={divRef}
 					className='fixed inset-0 z-10 overflow-y-auto'
 				>
-					<div className='flex min-h-screen items-center justify-center'>
+					<div
+						ref={divRef}
+						className='flex min-h-screen items-center justify-center'
+					>
 						<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 						<div className='relative m-4 w-full max-w-xl rounded-lg bg-white p-6 shadow'>
 							<div className='mb-4 flex justify-between'>

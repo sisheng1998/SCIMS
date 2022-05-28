@@ -11,6 +11,15 @@ const CASSchema = new Schema(
 		SDS: String,
 		classifications: [String],
 		COCs: [String],
+		createdAt: {
+			type: Date,
+			immutable: true,
+			default: Date.now,
+		},
+		lastUpdated: {
+			type: Date,
+			default: Date.now,
+		},
 	},
 	{ collection: 'cas' }
 )

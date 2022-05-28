@@ -1,19 +1,22 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Dialog } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 
 const ImageLightBox = ({ object, type, openModal, setOpenModal }) => {
-	const closeHandler = () => {
-		setOpenModal(false)
-	}
+	const divRef = useRef(null)
+	const closeHandler = () => setOpenModal(false)
 
 	return (
 		<Dialog
 			open={openModal}
 			onClose={() => {}}
+			initialFocus={divRef}
 			className='fixed inset-0 z-20 overflow-y-auto'
 		>
-			<div className='flex min-h-screen items-center justify-center'>
+			<div
+				ref={divRef}
+				className='flex min-h-screen items-center justify-center'
+			>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div className='relative m-4 w-full max-w-md'>
 					<div className='mb-2 flex justify-between space-x-6 text-white'>

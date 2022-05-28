@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Dialog } from '@headlessui/react'
 import { QrReader } from 'react-qr-reader'
 import { useNavigate } from 'react-router-dom'
@@ -32,18 +32,17 @@ const ScanQRCodeModal = ({
 	setScannedChemicalId,
 }) => {
 	const navigate = useNavigate()
-
-	const closeHandler = () => {
-		setOpenModal(false)
-	}
+	const divRef = useRef(null)
+	const closeHandler = () => setOpenModal(false)
 
 	return (
 		<Dialog
 			open={openModal}
 			onClose={() => {}}
+			initialFocus={divRef}
 			className='fixed inset-0 z-20 overflow-hidden'
 		>
-			<div className='flex min-h-screen justify-center'>
+			<div ref={divRef} className='flex min-h-screen justify-center'>
 				<Dialog.Overlay className='fixed inset-0 bg-black' />
 
 				<QrReader

@@ -11,6 +11,8 @@ import {
 import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import EditSDSModal from './EditSDSModal'
+import ViewSDSModal from './ViewSDSModal'
+import { FormatChemicalDate } from '../../utils/FormatDate'
 
 const tableHeaders = [
 	{
@@ -34,6 +36,11 @@ const tableHeaders = [
 		sortable: false,
 	},
 	{
+		key: 'lastUpdated',
+		label: 'Last Updated',
+		sortable: true,
+	},
+	{
 		key: 'action',
 		label: 'Action',
 		sortable: false,
@@ -43,7 +50,8 @@ const tableHeaders = [
 const SDSTable = ({ SDS, setRefresh }) => {
 	const { auth } = useAuth()
 
-	const [openModal, setOpenModal] = useState(false)
+	const [openEditSDSModal, setOpenEditSDSModal] = useState(false)
+	const [openViewSDSModal, setOpenViewSDSModal] = useState(false)
 	const [CAS, setCAS] = useState('')
 
 	const [sortKey, setSortKey] = useState('index')
@@ -100,7 +108,12 @@ const SDSTable = ({ SDS, setRefresh }) => {
 
 	const editSDSHandler = (CAS) => {
 		setCAS(CAS)
-		setOpenModal(true)
+		setOpenEditSDSModal(true)
+	}
+
+	const viewSDSHandler = (CAS) => {
+		setCAS(CAS)
+		setOpenViewSDSModal(true)
 	}
 
 	return (
@@ -244,15 +257,17 @@ const SDSTable = ({ SDS, setRefresh }) => {
 													: '-'}
 											</td>
 
+											<td className='px-6 py-4'>
+												{FormatChemicalDate(CAS.lastUpdated)}
+											</td>
+
 											<td className='space-x-1 px-6 py-4'>
-												<a
+												<button
+													onClick={() => viewSDSHandler(CAS)}
 													className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
-													href={auth.SDSPath + CAS.SDS}
-													target='_blank'
-													rel='noreferrer'
 												>
 													View
-												</a>
+												</button>
 
 												{auth.currentRole >= ROLES_LIST.postgraduate && (
 													<>
@@ -286,12 +301,20 @@ const SDSTable = ({ SDS, setRefresh }) => {
 				paginate={paginate}
 			/>
 
-			{CAS && openModal && (
+			{CAS && openEditSDSModal && (
 				<EditSDSModal
 					CAS={CAS}
-					openModal={openModal}
-					setOpenModal={setOpenModal}
+					openModal={openEditSDSModal}
+					setOpenModal={setOpenEditSDSModal}
 					setEditSDSSuccess={setRefresh}
+				/>
+			)}
+
+			{CAS && openViewSDSModal && (
+				<ViewSDSModal
+					CAS={CAS}
+					openModal={openViewSDSModal}
+					setOpenModal={setOpenViewSDSModal}
 				/>
 			)}
 		</>

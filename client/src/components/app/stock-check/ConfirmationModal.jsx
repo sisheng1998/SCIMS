@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Dialog } from '@headlessui/react'
 import { CheckIcon, ExclamationCircleIcon } from '@heroicons/react/outline'
 import useAuth from '../../../hooks/useAuth'
@@ -14,6 +14,7 @@ const ConfirmationModal = ({
 }) => {
 	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
+	const divRef = useRef(null)
 
 	const labId = auth.currentLabId
 	const storageName = labId + '_chemicals'
@@ -88,9 +89,13 @@ const ConfirmationModal = ({
 		<Dialog
 			open={openModal}
 			onClose={() => {}}
+			initialFocus={divRef}
 			className='fixed inset-0 z-10 overflow-y-auto'
 		>
-			<div className='flex min-h-screen items-center justify-center'>
+			<div
+				ref={divRef}
+				className='flex min-h-screen items-center justify-center'
+			>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div
 					className={`relative m-4 w-full max-w-sm rounded-lg bg-white p-6 shadow ${

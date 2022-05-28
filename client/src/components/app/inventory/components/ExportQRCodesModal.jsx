@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Dialog } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import { FormatChemicalDate } from '../../../utils/FormatDate'
@@ -7,7 +7,9 @@ import DownloadPDFModal from './DownloadPDFModal'
 const tableHeaders = ['CAS No.', 'Name', 'Exp. Date']
 
 const ExportQRCodesModal = ({ chemicals, openModal, setOpenModal }) => {
+	const divRef = useRef(null)
 	const closeHandler = () => setOpenModal(false)
+
 	const [searchTerm, setSearchTerm] = useState('')
 	const [selected, setSelected] = useState([])
 	const [generatePDF, setGeneratePDF] = useState(false)
@@ -41,9 +43,13 @@ const ExportQRCodesModal = ({ chemicals, openModal, setOpenModal }) => {
 		<Dialog
 			open={openModal}
 			onClose={() => {}}
+			initialFocus={divRef}
 			className='fixed inset-0 z-10 overflow-y-auto'
 		>
-			<div className='flex min-h-screen items-center justify-center'>
+			<div
+				ref={divRef}
+				className='flex min-h-screen items-center justify-center'
+			>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div className='relative m-4 w-full max-w-3xl rounded-lg bg-white p-6 shadow'>
 					<div className='mb-6 flex justify-between border-b border-gray-200 pb-3'>

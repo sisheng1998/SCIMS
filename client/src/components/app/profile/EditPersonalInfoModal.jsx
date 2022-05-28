@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Dialog } from '@headlessui/react'
 import MatricNoField from '../../validations/MatricNoField'
 import NameField from '../../validations/NameField'
@@ -17,6 +17,7 @@ const EditPersonalInfoModal = ({
 	setEditPersonalInfoSuccess,
 }) => {
 	const axiosPrivate = useAxiosPrivate()
+	const divRef = useRef(null)
 
 	const [matricNo, setMatricNo] = useState(user.matricNo)
 	const [name, setName] = useState(user.name)
@@ -88,9 +89,13 @@ const EditPersonalInfoModal = ({
 		<Dialog
 			open={openModal}
 			onClose={() => {}}
+			initialFocus={divRef}
 			className='fixed inset-0 z-10 overflow-y-auto'
 		>
-			<div className='flex min-h-screen items-center justify-center'>
+			<div
+				ref={divRef}
+				className='flex min-h-screen items-center justify-center'
+			>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div
 					className={`relative m-4 w-full rounded-lg bg-white p-6 shadow ${

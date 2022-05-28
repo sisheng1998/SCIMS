@@ -79,6 +79,7 @@ exports.updateSDS = async (req, res, next) => {
 		const updateQuery = {
 			classifications,
 			COCs,
+			lastUpdated: Date.now(),
 		}
 
 		if (req.file !== undefined) {

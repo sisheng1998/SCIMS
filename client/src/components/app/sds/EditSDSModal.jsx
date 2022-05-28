@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Dialog } from '@headlessui/react'
 import {
 	CheckIcon,
@@ -14,10 +14,12 @@ import {
 	COC_LIST,
 } from '../../../config/safety_security_list'
 import SafetySecurityField from '../../validations/SafetySecurityField'
+import FormatDate from '../../utils/FormatDate'
 
 const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
 	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
+	const divRef = useRef(null)
 
 	const labId = auth.currentLabId
 
@@ -87,9 +89,13 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
 		<Dialog
 			open={openModal}
 			onClose={() => {}}
+			initialFocus={divRef}
 			className='fixed inset-0 z-10 overflow-y-auto'
 		>
-			<div className='flex min-h-screen items-center justify-center'>
+			<div
+				ref={divRef}
+				className='flex min-h-screen items-center justify-center'
+			>
 				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
 				<div
 					className={`relative m-4 w-full rounded-lg bg-white p-6 shadow ${
@@ -209,7 +215,22 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
 									isCOC={true}
 								/>
 
-								<div className='mt-9 flex items-center justify-end'>
+								<div className='mb-9 mt-6 flex items-center justify-between space-x-6 text-sm text-gray-500'>
+									<p>
+										Added At:{' '}
+										<span className='font-semibold'>
+											{FormatDate(CAS.createdAt)}
+										</span>
+									</p>
+									<p>
+										Last Updated:{' '}
+										<span className='font-semibold'>
+											{FormatDate(CAS.lastUpdated)}
+										</span>
+									</p>
+								</div>
+
+								<div className='flex items-center justify-end'>
 									<span
 										onClick={closeHandler}
 										className='mr-6 cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'
