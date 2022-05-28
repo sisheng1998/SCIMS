@@ -37,6 +37,7 @@ const AddSDSModal = ({
 	const [allowNextStep, setAllowNextStep] = useState(false)
 	const [success, setSuccess] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
+	const [extractionResult, setExtractionResult] = useState('')
 	const [allowed, setAllowed] = useState(false)
 
 	useEffect(() => {
@@ -204,6 +205,7 @@ const AddSDSModal = ({
 												setPDF={setSDS}
 												classifications={classifications}
 												setClassifications={setClassifications}
+												setExtractionResult={setExtractionResult}
 												setErrorMessage={setErrorMessage}
 											/>
 											<p className='mt-2 text-xs text-gray-400'>
@@ -215,7 +217,11 @@ const AddSDSModal = ({
 											<label htmlFor='SDS' className='required-input-label'>
 												Safety Data Sheet (SDS)
 											</label>
-											<RenderPDF PDF={SDS} setPDF={setSDS} />
+											<RenderPDF
+												PDF={SDS}
+												setPDF={setSDS}
+												extractionResult={extractionResult}
+											/>
 										</>
 									)}
 

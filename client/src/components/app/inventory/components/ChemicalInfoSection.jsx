@@ -97,10 +97,7 @@ const ChemicalInfoSection = ({
 	])
 
 	useEffect(() => {
-		if (!chemical && CASNo && CASNoValidated) {
-			let isMounted = true
-			const controller = new AbortController()
-
+		if (!chemical) {
 			setChemicalData((prev) => {
 				return {
 					...prev,
@@ -111,42 +108,46 @@ const ChemicalInfoSection = ({
 			setClassifications([])
 			setCOCs([])
 
-			const getCASInfo = async () => {
-				try {
-					const { data } = await axiosPrivate.put(
-						'/api/private/cas',
-						{
-							labId: auth.currentLabId,
-							CASNo,
-						},
-						{
-							signal: controller.signal,
-						}
-					)
-					if (isMounted) {
-						setChemicalData((prev) => {
-							return {
-								...prev,
-								SDSLink: data.data.SDS,
+			if (CASNo && CASNoValidated) {
+				let isMounted = true
+				const controller = new AbortController()
+
+				const getCASInfo = async () => {
+					try {
+						const { data } = await axiosPrivate.put(
+							'/api/private/cas',
+							{
+								labId: auth.currentLabId,
+								CASNo,
+							},
+							{
+								signal: controller.signal,
 							}
-						})
-						setSDS(data.data.SDS)
-						setClassifications(data.data.classifications)
-						setCOCs(data.data.COCs)
+						)
+						if (isMounted) {
+							setChemicalData((prev) => {
+								return {
+									...prev,
+									SDSLink: data.data.SDS,
+								}
+							})
+							setSDS(data.data.SDS)
+							setClassifications(data.data.classifications)
+							setCOCs(data.data.COCs)
+						}
+					} catch (error) {
+						return
 					}
-				} catch (error) {
-					return
+				}
+
+				getCASInfo()
+
+				return () => {
+					isMounted = false
+					controller.abort()
 				}
 			}
-
-			getCASInfo()
-
-			return () => {
-				isMounted = false
-				controller.abort()
-			}
 		}
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [CASNo, CASNoValidated])
 

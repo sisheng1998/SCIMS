@@ -168,6 +168,7 @@ const AddChemical = () => {
 							COCs={COCs}
 							setCOCs={setCOCs}
 							setChemicalData={setChemicalData}
+							validated={validated}
 							setValidated={setValidated}
 						/>
 					</div>

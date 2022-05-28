@@ -4,7 +4,7 @@ import { DocumentTextIcon } from '@heroicons/react/outline'
 import { PaperClipIcon } from '@heroicons/react/solid'
 import useAuth from '../../../hooks/useAuth'
 
-const RenderPDF = ({ PDF, setPDF }) => {
+const RenderPDF = ({ PDF, setPDF, extractionResult }) => {
 	const { auth } = useAuth()
 
 	return (
@@ -31,6 +31,13 @@ const RenderPDF = ({ PDF, setPDF }) => {
 
 							<p className='text-xs'>{FormatBytes(PDF.size)}</p>
 						</div>
+
+						<p className='ml-6 border-l border-l-gray-200 pl-6 text-xs text-gray-500'>
+							Detected GHS Classification(s)
+							<span className='block text-sm font-medium text-gray-700'>
+								{extractionResult ? extractionResult : '-'}
+							</span>
+						</p>
 					</div>
 
 					<button

@@ -119,6 +119,7 @@ const EditSystemConfigModal = ({
 										required
 										value={duration}
 										onChange={(e) => setDuration(Number(e.target.value))}
+										onWheel={(e) => e.target.blur()}
 									/>
 									<p className='flex w-20 flex-shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-gray-300 bg-gray-50 text-gray-500 shadow-sm'>
 										Days

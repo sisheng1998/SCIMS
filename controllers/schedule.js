@@ -72,10 +72,9 @@ const notifyUsers = (chemicals, type) => {
 }
 
 module.exports = async () => {
-	// At 00:00 everyday - Update all chemical status
-	schedule.scheduleJob('0 0 * * *', async () => {
+	// At 00:15 (UTC) everyday - Update all chemical status
+	schedule.scheduleJob('15 8 * * *', async () => {
 		const today = new Date()
-		today.setUTCHours(0, 0, 0, 0)
 		const future = new Date(
 			new Date().setDate(today.getDate() + settings.DAY_BEFORE_EXP)
 		)
@@ -155,8 +154,8 @@ module.exports = async () => {
 		}
 	})
 
-	// At 08:00 on Monday - Send weekly report to lab owner
-	/*schedule.scheduleJob('0 8 * * 1', async () => {
+	// At 00:30 (UTC) on Monday - Send weekly report to lab owner
+	/*schedule.scheduleJob('30 8 * * 1', async () => {
 		sendEmail({
 			to: 'sisheng1998@gmail.com',
 			subject: 'Weekly Report',

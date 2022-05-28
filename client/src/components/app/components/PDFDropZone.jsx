@@ -7,6 +7,7 @@ const PDFDropZone = ({
 	setPDF,
 	classifications,
 	setClassifications,
+	setExtractionResult,
 	setErrorMessage,
 }) => {
 	const MAX_SIZE_IN_BYTES = 5242880 // 5MB
@@ -23,15 +24,18 @@ const PDFDropZone = ({
 				} else {
 					setErrorMessage('')
 
-					if (classifications.length === 0) {
-						const classifications = ExtractClassifications(PDF)
+					const getClassifications = async () => {
+						const extractedResult = await ExtractClassifications(PDF)
 
-						if (classifications.length !== 0) {
-							setClassifications(classifications)
+						if (classifications.length === 0 && extractedResult.length !== 0) {
+							setClassifications(extractedResult)
 						}
+
+						setExtractionResult(extractedResult.join(', '))
+						setPDF(PDF)
 					}
 
-					setPDF(PDF)
+					getClassifications()
 				}
 			} else {
 				if (rejectedFiles.length > 1) {

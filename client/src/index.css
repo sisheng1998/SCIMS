@@ -126,6 +126,15 @@
 		@apply read-only:bg-gray-50 read-only:text-gray-500 read-only:shadow-none read-only:focus:border-gray-300;
 	}
 
+	input[type='number']::-webkit-outer-spin-button,
+	input[type='number']::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+	input[type='number'] {
+		-moz-appearance: textfield;
+	}
+
 	[type='checkbox'],
 	[type='radio'] {
 		@apply rounded border-gray-300 text-indigo-600 focus:ring-indigo-500;

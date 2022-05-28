@@ -16,9 +16,11 @@ const SafetyAndSecuritySection = ({
 	COCs,
 	setCOCs,
 	setChemicalData,
+	validated,
 	setValidated,
 }) => {
 	const [errorMessage, setErrorMessage] = useState('')
+	const [extractionResult, setExtractionResult] = useState('')
 
 	useEffect(() => {
 		if (SDS.toString().toLowerCase().endsWith('.pdf')) {
@@ -96,7 +98,11 @@ const SafetyAndSecuritySection = ({
 			</div>
 		</>
 	) : (
-		<>
+		<div
+			className={`transition ${
+				validated.CASNoValidated ? '' : 'pointer-events-none opacity-50'
+			}`}
+		>
 			{errorMessage && (
 				<p className='mb-6 flex items-center text-sm font-medium text-red-600'>
 					<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}
@@ -113,6 +119,7 @@ const SafetyAndSecuritySection = ({
 						setPDF={setSDS}
 						classifications={classifications}
 						setClassifications={setClassifications}
+						setExtractionResult={setExtractionResult}
 						setErrorMessage={setErrorMessage}
 					/>
 					<p className='mt-2 text-xs text-gray-400'>
@@ -124,7 +131,11 @@ const SafetyAndSecuritySection = ({
 					<label htmlFor='SDS' className='required-input-label'>
 						Safety Data Sheet (SDS)
 					</label>
-					<RenderPDF PDF={SDS} setPDF={setSDS} />
+					<RenderPDF
+						PDF={SDS}
+						setPDF={setSDS}
+						extractionResult={extractionResult}
+					/>
 				</>
 			)}
 
@@ -146,7 +157,7 @@ const SafetyAndSecuritySection = ({
 				setValue={setCOCs}
 				isCOC={true}
 			/>
-		</>
+		</div>
 	)
 }
 

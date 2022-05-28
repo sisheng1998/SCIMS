@@ -35,6 +35,7 @@ const NumberWithUnitField = (props) => {
 					required={props.required || false}
 					value={props.value}
 					onChange={(e) => props.setValue(e.target.value)}
+					onWheel={(e) => e.target.blur()}
 				/>
 				<p className='flex w-10 flex-shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-gray-300 bg-gray-50 text-gray-500 shadow-sm'>
 					{props.unit === '' ? '-' : props.unit}

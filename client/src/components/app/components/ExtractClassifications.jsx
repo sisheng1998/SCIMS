@@ -1,65 +1,85 @@
-import * as pdfjsLib from 'pdfjs-dist/build/pdf'
+import * as pdfjsLib from 'pdfjs-dist/webpack'
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry'
+import {
+	CLASSIFICATION_LIST,
+	HAZARD_CODES,
+} from '../../../config/safety_security_list'
 
 // Code came from https://jsfiddle.net/ourcodeworld/9s3hpbu2/
 
-function getPageText(pageNum, PDFDocumentInstance) {
-	// Return a Promise that is solved once the text of the page is retrieven
-	return new Promise(function (resolve, reject) {
-		PDFDocumentInstance.getPage(pageNum).then(function (pdfPage) {
-			// The main trick to obtain the text of the PDF page, use the getTextContent method
-			pdfPage.getTextContent().then(function (textContent) {
-				var textItems = textContent.items
-				var finalString = ''
+const getClassifications = (text, codeList, classifications, index) => {
+	if (codeList.some((code) => text.includes(code))) {
+		classifications.push(CLASSIFICATION_LIST[index])
+	}
+}
 
-				// Concatenate the string of the item to the final string
-				for (var i = 0; i < textItems.length; i++) {
-					var item = textItems[i]
+const getPageText = (pageNum, PDFDocumentInstance) =>
+	new Promise((resolve, reject) => {
+		PDFDocumentInstance.getPage(pageNum).then((pdfPage) => {
+			pdfPage.getTextContent().then((textContent) => {
+				const textItems = textContent.items
+				let finalString = ''
+
+				for (let i = 0; i < textItems.length; i++) {
+					let item = textItems[i]
 
 					finalString += item.str + ' '
 				}
 
-				// Solve promise with the text retrieven from the page
 				resolve(finalString)
 			})
 		})
 	})
-}
 
-const ExtractClassifications = (pdf) => {
-	pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker
+const ExtractClassifications = (pdf) =>
+	new Promise((resolve) => {
+		pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker
+		const fileReader = new FileReader()
 
-	const fileReader = new FileReader()
+		let classifications = []
 
-	fileReader.onloadend = (e) => {
-		pdfjsLib.getDocument(e.currentTarget.result).promise.then(
-			function (pdf) {
-				var pdfDocument = pdf
-				var pagesPromises = []
+		fileReader.onloadend = (e) => {
+			pdfjsLib.getDocument(e.currentTarget.result).promise.then(
+				(pdf) => {
+					const pdfDocument = pdf
+					let pagesPromises = []
 
-				for (var i = 0; i < pdf.numPages; i++) {
-					// Required to prevent that i is always the total of pages
-					;(function (pageNumber) {
-						pagesPromises.push(getPageText(pageNumber, pdfDocument))
-					})(i + 1)
-				}
-
-				Promise.all(pagesPromises).then(function (pagesText) {
-					for (var i = 0; i < pagesText.length; i++) {
-						console.log(pagesText[i])
+					for (let i = 0; i < pdf.numPages; i++) {
+						;((pageNumber) => {
+							pagesPromises.push(getPageText(pageNumber, pdfDocument))
+						})(i + 1)
 					}
-				})
-			},
-			function (reason) {
-				// PDF loading error
-				console.error(reason)
-			}
-		)
-	}
 
-	fileReader.readAsArrayBuffer(pdf)
+					Promise.all(pagesPromises).then((pagesText) => {
+						pagesText.forEach((text) => {
+							const lowercaseText = text.toLowerCase()
 
-	return []
-}
+							if (
+								lowercaseText.includes('hazard identification') ||
+								lowercaseText.includes('ghs classification') ||
+								lowercaseText.includes('hazard statement')
+							) {
+								HAZARD_CODES.forEach((codeList, index) =>
+									getClassifications(
+										lowercaseText,
+										codeList,
+										classifications,
+										index
+									)
+								)
+							}
+						})
+
+						resolve([...new Set(classifications)])
+					})
+				},
+				() => {
+					resolve([])
+				}
+			)
+		}
+
+		fileReader.readAsArrayBuffer(pdf)
+	})
 
 export default ExtractClassifications
