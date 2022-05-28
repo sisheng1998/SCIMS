@@ -32,12 +32,15 @@ const RenderPDF = ({ PDF, setPDF, extractionResult }) => {
 							<p className='text-xs'>{FormatBytes(PDF.size)}</p>
 						</div>
 
-						<p className='ml-6 border-l border-l-gray-200 pl-6 text-xs text-gray-500'>
-							Detected GHS Classification(s)
-							<span className='block text-sm font-medium text-gray-700'>
+						<div className='ml-6 border-l border-l-gray-200 pl-6'>
+							<p className='text-xs text-gray-500'>
+								Detected GHS Classification(s)
+							</p>
+
+							<p className='text-sm font-medium'>
 								{extractionResult ? extractionResult : '-'}
-							</span>
-						</p>
+							</p>
+						</div>
 					</div>
 
 					<button

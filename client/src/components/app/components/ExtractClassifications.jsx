@@ -1,5 +1,4 @@
 import * as pdfjsLib from 'pdfjs-dist/webpack'
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry'
 import {
 	CLASSIFICATION_LIST,
 	HAZARD_CODES,
@@ -33,7 +32,6 @@ const getPageText = (pageNum, PDFDocumentInstance) =>
 
 const ExtractClassifications = (pdf) =>
 	new Promise((resolve) => {
-		pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker
 		const fileReader = new FileReader()
 
 		let classifications = []

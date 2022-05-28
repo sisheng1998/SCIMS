@@ -9,6 +9,8 @@ import {
 	COC_DESCRIPTION,
 } from '../../../config/safety_security_list'
 import useAuth from '../../../hooks/useAuth'
+import ROLES_LIST from '../../../config/roles_list'
+import EditSDSModal from './EditSDSModal'
 
 const tableHeaders = [
 	{
@@ -38,8 +40,11 @@ const tableHeaders = [
 	},
 ]
 
-const SDSTable = ({ SDS }) => {
+const SDSTable = ({ SDS, setRefresh }) => {
 	const { auth } = useAuth()
+
+	const [openModal, setOpenModal] = useState(false)
+	const [CAS, setCAS] = useState('')
 
 	const [sortKey, setSortKey] = useState('index')
 	const [sortOrder, setSortOrder] = useState('asc')
@@ -92,6 +97,11 @@ const SDSTable = ({ SDS }) => {
 	const currentItems = results.slice(indexOfFirstItem, indexOfLastItem)
 
 	const paginate = (pageNumber) => setCurrentPage(pageNumber)
+
+	const editSDSHandler = (CAS) => {
+		setCAS(CAS)
+		setOpenModal(true)
+	}
 
 	return (
 		<>
@@ -234,7 +244,7 @@ const SDSTable = ({ SDS }) => {
 													: '-'}
 											</td>
 
-											<td className='px-6 py-4'>
+											<td className='space-x-1 px-6 py-4'>
 												<a
 													className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
 													href={auth.SDSPath + CAS.SDS}
@@ -243,6 +253,18 @@ const SDSTable = ({ SDS }) => {
 												>
 													View
 												</a>
+
+												{auth.currentRole >= ROLES_LIST.postgraduate && (
+													<>
+														<span>/</span>
+														<button
+															onClick={() => editSDSHandler(CAS)}
+															className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+														>
+															Edit
+														</button>
+													</>
+												)}
 											</td>
 										</tr>
 									))
@@ -263,6 +285,15 @@ const SDSTable = ({ SDS }) => {
 				totalItems={results.length}
 				paginate={paginate}
 			/>
+
+			{CAS && openModal && (
+				<EditSDSModal
+					CAS={CAS}
+					openModal={openModal}
+					setOpenModal={setOpenModal}
+					setEditSDSSuccess={setRefresh}
+				/>
+			)}
 		</>
 	)
 }

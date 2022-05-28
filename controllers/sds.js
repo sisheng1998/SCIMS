@@ -58,3 +58,52 @@ exports.addSDS = async (req, res, next) => {
 		next(error)
 	}
 }
+
+exports.updateSDS = async (req, res, next) => {
+	const { CASNo, classifications, COCs } = JSON.parse(req.body.chemicalInfo)
+
+	if (!CASNo) {
+		return next(new ErrorResponse('Missing value for required field.', 400))
+	}
+
+	const foundCAS = await CAS.findOne({ CASNo })
+	if (!foundCAS) {
+		return next(new ErrorResponse('SDS not found.', 404))
+	}
+
+	const session = await startSession()
+
+	try {
+		session.startTransaction()
+
+		const updateQuery = {
+			classifications,
+			COCs,
+		}
+
+		if (req.file !== undefined) {
+			updateQuery.SDS = req.file.filename
+		}
+
+		await CAS.updateOne(
+			foundCAS,
+			{
+				$set: updateQuery,
+			},
+			{ new: true, session }
+		)
+
+		await session.commitTransaction()
+		session.endSession()
+
+		res.status(201).json({
+			success: true,
+			data: 'SDS updated.',
+		})
+	} catch (error) {
+		await session.abortTransaction()
+		session.endSession()
+
+		next(error)
+	}
+}
