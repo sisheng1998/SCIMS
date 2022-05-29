@@ -64,10 +64,10 @@ const App = () => {
 						<Route exact path='/' element={<Dashboard />} />
 						<Route exact path='/inventory' element={<Inventory />} />
 						{!isMobile && <Route exact path='/users' element={<Users />} />}
+						<Route exact path='/sds' element={<SDS />} />
 						<Route exact path='/labs' element={<Labs />} />
-						<Route exact path='/notifications' element={<Notifications />} />
 						<Route exact path='/profile' element={<Profile />} />
-						{!isMobile && <Route exact path='/sds' element={<SDS />} />}
+						<Route exact path='/notifications' element={<Notifications />} />
 
 						{/* Allow view only by Guest and Undergraduate, edit by postgraduate and above */}
 						<Route

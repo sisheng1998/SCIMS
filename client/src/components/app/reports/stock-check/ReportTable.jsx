@@ -164,7 +164,7 @@ const ReportTable = ({ chemicals, locations, type }) => {
 				</div>
 			</Filters>
 
-			<div className='mb-6 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-3 shadow'>
+			<div className='mb-5 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-3 shadow'>
 				<div className='overflow-x-auto'>
 					<div className='border-b border-gray-200'>
 						<table className='min-w-full divide-y divide-gray-200 whitespace-nowrap'>

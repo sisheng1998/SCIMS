@@ -6,10 +6,12 @@ import ROLES_LIST from '../../../config/roles_list'
 import LoadingScreen from '../../utils/LoadingScreen'
 import SDSTable from './SDSTable'
 import AddSDSModal from './AddSDSModal'
+import useMobile from '../../../hooks/useMobile'
 
 const SDS = () => {
 	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
+	const isMobile = useMobile()
 
 	const [SDS, setSDS] = useState([])
 	const [openModal, setOpenModal] = useState(false)
@@ -62,8 +64,8 @@ const SDS = () => {
 	) : (
 		<>
 			<Title
-				title='All Safety Data Sheets'
-				hasButton={auth.currentRole >= ROLES_LIST.postgraduate}
+				title={isMobile ? 'All SDS Docs' : 'All Safety Data Sheets'}
+				hasButton={!isMobile && auth.currentRole >= ROLES_LIST.postgraduate}
 				hasRefreshButton={true}
 				buttonText='Add Safety Data Sheet'
 				buttonAction={() => setOpenModal(true)}

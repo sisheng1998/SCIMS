@@ -69,7 +69,7 @@ const ScanQRCodeModal = ({
 					)}
 				/>
 
-				<div className='fixed left-0 right-0 bottom-0 z-30 w-full bg-white/90 shadow-[0_-1px_2px_0_rgba(0,0,0,0.05)]'>
+				<div className='fixed left-0 right-0 bottom-0 z-30 w-full bg-white/90 shadow-[0_-1px_2px_0_rgba(0,0,0,0.1)]'>
 					<button
 						className='h-12 w-full justify-center font-medium text-gray-700'
 						onClick={closeHandler}

@@ -30,6 +30,12 @@ const MENU_LIST = [
 		minRole: ROLES_LIST.guest,
 	},
 	{
+		text: 'Safety Data Sheets',
+		link: '/sds',
+		icon: <DocumentTextIcon />,
+		minRole: ROLES_LIST.guest,
+	},
+	{
 		text: 'Reports',
 		link: '/reports',
 		icon: <ChartBarIcon />,
@@ -45,12 +51,6 @@ const MENU_LIST = [
 		text: 'Users',
 		link: '/users',
 		icon: <UsersIcon />,
-		minRole: ROLES_LIST.guest,
-	},
-	{
-		text: 'Safety Data Sheets',
-		link: '/sds',
-		icon: <DocumentTextIcon />,
 		minRole: ROLES_LIST.guest,
 	},
 	{
@@ -99,38 +99,44 @@ const ADMIN_MENU_LIST = [
 const MOBILE_MENU_LIST = [
 	{
 		text: 'Home',
-		icon: <HomeIcon />,
 		link: '/',
+		icon: <HomeIcon />,
 		minRole: ROLES_LIST.guest,
 	},
 	{
 		text: 'Inventory',
-		icon: <CubeIcon />,
 		link: '/inventory',
+		icon: <CubeIcon />,
+		minRole: ROLES_LIST.guest,
+	},
+	{
+		text: 'SDS Docs',
+		link: '/sds',
+		icon: <DocumentTextIcon />,
 		minRole: ROLES_LIST.guest,
 	},
 	{
 		text: 'Stock Check',
-		icon: <ClipboardCheckIcon />,
 		link: '/stock-check',
+		icon: <ClipboardCheckIcon />,
 		minRole: ROLES_LIST.labOwner,
 	},
 	{
 		text: 'Profile',
-		icon: <UserIcon />,
 		link: '/profile',
+		icon: <UserIcon />,
 		minRole: ROLES_LIST.guest,
 	},
 	{
 		text: 'My Labs',
-		icon: <ColorSwatchIcon />,
 		link: '/labs',
+		icon: <ColorSwatchIcon />,
 		minRole: ROLES_LIST.guest,
 	},
 	{
 		text: 'Notifications',
-		icon: <BellIcon />,
 		link: '/notifications',
+		icon: <BellIcon />,
 		minRole: ROLES_LIST.guest,
 	},
 ]

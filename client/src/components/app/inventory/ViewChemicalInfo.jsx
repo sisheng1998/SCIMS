@@ -409,7 +409,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 
 			{currentUser.role >= ROLES_LIST.undergraduate && !isDisposed && isMobile && (
 				<button
-					className='button button-solid fixed bottom-2 right-2 z-10 -translate-y-[65px] justify-center py-2 shadow-md'
+					className='button button-solid fixed bottom-2 right-2 z-10 -translate-y-12 justify-center py-2 shadow-md'
 					onClick={() => setOpenUpdateAmountModal(true)}
 				>
 					<PencilAltIcon className='-ml-1 mr-1.5 h-5 w-5' />

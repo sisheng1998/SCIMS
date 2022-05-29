@@ -13,6 +13,7 @@ import ROLES_LIST from '../../../config/roles_list'
 import EditSDSModal from './EditSDSModal'
 import ViewSDSModal from './ViewSDSModal'
 import { FormatChemicalDate } from '../../utils/FormatDate'
+import useMobile from '../../../hooks/useMobile'
 
 const tableHeaders = [
 	{
@@ -49,6 +50,7 @@ const tableHeaders = [
 
 const SDSTable = ({ SDS, setRefresh }) => {
 	const { auth } = useAuth()
+	const isMobile = useMobile()
 
 	const [openEditSDSModal, setOpenEditSDSModal] = useState(false)
 	const [openViewSDSModal, setOpenViewSDSModal] = useState(false)
@@ -124,171 +126,246 @@ const SDSTable = ({ SDS, setRefresh }) => {
 				results={results}
 				searchTerm={searchTerm}
 				setSearchTerm={setSearchTerm}
-				searchPlaceholder='CAS No. / Name'
+				searchPlaceholder={isMobile ? 'CAS No.' : 'CAS No. / Name'}
 			>
-				<div className='mx-6 flex items-center lg:ml-4 lg:mr-0'>
-					<p>Filter</p>
+				{!isMobile && (
+					<div className='mx-6 flex items-center lg:ml-4 lg:mr-0'>
+						<p>Filter</p>
 
-					<select
-						className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
-						name='classificationFilter'
-						id='classificationFilter'
-						value={filterTerms.classifications}
-						onChange={(e) =>
-							setFilterTerms((prev) => ({
-								...prev,
-								classifications: e.target.value,
-							}))
-						}
-					>
-						<option value=''>Any Classification</option>
-						{CLASSIFICATION_LIST.map((classification, index) => (
-							<option key={index} value={classification}>
-								{classification}
-							</option>
-						))}
-						<option value='-'>No Classification</option>
-					</select>
+						<select
+							className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
+							name='classificationFilter'
+							id='classificationFilter'
+							value={filterTerms.classifications}
+							onChange={(e) =>
+								setFilterTerms((prev) => ({
+									...prev,
+									classifications: e.target.value,
+								}))
+							}
+						>
+							<option value=''>Any Classification</option>
+							{CLASSIFICATION_LIST.map((classification, index) => (
+								<option key={index} value={classification}>
+									{classification}
+								</option>
+							))}
+							<option value='-'>No Classification</option>
+						</select>
 
-					<select
-						className='ml-2 max-w-xs p-1 pl-2 pr-8 text-sm text-gray-700'
-						name='COCFilter'
-						id='COCFilter'
-						value={filterTerms.COCs}
-						onChange={(e) =>
-							setFilterTerms((prev) => ({ ...prev, COCs: e.target.value }))
-						}
-					>
-						<option value=''>Any Chemical of Concern</option>
-						{COC_LIST.map((COC, index) => (
-							<option key={index} value={COC}>
-								{index !== COC_DESCRIPTION.length - 1
-									? `${COC_DESCRIPTION[index]} (${COC})`
-									: COC}
-							</option>
-						))}
-						<option value='-'>No Chemical of Concern</option>
-					</select>
-				</div>
+						<select
+							className='ml-2 max-w-xs p-1 pl-2 pr-8 text-sm text-gray-700'
+							name='COCFilter'
+							id='COCFilter'
+							value={filterTerms.COCs}
+							onChange={(e) =>
+								setFilterTerms((prev) => ({ ...prev, COCs: e.target.value }))
+							}
+						>
+							<option value=''>Any Chemical of Concern</option>
+							{COC_LIST.map((COC, index) => (
+								<option key={index} value={COC}>
+									{index !== COC_DESCRIPTION.length - 1
+										? `${COC_DESCRIPTION[index]} (${COC})`
+										: COC}
+								</option>
+							))}
+							<option value='-'>No Chemical of Concern</option>
+						</select>
+					</div>
+				)}
 			</Filters>
 
-			<div className='mb-6 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-3 shadow'>
-				<div className='overflow-x-auto'>
-					<div className='border-b border-gray-200'>
-						<table className='min-w-full divide-y divide-gray-200 whitespace-nowrap'>
-							<thead className='bg-gray-50'>
-								<tr>
-									{tableHeaders.map(
-										(header) =>
-											!header.hide && (
-												<th
-													scope='col'
-													key={header.key}
-													className='px-6 py-3 text-left font-medium text-gray-500'
-												>
-													{header.sortable ? (
-														<SortButton
-															columnKey={header.key}
-															onClick={() => changeSortOrder(header.key)}
-															{...{ sortOrder, sortKey }}
-														>
-															{header.label}
-														</SortButton>
-													) : (
-														header.label
-													)}
-												</th>
-											)
-									)}
-								</tr>
-							</thead>
+			{isMobile ? (
+				<>
+					{currentItems.length === 0 ? (
+						<div className='mb-4 rounded-lg bg-white p-4 text-center shadow'>
+							No record found.
+						</div>
+					) : (
+						currentItems.map((CAS) => (
+							<div
+								key={CAS._id}
+								className='mb-4 rounded-lg bg-white p-4 text-sm shadow'
+							>
+								<div className='flex items-start justify-between'>
+									<div>
+										<p className='text-lg font-medium leading-6 text-gray-900'>
+											{CAS.SDS}
+										</p>
+										<p className='text-gray-500'>{CAS.CASNo}</p>
+									</div>
 
-							<tbody className='divide-y divide-gray-200 bg-white'>
-								{currentItems.length === 0 ? (
+									<a
+										href={auth.SDSPath + CAS.SDS}
+										target='_blank'
+										rel='noreferrer'
+										className='inline-flex items-center font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+									>
+										View
+									</a>
+								</div>
+
+								{CAS.classifications.length === 0 &&
+								CAS.COCs.length === 0 ? null : (
+									<div className='-mb-2 mt-4'>
+										{CAS.classifications.length !== 0
+											? CLASSIFICATION_LIST.filter((classification) =>
+													CAS.classifications.includes(classification)
+											  ).map((classification, index) => (
+													<span
+														key={index}
+														className={`mb-2 mr-2 inline-flex rounded-full px-3 py-1 font-medium ${
+															classification === CLASSIFICATION_LIST[8] ||
+															classification === CLASSIFICATION_LIST[7] ||
+															classification === CLASSIFICATION_LIST[6] ||
+															classification === CLASSIFICATION_LIST[5]
+																? 'bg-blue-100 text-blue-600'
+																: 'bg-yellow-100 text-yellow-600'
+														}`}
+													>
+														{classification}
+													</span>
+											  ))
+											: null}
+
+										{CAS.COCs.length !== 0
+											? COC_LIST.filter((security) =>
+													CAS.COCs.includes(security)
+											  ).map((security, index) => (
+													<span
+														key={index}
+														className='mb-2 mr-2 inline-flex rounded-full bg-red-100 px-3 py-1 font-medium text-red-600'
+													>
+														{security}
+													</span>
+											  ))
+											: null}
+									</div>
+								)}
+							</div>
+						))
+					)}
+				</>
+			) : (
+				<div className='mb-5 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pb-3 shadow'>
+					<div className='overflow-x-auto'>
+						<div className='border-b border-gray-200'>
+							<table className='min-w-full divide-y divide-gray-200 whitespace-nowrap'>
+								<thead className='bg-gray-50'>
 									<tr>
-										<td
-											className='px-6 py-4 text-center'
-											colSpan={tableHeaders.length}
-										>
-											No record found.
-										</td>
+										{tableHeaders.map(
+											(header) =>
+												!header.hide && (
+													<th
+														scope='col'
+														key={header.key}
+														className='px-6 py-3 text-left font-medium text-gray-500'
+													>
+														{header.sortable ? (
+															<SortButton
+																columnKey={header.key}
+																onClick={() => changeSortOrder(header.key)}
+																{...{ sortOrder, sortKey }}
+															>
+																{header.label}
+															</SortButton>
+														) : (
+															header.label
+														)}
+													</th>
+												)
+										)}
 									</tr>
-								) : (
-									currentItems.map((CAS) => (
-										<tr className='hover:bg-indigo-50/30' key={CAS._id}>
-											<td className='px-6 py-4'>{CAS.CASNo}</td>
+								</thead>
 
-											<td className='px-6 py-4'>{CAS.SDS}</td>
-
-											<td className='space-x-2 px-6 py-4'>
-												{CAS.classifications.length !== 0
-													? CLASSIFICATION_LIST.filter((classification) =>
-															CAS.classifications.includes(classification)
-													  ).map((classification, index) => (
-															<span
-																key={index}
-																className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${
-																	classification === CLASSIFICATION_LIST[8] ||
-																	classification === CLASSIFICATION_LIST[7] ||
-																	classification === CLASSIFICATION_LIST[6] ||
-																	classification === CLASSIFICATION_LIST[5]
-																		? 'bg-blue-100 text-blue-600'
-																		: 'bg-yellow-100 text-yellow-600'
-																}`}
-															>
-																{classification}
-															</span>
-													  ))
-													: '-'}
-											</td>
-
-											<td className='space-x-2 px-6 py-4'>
-												{CAS.COCs.length !== 0
-													? COC_LIST.filter((security) =>
-															CAS.COCs.includes(security)
-													  ).map((security, index) => (
-															<span
-																key={index}
-																className='inline-flex rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-600'
-															>
-																{security}
-															</span>
-													  ))
-													: '-'}
-											</td>
-
-											<td className='px-6 py-4'>
-												{FormatChemicalDate(CAS.lastUpdated)}
-											</td>
-
-											<td className='space-x-1 px-6 py-4'>
-												<button
-													onClick={() => viewSDSHandler(CAS)}
-													className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
-												>
-													View
-												</button>
-
-												{auth.currentRole >= ROLES_LIST.postgraduate && (
-													<>
-														<span>/</span>
-														<button
-															onClick={() => editSDSHandler(CAS)}
-															className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
-														>
-															Edit
-														</button>
-													</>
-												)}
+								<tbody className='divide-y divide-gray-200 bg-white'>
+									{currentItems.length === 0 ? (
+										<tr>
+											<td
+												className='px-6 py-4 text-center'
+												colSpan={tableHeaders.length}
+											>
+												No record found.
 											</td>
 										</tr>
-									))
-								)}
-							</tbody>
-						</table>
+									) : (
+										currentItems.map((CAS) => (
+											<tr className='hover:bg-indigo-50/30' key={CAS._id}>
+												<td className='px-6 py-4'>{CAS.CASNo}</td>
+
+												<td className='px-6 py-4'>{CAS.SDS}</td>
+
+												<td className='space-x-2 px-6 py-4'>
+													{CAS.classifications.length !== 0
+														? CLASSIFICATION_LIST.filter((classification) =>
+																CAS.classifications.includes(classification)
+														  ).map((classification, index) => (
+																<span
+																	key={index}
+																	className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${
+																		classification === CLASSIFICATION_LIST[8] ||
+																		classification === CLASSIFICATION_LIST[7] ||
+																		classification === CLASSIFICATION_LIST[6] ||
+																		classification === CLASSIFICATION_LIST[5]
+																			? 'bg-blue-100 text-blue-600'
+																			: 'bg-yellow-100 text-yellow-600'
+																	}`}
+																>
+																	{classification}
+																</span>
+														  ))
+														: '-'}
+												</td>
+
+												<td className='space-x-2 px-6 py-4'>
+													{CAS.COCs.length !== 0
+														? COC_LIST.filter((security) =>
+																CAS.COCs.includes(security)
+														  ).map((security, index) => (
+																<span
+																	key={index}
+																	className='inline-flex rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-600'
+																>
+																	{security}
+																</span>
+														  ))
+														: '-'}
+												</td>
+
+												<td className='px-6 py-4'>
+													{FormatChemicalDate(CAS.lastUpdated)}
+												</td>
+
+												<td className='space-x-1 px-6 py-4'>
+													<button
+														onClick={() => viewSDSHandler(CAS)}
+														className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+													>
+														View
+													</button>
+
+													{auth.currentRole >= ROLES_LIST.postgraduate && (
+														<>
+															<span>/</span>
+															<button
+																onClick={() => editSDSHandler(CAS)}
+																className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+															>
+																Edit
+															</button>
+														</>
+													)}
+												</td>
+											</tr>
+										))
+									)}
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
-			</div>
+			)}
 
 			<Pagination
 				filterTerms={filterTerms}

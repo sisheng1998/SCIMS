@@ -37,7 +37,7 @@ const Labs = () => {
 
 			{isMobile && (
 				<button
-					className='button button-solid fixed bottom-2 right-2 z-10 -translate-y-[65px] justify-center py-2 shadow-md'
+					className='button button-solid fixed bottom-2 right-2 z-10 -translate-y-12 justify-center py-2 shadow-md'
 					onClick={() => setOpenApplyNewLabModal(true)}
 				>
 					<PlusIcon className='-ml-1 mr-1.5 h-4 w-4 stroke-2' />
