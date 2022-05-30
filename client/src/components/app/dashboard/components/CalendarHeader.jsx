@@ -33,18 +33,18 @@ const CalendarHeader = ({ monthIndex, setMonthIndex, dayBeforeExp }) => {
 				/>
 			</div>
 
-			<h4 className='ml-2.5 mr-6 text-gray-700'>
+			<h4 className='ml-2.5 mr-6 text-gray-700 xl:mr-4'>
 				{dayjs(new Date(dayjs().year(), monthIndex)).format('MMMM YYYY')}
 			</h4>
 
-			<div className='ml-auto flex items-center space-x-6 text-sm font-medium text-gray-500'>
+			<div className='ml-auto flex items-center space-x-6 text-sm font-medium text-gray-500 xl:space-x-4 xl:text-xs'>
 				<p className='flex items-center'>
-					<span className='mr-2 inline-block h-5 w-5 rounded-full bg-yellow-100'></span>
+					<span className='mr-2 inline-block h-5 w-5 rounded-full bg-yellow-100 xl:h-4 xl:w-4'></span>
 					{dayBeforeExp} Days Before Expiration Date
 				</p>
 
 				<p className='flex items-center'>
-					<span className='mr-2 inline-block h-5 w-5 rounded-full bg-red-100'></span>
+					<span className='mr-2 inline-block h-5 w-5 rounded-full bg-red-100 xl:h-4 xl:w-4'></span>
 					Expiration Date
 				</p>
 			</div>

@@ -208,7 +208,7 @@ const SDSTable = ({ SDS, setRefresh }) => {
 
 								{CAS.classifications.length === 0 &&
 								CAS.COCs.length === 0 ? null : (
-									<div className='-mb-2 mt-4'>
+									<div className='-mb-2 mt-4 text-xs'>
 										{CAS.classifications.length !== 0
 											? CLASSIFICATION_LIST.filter((classification) =>
 													CAS.classifications.includes(classification)

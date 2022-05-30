@@ -11,6 +11,7 @@ import UserInfoCard from '../components/UserInfoCard'
 import QuickAccessCard from '../components/QuickAccessCard'
 import Overview from './Overview'
 import Calendar from './Calendar'
+import Chart from './Chart'
 
 const Dashboard = () => {
 	const navigate = useNavigate()
@@ -75,7 +76,11 @@ const Dashboard = () => {
 		<>
 			<Title title='Dashboard' hasButton={false} hasRefreshButton={false} />
 			<Overview info={info} />
-			<Calendar chemicals={info.chemicals} dayBeforeExp={info.dayBeforeExp} />
+
+			<div className='mb-6 flex space-x-4'>
+				<Calendar chemicals={info.chemicals} dayBeforeExp={info.dayBeforeExp} />
+				<Chart info={info} />
+			</div>
 		</>
 	)
 }

@@ -72,7 +72,7 @@ const Search = ({ searchRef }) => {
 					navigate(`/inventory/${chemical._id}`)
 				}}
 				as='div'
-				className={`relative w-full max-w-lg ${
+				className={`relative w-full max-w-sm ${
 					!searchable ? 'pointer-events-none' : ''
 				}`}
 			>
@@ -88,7 +88,7 @@ const Search = ({ searchRef }) => {
 				</div>
 
 				<Combobox.Options
-					className={`absolute top-full mt-2 max-h-80 w-full overflow-y-auto rounded-lg bg-white py-2 text-sm font-semibold leading-6 shadow-md outline-gray-300 ring-1 ring-gray-300 ${
+					className={`absolute top-full mt-2 max-h-96 w-full overflow-y-auto rounded-lg bg-white py-2 text-sm font-semibold shadow-md outline-gray-300 ring-1 ring-gray-300 ${
 						!query && filteredChemicals.length === 0 ? 'hidden' : ''
 					}`}
 				>
@@ -110,23 +110,24 @@ const Search = ({ searchRef }) => {
 								}
 
 								return (
-									<p
-										className={`flex cursor-pointer flex-row items-center py-0.5 px-3 ${
+									<div
+										className={`flex cursor-pointer flex-row items-center py-1 px-3 ${
 											active ? 'bg-indigo-600 text-white' : ''
 										}`}
 									>
-										{chemical.name}
+										<div className='mr-2'>
+											<p>{chemical.name}</p>
+											<p
+												className={`text-sx font-normal ${
+													active ? 'text-indigo-100' : 'text-gray-500'
+												}`}
+											>
+												{chemical.CASId.CASNo}
+											</p>
+										</div>
 
-										<span
-											className={`text-sx mx-2 shrink-0 font-normal ${
-												active ? 'text-indigo-100' : 'text-gray-500'
-											}`}
-										>
-											{chemical.CASId.CASNo}
-										</span>
-
-										<span
-											className={`ml-auto flex shrink-0 items-center text-xs font-medium ${
+										<p
+											className={`ml-auto flex shrink-0 items-center self-start text-xs font-medium leading-5 ${
 												active ? 'text-indigo-100' : 'text-gray-500'
 											}`}
 										>
@@ -134,8 +135,8 @@ const Search = ({ searchRef }) => {
 												className={`mr-1.5 h-1.5 w-1.5 rounded-full ${classes}`}
 											></span>
 											{chemical.status}
-										</span>
-									</p>
+										</p>
+									</div>
 								)
 							}}
 						</Combobox.Option>

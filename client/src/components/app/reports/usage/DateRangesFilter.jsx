@@ -67,7 +67,7 @@ const DateRangesFilter = ({ dateRanges, setDateRanges }) => {
 	}
 
 	return (
-		<div className='mb-4 flex items-center text-sm text-gray-500'>
+		<div className='mb-5 flex items-center text-sm text-gray-500'>
 			<p>Period</p>
 
 			<select

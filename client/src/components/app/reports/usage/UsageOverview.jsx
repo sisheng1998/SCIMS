@@ -3,21 +3,11 @@ import InfoCard from '../InfoCard'
 import {
 	ClockIcon,
 	BeakerIcon,
-	UserIcon,
+	UsersIcon,
 	ClipboardListIcon,
 } from '@heroicons/react/outline'
 
-const UsageOverview = ({ data, dateRanges }) => {
-	let involvedChemicals = []
-	let involvedUsers = []
-
-	data.forEach((log) => {
-		!involvedChemicals.includes(log.chemical._id) &&
-			involvedChemicals.push(log.chemical._id)
-
-		!involvedUsers.includes(log.user._id) && involvedUsers.push(log.user._id)
-	})
-
+const UsageOverview = ({ data, dateRanges, chemicals, users }) => {
 	return (
 		<div className='-mr-4 mb-2 flex flex-wrap'>
 			<InfoCard
@@ -38,23 +28,23 @@ const UsageOverview = ({ data, dateRanges }) => {
 				icon={
 					<BeakerIcon className='h-14 w-14 rounded-full bg-indigo-50 p-3 text-indigo-500' />
 				}
-				value={involvedChemicals.length}
+				value={chemicals.length}
 				text='Involved Chemical'
 				haveLetterS={true}
 			/>
 
 			<InfoCard
 				icon={
-					<UserIcon className='h-14 w-14 rounded-full bg-pink-50 p-3 text-pink-500' />
+					<UsersIcon className='h-14 w-14 rounded-full bg-emerald-50 p-3 text-emerald-500' />
 				}
-				value={involvedUsers.length}
+				value={users.length}
 				text='Involved User'
 				haveLetterS={true}
 			/>
 
 			<InfoCard
 				icon={
-					<ClipboardListIcon className='h-14 w-14 rounded-full bg-green-50 p-3 text-green-500' />
+					<ClipboardListIcon className='h-14 w-14 rounded-full bg-blue-50 p-3 text-blue-500' />
 				}
 				value={data.length}
 				text='Usage Record'

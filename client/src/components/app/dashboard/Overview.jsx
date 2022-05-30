@@ -33,7 +33,7 @@ const Overview = ({ info }) => {
 				<InfoCard
 					info={info.totalChemicals}
 					icon={
-						<CubeIcon className='h-14 w-14 rounded-full bg-pink-50 p-3 text-pink-500' />
+						<CubeIcon className='h-14 w-14 rounded-full bg-indigo-50 p-3 text-indigo-500' />
 					}
 					text='Total Chemical'
 					increment={info.newChemicals === 0 ? false : info.newChemicals}
