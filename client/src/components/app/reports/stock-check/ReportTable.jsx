@@ -120,7 +120,7 @@ const ReportTable = ({ chemicals, locations, type }) => {
 				setSearchTerm={setSearchTerm}
 				searchPlaceholder='CAS No. / Name'
 			>
-				<div className='mx-6 flex items-center lg:ml-4 lg:mr-0'>
+				<div className='mx-6 flex items-center'>
 					<p>Filter</p>
 
 					<select

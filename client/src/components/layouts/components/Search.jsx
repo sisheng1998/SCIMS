@@ -72,7 +72,7 @@ const Search = ({ searchRef }) => {
 					navigate(`/inventory/${chemical._id}`)
 				}}
 				as='div'
-				className={`relative w-full max-w-sm ${
+				className={`relative w-full max-w-lg ${
 					!searchable ? 'pointer-events-none' : ''
 				}`}
 			>
@@ -80,11 +80,11 @@ const Search = ({ searchRef }) => {
 					<Combobox.Input
 						type='text'
 						placeholder='Search Inventory'
-						className='w-full pr-8 pl-7 text-sm shadow-none'
+						className='w-full pl-10 text-sm shadow-none'
 						onChange={(e) => setQuery(e.target.value)}
 						ref={searchRef}
 					/>
-					<SearchIcon className='pointer-events-none absolute left-2 h-4 w-4 text-gray-400' />
+					<SearchIcon className='pointer-events-none absolute left-3.5 h-4 w-4 text-gray-400' />
 				</div>
 
 				<Combobox.Options

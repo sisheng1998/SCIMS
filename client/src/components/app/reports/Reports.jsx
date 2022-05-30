@@ -3,15 +3,24 @@ import useAuth from '../../../hooks/useAuth'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import LoadingScreen from '../../utils/LoadingScreen'
 import Title from '../components/Title'
+import Usage from './usage/Usage'
 import StockCheckTable from './stock-check/StockCheckTable'
+import dayjs from 'dayjs'
 
 const Reports = () => {
 	const { auth } = useAuth()
-
 	const axiosPrivate = useAxiosPrivate()
+
 	const [isLoading, setIsLoading] = useState(true)
-	const [info, setInfo] = useState([])
+
 	const [reportType, setReportType] = useState('Chemical Usage')
+	const [dateRanges, setDateRanges] = useState({
+		start: dayjs().startOf('month').format('YYYY-MM-DD'),
+		end: dayjs().format('YYYY-MM-DD'),
+	})
+
+	const [usage, setUsage] = useState([])
+	const [stockCheck, setStockCheck] = useState([])
 
 	useEffect(() => {
 		let isMounted = true
@@ -22,7 +31,28 @@ const Reports = () => {
 		const getInfo = async () => {
 			try {
 				if (reportType === 'Chemical Usage') {
-					setTimeout(() => setIsLoading(false), 500)
+					const { data } = await axiosPrivate.put(
+						'/api/private/usage-reports',
+						{ labId: auth.currentLabId, dateRanges },
+						{
+							signal: controller.signal,
+						}
+					)
+					if (isMounted) {
+						const processedData = data.data
+							.sort((a, b) => (a.date < b.date ? 1 : -1))
+							.map((log, index) => ({
+								...log,
+								CASNo: log.chemical.CASId.CASNo,
+								chemicalName: log.chemical.name,
+								userName: log.user.name,
+								userEmail: log.user.email,
+								index,
+							}))
+
+						setUsage(processedData)
+						setIsLoading(false)
+					}
 				} else {
 					const { data } = await axiosPrivate.put(
 						'/api/private/stock-check-reports',
@@ -47,7 +77,7 @@ const Reports = () => {
 								date: report.date,
 							}))
 
-						setInfo(processedData)
+						setStockCheck(processedData)
 						setIsLoading(false)
 					}
 				}
@@ -62,7 +92,7 @@ const Reports = () => {
 			isMounted = false
 			controller.abort()
 		}
-	}, [axiosPrivate, auth.currentLabId, reportType])
+	}, [axiosPrivate, auth.currentLabId, reportType, dateRanges])
 
 	return isLoading ? (
 		<LoadingScreen />
@@ -89,11 +119,13 @@ const Reports = () => {
 			</Title>
 
 			{reportType === 'Chemical Usage' ? (
-				<div className='auth-card self-center text-center'>
-					<p className='text-lg'>No record yet.</p>
-				</div>
+				<Usage
+					data={usage}
+					dateRanges={dateRanges}
+					setDateRanges={setDateRanges}
+				/>
 			) : (
-				<StockCheckTable data={info} />
+				<StockCheckTable data={stockCheck} />
 			)}
 		</>
 	)

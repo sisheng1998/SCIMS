@@ -39,7 +39,11 @@ const { userActivity } = require('../controllers/activity_log')
 
 const { stockCheck } = require('../controllers/stock_check')
 
-const { stockCheckReports, stockCheckReport } = require('../controllers/report')
+const {
+	usageReports,
+	stockCheckReports,
+	stockCheckReport,
+} = require('../controllers/report')
 
 const { getSDS, addSDS, updateSDS } = require('../controllers/sds')
 
@@ -103,6 +107,9 @@ router
 router.route('/stock-check').post(verifyRoles(ROLES_LIST.labOwner), stockCheck)
 
 // Reports
+router
+	.route('/usage-reports')
+	.put(verifyRoles(ROLES_LIST.labOwner), usageReports)
 router
 	.route('/stock-check-reports')
 	.put(verifyRoles(ROLES_LIST.labOwner), stockCheckReports)

@@ -45,7 +45,7 @@ const ActivityLogsTable = (props) => {
 	const [sortOrder, setSortOrder] = useState('asc')
 	const [searchTerm, setSearchTerm] = useState('')
 	const [filterTerms, setFilterTerms] = useState({
-		duration: {
+		period: {
 			option: '',
 			startDate: past.toLocaleDateString('en-CA'),
 			endDate: today.toLocaleDateString('en-CA'),
@@ -117,16 +117,16 @@ const ActivityLogsTable = (props) => {
 				searchPlaceholder='Name / Email'
 			>
 				<div className='mx-6 flex items-center'>
-					<p>Duration</p>
+					<p>Period</p>
 					<select
 						className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
-						name='durationFilter'
-						id='durationFilter'
-						value={filterTerms.duration.option}
+						name='periodFilter'
+						id='periodFilter'
+						value={filterTerms.period.option}
 						onChange={(e) =>
 							setFilterTerms((prev) => ({
 								...prev,
-								duration: { ...prev.duration, option: e.target.value },
+								period: { ...prev.period, option: e.target.value },
 							}))
 						}
 					>
@@ -136,7 +136,7 @@ const ActivityLogsTable = (props) => {
 						<option value='custom'>Custom</option>
 					</select>
 
-					{filterTerms.duration.option === 'custom' && (
+					{filterTerms.period.option === 'custom' && (
 						<>
 							<p className='ml-4 mr-2'>Range</p>
 							<input
@@ -145,11 +145,11 @@ const ActivityLogsTable = (props) => {
 								name='startDate'
 								id='startDate'
 								max={today.toLocaleDateString('en-CA')}
-								value={filterTerms.duration.startDate}
+								value={filterTerms.period.startDate}
 								onChange={(e) =>
 									setFilterTerms((prev) => ({
 										...prev,
-										duration: { ...prev.duration, startDate: e.target.value },
+										period: { ...prev.period, startDate: e.target.value },
 									}))
 								}
 							/>
@@ -160,11 +160,11 @@ const ActivityLogsTable = (props) => {
 								name='endDate'
 								id='endDate'
 								max={today.toLocaleDateString('en-CA')}
-								value={filterTerms.duration.endDate}
+								value={filterTerms.period.endDate}
 								onChange={(e) =>
 									setFilterTerms((prev) => ({
 										...prev,
-										duration: { ...prev.duration, endDate: e.target.value },
+										period: { ...prev.period, endDate: e.target.value },
 									}))
 								}
 							/>

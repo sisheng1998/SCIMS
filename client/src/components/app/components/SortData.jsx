@@ -35,7 +35,7 @@ const SortData = ({
 					}
 
 					// Filter for activity logs
-					if (col === 'duration') {
+					if (col === 'period') {
 						const currentMonth = new Date().getMonth() + 1
 						const loggedMonth = new Date(data['date']).getMonth() + 1
 
