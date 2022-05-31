@@ -20,8 +20,14 @@ exports.usageReports = async (req, res, next) => {
 			return next(new ErrorResponse('Lab not found.', 404))
 		}
 
+		const startDate = new Date(dateRanges.start)
+		startDate.setUTCHours(0, 0, 0, 0)
+
+		const endDate = new Date(dateRanges.end)
+		endDate.setUTCHours(23, 59, 59, 999)
+
 		const records = await Usage.find(
-			{ lab: labId, date: { $gte: dateRanges.start, $lt: dateRanges.end } },
+			{ lab: labId, date: { $gte: startDate, $lt: endDate } },
 			'-lab'
 		)
 			.populate('user', UserOption)

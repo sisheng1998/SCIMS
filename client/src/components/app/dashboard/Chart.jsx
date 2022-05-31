@@ -75,7 +75,7 @@ const Chart = ({ info }) => {
 					<span className='text-xs text-gray-400'>(No. of Chemicals)</span>
 				</p>
 
-				<div className='rounded-lg border border-gray-200 bg-white p-2 shadow-sm'>
+				<div className='relative rounded-lg border border-gray-200 bg-white p-2 shadow-sm'>
 					<Doughnut data={data} options={options} />
 					<p className='p-2 pt-4 text-sm font-medium text-gray-500'>
 						Total: {info.totalChemicals} Chemical
