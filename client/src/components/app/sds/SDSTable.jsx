@@ -22,7 +22,7 @@ const tableHeaders = [
 		sortable: true,
 	},
 	{
-		key: 'SDS',
+		key: 'chemicalName',
 		label: 'Name',
 		sortable: true,
 	},
@@ -71,7 +71,7 @@ const SDSTable = ({ SDS, setRefresh }) => {
 				sortKey,
 				reverse: sortOrder === 'desc',
 				searchTerm,
-				searchCols: ['CASNo', 'SDS'],
+				searchCols: ['CASNo', 'chemicalName'],
 				filterTerms,
 			}),
 		[SDS, sortKey, sortOrder, searchTerm, filterTerms]
@@ -126,7 +126,7 @@ const SDSTable = ({ SDS, setRefresh }) => {
 				results={results}
 				searchTerm={searchTerm}
 				setSearchTerm={setSearchTerm}
-				searchPlaceholder={isMobile ? 'CAS No.' : 'CAS No. / Name'}
+				searchPlaceholder='CAS No. / Name'
 			>
 				{!isMobile && (
 					<div className='mx-6 flex items-center lg:ml-4 lg:mr-0'>
@@ -188,12 +188,12 @@ const SDSTable = ({ SDS, setRefresh }) => {
 								key={CAS._id}
 								className='mb-4 rounded-lg bg-white p-4 text-sm shadow'
 							>
-								<div className='flex items-start justify-between'>
+								<div className='flex items-start justify-between space-x-4'>
 									<div>
 										<p className='text-lg font-medium leading-6 text-gray-900'>
-											{CAS.SDS}
+											{CAS.CASNo}
 										</p>
-										<p className='text-gray-500'>{CAS.CASNo}</p>
+										<p className='text-gray-500'>{CAS.chemicalName}</p>
 									</div>
 
 									<a
@@ -230,16 +230,20 @@ const SDSTable = ({ SDS, setRefresh }) => {
 											: null}
 
 										{CAS.COCs.length !== 0
-											? COC_LIST.filter((security) =>
-													CAS.COCs.includes(security)
-											  ).map((security, index) => (
-													<span
-														key={index}
-														className='mb-2 mr-2 inline-flex rounded-full bg-red-100 px-3 py-1 font-medium text-red-600'
-													>
-														{security}
-													</span>
-											  ))
+											? COC_LIST.map(
+													(security, index) =>
+														CAS.COCs.includes(security) && (
+															<span
+																key={index}
+																className={`mb-2 mr-2 inline-flex rounded-full bg-red-100 px-3 py-1 font-medium text-red-600 ${
+																	security !== 'Other' ? 'tooltip' : ''
+																}`}
+																data-tooltip={COC_DESCRIPTION[index]}
+															>
+																{security}
+															</span>
+														)
+											  )
 											: null}
 									</div>
 								)}
@@ -294,7 +298,7 @@ const SDSTable = ({ SDS, setRefresh }) => {
 											<tr className='hover:bg-indigo-50/30' key={CAS._id}>
 												<td className='px-6 py-4'>{CAS.CASNo}</td>
 
-												<td className='px-6 py-4'>{CAS.SDS}</td>
+												<td className='px-6 py-4'>{CAS.chemicalName}</td>
 
 												<td className='space-x-2 px-6 py-4'>
 													{CAS.classifications.length !== 0
@@ -320,16 +324,20 @@ const SDSTable = ({ SDS, setRefresh }) => {
 
 												<td className='space-x-2 px-6 py-4'>
 													{CAS.COCs.length !== 0
-														? COC_LIST.filter((security) =>
-																CAS.COCs.includes(security)
-														  ).map((security, index) => (
-																<span
-																	key={index}
-																	className='inline-flex rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-600'
-																>
-																	{security}
-																</span>
-														  ))
+														? COC_LIST.map(
+																(security, index) =>
+																	CAS.COCs.includes(security) && (
+																		<span
+																			key={index}
+																			className={`inline-flex whitespace-normal rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-600 ${
+																				security !== 'Other' ? 'tooltip' : ''
+																			}`}
+																			data-tooltip={COC_DESCRIPTION[index]}
+																		>
+																			{security}
+																		</span>
+																	)
+														  )
 														: '-'}
 												</td>
 

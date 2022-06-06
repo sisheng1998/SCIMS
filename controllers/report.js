@@ -37,7 +37,7 @@ exports.usageReports = async (req, res, next) => {
 				populate: {
 					path: 'CASId',
 					model: 'CAS',
-					select: 'CASNo -_id',
+					select: 'CASNo chemicalName -_id',
 				},
 			})
 

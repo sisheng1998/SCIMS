@@ -15,6 +15,7 @@ import {
 } from '../../../config/safety_security_list'
 import SafetySecurityField from '../../validations/SafetySecurityField'
 import FormatDate from '../../utils/FormatDate'
+import NameField from '../../validations/NameField'
 
 const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
 	const { auth } = useAuth()
@@ -22,6 +23,9 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
 	const divRef = useRef(null)
 
 	const labId = auth.currentLabId
+
+	const [chemicalName, setChemicalName] = useState(CAS.chemicalName)
+	const [chemicalNameValidated, setChemicalNameValidated] = useState(false)
 
 	const [SDS, setSDS] = useState(CAS.SDS)
 	const [classifications, setClassifications] = useState(CAS.classifications)
@@ -35,12 +39,14 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
 	useEffect(() => {
 		setAllowed(
 			SDS !== '' &&
+				chemicalNameValidated &&
 				(SDS !== CAS.SDS ||
+					chemicalName !== CAS.chemicalName ||
 					[...classifications].sort().toString() !==
 						[...CAS.classifications].sort().toString() ||
 					[...COCs].sort().toString() !== [...CAS.COCs].sort().toString())
 		)
-	}, [CAS, SDS, classifications, COCs])
+	}, [CAS, SDS, classifications, COCs, chemicalName, chemicalNameValidated])
 
 	const submitHandler = async (e) => {
 		e.preventDefault()
@@ -53,6 +59,7 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
 				JSON.stringify({
 					labId,
 					CASNo: CAS.CASNo,
+					chemicalName,
 					classifications,
 					COCs,
 				})
@@ -148,6 +155,21 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
 								<p className='mt-2 mb-6 text-xs text-gray-400'>
 									CAS Number cannot be changed.
 								</p>
+
+								<label htmlFor='name' className='required-input-label'>
+									Name of Chemical
+								</label>
+								<NameField
+									id='chemicalName'
+									placeholder='Enter chemical name'
+									required={true}
+									value={chemicalName}
+									setValue={setChemicalName}
+									validated={chemicalNameValidated}
+									setValidated={setChemicalNameValidated}
+									withNumber={true}
+									showValidated={false}
+								/>
 
 								{!SDS ? (
 									<>

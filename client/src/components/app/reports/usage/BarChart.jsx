@@ -43,7 +43,7 @@ const BarChart = ({ info, chemicals, users, type, unit, indexAxis }) => {
 
 					if (totalUsages !== 0) {
 						chemicalsWithUsages.push({
-							name: chemical.CASNo,
+							name: `${chemical.chemicalName} (${chemical.CASNo})`,
 							usage: totalUsages,
 						})
 					}

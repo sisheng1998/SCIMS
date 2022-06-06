@@ -148,6 +148,7 @@ exports.addChemical = async (req, res, next) => {
 				[
 					{
 						CASNo,
+						chemicalName: name,
 						SDS: req.file.filename,
 						classifications,
 						COCs,

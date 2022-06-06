@@ -8,6 +8,7 @@ import {
 import useAuth from '../../../hooks/useAuth'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import CASField from '../../validations/CASField'
+import NameField from '../../validations/NameField'
 import PDFDropZone from '../components/PDFDropZone'
 import RenderPDF from '../components/RenderPDF'
 import {
@@ -30,6 +31,9 @@ const AddSDSModal = ({
 
 	const [CASNo, setCASNo] = useState('')
 	const [CASNoValidated, setCASNoValidated] = useState(false)
+
+	const [chemicalName, setChemicalName] = useState('')
+	const [chemicalNameValidated, setChemicalNameValidated] = useState(false)
 
 	const [SDS, setSDS] = useState('')
 	const [classifications, setClassifications] = useState([])
@@ -88,8 +92,8 @@ const AddSDSModal = ({
 	}, [axiosPrivate, labId, CASNo, CASNoValidated, existedSDS])
 
 	useEffect(() => {
-		setAllowed(SDS !== '' && CASNoValidated)
-	}, [SDS, CASNoValidated])
+		setAllowed(SDS !== '' && CASNoValidated && chemicalNameValidated)
+	}, [SDS, CASNoValidated, chemicalNameValidated])
 
 	const submitHandler = async (e) => {
 		e.preventDefault()
@@ -99,7 +103,7 @@ const AddSDSModal = ({
 			const formData = new FormData()
 			formData.append(
 				'chemicalInfo',
-				JSON.stringify({ labId, CASNo, classifications, COCs })
+				JSON.stringify({ labId, CASNo, chemicalName, classifications, COCs })
 			)
 			formData.append('SDS', SDS)
 
@@ -201,6 +205,21 @@ const AddSDSModal = ({
 										allowNextStep ? '' : 'pointer-events-none opacity-50'
 									}`}
 								>
+									<label htmlFor='name' className='required-input-label'>
+										Name of Chemical
+									</label>
+									<NameField
+										id='chemicalName'
+										placeholder='Enter chemical name'
+										required={true}
+										value={chemicalName}
+										setValue={setChemicalName}
+										validated={chemicalNameValidated}
+										setValidated={setChemicalNameValidated}
+										withNumber={true}
+										showValidated={true}
+									/>
+
 									{!SDS ? (
 										<>
 											<label htmlFor='SDS' className='required-input-label'>

@@ -19,6 +19,7 @@ import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
 import { useNavigate } from 'react-router-dom'
 import UpdateAmountModal from './components/UpdateAmountModal'
 import useMobile from '../../../hooks/useMobile'
+import ViewSDSModal from '../sds/ViewSDSModal'
 
 const ChemicalsTable = (props) => {
 	const { auth } = useAuth()
@@ -27,6 +28,9 @@ const ChemicalsTable = (props) => {
 
 	const [QRCodeInfo, setQRCodeInfo] = useState('')
 	const [openViewImageModal, setOpenViewImageModal] = useState(false)
+
+	const [openViewSDSModal, setOpenViewSDSModal] = useState(false)
+	const [CAS, setCAS] = useState('')
 
 	const [chemicalInfo, setChemicalInfo] = useState('')
 	const [openUpdateAmountModal, setOpenUpdateAmountModal] = useState(false)
@@ -149,6 +153,11 @@ const ChemicalsTable = (props) => {
 	const updateAmountHandler = (chemical) => {
 		setChemicalInfo(chemical)
 		setOpenUpdateAmountModal(true)
+	}
+
+	const viewSDSHandler = (CAS) => {
+		setCAS(CAS)
+		setOpenViewSDSModal(true)
 	}
 
 	return (
@@ -281,7 +290,20 @@ const ChemicalsTable = (props) => {
 									<p className='text-lg font-medium leading-6 text-gray-900'>
 										{chemical.name}
 									</p>
-									<p className='mb-2 text-gray-500'>{chemical.CASId.CASNo}</p>
+									<p
+										onClick={() => viewSDSHandler(chemical.CASId)}
+										className='mb-2 cursor-pointer text-gray-500 transition hover:text-indigo-600'
+									>
+										{chemical.CASId.CASNo}
+										{chemical.CASId.COCs.length !== 0 && (
+											<span
+												className='tooltip ml-1.5 inline-block -translate-y-0.5 whitespace-normal'
+												data-tooltip='Chemical of Concerns'
+											>
+												<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
+											</span>
+										)}
+									</p>
 
 									<div className='flex flex-wrap items-center'>
 										<p className='mt-2 mr-4 flex items-center'>
@@ -382,7 +404,22 @@ const ChemicalsTable = (props) => {
 													className='hover:bg-indigo-50/30'
 													key={chemical._id}
 												>
-													<td className='px-6 py-4'>{chemical.CASId.CASNo}</td>
+													<td className='px-6 py-4'>
+														<p
+															onClick={() => viewSDSHandler(chemical.CASId)}
+															className='cursor-pointer transition hover:text-indigo-600'
+														>
+															{chemical.CASId.CASNo}
+															{chemical.CASId.COCs.length !== 0 && (
+																<span
+																	className='tooltip ml-1.5 whitespace-normal'
+																	data-tooltip='Chemical of Concerns'
+																>
+																	<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
+																</span>
+															)}
+														</p>
+													</td>
 
 													<td className='px-6 py-4'>
 														<div className='flex items-center space-x-2'>
@@ -535,6 +572,15 @@ const ChemicalsTable = (props) => {
 					openModal={openUpdateAmountModal}
 					setOpenModal={setOpenUpdateAmountModal}
 					setUpdateAmountSuccess={props.setUpdateAmountSuccess}
+				/>
+			)}
+
+			{CAS && openViewSDSModal && (
+				<ViewSDSModal
+					CAS={CAS}
+					fromInventory={true}
+					openModal={openViewSDSModal}
+					setOpenModal={setOpenViewSDSModal}
 				/>
 			)}
 		</>

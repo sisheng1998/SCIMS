@@ -16,9 +16,11 @@ exports.getSDS = async (req, res, next) => {
 }
 
 exports.addSDS = async (req, res, next) => {
-	const { CASNo, classifications, COCs } = JSON.parse(req.body.chemicalInfo)
+	const { CASNo, chemicalName, classifications, COCs } = JSON.parse(
+		req.body.chemicalInfo
+	)
 
-	if (!CASNo) {
+	if (!CASNo || !chemicalName) {
 		return next(new ErrorResponse('Missing value for required field.', 400))
 	}
 
@@ -36,6 +38,7 @@ exports.addSDS = async (req, res, next) => {
 			[
 				{
 					CASNo,
+					chemicalName,
 					SDS: req.file.filename,
 					classifications,
 					COCs,
@@ -60,9 +63,11 @@ exports.addSDS = async (req, res, next) => {
 }
 
 exports.updateSDS = async (req, res, next) => {
-	const { CASNo, classifications, COCs } = JSON.parse(req.body.chemicalInfo)
+	const { CASNo, chemicalName, classifications, COCs } = JSON.parse(
+		req.body.chemicalInfo
+	)
 
-	if (!CASNo) {
+	if (!CASNo || !chemicalName) {
 		return next(new ErrorResponse('Missing value for required field.', 400))
 	}
 
@@ -77,6 +82,7 @@ exports.updateSDS = async (req, res, next) => {
 		session.startTransaction()
 
 		const updateQuery = {
+			chemicalName,
 			classifications,
 			COCs,
 			lastUpdated: Date.now(),

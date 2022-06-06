@@ -21,6 +21,7 @@ const Usage = ({ data, dateRanges, setDateRanges }) => {
 			chemicals.push({
 				_id: log.chemical._id,
 				CASNo: log.CASNo,
+				chemicalName: log.chemical.CASId.chemicalName,
 				name: log.chemical.name,
 			})
 		}

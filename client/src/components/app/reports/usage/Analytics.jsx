@@ -16,7 +16,7 @@ const Analytics = ({ data, chemicals, users }) => {
 	return (
 		<div className='mb-6 grid grid-cols-5 gap-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm'>
 			{data.length === 0 ? (
-				<p className='p-2 text-center'>No record found.</p>
+				<p className='col-span-5 p-2 text-center'>No record found.</p>
 			) : (
 				<>
 					<div className='space-y-2 border-r border-r-gray-200 p-2 pr-0 text-sm font-medium text-gray-400'>

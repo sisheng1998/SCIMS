@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-const MATRIC_REGEX = /^[a-zA-Z0-9-_/]*$/
+const MATRIC_REGEX = /^[a-zA-Z0-9-_/()]*$/
 
 const MatricNoField = (props) => {
 	useEffect(() => {
