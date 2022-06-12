@@ -77,7 +77,7 @@ const Dashboard = () => {
 			<Title title='Dashboard' hasButton={false} hasRefreshButton={false} />
 			<Overview info={info} />
 
-			<div className='mb-6 flex space-x-4'>
+			<div className='mb-6 flex space-x-4 xl:block xl:space-x-0 xl:space-y-6'>
 				<Calendar chemicals={info.chemicals} dayBeforeExp={info.dayBeforeExp} />
 				<Chart info={info} />
 			</div>

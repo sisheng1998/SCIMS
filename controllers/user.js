@@ -1,9 +1,12 @@
 const ErrorResponse = require('../utils/errorResponse')
 const Lab = require('../models/Lab')
 const User = require('../models/User')
+const Notification = require('../models/Notification')
+const Subscriber = require('../models/Subscriber')
 const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
 const sendEmail = require('../utils/sendEmail')
+const sendNotification = require('../utils/sendNotification')
 
 const UserInfo =
 	'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status'
@@ -156,10 +159,11 @@ exports.userApproval = async (req, res, next) => {
 					$set: {
 						'roles.$[el].role': role,
 						'roles.$[el].status': 'Active',
+						notification: true,
 						lastUpdated: Date.now(),
 					},
 				},
-				{ arrayFilters: [{ 'el.lab': labId }], new: true, session }
+				{ arrayFilters: [{ 'el.lab': foundLab._id }], new: true, session }
 			)
 		} else {
 			await User.updateOne(
@@ -167,10 +171,11 @@ exports.userApproval = async (req, res, next) => {
 				{
 					$pull: {
 						roles: {
-							lab: labId,
+							lab: foundLab._id,
 						},
 					},
 					$set: {
+						notification: true,
 						lastUpdated: Date.now(),
 					},
 				},
@@ -181,7 +186,7 @@ exports.userApproval = async (req, res, next) => {
 				foundLab,
 				{
 					$pull: {
-						labUsers: userId,
+						labUsers: foundUser._id,
 					},
 					$set: {
 						lastUpdated: Date.now(),
@@ -190,6 +195,17 @@ exports.userApproval = async (req, res, next) => {
 				{ new: true, session }
 			)
 		}
+
+		await Notification.create(
+			[
+				{
+					lab: foundLab._id,
+					user: foundUser._id,
+					type: approve ? 'Request Approved' : 'Request Declined',
+				},
+			],
+			{ session }
+		)
 
 		let roleName = 'Guest'
 		if (role === 5555) roleName = 'Postgraduate'
@@ -206,6 +222,28 @@ exports.userApproval = async (req, res, next) => {
 				message: message,
 			},
 		})
+
+		const subscribedUser = await Subscriber.findOne(
+			{ user: foundUser._id },
+			'endpoint keys'
+		)
+
+		if (subscribedUser) {
+			const subscription = {
+				endpoint: subscribedUser.endpoint,
+				keys: subscribedUser.keys,
+			}
+
+			const payload = JSON.stringify({
+				title: 'Lab Application Result',
+				message: `[Lab ${foundLab.labName}] Your request have been ${
+					approve ? 'approved' : 'declined'
+				}.`,
+				url: '/notifications',
+			})
+
+			sendNotification(subscription, payload)
+		}
 
 		await session.commitTransaction()
 		session.endSession()
@@ -285,24 +323,106 @@ exports.updateUser = async (req, res, next) => {
 		return next(new ErrorResponse('Missing value for required field.', 400))
 	}
 
+	const foundLab = await Lab.findById(labId)
+	if (!foundLab) {
+		return next(new ErrorResponse('Lab not found.', 404))
+	}
+
+	const foundUser = await User.findById(userId)
+	if (!foundUser) {
+		return next(new ErrorResponse('User not found.', 404))
+	}
+
+	const session = await startSession()
+
 	try {
-		await User.findOneAndUpdate(
-			{ _id: userId },
+		session.startTransaction()
+
+		await User.updateOne(
+			foundUser,
 			{
 				$set: {
 					'roles.$[el].role': role,
 					'roles.$[el].status': status,
+					notification: true,
 					lastUpdated: Date.now(),
 				},
 			},
-			{ arrayFilters: [{ 'el.lab': labId }], new: true }
+			{ arrayFilters: [{ 'el.lab': foundLab._id }], new: true, session }
 		)
+
+		const previousRole = foundUser.roles.find((role) =>
+			role.lab.equals(foundLab._id)
+		)
+
+		let type
+		let title
+		let message
+
+		if (previousRole.status !== status) {
+			type = `User Role ${status}`
+			title = 'Status Changed'
+			message =
+				status === 'Active'
+					? 'You are now able to access the lab.'
+					: 'You are temporarily unable to access the lab.'
+		} else {
+			title = 'User Role Changed'
+
+			if (role === ROLES_LIST.guest) {
+				type = 'Guest Role'
+				message = 'Your role have been changed to Guest.'
+			} else if (role === ROLES_LIST.undergraduate) {
+				type = 'Undergraduate Role'
+				message = 'Your role have been changed to Undergraduate.'
+			} else {
+				type = 'Postgraduate Role'
+				message = 'Your role have been changed to Postgraduate.'
+			}
+		}
+
+		await Notification.create(
+			[
+				{
+					lab: foundLab._id,
+					user: foundUser._id,
+					type,
+				},
+			],
+			{ session }
+		)
+
+		const subscribedUser = await Subscriber.findOne(
+			{ user: foundUser._id },
+			'endpoint keys'
+		)
+
+		if (subscribedUser) {
+			const subscription = {
+				endpoint: subscribedUser.endpoint,
+				keys: subscribedUser.keys,
+			}
+
+			const payload = JSON.stringify({
+				title,
+				message: `[Lab ${foundLab.labName}] ${message}`,
+				url: '/notifications',
+			})
+
+			sendNotification(subscription, payload)
+		}
+
+		await session.commitTransaction()
+		session.endSession()
 
 		res.status(200).json({
 			success: true,
 			data: 'User information updated.',
 		})
 	} catch (error) {
+		await session.abortTransaction()
+		session.endSession()
+
 		next(error)
 	}
 }
@@ -314,23 +434,39 @@ exports.removeUser = async (req, res, next) => {
 		return next(new ErrorResponse('Missing required value.', 400))
 	}
 
+	const foundLab = await Lab.findById(labId)
+	if (!foundLab) {
+		return next(new ErrorResponse('Lab not found.', 404))
+	}
+
+	const foundUser = await User.findById(userId)
+	if (!foundUser) {
+		return next(new ErrorResponse('User not found.', 404))
+	}
+
+	const session = await startSession()
+
 	try {
+		session.startTransaction()
+
 		await User.updateOne(
-			{ _id: userId },
+			foundUser,
 			{
 				$pull: {
 					roles: {
-						lab: labId,
+						lab: foundLab._id,
 					},
 				},
 				$set: {
+					notification: true,
 					lastUpdated: Date.now(),
 				},
-			}
+			},
+			{ session }
 		)
 
 		await Lab.updateOne(
-			{ _id: labId },
+			foundLab,
 			{
 				$pull: {
 					labUsers: userId,
@@ -338,14 +474,52 @@ exports.removeUser = async (req, res, next) => {
 				$set: {
 					lastUpdated: Date.now(),
 				},
-			}
+			},
+			{ session }
 		)
+
+		await Notification.create(
+			[
+				{
+					lab: foundLab._id,
+					user: foundUser._id,
+					type: 'Removed From Lab',
+				},
+			],
+			{ session }
+		)
+
+		const subscribedUser = await Subscriber.findOne(
+			{ user: foundUser._id },
+			'endpoint keys'
+		)
+
+		if (subscribedUser) {
+			const subscription = {
+				endpoint: subscribedUser.endpoint,
+				keys: subscribedUser.keys,
+			}
+
+			const payload = JSON.stringify({
+				title: 'Lost Access To The Lab',
+				message: `[Lab ${foundLab.labName}] You have been removed from the lab.`,
+				url: '/notifications',
+			})
+
+			sendNotification(subscription, payload)
+		}
+
+		await session.commitTransaction()
+		session.endSession()
 
 		res.status(200).json({
 			success: true,
 			data: 'User removed.',
 		})
 	} catch (error) {
+		await session.abortTransaction()
+		session.endSession()
+
 		next(error)
 	}
 }

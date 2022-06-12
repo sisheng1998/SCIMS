@@ -2,6 +2,7 @@ const schedule = require('node-schedule')
 const Chemical = require('../models/Chemical')
 const User = require('../models/User')
 const Subscriber = require('../models/Subscriber')
+const Notification = require('../models/Notification')
 const settings = require('../config/settings.json')
 const ROLES_LIST = require('../config/roles_list')
 const sendEmail = require('../utils/sendEmail')
@@ -25,7 +26,23 @@ const notifyUsers = (chemicals, type) => {
 			'email'
 		)
 
-		users.forEach((user) => {
+		users.forEach(async (user) => {
+			await User.updateOne(
+				{ _id: user._id },
+				{
+					$set: {
+						notification: true,
+					},
+				}
+			)
+
+			await Notification.create({
+				lab: chemical.lab._id,
+				user: user._id,
+				chemical: chemical._id,
+				type,
+			})
+
 			const emailOptions = {
 				to: user.email,
 				subject:
@@ -62,7 +79,7 @@ const notifyUsers = (chemicals, type) => {
 				message:
 					type === 'Expired'
 						? `[Lab ${chemical.lab.labName}] ${chemical.name} expired.`
-						: `[Lab ${chemical.lab.labName}] ${chemical.name} expiring soon.`,
+						: `[Lab ${chemical.lab.labName}] ${chemical.name} is expiring soon.`,
 				url: `/inventory/${chemical._id}`,
 			})
 
@@ -109,6 +126,7 @@ module.exports = async () => {
 				{
 					$set: {
 						status: 'Expired',
+						lastUpdated: today,
 					},
 				}
 			)
@@ -144,6 +162,7 @@ module.exports = async () => {
 				{
 					$set: {
 						status: 'Expiring Soon',
+						lastUpdated: today,
 					},
 				}
 			)

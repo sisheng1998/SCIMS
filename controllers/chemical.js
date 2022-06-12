@@ -6,6 +6,7 @@ const Usage = require('../models/Usage')
 const Activity = require('../models/Activity')
 const User = require('../models/User')
 const Subscriber = require('../models/Subscriber')
+const Notification = require('../models/Notification')
 const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId
@@ -541,7 +542,29 @@ exports.updateAmount = async (req, res, next) => {
 				'email'
 			).session(session)
 
-			users.forEach((user) => {
+			users.forEach(async (user) => {
+				await User.updateOne(
+					{ _id: user._id },
+					{
+						$set: {
+							notification: true,
+						},
+					},
+					{ new: true, session }
+				)
+
+				await Notification.create(
+					[
+						{
+							lab: foundChemical.lab._id,
+							user: user._id,
+							chemical: foundChemical._id,
+							type: 'Low Amount',
+						},
+					],
+					{ session }
+				)
+
 				sendEmail({
 					to: user.email,
 					subject: 'Alert - Chemical Low Amount',

@@ -54,6 +54,8 @@ const {
 	editLab,
 } = require('../controllers/settings')
 
+const { getNotifications } = require('../controllers/notification')
+
 // Dashboard
 router.route('/dashboard').put(verifyRoles(ROLES_LIST.guest), getInfo)
 
@@ -121,6 +123,9 @@ router
 router.route('/sds').get(getSDS)
 router.route('/sds').post(uploadSDS.single('SDS'), updateSDS)
 router.route('/sds/new-sds').post(uploadSDS.single('SDS'), addSDS)
+
+// Notifications
+router.route('/notifications').get(getNotifications)
 
 // Settings
 router.route('/location').post(verifyRoles(ROLES_LIST.labOwner), addLocation)

@@ -3,11 +3,14 @@ import ChangeEmailModal from './ChangeEmailModal'
 import ChangePasswordModal from './ChangePasswordModal'
 import NotificationSection from './NotificationSection'
 import useMobile from '../../../hooks/useMobile'
+import LogoutModal from './LogoutModal'
 
 const AccountSection = ({ user, subscriber }) => {
 	const isMobile = useMobile()
+
 	const [openChangeEmailModal, setOpenChangeEmailModal] = useState(false)
 	const [openChangePasswordModal, setOpenChangePasswordModal] = useState(false)
+	const [openLogoutModal, setOpenLogoutModal] = useState(false)
 
 	return (
 		<>
@@ -42,13 +45,28 @@ const AccountSection = ({ user, subscriber }) => {
 				/>
 			</div>
 
-			<label htmlFor='password'>Password</label>
+			<label htmlFor='password' className='mb-1'>
+				Password
+			</label>
 			<button
 				className='button button-outline w-60 justify-center px-4 py-3'
 				onClick={() => setOpenChangePasswordModal(true)}
 			>
 				Change Password
 			</button>
+
+			<label htmlFor='sessions' className='mt-6 mb-1'>
+				Sessions
+			</label>
+			<button
+				className='button button-outline w-60 justify-center px-4 py-3'
+				onClick={() => setOpenLogoutModal(true)}
+			>
+				Logout On All Devices
+			</button>
+			<p className='mt-2 text-xs text-gray-400'>
+				Force logout your account on all devices that is currently logged in.
+			</p>
 
 			{isMobile && <NotificationSection subscriber={subscriber} />}
 
@@ -64,6 +82,13 @@ const AccountSection = ({ user, subscriber }) => {
 					user={user}
 					openModal={openChangeEmailModal}
 					setOpenModal={setOpenChangeEmailModal}
+				/>
+			)}
+
+			{openLogoutModal && (
+				<LogoutModal
+					openModal={openLogoutModal}
+					setOpenModal={setOpenLogoutModal}
 				/>
 			)}
 		</>

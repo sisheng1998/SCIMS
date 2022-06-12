@@ -1,0 +1,47 @@
+import React, { useRef } from 'react'
+import { Dialog } from '@headlessui/react'
+import { CheckIcon, ExclamationCircleIcon } from '@heroicons/react/outline'
+import useLogout from '../../../hooks/useLogout'
+
+const LogoutModal = ({ openModal, setOpenModal }) => {
+	const logout = useLogout('All Devices')
+	const divRef = useRef(null)
+
+	const closeHandler = () => {
+		logout()
+		setOpenModal(false)
+	}
+
+	return (
+		<Dialog
+			open={openModal}
+			onClose={() => {}}
+			initialFocus={divRef}
+			className='fixed inset-0 z-10 overflow-y-auto'
+		>
+			<div
+				ref={divRef}
+				className='flex min-h-screen items-center justify-center'
+			>
+				<Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
+				<div className='relative m-4 w-full max-w-sm rounded-lg bg-white p-6 text-center shadow'>
+					<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
+					<h2 className='mt-6 mb-2 text-green-600'>Success!</h2>
+					<p>Your account on all devices have been logged out.</p>
+					<p className='mt-6 flex items-center justify-center text-sm font-medium text-red-600'>
+						<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' /> Kindly
+						re-login to your account.
+					</p>
+					<button
+						className='button button-solid mt-6 w-32 justify-center'
+						onClick={closeHandler}
+					>
+						Okay
+					</button>
+				</div>
+			</div>
+		</Dialog>
+	)
+}
+
+export default LogoutModal

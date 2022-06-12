@@ -2,9 +2,12 @@ const ErrorResponse = require('../utils/errorResponse')
 const Lab = require('../models/Lab')
 const User = require('../models/User')
 const Chemical = require('../models/Chemical')
+const Notification = require('../models/Notification')
+const Subscriber = require('../models/Subscriber')
 const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
 const sendEmail = require('../utils/sendEmail')
+const sendNotification = require('../utils/sendNotification')
 const fs = require('fs')
 const path = require('path')
 
@@ -117,6 +120,7 @@ exports.addLab = async (req, res, next) => {
 						role: ROLES_LIST.labOwner,
 						status: 'Active',
 					},
+					notification: true,
 				},
 			],
 			{ session }
@@ -130,6 +134,17 @@ exports.addLab = async (req, res, next) => {
 				},
 			},
 			{ new: true, session }
+		)
+
+		await Notification.create(
+			[
+				{
+					lab: lab[0]._id,
+					user: user[0]._id,
+					type: 'New Lab Created',
+				},
+			],
+			{ session }
 		)
 
 		const emailVerificationToken = user[0].getEmailVerificationToken()
@@ -176,35 +191,86 @@ exports.addLabWithExistingUser = async (req, res, next) => {
 		return next(new ErrorResponse('Missing value.', 400))
 	}
 
+	const foundUser = await User.findById(ownerId)
+	if (!foundUser) {
+		return next(new ErrorResponse('User not found.', 404))
+	}
+
+	const session = await startSession()
+
 	try {
-		const foundUser = await User.findById(ownerId)
-		if (!foundUser) {
-			return next(new ErrorResponse('User not found.', 404))
-		}
+		session.startTransaction()
 
-		const lab = await Lab.create({
-			labName,
-			labOwner: foundUser._id,
-		})
+		const lab = await Lab.create(
+			[
+				{
+					labName,
+					labOwner: foundUser._id,
+				},
+			],
+			{ session }
+		)
 
-		await User.updateOne(foundUser, {
-			$push: {
-				roles: {
-					lab: lab._id,
-					role: ROLES_LIST.labOwner,
-					status: 'Active',
+		await User.updateOne(
+			foundUser,
+			{
+				$push: {
+					roles: {
+						lab: lab[0]._id,
+						role: ROLES_LIST.labOwner,
+						status: 'Active',
+					},
+				},
+				$set: {
+					notification: true,
+					lastUpdated: Date.now(),
 				},
 			},
-			$set: {
-				lastUpdated: Date.now(),
-			},
-		})
+			{ new: true, session }
+		)
+
+		await Notification.create(
+			[
+				{
+					lab: lab[0]._id,
+					user: foundUser._id,
+					type: 'New Lab Created',
+				},
+			],
+			{ session }
+		)
+
+		const subscribedUser = await Subscriber.findOne(
+			{ user: foundUser._id },
+			'endpoint keys'
+		)
+
+		if (subscribedUser) {
+			const subscription = {
+				endpoint: subscribedUser.endpoint,
+				keys: subscribedUser.keys,
+			}
+
+			const payload = JSON.stringify({
+				title: 'New Lab Created',
+				message: `[Lab ${lab[0].labName}] A new lab have been created for you.`,
+				url: '/notifications',
+			})
+
+			sendNotification(subscription, payload)
+		}
+
+		await session.commitTransaction()
+		session.endSession()
 
 		res.status(201).json({
 			success: true,
 			data: 'New lab created.',
 		})
 	} catch (error) {
+		await session.abortTransaction()
+		session.endSession()
+
 		if (error.code === 11000) {
 			return next(new ErrorResponse('Lab name existed.', 409))
 		}
@@ -220,11 +286,15 @@ exports.updateLab = async (req, res, next) => {
 		return next(new ErrorResponse('Missing value.', 400))
 	}
 
+	const foundLab = await Lab.findById(labId)
+	if (!foundLab) {
+		return next(new ErrorResponse('Lab not found.', 404))
+	}
+
+	const session = await startSession()
+
 	try {
-		const foundLab = await Lab.findById(labId)
-		if (!foundLab) {
-			return next(new ErrorResponse('Lab not found.', 404))
-		}
+		session.startTransaction()
 
 		if (!foundLab.labOwner.equals(ownerId)) {
 			const previousOwnerId = foundLab.labOwner
@@ -238,14 +308,47 @@ exports.updateLab = async (req, res, next) => {
 				{
 					$pull: {
 						roles: {
-							lab: labId,
+							lab: foundLab._id,
 						},
 					},
 					$set: {
+						notification: true,
 						lastUpdated: Date.now(),
 					},
-				}
+				},
+				{ new: true, session }
 			)
+
+			await Notification.create(
+				[
+					{
+						lab: foundLab._id,
+						user: previousOwnerId,
+						type: 'Removed From Lab',
+					},
+				],
+				{ session }
+			)
+
+			const subscribedPreviousOwner = await Subscriber.findOne(
+				{ user: previousOwnerId },
+				'endpoint keys'
+			)
+
+			if (subscribedPreviousOwner) {
+				const subscription = {
+					endpoint: subscribedPreviousOwner.endpoint,
+					keys: subscribedPreviousOwner.keys,
+				}
+
+				const payload = JSON.stringify({
+					title: 'Lost Access To The Lab',
+					message: `[Lab ${foundLab.labName}] You have been removed from the lab.`,
+					url: '/notifications',
+				})
+
+				sendNotification(subscription, payload)
+			}
 
 			const foundUser = await User.findById(ownerId)
 			if (!foundUser) {
@@ -261,11 +364,43 @@ exports.updateLab = async (req, res, next) => {
 						$set: {
 							'roles.$[el].role': ROLES_LIST.labOwner,
 							'roles.$[el].status': 'Active',
+							notification: true,
 							lastUpdated: Date.now(),
 						},
 					},
-					{ arrayFilters: [{ 'el.lab': labId }], new: true }
+					{ arrayFilters: [{ 'el.lab': labId }], new: true, session }
 				)
+
+				await Notification.create(
+					[
+						{
+							lab: foundLab._id,
+							user: foundUser._id,
+							type: 'Lab Owner Role',
+						},
+					],
+					{ session }
+				)
+
+				const subscribedNewOwner = await Subscriber.findOne(
+					{ user: foundUser._id },
+					'endpoint keys'
+				)
+
+				if (subscribedNewOwner) {
+					const subscription = {
+						endpoint: subscribedNewOwner.endpoint,
+						keys: subscribedNewOwner.keys,
+					}
+
+					const payload = JSON.stringify({
+						title: 'User Role Changed',
+						message: `[Lab ${foundLab.labName}] You are now the lab owner of the lab.`,
+						url: '/notifications',
+					})
+
+					sendNotification(subscription, payload)
+				}
 
 				// Remove the new lab owner in the lab users list
 				foundLab.labUsers = foundLab.labUsers.filter(
@@ -273,18 +408,54 @@ exports.updateLab = async (req, res, next) => {
 				)
 			} else {
 				// Push new role to new lab owner's roles (role not exist)
-				await User.updateOne(foundUser, {
-					$push: {
-						roles: {
-							lab: foundLab._id,
-							role: ROLES_LIST.labOwner,
-							status: 'Active',
+				await User.updateOne(
+					foundUser,
+					{
+						$push: {
+							roles: {
+								lab: foundLab._id,
+								role: ROLES_LIST.labOwner,
+								status: 'Active',
+							},
+						},
+						$set: {
+							notification: true,
+							lastUpdated: Date.now(),
 						},
 					},
-					$set: {
-						lastUpdated: Date.now(),
-					},
-				})
+					{ new: true, session }
+				)
+
+				await Notification.create(
+					[
+						{
+							lab: foundLab._id,
+							user: foundUser._id,
+							type: 'Lab Owner Role',
+						},
+					],
+					{ session }
+				)
+
+				const subscribedNewOwner = await Subscriber.findOne(
+					{ user: foundUser._id },
+					'endpoint keys'
+				)
+
+				if (subscribedNewOwner) {
+					const subscription = {
+						endpoint: subscribedNewOwner.endpoint,
+						keys: subscribedNewOwner.keys,
+					}
+
+					const payload = JSON.stringify({
+						title: 'User Role Changed',
+						message: `[Lab ${foundLab.labName}] You are now the lab owner of the lab.`,
+						url: '/notifications',
+					})
+
+					sendNotification(subscription, payload)
+				}
 			}
 		}
 
@@ -300,11 +471,17 @@ exports.updateLab = async (req, res, next) => {
 
 		await foundLab.save()
 
+		await session.commitTransaction()
+		session.endSession()
+
 		res.status(200).json({
 			success: true,
 			data: 'Lab information updated.',
 		})
 	} catch (error) {
+		await session.abortTransaction()
+		session.endSession()
+
 		if (error.code === 11000) {
 			return next(new ErrorResponse('Lab name existed.', 409))
 		}
@@ -320,11 +497,15 @@ exports.removeLab = async (req, res, next) => {
 		return next(new ErrorResponse('Missing required value.', 400))
 	}
 
+	const foundLab = await Lab.findById(labId)
+	if (!foundLab) {
+		return next(new ErrorResponse('Lab not found.', 404))
+	}
+
+	const session = await startSession()
+
 	try {
-		const foundLab = await Lab.findById(labId)
-		if (!foundLab) {
-			return next(new ErrorResponse('Lab not found.', 404))
-		}
+		session.startTransaction()
 
 		const userIds = foundLab.labUsers
 		userIds.push(foundLab.labOwner)
@@ -340,16 +521,25 @@ exports.removeLab = async (req, res, next) => {
 				$set: {
 					lastUpdated: Date.now(),
 				},
-			}
+			},
+			{ new: true, session }
 		)
 
-		await Lab.deleteOne({ _id: labId })
+		await Lab.deleteOne({ _id: labId }, { session })
+
+		await Notification.deleteMany({ lab: labId }, { session })
+
+		await session.commitTransaction()
+		session.endSession()
 
 		res.status(200).json({
 			success: true,
 			data: 'Lab removed.',
 		})
 	} catch (error) {
+		await session.abortTransaction()
+		session.endSession()
+
 		next(error)
 	}
 }

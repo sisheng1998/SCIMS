@@ -1,10 +1,14 @@
 const crypto = require('crypto')
 const User = require('../models/User')
 const Lab = require('../models/Lab')
+const Notification = require('../models/Notification')
+const Subscriber = require('../models/Subscriber')
 const jwt = require('jsonwebtoken')
 const ErrorResponse = require('../utils/errorResponse')
 const sendEmail = require('../utils/sendEmail')
+const sendNotification = require('../utils/sendNotification')
 const ROLES_LIST = require('../config/roles_list')
+const { startSession } = require('mongoose')
 
 exports.register = async (req, res, next) => {
 	const { name, email, password, labId, matricNo } = req.body
@@ -18,37 +22,98 @@ exports.register = async (req, res, next) => {
 		return next(new ErrorResponse('Email registered.', 409))
 	}
 
+	const foundLab = await Lab.findById(labId)
+	if (!foundLab) {
+		return next(new ErrorResponse('Lab not found.', 404))
+	}
+
+	const session = await startSession()
+
 	try {
-		const foundLab = await Lab.findById(labId)
-		if (!foundLab) {
-			return next(new ErrorResponse('Lab not found.', 404))
+		session.startTransaction()
+
+		const user = await User.create(
+			[
+				{
+					name,
+					email,
+					password,
+					matricNo,
+					roles: {
+						lab: foundLab._id,
+					},
+				},
+			],
+			{ session }
+		)
+
+		await Lab.updateOne(
+			foundLab,
+			{
+				$push: {
+					labUsers: user[0]._id,
+				},
+				$set: {
+					lastUpdated: Date.now(),
+				},
+			},
+			{ new: true, session }
+		)
+
+		const emailVerificationToken = user[0].getEmailVerificationToken()
+
+		await user[0].save()
+
+		await User.updateOne(
+			{ _id: foundLab.labOwner },
+			{
+				$set: {
+					notification: true,
+				},
+			},
+			{ new: true, session }
+		)
+
+		await Notification.create(
+			[
+				{
+					lab: foundLab._id,
+					user: foundLab.labOwner,
+					requestor: user[0]._id,
+					type: 'Request Approval',
+				},
+			],
+			{ session }
+		)
+
+		const subscribedUser = await Subscriber.findOne(
+			{ user: foundLab.labOwner },
+			'endpoint keys'
+		)
+
+		if (subscribedUser) {
+			const subscription = {
+				endpoint: subscribedUser.endpoint,
+				keys: subscribedUser.keys,
+			}
+
+			const payload = JSON.stringify({
+				title: 'New User Request',
+				message: `[Lab ${foundLab.labName}] ${user[0].name} requested access to your lab.`,
+				url: '/notifications',
+			})
+
+			sendNotification(subscription, payload)
 		}
 
-		const user = await User.create({
-			name,
-			email,
-			password,
-			matricNo,
-			roles: {
-				lab: foundLab._id,
-			},
-		})
+		await session.commitTransaction()
+		session.endSession()
 
-		await Lab.updateOne(foundLab, {
-			$push: {
-				labUsers: user._id,
-			},
-			$set: {
-				lastUpdated: Date.now(),
-			},
-		})
-
-		const emailVerificationToken = user.getEmailVerificationToken()
-
-		await user.save()
-
-		sendVerificationEmail(user, emailVerificationToken, res, next)
+		sendVerificationEmail(user[0], emailVerificationToken, res, next)
 	} catch (error) {
+		await session.abortTransaction()
+		session.endSession()
+
 		if (error.code === 11000 && error.keyPattern.hasOwnProperty('matricNo')) {
 			return next(new ErrorResponse('Matric number existed.', 409))
 		}
@@ -120,6 +185,7 @@ exports.changeEmail = async (req, res, next) => {
 	}
 
 	const duplicate = await User.findOne({ email: newEmail })
+
 	if (duplicate) {
 		return next(new ErrorResponse('Email registered.', 409))
 	}
@@ -178,10 +244,22 @@ exports.login = async (req, res, next) => {
 exports.logout = async (req, res, next) => {
 	// On client side, the accessToken also being deleted
 
+	const { userId, allDevices } = req.body
 	const refreshToken = req.cookies.refreshToken
 
 	if (!refreshToken) {
 		return next(new ErrorResponse('Refresh token not found.', 204))
+	}
+
+	if (allDevices) {
+		const foundUser = await User.findById(userId)
+
+		if (!foundUser) {
+			return next(new ErrorResponse('User not found.', 204))
+		}
+
+		foundUser.refreshToken = undefined
+		await foundUser.save()
 	}
 
 	res
@@ -353,46 +431,106 @@ exports.applyNewLab = async (req, res, next) => {
 		return next(new ErrorResponse('Email registered.', 409))
 	}
 
+	const foundLab = await Lab.findById(labId)
+	if (!foundLab) {
+		return next(new ErrorResponse('Lab not found.', 404))
+	}
+
+	const isUserExisted =
+		foundLab.labUsers.some((user) => user._id.equals(foundUser._id)) ||
+		foundLab.labOwner.equals(foundUser._id)
+
+	if (isUserExisted) {
+		return next(new ErrorResponse('User existed.', 409))
+	}
+
+	const session = await startSession()
+
 	try {
-		const foundLab = await Lab.findById(labId)
-		if (!foundLab) {
-			return next(new ErrorResponse('Lab not found.', 404))
-		}
+		session.startTransaction()
 
-		const isUserExisted =
-			foundLab.labUsers.some((user) => user._id.equals(foundUser._id)) ||
-			foundLab.labOwner.equals(foundUser._id)
-
-		if (isUserExisted) {
-			return next(new ErrorResponse('User existed.', 409))
-		}
-
-		await User.updateOne(foundUser, {
-			$push: {
-				roles: {
-					lab: labId,
-					role: ROLES_LIST.guest,
+		await User.updateOne(
+			foundUser,
+			{
+				$push: {
+					roles: {
+						lab: labId,
+						role: ROLES_LIST.guest,
+					},
+				},
+				$set: {
+					lastUpdated: Date.now(),
 				},
 			},
-			$set: {
-				lastUpdated: Date.now(),
-			},
-		})
+			{ new: true, session }
+		)
 
-		await Lab.updateOne(foundLab, {
-			$push: {
-				labUsers: foundUser._id,
+		await Lab.updateOne(
+			foundLab,
+			{
+				$push: {
+					labUsers: foundUser._id,
+				},
+				$set: {
+					lastUpdated: Date.now(),
+				},
 			},
-			$set: {
-				lastUpdated: Date.now(),
+			{ new: true, session }
+		)
+
+		await User.updateOne(
+			{ _id: foundLab.labOwner },
+			{
+				$set: {
+					notification: true,
+				},
 			},
-		})
+			{ new: true, session }
+		)
+
+		await Notification.create(
+			[
+				{
+					lab: foundLab._id,
+					user: foundLab.labOwner,
+					requestor: foundUser._id,
+					type: 'Request Approval',
+				},
+			],
+			{ session }
+		)
+
+		const subscribedUser = await Subscriber.findOne(
+			{ user: foundLab.labOwner },
+			'endpoint keys'
+		)
+
+		if (subscribedUser) {
+			const subscription = {
+				endpoint: subscribedUser.endpoint,
+				keys: subscribedUser.keys,
+			}
+
+			const payload = JSON.stringify({
+				title: 'New User Request',
+				message: `[Lab ${foundLab.labName}] ${foundUser.name} requested access to your lab`,
+				url: '/notifications',
+			})
+
+			sendNotification(subscription, payload)
+		}
+
+		await session.commitTransaction()
+		session.endSession()
 
 		res.status(200).json({
 			success: true,
 			data: 'New lab applied.',
 		})
 	} catch (error) {
+		await session.abortTransaction()
+		session.endSession()
+
 		next(error)
 	}
 }
