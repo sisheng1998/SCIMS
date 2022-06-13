@@ -71,11 +71,11 @@ const NotificationCard = ({ notification }) => {
 			description = 'Your role have been changed to Guest.'
 			break
 		case 'User Role Active':
-			title = 'Status Changed'
+			title = 'User Status Changed'
 			description = `You are now able to access Lab ${notification.lab.labName}.`
 			break
 		case 'User Role Deactivated':
-			title = 'Status Changed'
+			title = 'User Status Changed'
 			description = `You are temporarily unable to access Lab ${notification.lab.labName}.`
 			break
 		case 'New Lab Created':

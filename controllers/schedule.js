@@ -1,6 +1,7 @@
 const schedule = require('node-schedule')
 const Chemical = require('../models/Chemical')
 const User = require('../models/User')
+const Lab = require('../models/Lab')
 const Subscriber = require('../models/Subscriber')
 const Notification = require('../models/Notification')
 const settings = require('../config/settings.json')
@@ -174,12 +175,76 @@ module.exports = async () => {
 	})
 
 	// At 00:30 (UTC) on Monday - Send weekly report to lab owner
-	/*schedule.scheduleJob('30 8 * * 1', async () => {
-		sendEmail({
-			to: 'sisheng1998@gmail.com',
-			subject: 'Weekly Report',
-			template: 'weekly_report',
-			context: {},
-		})
-	})*/
+	schedule.scheduleJob('30 8 * * 1', async () => {
+		const today = new Date()
+		const past = new Date(new Date().setDate(today.getDate() - 7))
+
+		const todayDate = today.toLocaleDateString('en-GB')
+		const pastDate = past.toLocaleDateString('en-GB')
+
+		try {
+			const labs = await Lab.find(
+				{
+					status: 'In Use',
+				},
+				'labName labOwner chemicals disposedChemicals'
+			)
+				.populate('labOwner', 'email')
+				.populate({
+					path: 'chemicals disposedChemicals',
+					select: 'name status CASId createdAt lastUpdated',
+					match: {
+						lastUpdated: {
+							$gte: past,
+							$lt: today,
+						},
+					},
+					populate: {
+						path: 'CASId',
+						select: 'CASNo',
+					},
+				})
+				.lean()
+
+			labs.forEach((lab) => {
+				const newChemicals = lab.chemicals.filter(
+					(chemical) => chemical.createdAt >= past && chemical.createdAt < today
+				)
+
+				const lowAmountChemicals = lab.chemicals.filter(
+					(chemical) => chemical.status === 'Low Amount'
+				)
+
+				const expiringChemicals = lab.chemicals.filter(
+					(chemical) => chemical.status === 'Expiring Soon'
+				)
+
+				const expiredChemicals = lab.chemicals.filter(
+					(chemical) => chemical.status === 'Expired'
+				)
+
+				const disposedChemicals = lab.disposedChemicals
+
+				const emailOptions = {
+					to: lab.labOwner.email,
+					subject: `SCIMS Weekly Report (${todayDate})`,
+					template: 'weekly_report',
+					context: {
+						todayDate,
+						pastDate,
+						lab: lab.labName,
+						newChemicals,
+						lowAmountChemicals,
+						expiringChemicals,
+						expiredChemicals,
+						disposedChemicals,
+					},
+				}
+
+				sendEmail(emailOptions)
+			})
+		} catch (error) {
+			logEvents(`${error.name}: ${error.message}`, 'scheduleErrorLogs.txt')
+		}
+	})
 }
