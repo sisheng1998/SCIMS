@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ArrowNarrowRightIcon } from '@heroicons/react/outline'
 
-const ExportSection = () => {
+const ExportSection = ({ chemicals }) => {
 	const [columns, setColumns] = useState('')
 
 	return (

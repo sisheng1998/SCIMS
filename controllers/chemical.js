@@ -590,7 +590,7 @@ exports.updateAmount = async (req, res, next) => {
 				const payload = JSON.stringify({
 					title: 'Alert - Chemical Reached Low Amount',
 					message: `[Lab ${foundChemical.lab.labName}] ${foundChemical.name} has reached low amount.`,
-					url: `/inventory/${foundChemical._id}`,
+					url: '/notifications',
 				})
 
 				sendNotification(subscription, payload)

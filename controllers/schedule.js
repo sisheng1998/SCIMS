@@ -4,6 +4,7 @@ const User = require('../models/User')
 const Lab = require('../models/Lab')
 const Subscriber = require('../models/Subscriber')
 const Notification = require('../models/Notification')
+const Usage = require('../models/Usage')
 const settings = require('../config/settings.json')
 const ROLES_LIST = require('../config/roles_list')
 const sendEmail = require('../utils/sendEmail')
@@ -81,7 +82,7 @@ const notifyUsers = (chemicals, type) => {
 					type === 'Expired'
 						? `[Lab ${chemical.lab.labName}] ${chemical.name} expired.`
 						: `[Lab ${chemical.lab.labName}] ${chemical.name} is expiring soon.`,
-				url: `/inventory/${chemical._id}`,
+				url: '/notifications',
 			})
 
 			sendNotification(subscription, payload)
@@ -182,6 +183,15 @@ module.exports = async () => {
 		const todayDate = today.toLocaleDateString('en-GB')
 		const pastDate = past.toLocaleDateString('en-GB')
 
+		const options = {
+			day: 'numeric',
+			year: 'numeric',
+			month: 'numeric',
+			hour: 'numeric',
+			minute: 'numeric',
+			hourCycle: 'h12',
+		}
+
 		try {
 			const labs = await Lab.find(
 				{
@@ -192,7 +202,7 @@ module.exports = async () => {
 				.populate('labOwner', 'email')
 				.populate({
 					path: 'chemicals disposedChemicals',
-					select: 'name status CASId createdAt lastUpdated',
+					select: 'CASId name amount minAmount status createdAt lastUpdated',
 					match: {
 						lastUpdated: {
 							$gte: past,
@@ -206,13 +216,40 @@ module.exports = async () => {
 				})
 				.lean()
 
-			labs.forEach((lab) => {
+			labs.forEach(async (lab) => {
+				const records = await Usage.find(
+					{ lab: lab._id, date: { $gte: past, $lt: today } },
+					'chemical usage date -_id'
+				)
+					.populate({
+						path: 'chemical',
+						select: 'CASId name unit -_id',
+						populate: {
+							path: 'CASId',
+							model: 'CAS',
+							select: 'CASNo -_id',
+						},
+					})
+					.sort({ date: -1 })
+					.lean()
+
+				const usageRecords = records.map((record) => {
+					return {
+						...record,
+						date: new Date(record.date)
+							.toLocaleString('en-GB', options)
+							.toUpperCase(),
+					}
+				})
+
 				const newChemicals = lab.chemicals.filter(
 					(chemical) => chemical.createdAt >= past && chemical.createdAt < today
 				)
 
 				const lowAmountChemicals = lab.chemicals.filter(
-					(chemical) => chemical.status === 'Low Amount'
+					(chemical) =>
+						chemical.status !== 'Expired' &&
+						chemical.amount <= chemical.minAmount
 				)
 
 				const expiringChemicals = lab.chemicals.filter(
@@ -233,6 +270,7 @@ module.exports = async () => {
 						todayDate,
 						pastDate,
 						lab: lab.labName,
+						usageRecords,
 						newChemicals,
 						lowAmountChemicals,
 						expiringChemicals,

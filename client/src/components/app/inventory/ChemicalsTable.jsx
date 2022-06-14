@@ -468,7 +468,7 @@ const ChemicalsTable = (props) => {
 																	chemical.amount,
 																	chemical.unit
 																)}
-																{Number(chemical.amount) <
+																{Number(chemical.amount) <=
 																	Number(chemical.minAmount) && (
 																	<span
 																		className='tooltip ml-1.5'

@@ -8,8 +8,8 @@ import ExportSection from './ExportSection'
 
 const ImportExport = () => {
 	const { auth } = useAuth()
-
 	const axiosPrivate = useAxiosPrivate()
+
 	const [isLoading, setIsLoading] = useState(false)
 	const [chemicals, setChemicals] = useState([])
 	const [type, setType] = useState('Import')
@@ -26,16 +26,31 @@ const ImportExport = () => {
 
 		const getChemicals = async () => {
 			try {
-				/*const { data } = await axiosPrivate.put(
-					'/api/private/dashboard',
-					{ labId: auth.currentLabId, days },
+				const { data } = await axiosPrivate.post(
+					'/api/private/chemicals',
+					{
+						labId: auth.currentLabId,
+					},
 					{
 						signal: controller.signal,
 					}
-				)*/
+				)
 				if (isMounted) {
-					setChemicals([])
-					setTimeout(() => setIsLoading(false), 500)
+					const processedData = [
+						...data.data.chemicals,
+						...data.data.disposedChemicals,
+					].map((chemical) => {
+						const location = data.data.locations.find(
+							(location) => location._id === chemical.locationId
+						)
+
+						return {
+							...chemical,
+							location: location ? location.name : '',
+						}
+					})
+					setChemicals(processedData)
+					setIsLoading(false)
 				}
 			} catch (error) {
 				return
