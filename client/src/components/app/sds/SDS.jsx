@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import Title from '../components/Title'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
-import useAuth from '../../../hooks/useAuth'
-import ROLES_LIST from '../../../config/roles_list'
 import LoadingScreen from '../../utils/LoadingScreen'
 import SDSTable from './SDSTable'
 import AddSDSModal from './AddSDSModal'
 import useMobile from '../../../hooks/useMobile'
 
 const SDS = () => {
-	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
 	const isMobile = useMobile()
 
@@ -65,7 +62,7 @@ const SDS = () => {
 		<>
 			<Title
 				title={isMobile ? 'All SDS Docs' : 'All Safety Data Sheets'}
-				hasButton={!isMobile && auth.currentRole >= ROLES_LIST.postgraduate}
+				hasButton={!isMobile}
 				hasRefreshButton={true}
 				buttonText='Add Safety Data Sheet'
 				buttonAction={() => setOpenModal(true)}

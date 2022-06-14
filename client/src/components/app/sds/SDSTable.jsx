@@ -5,11 +5,11 @@ import Filters from '../components/Filters'
 import Pagination from '../components/Pagination'
 import {
 	CLASSIFICATION_LIST,
+	CLASSIFICATION_ICON,
 	COC_LIST,
 	COC_DESCRIPTION,
 } from '../../../config/safety_security_list'
 import useAuth from '../../../hooks/useAuth'
-import ROLES_LIST from '../../../config/roles_list'
 import EditSDSModal from './EditSDSModal'
 import ViewSDSModal from './ViewSDSModal'
 import { FormatChemicalDate } from '../../utils/FormatDate'
@@ -208,43 +208,46 @@ const SDSTable = ({ SDS, setRefresh }) => {
 
 								{CAS.classifications.length === 0 &&
 								CAS.COCs.length === 0 ? null : (
-									<div className='-mb-2 mt-4 text-xs'>
-										{CAS.classifications.length !== 0
-											? CLASSIFICATION_LIST.filter((classification) =>
-													CAS.classifications.includes(classification)
-											  ).map((classification, index) => (
-													<span
-														key={index}
-														className={`mb-2 mr-2 inline-flex rounded-full px-3 py-1 font-medium ${
-															classification === CLASSIFICATION_LIST[8] ||
-															classification === CLASSIFICATION_LIST[7] ||
-															classification === CLASSIFICATION_LIST[6] ||
-															classification === CLASSIFICATION_LIST[5]
-																? 'bg-blue-100 text-blue-600'
-																: 'bg-yellow-100 text-yellow-600'
-														}`}
-													>
-														{classification}
-													</span>
-											  ))
-											: null}
+									<div className='-mb-2 mt-4 space-y-2 text-xs'>
+										<div className='empty:hidden'>
+											{CAS.classifications.length !== 0
+												? CLASSIFICATION_LIST.map(
+														(classification, index) =>
+															CAS.classifications.includes(classification) && (
+																<span
+																	key={index}
+																	className='tooltip mb-2 mr-2 inline-flex h-12 w-12'
+																	data-tooltip={classification}
+																>
+																	<img
+																		className='flex-1'
+																		src={CLASSIFICATION_ICON[index]}
+																		alt='GHS Classifications'
+																	/>
+																</span>
+															)
+												  )
+												: null}
+										</div>
 
-										{CAS.COCs.length !== 0
-											? COC_LIST.map(
-													(security, index) =>
-														CAS.COCs.includes(security) && (
-															<span
-																key={index}
-																className={`mb-2 mr-2 inline-flex rounded-full bg-red-100 px-3 py-1 font-medium text-red-600 ${
-																	security !== 'Other' ? 'tooltip' : ''
-																}`}
-																data-tooltip={COC_DESCRIPTION[index]}
-															>
-																{security}
-															</span>
-														)
-											  )
-											: null}
+										<div className='empty:hidden'>
+											{CAS.COCs.length !== 0
+												? COC_LIST.map(
+														(security, index) =>
+															CAS.COCs.includes(security) && (
+																<span
+																	key={index}
+																	className={`mb-2 mr-2 inline-flex rounded-full bg-red-100 px-3 py-1 font-medium text-red-600 ${
+																		security !== 'Other' ? 'tooltip' : ''
+																	}`}
+																	data-tooltip={COC_DESCRIPTION[index]}
+																>
+																	{security}
+																</span>
+															)
+												  )
+												: null}
+										</div>
 									</div>
 								)}
 							</div>
@@ -300,25 +303,26 @@ const SDSTable = ({ SDS, setRefresh }) => {
 
 												<td className='px-6 py-4'>{CAS.chemicalName}</td>
 
-												<td className='space-x-2 px-6 py-4'>
+												<td className='flex items-center space-x-2 px-6 py-4'>
 													{CAS.classifications.length !== 0
-														? CLASSIFICATION_LIST.filter((classification) =>
-																CAS.classifications.includes(classification)
-														  ).map((classification, index) => (
-																<span
-																	key={index}
-																	className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${
-																		classification === CLASSIFICATION_LIST[8] ||
-																		classification === CLASSIFICATION_LIST[7] ||
-																		classification === CLASSIFICATION_LIST[6] ||
-																		classification === CLASSIFICATION_LIST[5]
-																			? 'bg-blue-100 text-blue-600'
-																			: 'bg-yellow-100 text-yellow-600'
-																	}`}
-																>
-																	{classification}
-																</span>
-														  ))
+														? CLASSIFICATION_LIST.map(
+																(classification, index) =>
+																	CAS.classifications.includes(
+																		classification
+																	) && (
+																		<span
+																			key={index}
+																			className='tooltip inline-flex h-14 w-14'
+																			data-tooltip={classification}
+																		>
+																			<img
+																				className='flex-1'
+																				src={CLASSIFICATION_ICON[index]}
+																				alt='GHS Classifications'
+																			/>
+																		</span>
+																	)
+														  )
 														: '-'}
 												</td>
 
@@ -352,18 +356,13 @@ const SDSTable = ({ SDS, setRefresh }) => {
 													>
 														View
 													</button>
-
-													{auth.currentRole >= ROLES_LIST.postgraduate && (
-														<>
-															<span>/</span>
-															<button
-																onClick={() => editSDSHandler(CAS)}
-																className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
-															>
-																Edit
-															</button>
-														</>
-													)}
+													<span>/</span>
+													<button
+														onClick={() => editSDSHandler(CAS)}
+														className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+													>
+														Edit
+													</button>
 												</td>
 											</tr>
 										))

@@ -3,6 +3,7 @@ import { Dialog } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import {
 	CLASSIFICATION_LIST,
+	CLASSIFICATION_ICON,
 	COC_LIST,
 	COC_DESCRIPTION,
 } from '../../../config/safety_security_list'
@@ -58,23 +59,22 @@ const ViewSDSModal = ({ CAS, fromInventory, openModal, setOpenModal }) => {
 					<div className='mb-4 mt-6'>
 						<label htmlFor='classification'>GHS Classifications</label>
 						{CAS.classifications.length !== 0
-							? CLASSIFICATION_LIST.filter((classification) =>
-									CAS.classifications.includes(classification)
-							  ).map((classification, index) => (
-									<span
-										key={index}
-										className={`mb-2 mr-2 inline-flex rounded-full px-3 py-1 text-sm font-medium ${
-											classification === CLASSIFICATION_LIST[8] ||
-											classification === CLASSIFICATION_LIST[7] ||
-											classification === CLASSIFICATION_LIST[6] ||
-											classification === CLASSIFICATION_LIST[5]
-												? 'bg-blue-100 text-blue-600'
-												: 'bg-yellow-100 text-yellow-600'
-										}`}
-									>
-										{classification}
-									</span>
-							  ))
+							? CLASSIFICATION_LIST.map(
+									(classification, index) =>
+										CAS.classifications.includes(classification) && (
+											<span
+												key={index}
+												className='tooltip mb-2 mr-2 inline-flex h-16 w-16'
+												data-tooltip={classification}
+											>
+												<img
+													className='flex-1'
+													src={CLASSIFICATION_ICON[index]}
+													alt='GHS Classifications'
+												/>
+											</span>
+										)
+							  )
 							: '-'}
 					</div>
 

@@ -1,3 +1,13 @@
+import GHS01 from '../images/GHS01.svg'
+import GHS02 from '../images/GHS02.svg'
+import GHS03 from '../images/GHS03.svg'
+import GHS04 from '../images/GHS04.svg'
+import GHS05 from '../images/GHS05.svg'
+import GHS06 from '../images/GHS06.svg'
+import GHS07 from '../images/GHS07.svg'
+import GHS08 from '../images/GHS08.svg'
+import GHS09 from '../images/GHS09.svg'
+
 const CLASSIFICATION_LIST = [
 	'Explosive',
 	'Flammable',
@@ -8,6 +18,18 @@ const CLASSIFICATION_LIST = [
 	'Irritant',
 	'Health Hazard',
 	'Environment',
+]
+
+const CLASSIFICATION_ICON = [
+	GHS01,
+	GHS02,
+	GHS03,
+	GHS04,
+	GHS05,
+	GHS06,
+	GHS07,
+	GHS08,
+	GHS09,
 ]
 
 const COC_LIST = ['CWC', 'CFATS', 'EU', 'AG', 'WMD', 'Other']
@@ -81,4 +103,10 @@ const HAZARD_CODES = [
 	['h400', 'h410', 'h411'], // environment
 ]
 
-export { CLASSIFICATION_LIST, COC_LIST, COC_DESCRIPTION, HAZARD_CODES }
+export {
+	CLASSIFICATION_LIST,
+	CLASSIFICATION_ICON,
+	COC_LIST,
+	COC_DESCRIPTION,
+	HAZARD_CODES,
+}

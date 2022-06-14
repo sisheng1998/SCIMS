@@ -164,7 +164,8 @@ const UpdateAmountModal = ({
 												Current Amount
 											</label>
 											{FormatAmountWithUnit(chemical.amount, chemical.unit)}
-											{Number(chemical.amount) < Number(chemical.minAmount) && (
+											{Number(chemical.amount) <=
+												Number(chemical.minAmount) && (
 												<span
 													className='tooltip ml-1.5'
 													data-tooltip='Low Amount'
