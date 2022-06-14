@@ -236,6 +236,7 @@ module.exports = async () => {
 				const usageRecords = records.map((record) => {
 					return {
 						...record,
+						usage: parseFloat(Number(record.usage).toFixed(2)),
 						date: new Date(record.date)
 							.toLocaleString('en-GB', options)
 							.toUpperCase(),
