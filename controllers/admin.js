@@ -10,6 +10,7 @@ const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
 const fs = require('fs')
 const path = require('path')
+const settings = require('../config/settings.json')
 
 const UserInfo =
 	'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status'
@@ -37,6 +38,21 @@ exports.getInfo = async (req, res, next) => {
 		data.newChemicals = await Chemical.countDocuments({
 			createdAt: { $gte: past },
 		})
+		data.lowAmountChemicals = await Chemical.countDocuments({
+			status: 'Low Amount',
+		})
+		data.expiringChemicals = await Chemical.countDocuments({
+			status: 'Expiring Soon',
+		})
+		data.expiredChemicals = await Chemical.countDocuments({
+			status: 'Expired',
+		})
+		data.disposedChemicals = await Chemical.countDocuments({
+			status: 'Disposed',
+		})
+
+		data.chemicals = await Chemical.find({}, 'name expirationDate')
+		data.dayBeforeExp = settings.DAY_BEFORE_EXP
 
 		res.status(200).json({
 			success: true,
@@ -47,26 +63,43 @@ exports.getInfo = async (req, res, next) => {
 	}
 }
 
-// User
-exports.getUsers = async (req, res, next) => {
+// Chemicals
+exports.getChemicals = async (req, res, next) => {
 	try {
-		const users = await User.find({}, UserInfo).populate(
-			'roles.lab',
-			'labName status'
+		const labs = await Lab.find({}, 'labName')
+
+		const chemicals = await Chemical.find(
+			{
+				status: {
+					$ne: 'Disposed',
+				},
+			},
+			'CASId QRCode amount minAmount expirationDate lab name status unit'
 		)
-		const labs = await Lab.find({}, 'labName status')
+			.populate('CASId', '-_id')
+			.populate('lab', 'labName -_id')
+			.sort({ createdAt: -1 })
+
+		const disposedChemicals = await Chemical.find(
+			{ status: 'Disposed' },
+			'CASId QRCode amount minAmount disposedDate lab name status unit'
+		)
+			.populate('CASId', '-_id')
+			.populate('lab', 'labName -_id')
+			.sort({ disposedDate: -1 })
 
 		res.status(200).json({
 			success: true,
-			users,
 			labs,
+			chemicals,
+			disposedChemicals,
 		})
 	} catch (error) {
 		next(error)
 	}
 }
 
-// Lab
+// Labs
 exports.getLabs = async (req, res, next) => {
 	try {
 		const labs = await Lab.find({}).populate('labOwner', 'name email avatar')
@@ -540,6 +573,25 @@ exports.removeLab = async (req, res, next) => {
 		await session.abortTransaction()
 		session.endSession()
 
+		next(error)
+	}
+}
+
+// Users
+exports.getUsers = async (req, res, next) => {
+	try {
+		const users = await User.find({}, UserInfo).populate(
+			'roles.lab',
+			'labName status'
+		)
+		const labs = await Lab.find({}, 'labName status')
+
+		res.status(200).json({
+			success: true,
+			users,
+			labs,
+		})
+	} catch (error) {
 		next(error)
 	}
 }

@@ -42,6 +42,7 @@ import SDS from './components/app/sds/SDS'
 
 // Admin
 import AdminDashboard from './components/app/admin/dashboard/Dashboard'
+import AdminChemicals from './components/app/admin/chemicals/Chemicals'
 import AdminLabs from './components/app/admin/labs/Labs'
 import AdminUsers from './components/app/admin/users/Users'
 import AdminSettings from './components/app/admin/settings/Settings'
@@ -118,8 +119,14 @@ const App = () => {
 						{!isMobile && (
 							<Route element={<Authorization minRole={ROLES_LIST.admin} />}>
 								<Route exact path='/admin' element={<AdminDashboard />} />
+								<Route
+									exact
+									path='/admin/chemicals'
+									element={<AdminChemicals />}
+								/>
 								<Route exact path='/admin/labs' element={<AdminLabs />} />
 								<Route exact path='/admin/users' element={<AdminUsers />} />
+								<Route exact path='/admin/sds' element={<SDS />} />
 								<Route
 									exact
 									path='/admin/settings'

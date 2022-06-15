@@ -11,7 +11,7 @@ import {
 	ExclamationCircleIcon,
 	ArrowLeftIcon,
 } from '@heroicons/react/outline'
-import UpdateAmountModal from './components/UpdateAmountModal'
+import ChemicalUsageModal from './components/ChemicalUsageModal'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import SuccessMessageModal from './components/SuccessMessageModal'
 import useMobile from '../../../hooks/useMobile'
@@ -33,7 +33,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 
 	const [QRCodeInfo, setQRCodeInfo] = useState('')
 	const [openViewImageModal, setOpenViewImageModal] = useState(false)
-	const [openUpdateAmountModal, setOpenUpdateAmountModal] = useState(false)
+	const [openChemicalUsageModal, setOpenChemicalUsageModal] = useState(false)
 
 	const [success, setSuccess] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
@@ -198,9 +198,9 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 									!isDisposed &&
 									!isMobile && (
 										<button
-											onClick={() => setOpenUpdateAmountModal(true)}
+											onClick={() => setOpenChemicalUsageModal(true)}
 											className='tooltip ml-1.5 text-gray-400 transition hover:text-indigo-700 focus:outline-none'
-											data-tooltip='Update Amount'
+											data-tooltip='Chemical Usage'
 										>
 											<PencilAltIcon className='h-5 w-5' />
 										</button>
@@ -410,10 +410,10 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 			{currentUser.role >= ROLES_LIST.undergraduate && !isDisposed && isMobile && (
 				<button
 					className='button button-solid fixed bottom-2 right-2 z-10 -translate-y-12 justify-center py-2 shadow-md'
-					onClick={() => setOpenUpdateAmountModal(true)}
+					onClick={() => setOpenChemicalUsageModal(true)}
 				>
 					<PencilAltIcon className='-ml-1 mr-1.5 h-5 w-5' />
-					Update Amount
+					Chemical Usage
 				</button>
 			)}
 
@@ -426,11 +426,11 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 				/>
 			)}
 
-			{openUpdateAmountModal && (
-				<UpdateAmountModal
+			{openChemicalUsageModal && (
+				<ChemicalUsageModal
 					chemical={chemical}
-					openModal={openUpdateAmountModal}
-					setOpenModal={setOpenUpdateAmountModal}
+					openModal={openChemicalUsageModal}
+					setOpenModal={setOpenChemicalUsageModal}
 					setUpdateAmountSuccess={setUpdateSuccess}
 				/>
 			)}

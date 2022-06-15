@@ -6,12 +6,13 @@ const verifyRoles = require('../middleware/verifyRoles')
 
 const {
 	getInfo,
-	getUsers,
+	getChemicals,
 	getLabs,
 	addLab,
 	addLabWithExistingUser,
 	updateLab,
 	removeLab,
+	getUsers,
 	getSettings,
 	updateSettings,
 	sendTestEmail,
@@ -20,8 +21,8 @@ const {
 // Dashboard
 router.route('/dashboard').get(verifyRoles(ROLES_LIST.admin), getInfo)
 
-// Users
-router.route('/users').get(verifyRoles(ROLES_LIST.admin), getUsers)
+// Chemicals
+router.route('/chemicals').get(verifyRoles(ROLES_LIST.admin), getChemicals)
 
 // Labs
 router.route('/labs').get(verifyRoles(ROLES_LIST.admin), getLabs)
@@ -31,6 +32,9 @@ router
 	.post(verifyRoles(ROLES_LIST.admin), addLabWithExistingUser)
 router.route('/lab').put(verifyRoles(ROLES_LIST.admin), updateLab)
 router.route('/lab').delete(verifyRoles(ROLES_LIST.admin), removeLab)
+
+// Users
+router.route('/users').get(verifyRoles(ROLES_LIST.admin), getUsers)
 
 // Setting
 router.route('/settings').get(verifyRoles(ROLES_LIST.admin), getSettings)

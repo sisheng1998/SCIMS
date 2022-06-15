@@ -39,27 +39,27 @@ exports.getInfo = async (req, res, next) => {
 		})
 
 		data.totalChemicals = await Chemical.countDocuments({
-			lab: { $eq: foundLab._id },
+			lab: foundLab._id,
 		})
 		data.newChemicals = await Chemical.countDocuments({
-			lab: { $eq: foundLab._id },
+			lab: foundLab._id,
 			createdAt: { $gte: past },
 		})
 		data.lowAmountChemicals = await Chemical.countDocuments({
-			lab: { $eq: foundLab._id },
-			status: { $eq: 'Low Amount' },
+			lab: foundLab._id,
+			status: 'Low Amount',
 		})
 		data.expiringChemicals = await Chemical.countDocuments({
-			lab: { $eq: foundLab._id },
-			status: { $eq: 'Expiring Soon' },
+			lab: foundLab._id,
+			status: 'Expiring Soon',
 		})
 		data.expiredChemicals = await Chemical.countDocuments({
-			lab: { $eq: foundLab._id },
-			status: { $eq: 'Expired' },
+			lab: foundLab._id,
+			status: 'Expired',
 		})
 		data.disposedChemicals = await Chemical.countDocuments({
-			lab: { $eq: foundLab._id },
-			status: { $eq: 'Disposed' },
+			lab: foundLab._id,
+			status: 'Disposed',
 		})
 
 		data.chemicals = [...foundLab.chemicals, ...foundLab.disposedChemicals]

@@ -5,7 +5,6 @@ import {
 	XIcon,
 	ExclamationCircleIcon,
 } from '@heroicons/react/outline'
-import useAuth from '../../../hooks/useAuth'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import CASField from '../../validations/CASField'
 import NameField from '../../validations/NameField'
@@ -23,11 +22,8 @@ const AddSDSModal = ({
 	setOpenModal,
 	setAddSDSSuccess,
 }) => {
-	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
 	const divRef = useRef(null)
-
-	const labId = auth.currentLabId
 
 	const [CASNo, setCASNo] = useState('')
 	const [CASNoValidated, setCASNoValidated] = useState(false)
@@ -64,7 +60,6 @@ const AddSDSModal = ({
 						const { data } = await axiosPrivate.put(
 							'/api/private/cas',
 							{
-								labId,
 								CASNo,
 							},
 							{
@@ -89,7 +84,7 @@ const AddSDSModal = ({
 				}
 			}
 		}
-	}, [axiosPrivate, labId, CASNo, CASNoValidated, existedSDS])
+	}, [axiosPrivate, CASNo, CASNoValidated, existedSDS])
 
 	useEffect(() => {
 		setAllowed(SDS !== '' && CASNoValidated && chemicalNameValidated)
@@ -103,7 +98,7 @@ const AddSDSModal = ({
 			const formData = new FormData()
 			formData.append(
 				'chemicalInfo',
-				JSON.stringify({ labId, CASNo, chemicalName, classifications, COCs })
+				JSON.stringify({ CASNo, chemicalName, classifications, COCs })
 			)
 			formData.append('SDS', SDS)
 

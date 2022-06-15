@@ -5,7 +5,6 @@ import {
 	XIcon,
 	ExclamationCircleIcon,
 } from '@heroicons/react/outline'
-import useAuth from '../../../hooks/useAuth'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import PDFDropZone from '../components/PDFDropZone'
 import RenderPDF from '../components/RenderPDF'
@@ -18,11 +17,8 @@ import FormatDate from '../../utils/FormatDate'
 import NameField from '../../validations/NameField'
 
 const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
-	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
 	const divRef = useRef(null)
-
-	const labId = auth.currentLabId
 
 	const [chemicalName, setChemicalName] = useState(CAS.chemicalName)
 	const [chemicalNameValidated, setChemicalNameValidated] = useState(false)
@@ -57,7 +53,6 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
 			formData.append(
 				'chemicalInfo',
 				JSON.stringify({
-					labId,
 					CASNo: CAS.CASNo,
 					chemicalName,
 					classifications,

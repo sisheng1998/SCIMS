@@ -50,6 +50,7 @@ const ActivityLogsTable = (props) => {
 			startDate: past.toLocaleDateString('en-CA'),
 			endDate: today.toLocaleDateString('en-CA'),
 		},
+		type: '',
 	})
 
 	const sortedData = useCallback(
@@ -170,6 +171,24 @@ const ActivityLogsTable = (props) => {
 							/>
 						</>
 					)}
+
+					<p className='ml-6'>Type</p>
+					<select
+						className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
+						name='typeFilter'
+						id='typeFilter'
+						value={filterTerms.type}
+						onChange={(e) =>
+							setFilterTerms((prev) => ({
+								...prev,
+								type: e.target.value,
+							}))
+						}
+					>
+						<option value=''>Any</option>
+						<option value='Usage'>Usage</option>
+						<option value='Activity'>Others</option>
+					</select>
 				</div>
 			</Filters>
 

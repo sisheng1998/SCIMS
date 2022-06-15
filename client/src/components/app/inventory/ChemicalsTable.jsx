@@ -17,7 +17,7 @@ import {
 import { FormatChemicalDate } from '../../utils/FormatDate'
 import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
 import { useNavigate } from 'react-router-dom'
-import UpdateAmountModal from './components/UpdateAmountModal'
+import ChemicalUsageModal from './components/ChemicalUsageModal'
 import useMobile from '../../../hooks/useMobile'
 import ViewSDSModal from '../sds/ViewSDSModal'
 
@@ -33,7 +33,7 @@ const ChemicalsTable = (props) => {
 	const [CAS, setCAS] = useState('')
 
 	const [chemicalInfo, setChemicalInfo] = useState('')
-	const [openUpdateAmountModal, setOpenUpdateAmountModal] = useState(false)
+	const [openChemicalUsageModal, setOpenChemicalUsageModal] = useState(false)
 
 	const [viewDisposedChemicals, setViewDisposedChemicals] = useState(false)
 
@@ -152,7 +152,7 @@ const ChemicalsTable = (props) => {
 
 	const updateAmountHandler = (chemical) => {
 		setChemicalInfo(chemical)
-		setOpenUpdateAmountModal(true)
+		setOpenChemicalUsageModal(true)
 	}
 
 	const viewSDSHandler = (CAS) => {
@@ -485,7 +485,7 @@ const ChemicalsTable = (props) => {
 																			updateAmountHandler(chemical)
 																		}
 																		className='tooltip text-gray-400 transition hover:text-indigo-700 focus:outline-none'
-																		data-tooltip='Update Amount'
+																		data-tooltip='Chemical Usage'
 																	>
 																		<PencilAltIcon className='h-5 w-5' />
 																	</button>
@@ -566,11 +566,11 @@ const ChemicalsTable = (props) => {
 				/>
 			)}
 
-			{openUpdateAmountModal && chemicalInfo && (
-				<UpdateAmountModal
+			{openChemicalUsageModal && chemicalInfo && (
+				<ChemicalUsageModal
 					chemical={chemicalInfo}
-					openModal={openUpdateAmountModal}
-					setOpenModal={setOpenUpdateAmountModal}
+					openModal={openChemicalUsageModal}
+					setOpenModal={setOpenChemicalUsageModal}
 					setUpdateAmountSuccess={props.setUpdateAmountSuccess}
 				/>
 			)}

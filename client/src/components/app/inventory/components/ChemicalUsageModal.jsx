@@ -13,7 +13,7 @@ import FormatDate from '../../../utils/FormatDate'
 import useAuth from '../../../../hooks/useAuth'
 import useMobile from '../../../../hooks/useMobile'
 
-const UpdateAmountModal = ({
+const ChemicalUsageModal = ({
 	chemical,
 	openModal,
 	setOpenModal,
@@ -102,8 +102,8 @@ const UpdateAmountModal = ({
 					{success ? (
 						<>
 							<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
-							<h2 className='mt-6 mb-2 text-green-600'>Amount Updated!</h2>
-							<p>The chemical amount has been updated.</p>
+							<h2 className='mt-6 mb-2 text-green-600'>Usage Added!</h2>
+							<p>The chemical usage has been added.</p>
 							<button
 								className='button button-solid mt-6 w-32 justify-center'
 								onClick={closeHandler}
@@ -114,7 +114,7 @@ const UpdateAmountModal = ({
 					) : (
 						<>
 							<div className='mb-6 flex justify-between border-b border-gray-200 pb-3'>
-								<h4>Update Amount</h4>
+								<h4>Chemical Usage</h4>
 								<XIcon
 									className='h-5 w-5 cursor-pointer hover:text-indigo-600'
 									onClick={closeHandler}
@@ -265,4 +265,4 @@ const UpdateAmountModal = ({
 	)
 }
 
-export default UpdateAmountModal
+export default ChemicalUsageModal
