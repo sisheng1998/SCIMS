@@ -85,6 +85,7 @@ const Chemicals = () => {
 				labs={labs}
 				chemicals={chemicals}
 				disposedChemicals={disposedChemicals}
+				setUpdateAmountSuccess={setRefresh}
 			/>
 		</>
 	)

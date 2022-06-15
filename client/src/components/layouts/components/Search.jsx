@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import useAuth from '../../../hooks/useAuth'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 
-const Search = ({ searchRef }) => {
+const Search = ({ searchRef, isAdmin }) => {
 	const navigate = useNavigate()
 	const { auth, setAuth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
@@ -21,26 +21,41 @@ const Search = ({ searchRef }) => {
 
 		const getChemicals = async () => {
 			try {
-				const { data } = await axiosPrivate.post(
-					'/api/private/chemicals',
-					{
-						labId: auth.currentLabId,
-					},
-					{
+				if (isAdmin) {
+					const { data } = await axiosPrivate.get('/api/admin/chemicals', {
 						signal: controller.signal,
-					}
-				)
-				if (isMounted) {
-					setAuth((prev) => {
-						return {
-							...prev,
-							chemicals: [
-								...data.data.chemicals,
-								...data.data.disposedChemicals,
-							],
-						}
 					})
-					setSearchable(true)
+					if (isMounted) {
+						setAuth((prev) => {
+							return {
+								...prev,
+								chemicals: [...data.chemicals, ...data.disposedChemicals],
+							}
+						})
+						setSearchable(true)
+					}
+				} else {
+					const { data } = await axiosPrivate.post(
+						'/api/private/chemicals',
+						{
+							labId: auth.currentLabId,
+						},
+						{
+							signal: controller.signal,
+						}
+					)
+					if (isMounted) {
+						setAuth((prev) => {
+							return {
+								...prev,
+								chemicals: [
+									...data.data.chemicals,
+									...data.data.disposedChemicals,
+								],
+							}
+						})
+						setSearchable(true)
+					}
 				}
 			} catch (error) {
 				return
@@ -53,7 +68,7 @@ const Search = ({ searchRef }) => {
 			isMounted = false
 			controller.abort()
 		}
-	}, [axiosPrivate, auth.currentLabId, setAuth])
+	}, [axiosPrivate, auth.currentLabId, setAuth, isAdmin])
 
 	const filteredChemicals = query
 		? auth.chemicals.filter(
@@ -69,7 +84,9 @@ const Search = ({ searchRef }) => {
 				onChange={(chemical) => {
 					searchRef.current.value = ''
 					setQuery('')
-					navigate(`/inventory/${chemical._id}`)
+					isAdmin
+						? navigate(`/admin/inventory/${chemical._id}`)
+						: navigate(`/inventory/${chemical._id}`)
 				}}
 				as='div'
 				className={`relative w-full max-w-sm ${

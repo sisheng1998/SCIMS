@@ -74,10 +74,10 @@ exports.getChemicals = async (req, res, next) => {
 					$ne: 'Disposed',
 				},
 			},
-			'CASId QRCode amount minAmount expirationDate lab name status unit'
+			'CASId QRCode amount minAmount containerSize expirationDate lab name status unit lastUpdated'
 		)
 			.populate('CASId', '-_id')
-			.populate('lab', 'labName -_id')
+			.populate('lab', 'labName')
 			.sort({ createdAt: -1 })
 
 		const disposedChemicals = await Chemical.find(
@@ -85,7 +85,7 @@ exports.getChemicals = async (req, res, next) => {
 			'CASId QRCode amount minAmount disposedDate lab name status unit'
 		)
 			.populate('CASId', '-_id')
-			.populate('lab', 'labName -_id')
+			.populate('lab', 'labName')
 			.sort({ disposedDate: -1 })
 
 		res.status(200).json({

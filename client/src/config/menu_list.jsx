@@ -77,8 +77,8 @@ const ADMIN_MENU_LIST = [
 		minRole: ROLES_LIST.admin,
 	},
 	{
-		text: 'Chemicals',
-		link: '/admin/chemicals',
+		text: 'Inventory',
+		link: '/admin/inventory',
 		icon: <CubeIcon />,
 		minRole: ROLES_LIST.admin,
 	},

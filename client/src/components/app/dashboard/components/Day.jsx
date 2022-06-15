@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import dayjs from 'dayjs'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 const Day = ({ day, rowIndex, monthIndex, chemicals, dayBeforeExp }) => {
 	const navigate = useNavigate()
+	const { pathname } = useLocation()
 
 	const today = day.format('DD-MM-YY') === dayjs().format('DD-MM-YY')
 	const currentMonth = day.format('M') === dayjs().month(monthIndex).format('M')
@@ -56,7 +57,11 @@ const Day = ({ day, rowIndex, monthIndex, chemicals, dayBeforeExp }) => {
 						? ''
 						: expiringChemicals.map((chemical) => (
 								<div
-									onClick={() => navigate(`/inventory/${chemical._id}`)}
+									onClick={() =>
+										pathname.includes('/admin')
+											? navigate(`/admin/inventory/${chemical._id}`)
+											: navigate(`/inventory/${chemical._id}`)
+									}
 									className={`-ml-4 truncate rounded-tr-full rounded-br-full bg-yellow-100 px-2 py-0.5 font-semibold text-yellow-600 transition ${
 										currentMonth
 											? 'cursor-pointer'
@@ -72,7 +77,11 @@ const Day = ({ day, rowIndex, monthIndex, chemicals, dayBeforeExp }) => {
 						? ''
 						: expiredChemicals.map((chemical) => (
 								<div
-									onClick={() => navigate(`/inventory/${chemical._id}`)}
+									onClick={() =>
+										pathname.includes('/admin')
+											? navigate(`/admin/inventory/${chemical._id}`)
+											: navigate(`/inventory/${chemical._id}`)
+									}
 									className={`-ml-4 truncate rounded-tr-full rounded-br-full bg-red-100 px-2 py-0.5 font-semibold text-red-600 transition ${
 										currentMonth
 											? 'cursor-pointer'

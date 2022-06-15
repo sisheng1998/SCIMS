@@ -102,8 +102,8 @@ const ChemicalUsageModal = ({
 					{success ? (
 						<>
 							<CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
-							<h2 className='mt-6 mb-2 text-green-600'>Usage Added!</h2>
-							<p>The chemical usage has been added.</p>
+							<h2 className='mt-6 mb-2 text-green-600'>Usage Recorded!</h2>
+							<p>The chemical usage has been recorded.</p>
 							<button
 								className='button button-solid mt-6 w-32 justify-center'
 								onClick={closeHandler}

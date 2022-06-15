@@ -121,8 +121,13 @@ const App = () => {
 								<Route exact path='/admin' element={<AdminDashboard />} />
 								<Route
 									exact
-									path='/admin/chemicals'
+									path='/admin/inventory'
 									element={<AdminChemicals />}
+								/>
+								<Route
+									exact
+									path='/admin/inventory/:chemicalId'
+									element={<ChemicalInfo />}
 								/>
 								<Route exact path='/admin/labs' element={<AdminLabs />} />
 								<Route exact path='/admin/users' element={<AdminUsers />} />

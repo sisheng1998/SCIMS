@@ -5,19 +5,30 @@ import SortButton from '../../components/SortButton'
 import Filters from '../../components/Filters'
 import Pagination from '../../components/Pagination'
 import ImageLightBox from '../../../utils/ImageLightBox'
-import { QrcodeIcon, ExclamationIcon } from '@heroicons/react/outline'
+import {
+	QrcodeIcon,
+	ExclamationIcon,
+	PencilAltIcon,
+} from '@heroicons/react/outline'
 import { FormatChemicalDate } from '../../../utils/FormatDate'
 import FormatAmountWithUnit from '../../../utils/FormatAmountWithUnit'
 import ViewSDSModal from '../../sds/ViewSDSModal'
+import { useNavigate } from 'react-router-dom'
+import ROLES_LIST from '../../../../config/roles_list'
+import ChemicalUsageModal from '../../inventory/components/ChemicalUsageModal'
 
 const ChemicalsTable = (props) => {
 	const { auth } = useAuth()
+	const navigate = useNavigate()
 
 	const [QRCodeInfo, setQRCodeInfo] = useState('')
 	const [openViewImageModal, setOpenViewImageModal] = useState(false)
 
 	const [openViewSDSModal, setOpenViewSDSModal] = useState(false)
 	const [CAS, setCAS] = useState('')
+
+	const [chemicalInfo, setChemicalInfo] = useState('')
+	const [openChemicalUsageModal, setOpenChemicalUsageModal] = useState(false)
 
 	const [viewDisposedChemicals, setViewDisposedChemicals] = useState(false)
 
@@ -51,6 +62,11 @@ const ChemicalsTable = (props) => {
 			key: viewDisposedChemicals ? 'disposedDate' : 'expirationDate',
 			label: viewDisposedChemicals ? 'Dis. Date' : 'Exp. Date',
 			sortable: true,
+		},
+		{
+			key: 'action',
+			label: 'Action',
+			sortable: false,
 		},
 	]
 
@@ -124,6 +140,11 @@ const ChemicalsTable = (props) => {
 	const viewImageHandler = (name, imageSrc) => {
 		setQRCodeInfo({ name, imageSrc })
 		setOpenViewImageModal(true)
+	}
+
+	const updateAmountHandler = (chemical) => {
+		setChemicalInfo(chemical)
+		setOpenChemicalUsageModal(true)
 	}
 
 	const viewSDSHandler = (CAS) => {
@@ -251,6 +272,13 @@ const ChemicalsTable = (props) => {
 									</tr>
 								) : (
 									currentItems.map((chemical) => {
+										const currentUser = auth.roles.find(
+											(role) =>
+												role.lab._id === chemical.lab._id &&
+												role.lab.status === 'In Use' &&
+												role.status === 'Active'
+										)
+
 										let classes
 
 										if (chemical.status === 'Normal') {
@@ -305,21 +333,34 @@ const ChemicalsTable = (props) => {
 												</td>
 
 												<td className='space-y-0.5 px-6 py-4 '>
-													<p>
-														{FormatAmountWithUnit(
-															chemical.amount,
-															chemical.unit
-														)}
-														{Number(chemical.amount) <=
-															Number(chemical.minAmount) && (
-															<span
-																className='tooltip ml-1.5'
-																data-tooltip='Low Amount'
-															>
-																<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
-															</span>
-														)}
-													</p>
+													<div className='flex items-center space-x-2'>
+														<p>
+															{FormatAmountWithUnit(
+																chemical.amount,
+																chemical.unit
+															)}
+															{Number(chemical.amount) <=
+																Number(chemical.minAmount) && (
+																<span
+																	className='tooltip ml-1.5'
+																	data-tooltip='Low Amount'
+																>
+																	<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-yellow-600' />
+																</span>
+															)}
+														</p>
+														{currentUser &&
+															currentUser.role >= ROLES_LIST.undergraduate &&
+															!viewDisposedChemicals && (
+																<button
+																	onClick={() => updateAmountHandler(chemical)}
+																	className='tooltip text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+																	data-tooltip='Chemical Usage'
+																>
+																	<PencilAltIcon className='h-5 w-5' />
+																</button>
+															)}
+													</div>
 												</td>
 
 												<td className='px-6 py-4'>
@@ -336,6 +377,17 @@ const ChemicalsTable = (props) => {
 															? chemical.disposedDate
 															: chemical.expirationDate
 													)}
+												</td>
+
+												<td className='space-x-1 px-6 py-4'>
+													<button
+														onClick={() =>
+															navigate(`/admin/inventory/${chemical._id}`)
+														}
+														className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+													>
+														View
+													</button>
 												</td>
 											</tr>
 										)
@@ -364,6 +416,15 @@ const ChemicalsTable = (props) => {
 					type='QRCode'
 					openModal={openViewImageModal}
 					setOpenModal={setOpenViewImageModal}
+				/>
+			)}
+
+			{openChemicalUsageModal && chemicalInfo && (
+				<ChemicalUsageModal
+					chemical={chemicalInfo}
+					openModal={openChemicalUsageModal}
+					setOpenModal={setOpenChemicalUsageModal}
+					setUpdateAmountSuccess={props.setUpdateAmountSuccess}
 				/>
 			)}
 
