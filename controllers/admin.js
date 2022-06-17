@@ -66,7 +66,7 @@ exports.getInfo = async (req, res, next) => {
 // Chemicals
 exports.getChemicals = async (req, res, next) => {
 	try {
-		const labs = await Lab.find({}, 'labName')
+		const labs = await Lab.find({}, 'labName locations')
 
 		const chemicals = await Chemical.find(
 			{
@@ -74,7 +74,7 @@ exports.getChemicals = async (req, res, next) => {
 					$ne: 'Disposed',
 				},
 			},
-			'CASId QRCode amount minAmount containerSize expirationDate lab name status unit lastUpdated'
+			'CASId QRCode amount minAmount containerSize expirationDate locationId lab name status unit lastUpdated'
 		)
 			.populate('CASId', '-_id')
 			.populate('lab', 'labName')
@@ -82,7 +82,7 @@ exports.getChemicals = async (req, res, next) => {
 
 		const disposedChemicals = await Chemical.find(
 			{ status: 'Disposed' },
-			'CASId QRCode amount minAmount disposedDate lab name status unit'
+			'CASId QRCode amount minAmount expirationDate disposedDate locationId lab name status unit'
 		)
 			.populate('CASId', '-_id')
 			.populate('lab', 'labName')

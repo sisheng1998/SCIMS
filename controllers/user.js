@@ -12,34 +12,77 @@ const UserInfo =
 	'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status'
 
 exports.getUsers = async (req, res, next) => {
-	const labId = req.body.labId
+	const { labId } = req.body
 
 	try {
-		const foundLab = await Lab.findById(labId)
-			.populate('labOwner', UserInfo)
-			.populate('labUsers', UserInfo)
+		if (labId === 'All Labs') {
+			const labs = req.user.roles.map((role) => {
+				if (role.status === 'Active') return role.lab
+			})
 
-		if (!foundLab) {
-			return next(new ErrorResponse('Lab not found.', 404))
-		}
-
-		// Get all existing users that are not in the current lab - for lab owner or admin to add existing user to their lab
-		if (res.locals.user.role >= ROLES_LIST.labOwner) {
-			const otherUsers = await User.find(
-				{ isEmailVerified: true, 'roles.lab': { $ne: labId } },
-				'name email'
+			const foundLabs = await Lab.find(
+				{
+					_id: {
+						$in: labs,
+					},
+					status: 'In Use',
+				},
+				'labName'
 			)
 
+			if (foundLabs.length === 0) {
+				return next(new ErrorResponse('Lab not found.', 404))
+			}
+
+			const users = await User.find(
+				{
+					roles: {
+						$elemMatch: {
+							lab: {
+								$in: foundLabs,
+							},
+						},
+					},
+				},
+				UserInfo
+			)
+				.populate('roles.lab', 'labName status')
+				.sort({ createdAt: -1 })
+
 			res.status(200).json({
 				success: true,
-				data: foundLab,
-				otherUsers: otherUsers,
+				data: {
+					users,
+					labs: foundLabs,
+				},
 			})
 		} else {
-			res.status(200).json({
-				success: true,
-				data: foundLab,
-			})
+			const foundLab = await Lab.findById(labId)
+				.populate('labOwner', UserInfo)
+				.populate('labUsers', UserInfo)
+
+			if (!foundLab) {
+				return next(new ErrorResponse('Lab not found.', 404))
+			}
+
+			// Get all existing users that are not in the current lab - for lab owner or admin to add existing user to their lab
+			if (res.locals.user.role >= ROLES_LIST.labOwner) {
+				const otherUsers = await User.find(
+					{ isEmailVerified: true, 'roles.lab': { $ne: labId } },
+					'name email'
+				)
+
+				res.status(200).json({
+					success: true,
+					data: foundLab,
+					otherUsers: otherUsers,
+				})
+			} else {
+				res.status(200).json({
+					success: true,
+					data: foundLab,
+				})
+			}
 		}
 	} catch (error) {
 		return next(new ErrorResponse('Lab not found.', 404))

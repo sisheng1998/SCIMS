@@ -11,6 +11,11 @@ const admin = {
 	role: ROLES_LIST.admin,
 }
 
+const allLabs = {
+	lab: { _id: 'All Labs', labName: 'All Labs' },
+	role: ROLES_LIST.guest,
+}
+
 const LabSelection = ({ searchRef }) => {
 	const { auth, setAuth } = useAuth()
 	const navigate = useNavigate()
@@ -29,22 +34,32 @@ const LabSelection = ({ searchRef }) => {
 		window.location.reload(false)
 	}
 
+	const isAllLabs = currentLab === allLabs.lab._id
+
 	const index = auth.roles.findIndex(
 		(role) => role.lab._id === currentLab && role.lab.status === 'In Use'
 	)
-	if (!isAdmin && index === -1) {
+	if (!isAdmin && !isAllLabs && index === -1) {
 		window.location.reload(false)
 	}
 
 	const [selected, setSelected] = useState(
-		isAdmin && currentLab === admin.lab._id ? admin : auth.roles[index]
+		isAdmin && currentLab === admin.lab._id
+			? admin
+			: isAllLabs && currentLab === allLabs.lab._id
+			? allLabs
+			: auth.roles[index]
 	)
 
 	useEffect(() => {
 		setSelected(
-			isAdmin && currentLab === admin.lab._id ? admin : auth.roles[index]
+			isAdmin && currentLab === admin.lab._id
+				? admin
+				: isAllLabs && currentLab === allLabs.lab._id
+				? allLabs
+				: auth.roles[index]
 		)
-	}, [isAdmin, currentLab, auth.roles, index])
+	}, [isAdmin, isAllLabs, currentLab, auth.roles, index])
 
 	useEffect(() => {
 		const getAuth = () => {
@@ -83,7 +98,7 @@ const LabSelection = ({ searchRef }) => {
 			onChange={setSelected}
 		>
 			<Listbox.Button className='flex items-center rounded-full bg-gray-100 py-1 px-3 text-sm font-medium text-gray-500 outline-gray-300 hover:bg-gray-200 hover:text-gray-600'>
-				{selected.lab.labName === 'Admin'
+				{selected.lab.labName === 'Admin' || selected.lab.labName === 'All Labs'
 					? selected.lab.labName
 					: 'Lab ' + selected.lab.labName}
 				<svg width='6' height='3' className='ml-2 overflow-visible'>
@@ -115,6 +130,22 @@ const LabSelection = ({ searchRef }) => {
 						</li>
 					</Listbox.Option>
 				) : null}
+
+				<Listbox.Option value={allLabs} as={Fragment}>
+					<li
+						className={`flex cursor-pointer items-center justify-between px-3 py-1 hover:bg-indigo-50 hover:text-indigo-600 ${
+							auth.currentLabId === 'All Labs'
+								? 'pointer-events-none font-semibold text-indigo-600'
+								: ''
+						}`}
+						onClick={() => setRedirect(true)}
+					>
+						All Labs
+						{auth.currentLabId === 'All Labs' && (
+							<CheckIcon className='ml-2 h-4 w-4 stroke-2' />
+						)}
+					</li>
+				</Listbox.Option>
 
 				{auth.roles
 					.sort((a, b) =>

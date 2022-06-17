@@ -7,6 +7,7 @@ import LoadingScreen from '../../../utils/LoadingScreen'
 
 const Users = () => {
 	const axiosPrivate = useAxiosPrivate()
+
 	const [usersData, setUsersData] = useState('')
 	const [labsData, setLabsData] = useState('')
 	const [isLoading, setIsLoading] = useState(true)
@@ -33,7 +34,7 @@ const Users = () => {
 				if (isMounted) {
 					const processedData = data.users.reverse().map((user, index) => ({
 						...user,
-						index: index,
+						index,
 					}))
 					setUsersData(processedData)
 					setLabsData(data.labs)
@@ -64,11 +65,13 @@ const Users = () => {
 				buttonAction={() => setOpenAddUserModal(true)}
 				setRefresh={setRefresh}
 			/>
+
 			<UsersTable
 				data={usersData}
 				labs={labsData}
 				setEditUserSuccess={setRefresh}
 			/>
+
 			{openAddUserModal && (
 				<AddUserModal
 					users={usersData}

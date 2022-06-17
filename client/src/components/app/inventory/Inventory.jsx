@@ -10,6 +10,7 @@ import ChemicalsTable from './ChemicalsTable'
 import ExportQRCodesModal from './components/ExportQRCodesModal'
 import useMobile from '../../../hooks/useMobile'
 import ScanQRCodeModal from '../components/ScanQRCodeModal'
+import AllLabsChemicalsTable from '../admin/inventory/ChemicalsTable'
 
 const Inventory = () => {
 	window.scrollTo(0, 0)
@@ -19,6 +20,9 @@ const Inventory = () => {
 	const axiosPrivate = useAxiosPrivate()
 	const isMobile = useMobile()
 
+	const isAllLabs = auth.currentLabId === 'All Labs'
+
+	const [labs, setLabs] = useState([])
 	const [locations, setLocations] = useState('')
 	const [chemicals, setChemicals] = useState([])
 	const [disposedChemicals, setDisposedChemicals] = useState([])
@@ -61,51 +65,99 @@ const Inventory = () => {
 						}
 					})
 
-					if (
-						data.data.locations.length !== 0 &&
-						data.data.chemicals.length !== 0
-					) {
-						const processedData = data.data.chemicals
-							.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
-							.map((chemical, index) => {
-								const location = data.data.locations.find(
+					if (isAllLabs) {
+						setLabs(data.data.labs)
+
+						let locations = []
+						data.data.labs.forEach(
+							(lab) => (locations = [...locations, ...lab.locations])
+						)
+
+						const processedChemicals = data.data.chemicals.map(
+							(chemical, index) => {
+								const location = locations.find(
 									(location) => location._id === chemical.locationId
 								)
 
 								return {
 									...chemical,
+									labName: chemical.lab.labName,
 									CAS: chemical.CASId.CASNo,
 									location: location ? location.name : '-',
-									allowedStorageGroups: location ? location.storageGroups : [],
-									index: index,
+									index,
 								}
-							})
-						setChemicals(processedData)
-					}
+							}
+						)
+						setChemicals(processedChemicals)
 
-					if (
-						data.data.locations.length !== 0 &&
-						data.data.disposedChemicals.length !== 0
-					) {
-						const disposedData = data.data.disposedChemicals
-							.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
-							.map((chemical, index) => {
-								const location = data.data.locations.find(
+						const processedDisposedChemicals = data.data.disposedChemicals.map(
+							(chemical, index) => {
+								const location = locations.find(
 									(location) => location._id === chemical.locationId
 								)
 
 								return {
 									...chemical,
+									labName: chemical.lab.labName,
 									CAS: chemical.CASId.CASNo,
 									location: location ? location.name : '-',
-									allowedStorageGroups: location ? location.storageGroups : [],
-									index: index,
+									index,
 								}
-							})
-						setDisposedChemicals(disposedData)
+							}
+						)
+						setDisposedChemicals(processedDisposedChemicals)
+					} else {
+						if (
+							data.data.locations.length !== 0 &&
+							data.data.chemicals.length !== 0
+						) {
+							const processedData = data.data.chemicals
+								.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+								.map((chemical, index) => {
+									const location = data.data.locations.find(
+										(location) => location._id === chemical.locationId
+									)
+
+									return {
+										...chemical,
+										CAS: chemical.CASId.CASNo,
+										location: location ? location.name : '-',
+										allowedStorageGroups: location
+											? location.storageGroups
+											: [],
+										index: index,
+									}
+								})
+							setChemicals(processedData)
+						}
+
+						if (
+							data.data.locations.length !== 0 &&
+							data.data.disposedChemicals.length !== 0
+						) {
+							const disposedData = data.data.disposedChemicals
+								.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+								.map((chemical, index) => {
+									const location = data.data.locations.find(
+										(location) => location._id === chemical.locationId
+									)
+
+									return {
+										...chemical,
+										CAS: chemical.CASId.CASNo,
+										location: location ? location.name : '-',
+										allowedStorageGroups: location
+											? location.storageGroups
+											: [],
+										index: index,
+									}
+								})
+							setDisposedChemicals(disposedData)
+						}
+
+						setLocations(data.data.locations)
 					}
 
-					setLocations(data.data.locations)
 					setIsLoading(false)
 				}
 			} catch (error) {
@@ -119,10 +171,45 @@ const Inventory = () => {
 			isMounted = false
 			controller.abort()
 		}
-	}, [axiosPrivate, auth.currentLabId, refresh, setAuth])
+	}, [axiosPrivate, auth.currentLabId, refresh, setAuth, isAllLabs])
 
 	return isLoading ? (
 		<LoadingScreen />
+	) : isAllLabs ? (
+		<>
+			<Title
+				title='All Chemicals'
+				hasButton={false}
+				hasRefreshButton={true}
+				setRefresh={setRefresh}
+			/>
+
+			<AllLabsChemicalsTable
+				labs={labs}
+				chemicals={chemicals}
+				disposedChemicals={disposedChemicals}
+				setUpdateAmountSuccess={setRefresh}
+			/>
+
+			{isMobile && (
+				<>
+					<button
+						className='button button-solid fixed bottom-2 right-2 z-10 -translate-y-12 justify-center py-2 shadow-md'
+						onClick={() => setOpenScanQRCodeModal(true)}
+					>
+						<QrcodeIcon className='-ml-1 mr-1.5 h-5 w-5' />
+						Scan QR Code
+					</button>
+
+					{openScanQRCodeModal && (
+						<ScanQRCodeModal
+							openModal={openScanQRCodeModal}
+							setOpenModal={setOpenScanQRCodeModal}
+						/>
+					)}
+				</>
+			)}
+		</>
 	) : (
 		<>
 			{locations.length === 0 ? (

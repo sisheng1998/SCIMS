@@ -4,7 +4,7 @@ import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import LoadingScreen from '../../../utils/LoadingScreen'
 import ChemicalsTable from './ChemicalsTable'
 
-const Chemicals = () => {
+const Inventory = () => {
 	const axiosPrivate = useAxiosPrivate()
 
 	const [chemicals, setChemicals] = useState([])
@@ -33,11 +33,21 @@ const Chemicals = () => {
 				if (isMounted) {
 					setLabs(data.labs)
 
+					let locations = []
+					data.labs.forEach(
+						(lab) => (locations = [...locations, ...lab.locations])
+					)
+
 					const processedChemicals = data.chemicals.map((chemical, index) => {
+						const location = locations.find(
+							(location) => location._id === chemical.locationId
+						)
+
 						return {
 							...chemical,
 							labName: chemical.lab.labName,
 							CAS: chemical.CASId.CASNo,
+							location: location ? location.name : '-',
 							index,
 						}
 					})
@@ -45,10 +55,15 @@ const Chemicals = () => {
 
 					const processedDisposedChemicals = data.disposedChemicals.map(
 						(chemical, index) => {
+							const location = locations.find(
+								(location) => location._id === chemical.locationId
+							)
+
 							return {
 								...chemical,
 								labName: chemical.lab.labName,
 								CAS: chemical.CASId.CASNo,
+								location: location ? location.name : '-',
 								index,
 							}
 						}
@@ -91,4 +106,4 @@ const Chemicals = () => {
 	)
 }
 
-export default Chemicals
+export default Inventory

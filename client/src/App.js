@@ -42,7 +42,7 @@ import SDS from './components/app/sds/SDS'
 
 // Admin
 import AdminDashboard from './components/app/admin/dashboard/Dashboard'
-import AdminChemicals from './components/app/admin/chemicals/Chemicals'
+import AdminInventory from './components/app/admin/inventory/Inventory'
 import AdminLabs from './components/app/admin/labs/Labs'
 import AdminUsers from './components/app/admin/users/Users'
 import AdminSettings from './components/app/admin/settings/Settings'
@@ -122,7 +122,7 @@ const App = () => {
 								<Route
 									exact
 									path='/admin/inventory'
-									element={<AdminChemicals />}
+									element={<AdminInventory />}
 								/>
 								<Route
 									exact

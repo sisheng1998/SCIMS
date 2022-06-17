@@ -1,5 +1,12 @@
 const ROLES_LIST = require('../config/roles_list')
 
+const allLabs = {
+	lab: 'All Labs',
+	role: ROLES_LIST.guest,
+	status: 'Active',
+	_id: 'All Labs',
+}
+
 const verifyRoles = (minRoles) => {
 	return (req, res, next) => {
 		if (!req?.user) return res.sendStatus(401)
@@ -11,9 +18,13 @@ const verifyRoles = (minRoles) => {
 		if (admin) {
 			res.locals.user = admin
 		} else {
-			res.locals.user = req.user.roles.find(
-				(lab) => lab.lab._id.toString() === req.body.labId
-			)
+			if (req.body.labId === 'All Labs') {
+				res.locals.user = allLabs
+			} else {
+				res.locals.user = req.user.roles.find(
+					(lab) => lab.lab._id.toString() === req.body.labId
+				)
+			}
 		}
 
 		const result = res.locals.user.role >= minRoles

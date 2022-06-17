@@ -9,6 +9,11 @@ const admin = {
 	role: ROLES_LIST.admin,
 }
 
+const allLabs = {
+	lab: { _id: 'All Labs', labName: 'All Labs' },
+	role: ROLES_LIST.guest,
+}
+
 const PrivateRoute = () => {
 	const { pathname } = useLocation()
 	const { auth, setAuth } = useAuth()
@@ -22,9 +27,9 @@ const PrivateRoute = () => {
 			return
 		}
 
-		const activeRole = auth.roles.find((role) => {
-			return role.status === 'Active' && role.lab.status === 'In Use'
-		})
+		const activeRole = auth.roles.find(
+			(role) => role.status === 'Active' && role.lab.status === 'In Use'
+		)
 
 		if (!auth.avatar || pathname === '/profile-update') {
 			setIsLoading(false)
@@ -46,6 +51,20 @@ const PrivateRoute = () => {
 
 			// If local storage has value
 			if (currentLab) {
+				// Check the current lab is All Labs
+				if (currentLab === allLabs.lab._id) {
+					setAuth((prev) => {
+						return {
+							...prev,
+							currentLabId: allLabs.lab._id,
+							currentLabName: allLabs.lab.labName,
+							currentRole: allLabs.role,
+						}
+					})
+					setIsLoading(false)
+					return
+				}
+
 				// If the user is admin and the current lab is Admin
 				if (isAdmin && currentLab === admin.lab._id) {
 					setAuth((prev) => {
@@ -61,9 +80,9 @@ const PrivateRoute = () => {
 				}
 
 				// Get the role
-				const currentRole = auth.roles.find((role) => {
-					return role.lab._id === currentLab && role.lab.status === 'In Use'
-				})
+				const currentRole = auth.roles.find(
+					(role) => role.lab._id === currentLab && role.lab.status === 'In Use'
+				)
 
 				// Check the status of the role
 				if (currentRole && currentRole.status === 'Active') {

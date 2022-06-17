@@ -28,29 +28,91 @@ const chemicalOption =
 exports.getChemicals = async (req, res, next) => {
 	const labId = req.body.labId
 
-	try {
-		const foundLab = await Lab.findById(labId, labOption).populate({
-			path: 'chemicals disposedChemicals',
-			select: chemicalOption,
-			populate: [
-				{
-					path: 'CASId',
-					model: 'CAS',
-				},
-				{
-					path: 'lab',
-					select: 'labName _id',
-				},
-			],
-		})
+	let data = {
+		foundLabs: [],
+		chemicals: [],
+		disposedChemicals: [],
+	}
 
-		if (!foundLab) {
-			return next(new ErrorResponse('Lab not found.', 404))
+	try {
+		if (labId === 'All Labs') {
+			const labs = req.user.roles.map((role) => {
+				if (role.status === 'Active') return role.lab
+			})
+
+			const foundLabs = await Lab.find(
+				{
+					_id: {
+						$in: labs,
+					},
+					status: 'In Use',
+				},
+				'labName locations'
+			)
+
+			if (foundLabs.length === 0) {
+				return next(new ErrorResponse('Lab not found.', 404))
+			}
+
+			const chemicals = await Chemical.find(
+				{
+					lab: {
+						$in: foundLabs,
+					},
+					status: {
+						$ne: 'Disposed',
+					},
+				},
+				'CASId QRCode amount minAmount containerSize expirationDate locationId lab name status unit lastUpdated'
+			)
+				.populate('CASId', '-_id')
+				.populate('lab', 'labName')
+				.sort({ createdAt: -1 })
+
+			const disposedChemicals = await Chemical.find(
+				{
+					lab: {
+						$in: foundLabs,
+					},
+					status: 'Disposed',
+				},
+				'CASId QRCode amount minAmount expirationDate disposedDate locationId lab name status unit'
+			)
+				.populate('CASId', '-_id')
+				.populate('lab', 'labName')
+				.sort({ disposedDate: -1 })
+
+			data = {
+				labs: foundLabs,
+				chemicals,
+				disposedChemicals,
+			}
+		} else {
+			const foundLab = await Lab.findById(labId, labOption).populate({
+				path: 'chemicals disposedChemicals',
+				select: chemicalOption,
+				populate: [
+					{
+						path: 'CASId',
+						model: 'CAS',
+					},
+					{
+						path: 'lab',
+						select: 'labName _id',
+					},
+				],
+			})
+
+			if (!foundLab) {
+				return next(new ErrorResponse('Lab not found.', 404))
+			}
+
+			data = foundLab
 		}
 
 		res.status(200).json({
 			success: true,
-			data: foundLab,
+			data,
 		})
 	} catch (error) {
 		return next(new ErrorResponse('Lab not found.', 404))
