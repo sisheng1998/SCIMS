@@ -10,7 +10,6 @@ import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import FormatAmountWithUnit from '../../../utils/FormatAmountWithUnit'
 import NumberWithUnitField from '../../../validations/NumberWithUnitField'
 import FormatDate from '../../../utils/FormatDate'
-import useAuth from '../../../../hooks/useAuth'
 import useMobile from '../../../../hooks/useMobile'
 
 const ChemicalUsageModal = ({
@@ -20,7 +19,6 @@ const ChemicalUsageModal = ({
 	setUpdateAmountSuccess,
 }) => {
 	const isMobile = useMobile()
-	const { auth } = useAuth()
 	const divRef = useRef(null)
 
 	const isMounted = useRef(true)
@@ -31,10 +29,13 @@ const ChemicalUsageModal = ({
 	}, [])
 	const axiosPrivate = useAxiosPrivate()
 
-	const labId = auth.currentLabId
+	const labId = chemical.lab._id
 	const chemicalId = chemical._id
+
 	const [usage, setUsage] = useState('')
 	const [remainingAmount, setRemainingAmount] = useState('')
+	const [ownUse, setOwnUse] = useState(true)
+	const [remark, setRemark] = useState('')
 
 	const [usageValidated, setUsageValidated] = useState(false)
 
@@ -50,6 +51,7 @@ const ChemicalUsageModal = ({
 				labId,
 				chemicalId,
 				usage,
+				remark: ownUse ? '' : remark,
 			})
 			if (isMounted.current) {
 				setSuccess(true)
@@ -65,14 +67,24 @@ const ChemicalUsageModal = ({
 
 	useEffect(() => {
 		setErrorMessage('')
-		setAllowed(usageValidated && usage !== '0')
-		if (usage) setRemainingAmount(Number(chemical.amount) - Number(usage))
-	}, [usage, usageValidated, chemical])
+
+		if (ownUse) {
+			setAllowed(usageValidated && usage !== '0')
+		} else {
+			setAllowed(usageValidated && usage !== '0' && remark !== '')
+		}
+
+		if (usage) {
+			setRemainingAmount(Number(chemical.amount) - Number(usage))
+		}
+	}, [usage, usageValidated, ownUse, remark, chemical])
 
 	const closeHandler = () => {
 		setErrorMessage('')
 		setUsage('')
 		setRemainingAmount('')
+		setOwnUse(true)
+		setRemark('')
 
 		if (success) {
 			setSuccess(false)
@@ -134,7 +146,7 @@ const ChemicalUsageModal = ({
 								autoComplete='off'
 							>
 								{!isMobile && (
-									<div className='grid grid-cols-3 gap-6'>
+									<div className='mb-6 grid grid-cols-3 gap-6'>
 										<div>
 											<label htmlFor='CAS' className='mb-1'>
 												CAS No.
@@ -184,17 +196,18 @@ const ChemicalUsageModal = ({
 									</div>
 								)}
 
-								<div className='my-6 flex items-center justify-between space-x-6 rounded-lg border border-gray-200 bg-gray-50 p-6 lg:mt-0 lg:flex-wrap lg:justify-center lg:space-x-0 lg:p-4'>
-									<div className='text-center'>
+								<label htmlFor='calculation'>Calculation</label>
+								<div className='mb-6 grid grid-cols-5 items-center gap-4 rounded-lg border border-gray-200 bg-gray-50 p-4 sm:grid-cols-3'>
+									<div className='whitespace-nowrap text-center'>
 										<p className='text-xl'>
 											{FormatAmountWithUnit(chemical.amount, chemical.unit)}
 										</p>
 										<p className='text-sm font-medium text-gray-500'>Current</p>
 									</div>
 
-									<p className='text-gray-400 lg:!mx-6'>-</p>
+									<p className='text-center text-gray-400'>-</p>
 
-									<div className='text-center'>
+									<div className='whitespace-nowrap text-center'>
 										<p className='text-xl'>
 											{usage && usageValidated
 												? FormatAmountWithUnit(
@@ -206,11 +219,9 @@ const ChemicalUsageModal = ({
 										<p className='text-sm font-medium text-gray-500'>Usage</p>
 									</div>
 
-									{isMobile && <div className='h-4 basis-full'></div>}
+									<p className='text-center text-gray-400'>=</p>
 
-									<p className='text-gray-400 lg:!mr-6'>=</p>
-
-									<div className='text-center'>
+									<div className='whitespace-nowrap text-center'>
 										<p className='text-xl'>
 											{remainingAmount >= 0 && usageValidated
 												? FormatAmountWithUnit(
@@ -223,6 +234,51 @@ const ChemicalUsageModal = ({
 											Remaining
 										</p>
 									</div>
+								</div>
+
+								<label htmlFor='purpose' className='required-input-label'>
+									Purpose
+								</label>
+								<div className='mb-6 grid grid-cols-2 gap-6 sm:grid-cols-1 sm:gap-4'>
+									<label
+										className='mb-0 flex cursor-pointer text-base font-normal'
+										htmlFor='self'
+									>
+										<input
+											type='radio'
+											name='purpose'
+											id='self'
+											className='rounded-full'
+											checked={ownUse}
+											onChange={() => setOwnUse(true)}
+										/>
+										<div className='pl-3'>
+											<p className='font-medium leading-4'>For Own Use</p>
+											<p className='text-sm text-gray-400'>
+												Chemical is used by you
+											</p>
+										</div>
+									</label>
+
+									<label
+										className='mb-0 flex cursor-pointer text-base font-normal'
+										htmlFor='others'
+									>
+										<input
+											type='radio'
+											name='purpose'
+											id='others'
+											className='rounded-full'
+											checked={!ownUse}
+											onChange={() => setOwnUse(false)}
+										/>
+										<div className='pl-3'>
+											<p className='font-medium leading-4'>For Others</p>
+											<p className='text-sm text-gray-400'>
+												Chemical is used by others
+											</p>
+										</div>
+									</label>
 								</div>
 
 								<label htmlFor='usage' className='required-input-label'>
@@ -241,6 +297,27 @@ const ChemicalUsageModal = ({
 									usage={true}
 								/>
 
+								{!ownUse && (
+									<div className='mt-6'>
+										<label htmlFor='remark' className='required-input-label'>
+											Remark
+										</label>
+										<input
+											className='w-full'
+											type='text'
+											name='remark'
+											id='remark'
+											placeholder='For whom and which lab?'
+											required
+											value={remark}
+											onChange={(e) => setRemark(e.target.value)}
+										/>
+										<p className='mt-2 text-xs text-gray-400'>
+											Example: Borrow to Si Sheng at Lab 1.
+										</p>
+									</div>
+								)}
+
 								<div className='mt-9 flex items-center justify-end'>
 									<span
 										onClick={closeHandler}
@@ -253,7 +330,7 @@ const ChemicalUsageModal = ({
 										type='submit'
 										disabled={!allowed}
 									>
-										Update
+										Record
 									</button>
 								</div>
 							</form>

@@ -302,6 +302,11 @@ const ActivityLogsTable = (props) => {
 																)}
 																)
 															</span>
+															{log.remark && (
+																<span className='block text-sm leading-4 text-gray-400'>
+																	*{log.remark}
+																</span>
+															)}
 														</p>
 													) : (
 														<p>

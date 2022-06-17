@@ -4,8 +4,8 @@ import useAuth from '../../hooks/useAuth'
 import ROLES_LIST from '../../config/roles_list'
 import useMobile from '../../hooks/useMobile'
 
-const allLabs = {
-	lab: { _id: ROLES_LIST.admin.toString(), labName: 'All Labs' },
+const admin = {
+	lab: { _id: ROLES_LIST.admin.toString(), labName: 'Admin' },
 	role: ROLES_LIST.admin,
 }
 
@@ -46,14 +46,14 @@ const PrivateRoute = () => {
 
 			// If local storage has value
 			if (currentLab) {
-				// If the user is admin and the current lab is All Labs
-				if (isAdmin && currentLab === allLabs.lab._id) {
+				// If the user is admin and the current lab is Admin
+				if (isAdmin && currentLab === admin.lab._id) {
 					setAuth((prev) => {
 						return {
 							...prev,
-							currentLabId: allLabs.lab._id,
-							currentLabName: allLabs.lab.labName,
-							currentRole: allLabs.role,
+							currentLabId: admin.lab._id,
+							currentLabName: admin.lab.labName,
+							currentRole: admin.role,
 						}
 					})
 					setIsLoading(false)

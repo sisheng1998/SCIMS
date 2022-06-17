@@ -83,12 +83,6 @@ const ADMIN_MENU_LIST = [
 		minRole: ROLES_LIST.admin,
 	},
 	{
-		text: 'Safety Data Sheets',
-		link: '/admin/sds',
-		icon: <DocumentTextIcon />,
-		minRole: ROLES_LIST.admin,
-	},
-	{
 		text: 'Labs',
 		link: '/admin/labs',
 		icon: <BeakerIcon />,

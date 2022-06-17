@@ -6,8 +6,8 @@ import ROLES_LIST from '../../../config/roles_list'
 import { useNavigate } from 'react-router-dom'
 import useMobile from '../../../hooks/useMobile'
 
-const allLabs = {
-	lab: { _id: ROLES_LIST.admin.toString(), labName: 'All Labs' },
+const admin = {
+	lab: { _id: ROLES_LIST.admin.toString(), labName: 'Admin' },
 	role: ROLES_LIST.admin,
 }
 
@@ -37,12 +37,12 @@ const LabSelection = ({ searchRef }) => {
 	}
 
 	const [selected, setSelected] = useState(
-		isAdmin && currentLab === allLabs.lab._id ? allLabs : auth.roles[index]
+		isAdmin && currentLab === admin.lab._id ? admin : auth.roles[index]
 	)
 
 	useEffect(() => {
 		setSelected(
-			isAdmin && currentLab === allLabs.lab._id ? allLabs : auth.roles[index]
+			isAdmin && currentLab === admin.lab._id ? admin : auth.roles[index]
 		)
 	}, [isAdmin, currentLab, auth.roles, index])
 
@@ -83,7 +83,7 @@ const LabSelection = ({ searchRef }) => {
 			onChange={setSelected}
 		>
 			<Listbox.Button className='flex items-center rounded-full bg-gray-100 py-1 px-3 text-sm font-medium text-gray-500 outline-gray-300 hover:bg-gray-200 hover:text-gray-600'>
-				{selected.lab.labName === 'All Labs'
+				{selected.lab.labName === 'Admin'
 					? selected.lab.labName
 					: 'Lab ' + selected.lab.labName}
 				<svg width='6' height='3' className='ml-2 overflow-visible'>
@@ -99,7 +99,7 @@ const LabSelection = ({ searchRef }) => {
 
 			<Listbox.Options className='absolute top-full mt-2 w-36 rounded-lg bg-white py-2 text-sm font-medium leading-6 shadow-md outline-gray-300 ring-1 ring-gray-300'>
 				{isAdmin ? (
-					<Listbox.Option value={allLabs} as={Fragment}>
+					<Listbox.Option value={admin} as={Fragment}>
 						<li
 							className={`flex cursor-pointer items-center justify-between px-3 py-1 hover:bg-indigo-50 hover:text-indigo-600 ${
 								auth.currentLabId === ROLES_LIST.admin.toString()
@@ -108,7 +108,7 @@ const LabSelection = ({ searchRef }) => {
 							}`}
 							onClick={() => setRedirect(true)}
 						>
-							All Labs
+							Admin
 							{auth.currentLabId === ROLES_LIST.admin.toString() && (
 								<CheckIcon className='ml-2 h-4 w-4 stroke-2' />
 							)}

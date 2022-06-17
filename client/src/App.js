@@ -131,7 +131,6 @@ const App = () => {
 								/>
 								<Route exact path='/admin/labs' element={<AdminLabs />} />
 								<Route exact path='/admin/users' element={<AdminUsers />} />
-								<Route exact path='/admin/sds' element={<SDS />} />
 								<Route
 									exact
 									path='/admin/settings'

@@ -23,7 +23,7 @@ const getKeysByValue = (object, value) =>
 
 const labOption = 'labName labUsers chemicals locations createdAt lastUpdated'
 const chemicalOption =
-	'QRCode CASId name unit containerSize minAmount amount expirationDate disposedDate locationId storageGroup status createdAt lastUpdated'
+	'QRCode CASId name unit containerSize minAmount amount lab expirationDate disposedDate locationId storageGroup status createdAt lastUpdated'
 
 exports.getChemicals = async (req, res, next) => {
 	const labId = req.body.labId
@@ -32,10 +32,16 @@ exports.getChemicals = async (req, res, next) => {
 		const foundLab = await Lab.findById(labId, labOption).populate({
 			path: 'chemicals disposedChemicals',
 			select: chemicalOption,
-			populate: {
-				path: 'CASId',
-				model: 'CAS',
-			},
+			populate: [
+				{
+					path: 'CASId',
+					model: 'CAS',
+				},
+				{
+					path: 'lab',
+					select: 'labName _id',
+				},
+			],
 		})
 
 		if (!foundLab) {
@@ -484,7 +490,7 @@ exports.getChemicalInfo = async (req, res, next) => {
 }
 
 exports.updateAmount = async (req, res, next) => {
-	const { chemicalId, usage } = req.body
+	const { chemicalId, usage, remark } = req.body
 
 	if (!chemicalId || !usage) {
 		return next(new ErrorResponse('Missing value for required field.', 400))
@@ -609,6 +615,7 @@ exports.updateAmount = async (req, res, next) => {
 					chemical: foundChemical._id,
 					originalAmount: foundChemical.amount,
 					usage: isNegative ? foundChemical.amount : Number(usage).toFixed(2),
+					remark,
 				},
 			],
 			{ session }

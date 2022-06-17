@@ -65,7 +65,10 @@ const ChemicalInfo = () => {
 				)
 				if (isMounted) {
 					const { lab, ...chemicalInfo } = data.data
-					setChemical(chemicalInfo)
+					setChemical({
+						...chemicalInfo,
+						lab: { _id: lab._id, labName: lab.labName },
+					})
 					setLabData(lab)
 
 					const currentUser = auth.roles.find(
