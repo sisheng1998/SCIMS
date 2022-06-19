@@ -47,14 +47,16 @@ const {
 
 const { getSDS, addSDS, updateSDS } = require('../controllers/sds')
 
+const { getNotifications } = require('../controllers/notification')
+
+const { exportChemicals } = require('../controllers/import_export')
+
 const {
 	addLocation,
 	editLocation,
 	removeLocation,
 	editLab,
 } = require('../controllers/settings')
-
-const { getNotifications } = require('../controllers/notification')
 
 // Dashboard
 router.route('/dashboard').put(verifyRoles(ROLES_LIST.guest), getInfo)
@@ -126,6 +128,9 @@ router.route('/sds/new-sds').post(uploadSDS.single('SDS'), addSDS)
 
 // Notifications
 router.route('/notifications').get(getNotifications)
+
+// Import/Export
+router.route('/export').post(verifyRoles(ROLES_LIST.labOwner), exportChemicals)
 
 // Settings
 router.route('/location').post(verifyRoles(ROLES_LIST.labOwner), addLocation)

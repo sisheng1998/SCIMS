@@ -503,7 +503,9 @@ const ChemicalsTable = (props) => {
 													<td className='space-x-1 px-6 py-4'>
 														<button
 															onClick={() =>
-																navigate(`/admin/inventory/${chemical._id}`)
+																auth.currentLabId === 'All Labs'
+																	? navigate(`/inventory/${chemical._id}`)
+																	: navigate(`/admin/inventory/${chemical._id}`)
 															}
 															className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
 														>
