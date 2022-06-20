@@ -40,6 +40,10 @@ const COLUMNS = [
 		value: 'status',
 	},
 	{
+		label: 'Disposed Date',
+		value: 'disposedDate',
+	},
+	{
 		label: 'Date In',
 		value: 'dateIn',
 	},

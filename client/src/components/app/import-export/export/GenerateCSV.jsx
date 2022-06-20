@@ -29,9 +29,13 @@ const getProcessedData = (columns, chemicals, locations) =>
 			} else if (
 				value === 'dateIn' ||
 				value === 'dateOpen' ||
-				value === 'expirationDate'
+				value === 'expirationDate' ||
+				value === 'disposedDate'
 			) {
 				data[value] = chemical[value] ? FormatChemicalDate(chemical[value]) : ''
+			} else if (value === 'status') {
+				data[value] = chemical[value]
+				data['isDisposed'] = chemical[value] === 'Disposed' ? 1 : 0
 			} else {
 				data[value] = chemical[value]
 			}
