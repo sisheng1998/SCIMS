@@ -1,14 +1,42 @@
 import React, { useState } from 'react'
-import { DownloadIcon, ExclamationCircleIcon } from '@heroicons/react/outline'
+import {
+	ArrowNarrowRightIcon,
+	ExclamationCircleIcon,
+} from '@heroicons/react/outline'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import useAuth from '../../../../hooks/useAuth'
 import { COLUMNS, STATUSES } from '../../../../config/import_export'
 
 const getValues = (objects) => objects.map((object) => object.value)
 
-const GenerateCSV = ({ selectedColumns, selectedStatuses }) => {
+const getProcessedData = (columns, chemicals, locations) =>
+	chemicals.map((chemical) => {
+		const data = {}
+
+		columns.forEach((column) => {
+			const value = column.value
+
+			if (value === '') {
+				data[value] = chemical[value]
+			} else {
+				data[value] = chemical[value]
+			}
+		})
+
+		return data
+	})
+
+const GenerateCSV = ({
+	selectedColumns,
+	selectedStatuses,
+	setData,
+	setNextStep,
+}) => {
 	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
+
+	const columns = selectedColumns.length === 0 ? COLUMNS : selectedColumns
+	const statuses = selectedStatuses.length === 0 ? STATUSES : selectedStatuses
 
 	const [isLoading, setIsLoading] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
@@ -20,24 +48,25 @@ const GenerateCSV = ({ selectedColumns, selectedStatuses }) => {
 		try {
 			const { data } = await axiosPrivate.post('/api/private/export', {
 				labId: auth.currentLabId,
-				columns: getValues(
-					selectedColumns.length === 0 ? COLUMNS : selectedColumns
-				),
-				statuses: getValues(
-					selectedStatuses.length === 0 ? STATUSES : selectedStatuses
-				),
+				columns: getValues(columns),
+				statuses: getValues(statuses),
 			})
 
-			console.log(data)
+			console.log(getProcessedData(columns, data.chemicals, data.locations))
+
+			//setData(data.chemicals)
+
+			setIsLoading(false)
+			//setNextStep(true)
 		} catch (error) {
 			if (error.response?.status === 500) {
 				setErrorMessage('Server not responding. Please try again later.')
 			} else {
 				setErrorMessage('Oops. Something went wrong. Please try again later.')
 			}
-		}
 
-		setIsLoading(false)
+			setIsLoading(false)
+		}
 	}
 
 	return (
@@ -54,26 +83,31 @@ const GenerateCSV = ({ selectedColumns, selectedStatuses }) => {
 				onClick={generateCSVHandler}
 				disabled={isLoading}
 			>
-				Generate CSV
 				{isLoading ? (
-					<svg
-						xmlns='http://www.w3.org/2000/svg'
-						fill='none'
-						viewBox='0 0 24 24'
-						stroke='currentColor'
-						aria-hidden='true'
-						className='ml-2 h-4 w-4 animate-spin stroke-2'
-					>
-						<path
-							strokeLinecap='round'
-							strokeLinejoin='round'
-							strokeWidth='2'
-							d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
-							className='origin-center -scale-x-100'
-						></path>
-					</svg>
+					<>
+						Loading
+						<svg
+							xmlns='http://www.w3.org/2000/svg'
+							fill='none'
+							viewBox='0 0 24 24'
+							stroke='currentColor'
+							aria-hidden='true'
+							className='ml-2 h-4 w-4 animate-spin stroke-2'
+						>
+							<path
+								strokeLinecap='round'
+								strokeLinejoin='round'
+								strokeWidth='2'
+								d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
+								className='origin-center -scale-x-100'
+							></path>
+						</svg>
+					</>
 				) : (
-					<DownloadIcon className='ml-2 h-4 w-4 stroke-2' />
+					<>
+						Generate CSV
+						<ArrowNarrowRightIcon className='ml-2 h-4 w-4 stroke-2' />
+					</>
 				)}
 			</button>
 		</div>
