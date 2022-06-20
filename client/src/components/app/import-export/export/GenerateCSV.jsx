@@ -6,18 +6,32 @@ import {
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import useAuth from '../../../../hooks/useAuth'
 import { COLUMNS, STATUSES } from '../../../../config/import_export'
+import { FormatChemicalDate } from '../../../utils/FormatDate'
 
 const getValues = (objects) => objects.map((object) => object.value)
 
 const getProcessedData = (columns, chemicals, locations) =>
 	chemicals.map((chemical) => {
-		const data = {}
+		const data = {
+			_id: chemical._id,
+		}
 
 		columns.forEach((column) => {
 			const value = column.value
 
-			if (value === '') {
-				data[value] = chemical[value]
+			if (value === 'CASId') {
+				data['CASNo'] = chemical.CASId.CASNo
+			} else if (value === 'locationId') {
+				const location = locations.find(
+					(location) => location._id === chemical.locationId
+				)
+				data['location'] = location ? location.name : ''
+			} else if (
+				value === 'dateIn' ||
+				value === 'dateOpen' ||
+				value === 'expirationDate'
+			) {
+				data[value] = chemical[value] ? FormatChemicalDate(chemical[value]) : ''
 			} else {
 				data[value] = chemical[value]
 			}
@@ -52,12 +66,10 @@ const GenerateCSV = ({
 				statuses: getValues(statuses),
 			})
 
-			console.log(getProcessedData(columns, data.chemicals, data.locations))
-
-			//setData(data.chemicals)
+			setData(getProcessedData(columns, data.chemicals, data.locations))
 
 			setIsLoading(false)
-			//setNextStep(true)
+			setNextStep(true)
 		} catch (error) {
 			if (error.response?.status === 500) {
 				setErrorMessage('Server not responding. Please try again later.')

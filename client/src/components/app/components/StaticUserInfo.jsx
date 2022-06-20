@@ -18,6 +18,7 @@ const StaticUserInfo = ({ user }) => {
 		<>
 			<div className='mb-6 flex items-center space-x-6 border-b border-gray-200 pb-6'>
 				<img
+					onError={(event) => (event.target.src = GetLetterPicture(name))}
 					src={imageSrc}
 					alt='Avatar'
 					className='h-36 w-36 cursor-pointer object-cover'

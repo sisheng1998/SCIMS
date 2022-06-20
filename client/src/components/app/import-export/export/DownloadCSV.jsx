@@ -1,19 +1,37 @@
 import React from 'react'
 import { CSVLink } from 'react-csv'
-import { DownloadIcon } from '@heroicons/react/outline'
+import { ArrowLeftIcon, DownloadIcon } from '@heroicons/react/outline'
+import useAuth from '../../../../hooks/useAuth'
 
-const DownloadCSV = ({ data }) => {
+const DownloadCSV = ({ data, setNextStep }) => {
+	const { auth } = useAuth()
+	const today = new Date().toJSON().slice(0, 10)
+
+	const filename = `lab ${auth.currentLabName} chemicals ${today}.csv`
+		.replace(/\s/g, '_')
+		.toLowerCase()
+
 	return (
 		<div className='mt-9 flex items-center justify-end'>
-			<CSVLink
-				data={data}
-				filename='chemicals.csv'
-				className='button button-outline justify-center px-4 py-3'
-				target='_blank'
+			<p
+				onClick={() => setNextStep(false)}
+				className='mr-auto inline-flex cursor-pointer items-center self-end font-medium text-indigo-600 transition hover:text-indigo-700'
 			>
-				Download CSV
-				<DownloadIcon className='ml-2 h-4 w-4 stroke-2' />
-			</CSVLink>
+				<ArrowLeftIcon className='mr-1 h-4 w-4' />
+				Return Back
+			</p>
+
+			{data.length !== 0 && (
+				<CSVLink
+					data={data}
+					filename={filename}
+					className='button button-outline ml-6 justify-center px-4 py-3'
+					target='_blank'
+				>
+					Download CSV
+					<DownloadIcon className='ml-2 h-4 w-4 stroke-2' />
+				</CSVLink>
+			)}
 		</div>
 	)
 }

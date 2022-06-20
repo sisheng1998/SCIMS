@@ -41,6 +41,9 @@ const PersonalSection = ({ user, setRefresh }) => {
 				<div className='relative inline-block'>
 					<img
 						className='h-80 w-80 object-cover'
+						onError={(event) =>
+							(event.target.src = GetLetterPicture(user.name))
+						}
 						src={imageSrc}
 						alt='Avatar'
 						width='500'

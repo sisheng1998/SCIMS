@@ -1,6 +1,7 @@
 import React, { useRef } from 'react'
 import { Dialog } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
+import GetLetterPicture from './GetLetterPicture'
 
 const ImageLightBox = ({ object, type, openModal, setOpenModal }) => {
 	const divRef = useRef(null)
@@ -31,6 +32,9 @@ const ImageLightBox = ({ object, type, openModal, setOpenModal }) => {
 
 					<div className='rounded-lg bg-white p-6 shadow'>
 						<img
+							onError={(event) =>
+								(event.target.src = GetLetterPicture(object.name))
+							}
 							src={object.imageSrc}
 							alt={type}
 							className={`aspect-square object-cover ${

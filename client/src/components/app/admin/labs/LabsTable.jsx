@@ -198,6 +198,11 @@ const LabsTable = (props) => {
 												<td className='px-6 py-4'>
 													<div className='flex w-max items-center space-x-3'>
 														<img
+															onError={(event) =>
+																(event.target.src = GetLetterPicture(
+																	lab.labOwner.name
+																))
+															}
 															src={imageSrc}
 															alt='Avatar'
 															className='h-12 w-12 cursor-pointer rounded-full object-cover'

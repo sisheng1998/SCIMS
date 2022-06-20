@@ -33,6 +33,7 @@ const UserOption = () => {
 			<Menu.Button className='outline-gray-300'>
 				<img
 					src={imageSrc}
+					onError={(event) => (event.target.src = GetLetterPicture(auth.name))}
 					alt='Avatar'
 					className='h-9 w-9 rounded-full object-cover'
 					height='64'
