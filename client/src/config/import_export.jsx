@@ -1,5 +1,9 @@
 const COLUMNS = [
 	{
+		label: 'ID',
+		value: '_id',
+	},
+	{
 		label: 'CAS No.',
 		value: 'CASId',
 	},
@@ -40,10 +44,6 @@ const COLUMNS = [
 		value: 'status',
 	},
 	{
-		label: 'Disposed Date',
-		value: 'disposedDate',
-	},
-	{
 		label: 'Date In',
 		value: 'dateIn',
 	},
@@ -54,6 +54,10 @@ const COLUMNS = [
 	{
 		label: 'Expiration Date',
 		value: 'expirationDate',
+	},
+	{
+		label: 'Disposed Date',
+		value: 'disposedDate',
 	},
 	{
 		label: 'Supplier',
@@ -69,7 +73,7 @@ const COLUMNS = [
 	},
 ]
 
-const STATUSES = [
+const STATUS = [
 	{
 		label: 'Normal',
 		value: 'Normal',
@@ -92,4 +96,79 @@ const STATUSES = [
 	},
 ]
 
-export { COLUMNS, STATUSES }
+const HEADERS = [
+	{
+		label: 'ID',
+		key: '_id',
+	},
+	{
+		label: 'CAS No.*',
+		key: 'CASNo',
+	},
+	{
+		label: 'Name*',
+		key: 'name',
+	},
+	{
+		label: 'State*',
+		key: 'state',
+	},
+	{
+		label: 'Unit*',
+		key: 'unit',
+	},
+	{
+		label: 'Container Size*',
+		key: 'containerSize',
+	},
+	{
+		label: 'Amount*',
+		key: 'amount',
+	},
+	{
+		label: 'Minimum Amount*',
+		key: 'minAmount',
+	},
+	{
+		label: 'Location',
+		key: 'location',
+	},
+	{
+		label: 'Storage Group',
+		key: 'storageGroup',
+	},
+	{
+		label: 'Status',
+		key: 'status',
+	},
+	{
+		label: 'Date In*',
+		key: 'dateIn',
+	},
+	{
+		label: 'Date Open',
+		key: 'dateOpen',
+	},
+	{
+		label: 'Expiration Date*',
+		key: 'expirationDate',
+	},
+	{
+		label: 'Disposed Date',
+		key: 'disposedDate',
+	},
+	{
+		label: 'Supplier',
+		key: 'supplier',
+	},
+	{
+		label: 'Brand',
+		key: 'brand',
+	},
+	{
+		label: 'Notes',
+		key: 'notes',
+	},
+]
+
+export { COLUMNS, STATUS, HEADERS }

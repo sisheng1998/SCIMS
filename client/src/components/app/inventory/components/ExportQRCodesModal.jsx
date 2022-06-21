@@ -78,9 +78,9 @@ const ExportQRCodesModal = ({ chemicals, openModal, setOpenModal }) => {
 					<div className='overflow-hidden rounded-lg border border-gray-300 bg-gray-50 pb-3 shadow-sm'>
 						<div className='max-h-80 overflow-x-auto'>
 							<div className='border-b border-gray-200'>
-								<table className='min-w-full divide-y divide-gray-200 whitespace-nowrap'>
+								<table className='min-w-full whitespace-nowrap'>
 									<thead className='sticky top-0 bg-gray-50'>
-										<tr>
+										<tr className='sticky-border-b'>
 											<th className='w-9 py-2 pl-3 pr-2' scope='col'>
 												<input
 													type='checkbox'

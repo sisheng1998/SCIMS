@@ -249,4 +249,8 @@
 		border: var(--arrow-size) solid transparent;
 		@apply origin-top border-t-gray-700;
 	}
+
+	.sticky-border-b {
+		box-shadow: inset 0 -1px 0 rgb(229 231 235);
+	}
 }

@@ -3,9 +3,9 @@ const Lab = require('../models/Lab')
 const Chemical = require('../models/Chemical')
 
 exports.exportChemicals = async (req, res, next) => {
-	const { labId, columns, statuses } = req.body
+	const { labId, columns, status } = req.body
 
-	if (!labId || !columns || !statuses) {
+	if (!labId || !columns || !status) {
 		return next(new ErrorResponse('Missing value for required field.', 400))
 	}
 
@@ -16,13 +16,15 @@ exports.exportChemicals = async (req, res, next) => {
 	}
 
 	try {
-		const chemicalOptions = columns.join(' ')
+		const chemicalOptions = `${columns.join(' ')}${
+			columns.includes('_id') ? '' : ' -_id'
+		}`
 
 		const chemicals = await Chemical.find(
 			{
 				lab: foundLab._id,
 				status: {
-					$in: statuses,
+					$in: status,
 				},
 			},
 			chemicalOptions

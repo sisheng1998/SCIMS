@@ -4,7 +4,7 @@ import Step2 from './Step2'
 
 const ExportSection = () => {
 	const [selectedColumns, setSelectedColumns] = useState([])
-	const [selectedStatuses, setSelectedStatuses] = useState([])
+	const [selectedStatus, setSelectedStatus] = useState([])
 	const [nextStep, setNextStep] = useState(false)
 	const [data, setData] = useState([])
 
@@ -42,8 +42,8 @@ const ExportSection = () => {
 					<Step1
 						selectedColumns={selectedColumns}
 						setSelectedColumns={setSelectedColumns}
-						selectedStatuses={selectedStatuses}
-						setSelectedStatuses={setSelectedStatuses}
+						selectedStatus={selectedStatus}
+						setSelectedStatus={setSelectedStatus}
 						setData={setData}
 						setNextStep={setNextStep}
 					/>

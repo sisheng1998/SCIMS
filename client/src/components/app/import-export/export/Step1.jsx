@@ -5,8 +5,8 @@ import GenerateCSV from './GenerateCSV'
 const Step1 = ({
 	selectedColumns,
 	setSelectedColumns,
-	selectedStatuses,
-	setSelectedStatuses,
+	selectedStatus,
+	setSelectedStatus,
 	setData,
 	setNextStep,
 }) => {
@@ -29,18 +29,18 @@ const Step1 = ({
 				Which Chemical's Status Should Be Exported?
 			</label>
 			<MultipleSelect
-				type='Statuses'
-				selected={selectedStatuses}
-				setSelected={setSelectedStatuses}
+				type='Status'
+				selected={selectedStatus}
+				setSelected={setSelectedStatus}
 			/>
 			<p className='mt-2 text-xs text-gray-400'>
-				Leave it empty to export all chemical's status or select the statuses
-				that need to be included in the CSV file.
+				Leave it empty to export all chemical's status or select the status that
+				need to be included in the CSV file.
 			</p>
 
 			<GenerateCSV
 				selectedColumns={selectedColumns}
-				selectedStatuses={selectedStatuses}
+				selectedStatus={selectedStatus}
 				setData={setData}
 				setNextStep={setNextStep}
 			/>

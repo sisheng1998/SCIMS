@@ -2,8 +2,13 @@ import React from 'react'
 import { CSVLink } from 'react-csv'
 import { ArrowLeftIcon, DownloadIcon } from '@heroicons/react/outline'
 import useAuth from '../../../../hooks/useAuth'
+import { HEADERS } from '../../../../config/import_export'
 
 const DownloadCSV = ({ data, setNextStep }) => {
+	const headers = HEADERS.filter(
+		(header) => data.length !== 0 && Object.keys(data[0]).includes(header.key)
+	)
+
 	const { auth } = useAuth()
 	const today = new Date().toJSON().slice(0, 10)
 
@@ -24,6 +29,7 @@ const DownloadCSV = ({ data, setNextStep }) => {
 			{data.length !== 0 && (
 				<CSVLink
 					data={data}
+					headers={headers}
 					filename={filename}
 					className='button button-outline ml-6 justify-center px-4 py-3'
 					target='_blank'

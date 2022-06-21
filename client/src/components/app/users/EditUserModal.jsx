@@ -11,9 +11,8 @@ import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import FormatDate from '../../utils/FormatDate'
 import StaticUserInfo from '../components/StaticUserInfo'
 
-function getKeyByValue(value) {
-	return Object.keys(ROLES_LIST).find((key) => ROLES_LIST[key] === value)
-}
+const getKeyByValue = (value) =>
+	Object.keys(ROLES_LIST).find((key) => ROLES_LIST[key] === value)
 
 const EditUserModal = ({
 	user,

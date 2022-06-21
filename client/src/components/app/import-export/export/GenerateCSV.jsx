@@ -5,39 +5,36 @@ import {
 } from '@heroicons/react/outline'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import useAuth from '../../../../hooks/useAuth'
-import { COLUMNS, STATUSES } from '../../../../config/import_export'
+import { COLUMNS, STATUS } from '../../../../config/import_export'
 import { FormatChemicalDate } from '../../../utils/FormatDate'
 
 const getValues = (objects) => objects.map((object) => object.value)
 
 const getProcessedData = (columns, chemicals, locations) =>
 	chemicals.map((chemical) => {
-		const data = {
-			_id: chemical._id,
-		}
+		const data = {}
 
 		columns.forEach((column) => {
 			const value = column.value
 
 			if (value === 'CASId') {
-				data['CASNo'] = chemical.CASId.CASNo
+				data['CASNo'] = String("'" + chemical.CASId.CASNo)
 			} else if (value === 'locationId') {
 				const location = locations.find(
 					(location) => location._id === chemical.locationId
 				)
-				data['location'] = location ? location.name : ''
+				data['location'] = location ? String(location.name) : ''
 			} else if (
 				value === 'dateIn' ||
 				value === 'dateOpen' ||
 				value === 'expirationDate' ||
 				value === 'disposedDate'
 			) {
-				data[value] = chemical[value] ? FormatChemicalDate(chemical[value]) : ''
-			} else if (value === 'status') {
 				data[value] = chemical[value]
-				data['isDisposed'] = chemical[value] === 'Disposed' ? 1 : 0
+					? String("'" + FormatChemicalDate(chemical[value]))
+					: ''
 			} else {
-				data[value] = chemical[value]
+				data[value] = String(chemical[value])
 			}
 		})
 
@@ -46,7 +43,7 @@ const getProcessedData = (columns, chemicals, locations) =>
 
 const GenerateCSV = ({
 	selectedColumns,
-	selectedStatuses,
+	selectedStatus,
 	setData,
 	setNextStep,
 }) => {
@@ -54,7 +51,7 @@ const GenerateCSV = ({
 	const axiosPrivate = useAxiosPrivate()
 
 	const columns = selectedColumns.length === 0 ? COLUMNS : selectedColumns
-	const statuses = selectedStatuses.length === 0 ? STATUSES : selectedStatuses
+	const status = selectedStatus.length === 0 ? STATUS : selectedStatus
 
 	const [isLoading, setIsLoading] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
@@ -67,7 +64,7 @@ const GenerateCSV = ({
 			const { data } = await axiosPrivate.post('/api/private/export', {
 				labId: auth.currentLabId,
 				columns: getValues(columns),
-				statuses: getValues(statuses),
+				status: getValues(status),
 			})
 
 			setData(getProcessedData(columns, data.chemicals, data.locations))

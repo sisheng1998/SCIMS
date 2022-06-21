@@ -1,18 +1,20 @@
 import React, { Fragment } from 'react'
 import { Listbox } from '@headlessui/react'
 import { SelectorIcon, XIcon, CheckIcon } from '@heroicons/react/outline'
-import { COLUMNS, STATUSES } from '../../../../config/import_export'
+import { COLUMNS, STATUS } from '../../../../config/import_export'
 
 const MultipleSelect = ({ type, selected, setSelected }) => {
 	const isColumns = type === 'Columns'
-	const dataset = isColumns ? COLUMNS : STATUSES
+	const dataset = isColumns ? COLUMNS : STATUS
 
 	const isSelected = (value) =>
 		selected.some((selection) => selection.value === value)
 
 	const selectHandler = (selection) =>
 		!isSelected(selection.value)
-			? setSelected((prev) => [...prev, selection])
+			? setSelected((prev) =>
+					dataset.filter((data) => [...prev, selection].includes(data))
+			  )
 			: deselectHandler(selection.value)
 
 	const deselectHandler = (value) =>
@@ -28,7 +30,7 @@ const MultipleSelect = ({ type, selected, setSelected }) => {
 			<Listbox.Button className='flex w-full justify-between rounded-lg border border-gray-300 p-2 text-left shadow-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500'>
 				{selected.length === 0 ? (
 					<span className='my-0.5 ml-1 text-gray-400'>
-						{isColumns ? 'Export all columns' : 'Export all statuses'}
+						{isColumns ? 'Export all columns' : 'Export all status'}
 					</span>
 				) : (
 					<span className='-mb-1.5'>
