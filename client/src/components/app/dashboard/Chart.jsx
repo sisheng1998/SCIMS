@@ -69,7 +69,7 @@ const Chart = ({ info }) => {
 
 	return (
 		info.totalChemicals !== 0 && (
-			<div className='w-1/5 2xl:w-1/4'>
+			<div className='w-1/5 2xl:w-1/4 xl:w-1/3'>
 				<p className='mb-2 font-medium text-gray-500'>
 					Status{' '}
 					<span className='text-xs text-gray-400'>(No. of Chemicals)</span>

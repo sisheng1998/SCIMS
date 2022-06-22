@@ -1,11 +1,19 @@
 import React, { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { DocumentAddIcon } from '@heroicons/react/outline'
+import { parse } from 'papaparse'
+import { HEADERS } from '../../../../config/import_export'
 
-const CSVDropZone = ({ setCSV, setErrorMessage }) => {
-	const MAX_SIZE_IN_BYTES = 5242880 // 5MB
+const CSVDropZone = ({
+	setCSV,
+	setDetectedColumns,
+	setMappedColumns,
+	setData,
+	setErrorMessage,
+}) => {
+	const MAX_SIZE_IN_BYTES = 10485760 // 10MB
 
-	const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
+	const onDrop = useCallback(async (acceptedFiles, rejectedFiles) => {
 		if (acceptedFiles.length !== 0) {
 			const CSV = acceptedFiles[0]
 
@@ -15,6 +23,29 @@ const CSVDropZone = ({ setCSV, setErrorMessage }) => {
 				setErrorMessage('This file format is not supported.')
 			} else {
 				setErrorMessage('')
+
+				const text = await CSV.text()
+				const result = parse(text.replace(/\r\n+$/, ''), { header: true })
+
+				const initialMapping = HEADERS.map((header) => {
+					const label = result.meta.fields.find(
+						(field) => field === header.label
+					)
+					const key = header.key
+
+					return {
+						label: label ? label : '',
+						key,
+					}
+				})
+
+				setDetectedColumns(result.meta.fields)
+				setMappedColumns(initialMapping)
+				setData(result.data)
+
+				result.data.length === 0 &&
+					setErrorMessage('The CSV file is empty / contains header only.')
+
 				setCSV(CSV)
 			}
 		} else {

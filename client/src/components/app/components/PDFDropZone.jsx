@@ -10,7 +10,7 @@ const PDFDropZone = ({
 	setExtractionResult,
 	setErrorMessage,
 }) => {
-	const MAX_SIZE_IN_BYTES = 5242880 // 5MB
+	const MAX_SIZE_IN_BYTES = 10485760 // 10MB
 
 	const onDrop = useCallback(
 		(acceptedFiles, rejectedFiles) => {

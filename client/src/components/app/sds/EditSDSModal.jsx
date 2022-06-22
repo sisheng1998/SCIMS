@@ -179,7 +179,7 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
 											setErrorMessage={setErrorMessage}
 										/>
 										<p className='mt-2 text-xs text-gray-400'>
-											Only PDF is supported. Max file size: 5 MB.
+											Only PDF is supported. Max file size: 10 MB.
 										</p>
 									</>
 								) : (

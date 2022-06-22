@@ -110,11 +110,11 @@ const SafetyAndSecuritySection = ({
 				</p>
 			)}
 
+			<label htmlFor='SDS' className='required-input-label'>
+				Safety Data Sheet (SDS)
+			</label>
 			{!SDS ? (
 				<>
-					<label htmlFor='SDS' className='required-input-label'>
-						Safety Data Sheet (SDS)
-					</label>
 					<PDFDropZone
 						setPDF={setSDS}
 						classifications={classifications}
@@ -123,20 +123,15 @@ const SafetyAndSecuritySection = ({
 						setErrorMessage={setErrorMessage}
 					/>
 					<p className='mt-2 text-xs text-gray-400'>
-						Only PDF is supported. Max file size: 5 MB.
+						Only PDF is supported. Max file size: 10 MB.
 					</p>
 				</>
 			) : (
-				<>
-					<label htmlFor='SDS' className='required-input-label'>
-						Safety Data Sheet (SDS)
-					</label>
-					<RenderPDF
-						PDF={SDS}
-						setPDF={setSDS}
-						extractionResult={extractionResult}
-					/>
-				</>
+				<RenderPDF
+					PDF={SDS}
+					setPDF={setSDS}
+					extractionResult={extractionResult}
+				/>
 			)}
 
 			<label htmlFor='classification' className='mt-6'>
