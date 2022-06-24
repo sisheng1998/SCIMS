@@ -1,13 +1,41 @@
 import React from 'react'
 import { ArrowLeftIcon, ArrowNarrowRightIcon } from '@heroicons/react/outline'
-import ColumnMapping from './ColumnMapping'
+import ColumnMapping from './components/ColumnMapping'
+
+const removeSingleQuote = (value) =>
+	value.startsWith("'") ? value.substring(1) : value
 
 const Step2 = ({
+	data,
+	setProcessedData,
 	detectedColumns,
 	mappedColumns,
 	setMappedColumns,
 	setStep,
 }) => {
+	const getLabel = (value) =>
+		mappedColumns.find((column) => column.key === value)['label']
+
+	const continueHandler = () => {
+		const processedData = data.map((chemical) => {
+			const processedChemical = {}
+
+			mappedColumns.forEach((column) => {
+				const value = chemical[getLabel(column.key)]
+				processedChemical[column.key] = value
+					? removeSingleQuote(String(value))
+					: ''
+			})
+
+			return processedChemical
+		})
+
+		setProcessedData(processedData)
+
+		window.scrollTo(0, 0)
+		setStep(3)
+	}
+
 	return (
 		<>
 			<label htmlFor='columnMapping' className='required-input-label'>
@@ -34,7 +62,7 @@ const Step2 = ({
 
 				<button
 					className='button button-outline justify-center px-4 py-3'
-					onClick={() => setStep(3)}
+					onClick={continueHandler}
 				>
 					Continue
 					<ArrowNarrowRightIcon className='ml-2 h-4 w-4 stroke-2' />

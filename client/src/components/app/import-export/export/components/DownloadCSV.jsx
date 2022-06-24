@@ -1,8 +1,8 @@
 import React from 'react'
 import { CSVLink } from 'react-csv'
 import { ArrowLeftIcon, DownloadIcon } from '@heroicons/react/outline'
-import useAuth from '../../../../hooks/useAuth'
-import { HEADERS } from '../../../../config/import_export'
+import useAuth from '../../../../../hooks/useAuth'
+import { HEADERS } from '../../../../../config/import_export'
 
 const DownloadCSV = ({ data, setNextStep }) => {
 	const headers = HEADERS.filter(

@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import DownloadTemplate from './components/DownloadTemplate'
+import Info from './components/Info'
 import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
@@ -9,12 +11,14 @@ const ImportSection = () => {
 	const [detectedColumns, setDetectedColumns] = useState([])
 	const [mappedColumns, setMappedColumns] = useState([])
 	const [data, setData] = useState([])
+	const [processedData, setProcessedData] = useState([])
 
 	const [errorMessage, setErrorMessage] = useState('')
 
 	const setCurrentStep = (currentStep) => {
 		if (step === currentStep) return
 
+		window.scrollTo(0, 0)
 		setErrorMessage('')
 		setStep(currentStep)
 	}
@@ -66,11 +70,20 @@ const ImportSection = () => {
 			</div>
 
 			<div className='w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:max-w-full'>
-				<h4>Import Chemicals from a CSV File</h4>
-				<p className='text-sm text-gray-500'>
-					Import (or update) chemicals to current lab from a CSV file containing
-					a list of chemicals.
-				</p>
+				<div className='flex items-start justify-between space-x-6'>
+					<div>
+						<h4 className='flex items-center'>
+							Import Chemicals from a CSV File
+							<Info />
+						</h4>
+						<p className='text-sm text-gray-500'>
+							Import (or update) chemicals to current lab from a CSV file
+							containing a list of chemicals.
+						</p>
+					</div>
+
+					<DownloadTemplate />
+				</div>
 
 				<hr className='mb-6 mt-4 border-gray-200' />
 
@@ -91,6 +104,8 @@ const ImportSection = () => {
 
 				{step === 2 && (
 					<Step2
+						data={data}
+						setProcessedData={setProcessedData}
 						detectedColumns={detectedColumns}
 						mappedColumns={mappedColumns}
 						setMappedColumns={setMappedColumns}
@@ -100,8 +115,8 @@ const ImportSection = () => {
 
 				{step === 3 && (
 					<Step3
-						data={data}
-						setData={setData}
+						processedData={processedData}
+						setProcessedData={setProcessedData}
 						mappedColumns={mappedColumns}
 						errorMessage={errorMessage}
 						setErrorMessage={setErrorMessage}

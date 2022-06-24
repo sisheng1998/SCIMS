@@ -1,5 +1,5 @@
 import React from 'react'
-import { HEADERS } from '../../../../config/import_export'
+import { HEADERS } from '../../../../../config/import_export'
 
 const getLabel = (value) =>
 	HEADERS.find((header) => header.key === value)['label']
@@ -18,6 +18,12 @@ const CSVTable = ({ data }) => {
 					<table className='min-w-full whitespace-nowrap'>
 						<thead className='sticky top-0 bg-gray-50'>
 							<tr className='sticky-border-b'>
+								<th
+									scope='col'
+									className='px-3 py-2 text-left font-medium text-gray-500'
+								>
+									No.
+								</th>
 								{tableHeaders.map((key, index) => (
 									<th
 										scope='col'
@@ -31,8 +37,10 @@ const CSVTable = ({ data }) => {
 						</thead>
 
 						<tbody className='divide-y divide-gray-200 bg-white'>
-							{data.map((chemical) => (
-								<tr key={chemical._id} className='hover:bg-indigo-50/30'>
+							{data.map((chemical, index) => (
+								<tr key={index} className='hover:bg-indigo-50/30'>
+									<td className='px-3 py-2'>{index + 1}</td>
+
 									{tableHeaders.map((key, index) => (
 										<td key={index} className='px-3 py-2'>
 											{chemical[key]}

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { DocumentAddIcon } from '@heroicons/react/outline'
 import { parse } from 'papaparse'
-import { HEADERS } from '../../../../config/import_export'
+import { HEADERS } from '../../../../../config/import_export'
 
 const CSVDropZone = ({
 	setCSV,

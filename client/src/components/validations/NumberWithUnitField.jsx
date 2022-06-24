@@ -44,7 +44,7 @@ const NumberWithUnitField = (props) => {
 
 			<p className='mt-2 text-xs text-gray-400'>
 				{!props.value || (!props.showValidated && props.validated) ? (
-					props.message || 'Numbers with 2 decimal place only.'
+					props.message || 'Numbers with maximum 2 decimal places only.'
 				) : props.validated ? (
 					<span className='text-green-600'>Looks good!</span>
 				) : (
@@ -53,7 +53,7 @@ const NumberWithUnitField = (props) => {
 							? `The amount can't exceed the ${
 									props.usage ? 'current amount' : 'container size'
 							  }.`
-							: 'Please enter numbers with 2 decimal place only.'}
+							: 'Please enter numbers with maximum 2 decimal places only.'}
 					</span>
 				)}
 			</p>

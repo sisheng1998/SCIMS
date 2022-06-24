@@ -1,5 +1,5 @@
 import React from 'react'
-import CSVDropZone from './CSVDropZone'
+import CSVDropZone from './components/CSVDropZone'
 import FormatBytes from '../../../utils/FormatBytes'
 import {
 	DocumentTextIcon,
@@ -92,7 +92,10 @@ const Step1 = ({
 
 				<button
 					className='button button-outline justify-center px-4 py-3'
-					onClick={() => setStep(2)}
+					onClick={() => {
+						window.scrollTo(0, 0)
+						setStep(2)
+					}}
 					disabled={!CSV || data.length === 0}
 				>
 					Continue

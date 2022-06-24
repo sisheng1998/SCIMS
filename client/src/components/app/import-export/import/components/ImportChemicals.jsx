@@ -4,11 +4,11 @@ import {
 	ArrowLeftIcon,
 	ExclamationCircleIcon,
 } from '@heroicons/react/outline'
-import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
-import useAuth from '../../../../hooks/useAuth'
+import useAxiosPrivate from '../../../../../hooks/useAxiosPrivate'
+import useAuth from '../../../../../hooks/useAuth'
 
 const ImportChemicals = ({
-	data,
+	processedData,
 	mappedColumns,
 	errorMessage,
 	setErrorMessage,

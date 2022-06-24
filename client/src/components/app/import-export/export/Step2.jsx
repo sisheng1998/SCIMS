@@ -1,6 +1,6 @@
 import React from 'react'
-import CSVTable from './CSVTable'
-import DownloadCSV from './DownloadCSV'
+import CSVTable from './components/CSVTable'
+import DownloadCSV from './components/DownloadCSV'
 
 const Step2 = ({ data, setNextStep }) => {
 	return (

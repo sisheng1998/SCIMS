@@ -1,5 +1,5 @@
 import React from 'react'
-import { HEADERS } from '../../../../config/import_export'
+import { HEADERS } from '../../../../../config/import_export'
 
 const ColumnMapping = ({
 	detectedColumns,

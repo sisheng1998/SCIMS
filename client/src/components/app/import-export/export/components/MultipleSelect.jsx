@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { Listbox } from '@headlessui/react'
 import { SelectorIcon, XIcon, CheckIcon } from '@heroicons/react/outline'
-import { COLUMNS, STATUS } from '../../../../config/import_export'
+import { COLUMNS, STATUS } from '../../../../../config/import_export'
 
 const MultipleSelect = ({ type, selected, setSelected }) => {
 	const isColumns = type === 'Columns'

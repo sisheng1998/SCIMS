@@ -1,6 +1,6 @@
 import React from 'react'
-import MultipleSelect from './MultipleSelect'
-import GenerateCSV from './GenerateCSV'
+import MultipleSelect from './components/MultipleSelect'
+import GenerateCSV from './components/GenerateCSV'
 
 const Step1 = ({
 	selectedColumns,
