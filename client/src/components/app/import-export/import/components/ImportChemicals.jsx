@@ -19,16 +19,22 @@ const ImportChemicals = ({
 
 	const [isLoading, setIsLoading] = useState(false)
 
+	const validation = processedData.map((chemical) => chemical.validated)
+	const allValidated = validation.every((result) => result === true)
+
 	const importChemicalsHandler = async () => {
 		setIsLoading(true)
 		setErrorMessage('')
 
 		try {
-			const { data } = await axiosPrivate.post('/api/private/import', {
+			/*const { data } = await axiosPrivate.post('/api/private/import', {
 				labId: auth.currentLabId,
-			})
+			})*/
+
+			console.log(processedData)
 
 			setIsLoading(false)
+			window.scrollTo(0, 0)
 			//setStep(4)
 		} catch (error) {
 			if (error.response?.status === 500) {
@@ -66,7 +72,7 @@ const ImportChemicals = ({
 			<button
 				className='button button-outline justify-center px-4 py-3'
 				onClick={importChemicalsHandler}
-				disabled={isLoading}
+				disabled={isLoading || !allValidated}
 			>
 				{isLoading ? (
 					<>

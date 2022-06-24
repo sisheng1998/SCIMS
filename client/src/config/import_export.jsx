@@ -101,7 +101,8 @@ const HEADERS = [
 		label: 'ID',
 		key: '_id',
 		sample: '62998746a5f5bc7cf5bc0c5d',
-		description: 'Leave the field empty to add new chemicals.',
+		description:
+			'Leave it blank for new chemical. Otherwise the chemical will be updated.',
 	},
 	{
 		label: 'CAS No.*',
@@ -138,15 +139,13 @@ const HEADERS = [
 		label: 'Amount*',
 		key: 'amount',
 		sample: '0.75',
-		description:
-			'Numbers with maximum 2 decimal places only. Not exceed container size.',
+		description: 'Numbers with maximum 2 decimal places only.',
 	},
 	{
 		label: 'Minimum Amount*',
 		key: 'minAmount',
 		sample: '0.1',
-		description:
-			'Numbers with maximum 2 decimal places only. Not exceed container size.',
+		description: 'Numbers with maximum 2 decimal places only.',
 	},
 	{
 		label: 'Location',
@@ -164,19 +163,19 @@ const HEADERS = [
 		label: 'Status',
 		key: 'status',
 		sample: 'Normal',
-		description: 'Leave it empty to let system decide the status.',
+		description: 'Leave it blank to let system decide the status.',
 	},
 	{
 		label: 'Date In*',
 		key: 'dateIn',
 		sample: '30/11/2021',
-		description: 'Not greater than today. Format: DD/MM/YYYY',
+		description: 'Format: DD/MM/YYYY',
 	},
 	{
 		label: 'Date Open',
 		key: 'dateOpen',
 		sample: '02/01/2022',
-		description: 'Not greater than today. Format: DD/MM/YYYY',
+		description: 'Format: DD/MM/YYYY',
 	},
 	{
 		label: 'Expiration Date*',
@@ -189,7 +188,7 @@ const HEADERS = [
 		key: 'disposedDate',
 		sample: '30/06/2022',
 		description:
-			'Leave it empty if the chemical is not yet dispose. Format: DD/MM/YYYY',
+			'Leave it blank if the chemical is not yet disposed. Format: DD/MM/YYYY',
 	},
 	{
 		label: 'Supplier',
@@ -211,4 +210,54 @@ const HEADERS = [
 	},
 ]
 
-export { COLUMNS, STATUS, HEADERS }
+const CAS_REGEX = /^\b[1-9]{1}[0-9]{1,6}-\d{2}-\d\b$/
+const NAME_REGEX_WITH_NUMBER = /^[a-zA-Z0-9,.'-/]+( [a-zA-Z0-9,.'-/]+)*$/
+const STATE = ['solid', 'liquid', 'gas']
+const UNIT = ['kg', 'g', 'mg', 'L', 'mL']
+const NUMBER_REGEX = /^\d{1,}(\.\d{1,2})?$/
+const STORAGE_GROUPS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'j', 'k', 'l', 'x']
+const CHEMICAL_STATUS = [
+	'normal',
+	'low amount',
+	'expiring soon',
+	'expired',
+	'disposed',
+]
+const DATE_REGEX = /^(0?[1-9]|[12][0-9]|3[01])[/](0?[1-9]|1[012])[/]\d{4}$/
+
+const Validate = (key, value) => {
+	switch (key) {
+		case 'CASNo':
+			return CAS_REGEX.test(value)
+		case 'name':
+			return NAME_REGEX_WITH_NUMBER.test(value)
+		case 'state':
+			return STATE.includes(value.toLowerCase())
+		case 'unit':
+			return UNIT.includes(value)
+		case 'containerSize':
+		case 'amount':
+		case 'minAmount':
+			return NUMBER_REGEX.test(value)
+		case 'location':
+			return value === '' ? true : NAME_REGEX_WITH_NUMBER.test(value)
+		case 'storageGroup':
+			return value === '' ? true : STORAGE_GROUPS.includes(value.toLowerCase())
+		case 'status':
+			return value === '' ? true : CHEMICAL_STATUS.includes(value.toLowerCase())
+		case 'dateIn':
+		case 'dateOpen':
+		case 'expirationDate':
+		case 'disposedDate':
+			if (value === '' && (key === 'dateOpen' || key === 'disposedDate'))
+				return true
+			else return DATE_REGEX.test(value)
+		case 'supplier':
+		case 'brand':
+			return value === '' ? true : NAME_REGEX_WITH_NUMBER.test(value)
+		default:
+			return true
+	}
+}
+
+export { COLUMNS, STATUS, HEADERS, Validate }

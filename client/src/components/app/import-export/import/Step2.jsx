@@ -1,6 +1,7 @@
 import React from 'react'
 import { ArrowLeftIcon, ArrowNarrowRightIcon } from '@heroicons/react/outline'
 import ColumnMapping from './components/ColumnMapping'
+import { Validate } from '../../../../config/import_export'
 
 const removeSingleQuote = (value) =>
 	value.startsWith("'") ? value.substring(1) : value
@@ -18,13 +19,20 @@ const Step2 = ({
 
 	const continueHandler = () => {
 		const processedData = data.map((chemical) => {
-			const processedChemical = {}
+			const processedChemical = {
+				validated: true,
+			}
 
 			mappedColumns.forEach((column) => {
 				const value = chemical[getLabel(column.key)]
-				processedChemical[column.key] = value
-					? removeSingleQuote(String(value))
-					: ''
+				const processedValue = value ? removeSingleQuote(String(value)) : ''
+
+				processedChemical[column.key] = processedValue
+
+				const isValid = Validate(column.key, processedValue)
+				if (processedChemical['validated'] && !isValid) {
+					processedChemical['validated'] = false
+				}
 			})
 
 			return processedChemical
