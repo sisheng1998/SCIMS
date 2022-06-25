@@ -8,6 +8,8 @@ import { XIcon, ExclamationIcon } from '@heroicons/react/outline'
 import ReportDetails from './ReportDetails'
 import ReportTable from './ReportTable'
 
+const ID_REGEX = /^[a-f\d]{24}$/i
+
 const TabLabels = [
 	'Recorded Chemicals',
 	'Missing Chemicals',
@@ -29,7 +31,7 @@ const StockCheckReport = () => {
 	const [isLoading, setIsLoading] = useState(true)
 
 	useEffect(() => {
-		if (params.reportId.length !== 12 && params.reportId.length !== 24) {
+		if (!ID_REGEX.test(params.reportId)) {
 			setSuccess(false)
 			setInvalid(true)
 			setNotFound(false)

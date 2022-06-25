@@ -3,6 +3,9 @@ import { ExclamationIcon } from '@heroicons/react/outline'
 import { HEADERS, Validate } from '../../../../../config/import_export'
 
 const getTooltip = (value) => {
+	if (value === '_id')
+		return '24 characters with a-f, A-F and 0-9 only. (Optional)'
+
 	const header = HEADERS.find((header) => header.key === value)
 	const isRequired = header.label.endsWith('*') ? ' (Required)' : ' (Optional)'
 

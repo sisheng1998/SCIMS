@@ -11,6 +11,8 @@ import { XIcon, ExclamationIcon } from '@heroicons/react/outline'
 import useMobile from '../../../hooks/useMobile'
 import ScanQRCode from '../components/ScanQRCode'
 
+const ID_REGEX = /^[a-f\d]{24}$/i
+
 const ChemicalInfo = () => {
 	window.scrollTo(0, 0)
 
@@ -18,8 +20,9 @@ const ChemicalInfo = () => {
 	const { auth } = useAuth()
 	const axiosPrivate = useAxiosPrivate()
 	const params = useParams()
-	const { state } = useLocation()
+	const { pathname, state } = useLocation()
 	const { edit } = state || { edit: false }
+	const isAdmin = pathname.includes('/admin')
 
 	const [isEdit, setIsEdit] = useState(edit)
 	const [chemical, setChemical] = useState('')
@@ -33,7 +36,7 @@ const ChemicalInfo = () => {
 	const [refresh, setRefresh] = useState(false)
 
 	useEffect(() => {
-		if (params.chemicalId.length !== 12 && params.chemicalId.length !== 24) {
+		if (!ID_REGEX.test(params.chemicalId)) {
 			setSuccess(false)
 			setInvalid(true)
 			setNotFound(false)
@@ -152,7 +155,10 @@ const ChemicalInfo = () => {
 							<h2 className='mt-6 mb-2 text-red-600'>Invalid Link</h2>
 							<p>The link / QR code is invalid.</p>
 							<p className='mt-6 text-sm'>
-								Back to <Link to='/inventory'>Inventory</Link>
+								Back to{' '}
+								<Link to={isAdmin ? '/admin/inventory' : '/inventory'}>
+									Inventory
+								</Link>
 							</p>
 						</div>
 					)}
@@ -167,7 +173,10 @@ const ChemicalInfo = () => {
 							<h2 className='mt-6 mb-2 text-yellow-600'>Chemical Not Found</h2>
 							<p>The chemical does not exist in any lab.</p>
 							<p className='mt-6 text-sm'>
-								Back to <Link to='/inventory'>Inventory</Link>
+								Back to{' '}
+								<Link to={isAdmin ? '/admin/inventory' : '/inventory'}>
+									Inventory
+								</Link>
 							</p>
 						</div>
 					)}
@@ -247,7 +256,11 @@ const ChemicalInfo = () => {
 
 							<p className='text-center text-sm'>
 								<span>
-									Back to <Link to='/inventory'>Inventory</Link> or{' '}
+									Back to{' '}
+									<Link to={isAdmin ? '/admin/inventory' : '/inventory'}>
+										Inventory
+									</Link>{' '}
+									or{' '}
 								</span>
 								<Link to='/labs'>Apply New Lab</Link>
 							</p>

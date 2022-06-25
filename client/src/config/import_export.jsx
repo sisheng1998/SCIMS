@@ -102,7 +102,7 @@ const HEADERS = [
 		key: '_id',
 		sample: '62998746a5f5bc7cf5bc0c5d',
 		description:
-			'Leave it blank for new chemical. Otherwise the chemical will be updated.',
+			'Leave it blank for new chemical. Otherwise the existing chemical with matched ID in current lab will be updated.',
 	},
 	{
 		label: 'CAS No.*',
@@ -212,6 +212,7 @@ const HEADERS = [
 	},
 ]
 
+const ID_REGEX = /^[a-f\d]{24}$/i
 const CAS_REGEX = /^\b[1-9]{1}[0-9]{1,6}-\d{2}-\d\b$/
 const NAME_REGEX_WITH_NUMBER = /^[a-zA-Z0-9,.'-/]+( [a-zA-Z0-9,.'-/]+)*$/
 const STATE = ['solid', 'liquid', 'gas']
@@ -229,6 +230,8 @@ const DATE_REGEX = /^(0?[1-9]|[12][0-9]|3[01])[/](0?[1-9]|1[012])[/]\d{4}$/
 
 const Validate = (key, value) => {
 	switch (key) {
+		case '_id':
+			return value === '' ? true : ID_REGEX.test(value)
 		case 'CASNo':
 			return CAS_REGEX.test(value)
 		case 'name':

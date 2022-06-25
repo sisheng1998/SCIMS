@@ -25,12 +25,6 @@ exports.importChemicals = async (req, res, next) => {
 		let errorMessage = ''
 
 		chemicals.every(async (chemical, index) => {
-			if (chemical._id) {
-				const foundChemical = await Chemical.findById(chemical._id)
-
-				console.log(foundChemical)
-			}
-
 			let status = 'Normal'
 			if (Number(chemical.amount) <= Number(chemical.minAmount)) {
 				status = 'Low Amount'
