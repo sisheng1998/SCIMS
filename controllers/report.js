@@ -5,7 +5,7 @@ const StockCheck = require('../models/StockCheck')
 const ObjectId = require('mongoose').Types.ObjectId
 
 const UserOption = 'name email avatar'
-const ChemicalOption = 'CASId name unit'
+const ChemicalOption = 'CASId name'
 
 exports.usageReports = async (req, res, next) => {
 	const { labId, dateRanges } = req.body

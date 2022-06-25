@@ -5,7 +5,6 @@ import DataTable from './components/DataTable'
 const Step3 = ({
 	processedData,
 	setProcessedData,
-	mappedColumns,
 	errorMessage,
 	setErrorMessage,
 	setStep,
@@ -24,7 +23,6 @@ const Step3 = ({
 
 			<ImportChemicals
 				processedData={processedData}
-				mappedColumns={mappedColumns}
 				errorMessage={errorMessage}
 				setErrorMessage={setErrorMessage}
 				setStep={setStep}

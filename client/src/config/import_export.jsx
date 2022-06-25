@@ -194,13 +194,15 @@ const HEADERS = [
 		label: 'Supplier',
 		key: 'supplier',
 		sample: 'Merck',
-		description: 'Name of the supplier.',
+		description:
+			"Only alphabets, numbers, spaces, and symbols (-/,'.+) are allowed.",
 	},
 	{
 		label: 'Brand',
 		key: 'brand',
 		sample: 'Sigma Aldrich',
-		description: 'Name of the brand.',
+		description:
+			"Only alphabets, numbers, spaces, and symbols (-/,'.+) are allowed.",
 	},
 	{
 		label: 'Notes',

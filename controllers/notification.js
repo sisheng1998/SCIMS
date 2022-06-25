@@ -10,8 +10,8 @@ exports.getNotifications = async (req, res, next) => {
 	}
 
 	try {
-		const notification = await Notification.find(
-			{ user: foundUser._id },
+		const notifications = await Notification.find(
+			{ users: foundUser._id },
 			'lab chemical type date'
 		)
 			.sort({ date: -1 })
@@ -26,7 +26,7 @@ exports.getNotifications = async (req, res, next) => {
 
 		res.status(200).json({
 			success: true,
-			data: notification,
+			data: notifications,
 		})
 	} catch (error) {
 		next(error)

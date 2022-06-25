@@ -17,6 +17,7 @@ const UsageSchema = new Schema(
 		},
 		originalAmount: Number,
 		usage: Number,
+		unit: String,
 		remark: String,
 		date: {
 			type: Date,

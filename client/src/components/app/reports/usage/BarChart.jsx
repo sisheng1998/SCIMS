@@ -14,7 +14,7 @@ const BarChart = ({ info, chemicals, users, type, unit, indexAxis }) => {
 			})
 		})
 	} else {
-		const filteredInfo = info.filter((log) => log.chemical.unit === unit)
+		const filteredInfo = info.filter((log) => log.unit === unit)
 
 		if (type === 'Name') {
 			chemicals.forEach((chemical) => {

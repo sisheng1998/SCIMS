@@ -274,34 +274,26 @@ const ChemicalInfoSection = ({
 					<p className='mt-2 text-xs text-gray-400'>State of the chemical.</p>
 				</div>
 
-				{chemical ? (
-					<div className='w-1/5'>
-						<label htmlFor='unitSelection'>Unit</label>
-						<input type='text' value={unit} readOnly className='w-full' />
-						<p className='mt-2 text-xs text-gray-400'>Unit of the chemical.</p>
-					</div>
-				) : (
-					<div className='w-1/5'>
-						<label htmlFor='unitSelection' className='required-input-label'>
-							Unit
-						</label>
-						<select
-							className='w-full'
-							id='unitSelection'
-							required
-							value={unit}
-							onChange={unitChangeHandler}
-						>
-							<option value=''>Select</option>
-							<option value='kg'>kg</option>
-							<option value='g'>g</option>
-							<option value='mg'>mg</option>
-							<option value='L'>L</option>
-							<option value='mL'>mL</option>
-						</select>
-						<p className='mt-2 text-xs text-gray-400'>Unit of the chemical.</p>
-					</div>
-				)}
+				<div className='w-1/5'>
+					<label htmlFor='unitSelection' className='required-input-label'>
+						Unit
+					</label>
+					<select
+						className='w-full'
+						id='unitSelection'
+						required
+						value={unit}
+						onChange={unitChangeHandler}
+					>
+						<option value=''>Select</option>
+						<option value='kg'>kg</option>
+						<option value='g'>g</option>
+						<option value='mg'>mg</option>
+						<option value='L'>L</option>
+						<option value='mL'>mL</option>
+					</select>
+					<p className='mt-2 text-xs text-gray-400'>Unit of the chemical.</p>
+				</div>
 
 				<div className='w-1/3'>
 					<label htmlFor='containerSize' className='required-input-label'>

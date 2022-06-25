@@ -78,7 +78,7 @@ exports.register = async (req, res, next) => {
 			[
 				{
 					lab: foundLab._id,
-					user: foundLab.labOwner,
+					users: [foundLab.labOwner],
 					requestor: user[0]._id,
 					type: 'Request Approval',
 				},
@@ -492,7 +492,7 @@ exports.applyNewLab = async (req, res, next) => {
 			[
 				{
 					lab: foundLab._id,
-					user: foundLab.labOwner,
+					users: [foundLab.labOwner],
 					requestor: foundUser._id,
 					type: 'Request Approval',
 				},

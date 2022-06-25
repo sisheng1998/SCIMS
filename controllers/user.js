@@ -243,7 +243,7 @@ exports.userApproval = async (req, res, next) => {
 			[
 				{
 					lab: foundLab._id,
-					user: foundUser._id,
+					users: [foundUser._id],
 					type: approve ? 'Request Approved' : 'Request Declined',
 				},
 			],
@@ -428,7 +428,7 @@ exports.updateUser = async (req, res, next) => {
 			[
 				{
 					lab: foundLab._id,
-					user: foundUser._id,
+					users: [foundUser._id],
 					type,
 				},
 			],
@@ -525,7 +525,7 @@ exports.removeUser = async (req, res, next) => {
 			[
 				{
 					lab: foundLab._id,
-					user: foundUser._id,
+					users: [foundUser._id],
 					type: 'Removed From Lab',
 				},
 			],

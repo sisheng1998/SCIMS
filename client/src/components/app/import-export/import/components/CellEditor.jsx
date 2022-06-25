@@ -4,9 +4,9 @@ import { HEADERS, Validate } from '../../../../../config/import_export'
 
 const getTooltip = (value) => {
 	const header = HEADERS.find((header) => header.key === value)
-	const isRequired = header.label.endsWith('*') ? '(Required)' : '(Optional)'
+	const isRequired = header.label.endsWith('*') ? ' (Required)' : ' (Optional)'
 
-	return header['description'] + '\n' + isRequired
+	return header['description'] + isRequired
 }
 
 const CellEditor = ({
@@ -113,7 +113,7 @@ const CellEditor = ({
 
 				{!valid && (
 					<p
-						className='tooltip whitespace-pre-wrap hover:before:z-[1] hover:after:z-[1]'
+						className='tooltip tooltip-right whitespace-pre-wrap hover:before:z-[1] hover:after:z-[1]'
 						data-tooltip={getTooltip(cellKey)}
 					>
 						<ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />

@@ -173,7 +173,7 @@ exports.addLab = async (req, res, next) => {
 			[
 				{
 					lab: lab[0]._id,
-					user: user[0]._id,
+					users: [user[0]._id],
 					type: 'New Lab Created',
 				},
 			],
@@ -266,7 +266,7 @@ exports.addLabWithExistingUser = async (req, res, next) => {
 			[
 				{
 					lab: lab[0]._id,
-					user: foundUser._id,
+					users: [foundUser._id],
 					type: 'New Lab Created',
 				},
 			],
@@ -356,7 +356,7 @@ exports.updateLab = async (req, res, next) => {
 				[
 					{
 						lab: foundLab._id,
-						user: previousOwnerId,
+						users: [previousOwnerId],
 						type: 'Removed From Lab',
 					},
 				],
@@ -408,7 +408,7 @@ exports.updateLab = async (req, res, next) => {
 					[
 						{
 							lab: foundLab._id,
-							user: foundUser._id,
+							users: [foundUser._id],
 							type: 'Lab Owner Role',
 						},
 					],
@@ -463,7 +463,7 @@ exports.updateLab = async (req, res, next) => {
 					[
 						{
 							lab: foundLab._id,
-							user: foundUser._id,
+							users: [foundUser._id],
 							type: 'Lab Owner Role',
 						},
 					],

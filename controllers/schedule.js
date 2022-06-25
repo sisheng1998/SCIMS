@@ -38,13 +38,6 @@ const notifyUsers = (chemicals, type) => {
 				}
 			)
 
-			await Notification.create({
-				lab: chemical.lab._id,
-				user: user._id,
-				chemical: chemical._id,
-				type,
-			})
-
 			const emailOptions = {
 				to: user.email,
 				subject:
@@ -60,6 +53,13 @@ const notifyUsers = (chemicals, type) => {
 			}
 
 			sendEmail(emailOptions)
+		})
+
+		await Notification.create({
+			lab: chemical.lab._id,
+			users: users.map((user) => user._id),
+			chemical: chemical._id,
+			type,
 		})
 
 		const subscribers = await Subscriber.find(
@@ -219,11 +219,11 @@ module.exports = async () => {
 			labs.forEach(async (lab) => {
 				const records = await Usage.find(
 					{ lab: lab._id, date: { $gte: past, $lt: today } },
-					'chemical usage date -_id'
+					'chemical usage unit date -_id'
 				)
 					.populate({
 						path: 'chemical',
-						select: 'CASId name unit -_id',
+						select: 'CASId name -_id',
 						populate: {
 							path: 'CASId',
 							model: 'CAS',
@@ -233,15 +233,13 @@ module.exports = async () => {
 					.sort({ date: -1 })
 					.lean()
 
-				const usageRecords = records.map((record) => {
-					return {
-						...record,
-						usage: parseFloat(Number(record.usage).toFixed(2)),
-						date: new Date(record.date)
-							.toLocaleString('en-GB', options)
-							.toUpperCase(),
-					}
-				})
+				const usageRecords = records.map((record) => ({
+					...record,
+					usage: parseFloat(Number(record.usage).toFixed(2)),
+					date: new Date(record.date)
+						.toLocaleString('en-GB', options)
+						.toUpperCase(),
+				}))
 
 				const newChemicals = lab.chemicals.filter(
 					(chemical) => chemical.createdAt >= past && chemical.createdAt < today

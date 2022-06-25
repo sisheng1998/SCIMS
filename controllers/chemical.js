@@ -295,6 +295,7 @@ exports.updateChemical = async (req, res, next) => {
 		_id,
 		name,
 		state,
+		unit,
 		containerSize,
 		amount,
 		minAmount,
@@ -356,6 +357,7 @@ exports.updateChemical = async (req, res, next) => {
 		const updateQuery = {}
 		const removeQuery = {}
 		let changes = ''
+		let isUnitChanged = false
 
 		if (status && status !== foundChemical.status) {
 			updateQuery.status = status
@@ -371,13 +373,23 @@ exports.updateChemical = async (req, res, next) => {
 			changes += `State:\n${foundChemical.state} → ${state}\n\n`
 		}
 
+		if (unit && unit !== foundChemical.unit) {
+			updateQuery.unit = unit
+			changes += `Unit:\n${foundChemical.unit} → ${unit}\n\n`
+			isUnitChanged = true
+		}
+
 		if (
 			containerSize &&
 			Number(containerSize).toFixed(2) !==
 				Number(foundChemical.containerSize).toFixed(2)
 		) {
 			updateQuery.containerSize = Number(containerSize).toFixed(2)
-			changes += `Container Size:\n${foundChemical.containerSize} ${foundChemical.unit} → ${containerSize} ${foundChemical.unit}\n\n`
+			changes += `Container Size:\n${foundChemical.containerSize} ${
+				foundChemical.unit
+			} → ${containerSize} ${
+				isUnitChanged ? updateQuery.unit : foundChemical.unit
+			}\n\n`
 		}
 
 		if (
@@ -385,7 +397,11 @@ exports.updateChemical = async (req, res, next) => {
 			Number(amount).toFixed(2) !== Number(foundChemical.amount).toFixed(2)
 		) {
 			updateQuery.amount = Number(amount).toFixed(2)
-			changes += `Amount:\n${foundChemical.amount} ${foundChemical.unit} → ${amount} ${foundChemical.unit}\n\n`
+			changes += `Amount:\n${foundChemical.amount} ${
+				foundChemical.unit
+			} → ${amount} ${
+				isUnitChanged ? updateQuery.unit : foundChemical.unit
+			}\n\n`
 		}
 
 		if (
@@ -394,7 +410,11 @@ exports.updateChemical = async (req, res, next) => {
 				Number(foundChemical.minAmount).toFixed(2)
 		) {
 			updateQuery.minAmount = Number(minAmount).toFixed(2)
-			changes += `Minimum Amount:\n${foundChemical.minAmount} ${foundChemical.unit} → ${minAmount} ${foundChemical.unit}\n\n`
+			changes += `Minimum Amount:\n${foundChemical.minAmount} ${
+				foundChemical.unit
+			} → ${minAmount} ${
+				isUnitChanged ? updateQuery.unit : foundChemical.unit
+			}\n\n`
 		}
 
 		if (labId && !foundChemical.lab.equals(labId)) {
@@ -621,18 +641,6 @@ exports.updateAmount = async (req, res, next) => {
 					{ new: true, session }
 				)
 
-				await Notification.create(
-					[
-						{
-							lab: foundChemical.lab._id,
-							user: user._id,
-							chemical: foundChemical._id,
-							type: 'Low Amount',
-						},
-					],
-					{ session }
-				)
-
 				sendEmail({
 					to: user.email,
 					subject: 'Alert - Chemical Low Amount',
@@ -644,6 +652,18 @@ exports.updateAmount = async (req, res, next) => {
 					},
 				})
 			})
+
+			await Notification.create(
+				[
+					{
+						lab: foundChemical.lab._id,
+						users: users.map((user) => user._id),
+						chemical: foundChemical._id,
+						type: 'Low Amount',
+					},
+				],
+				{ session }
+			)
 
 			const subscribers = await Subscriber.find(
 				{ user: { $in: users } },
@@ -677,6 +697,7 @@ exports.updateAmount = async (req, res, next) => {
 					chemical: foundChemical._id,
 					originalAmount: foundChemical.amount,
 					usage: isNegative ? foundChemical.amount : Number(usage).toFixed(2),
+					unit: foundChemical.unit,
 					remark,
 				},
 			],

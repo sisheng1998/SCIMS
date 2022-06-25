@@ -4,7 +4,7 @@ const Activity = require('../models/Activity')
 const Usage = require('../models/Usage')
 
 const UserOption = 'name email avatar'
-const ChemicalOption = 'name unit'
+const ChemicalOption = 'name'
 
 exports.userActivity = async (req, res, next) => {
 	const { labId } = req.body

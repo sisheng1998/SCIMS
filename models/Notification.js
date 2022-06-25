@@ -7,10 +7,12 @@ const NotificationSchema = new Schema(
 			type: Schema.Types.ObjectId,
 			ref: 'Lab',
 		},
-		user: {
-			type: Schema.Types.ObjectId,
-			ref: 'User',
-		},
+		users: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'User',
+			},
+		],
 		chemical: {
 			type: Schema.Types.ObjectId,
 			ref: 'Chemical',

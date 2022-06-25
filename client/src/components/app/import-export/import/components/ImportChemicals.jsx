@@ -9,7 +9,6 @@ import useAuth from '../../../../../hooks/useAuth'
 
 const ImportChemicals = ({
 	processedData,
-	mappedColumns,
 	errorMessage,
 	setErrorMessage,
 	setStep,
@@ -27,18 +26,21 @@ const ImportChemicals = ({
 		setErrorMessage('')
 
 		try {
-			/*const { data } = await axiosPrivate.post('/api/private/import', {
+			const { data } = await axiosPrivate.post('/api/private/import', {
 				labId: auth.currentLabId,
-			})*/
+				chemicals: processedData,
+			})
 
-			console.log(processedData)
+			console.log(data)
 
 			setIsLoading(false)
-			window.scrollTo(0, 0)
+			//window.scrollTo(0, 0)
 			//setStep(4)
 		} catch (error) {
 			if (error.response?.status === 500) {
 				setErrorMessage('Server not responding. Please try again later.')
+			} else if (error.response?.status === 409) {
+				setErrorMessage(error.response.data.error)
 			} else {
 				setErrorMessage('Oops. Something went wrong. Please try again later.')
 			}

@@ -117,7 +117,6 @@ const ImportSection = () => {
 					<Step3
 						processedData={processedData}
 						setProcessedData={setProcessedData}
-						mappedColumns={mappedColumns}
 						errorMessage={errorMessage}
 						setErrorMessage={setErrorMessage}
 						setStep={setStep}

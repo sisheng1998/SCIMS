@@ -250,6 +250,15 @@
 		@apply origin-top border-t-gray-700;
 	}
 
+	.tooltip-right::before,
+	.tooltip-right::after {
+		@apply top-1/2 left-full origin-left translate-x-3 -translate-y-1/2;
+	}
+
+	.tooltip-right::after {
+		@apply origin-right translate-x-0 border-t-transparent border-r-gray-700;
+	}
+
 	.sticky-border-b {
 		box-shadow: inset 0 -1px 0 rgb(229 231 235);
 	}

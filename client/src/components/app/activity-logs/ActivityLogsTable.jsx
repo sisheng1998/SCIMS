@@ -294,16 +294,13 @@ const ActivityLogsTable = (props) => {
 															</span>
 															:
 															<span className='ml-1.5 font-medium'>
-																{FormatAmountWithUnit(
-																	log.usage,
-																	log.chemical.unit
-																)}
+																{FormatAmountWithUnit(log.usage, log.unit)}
 															</span>
 															<span className='ml-1.5 text-sm text-gray-500'>
 																({log.originalAmount} →{' '}
 																{FormatAmountWithUnit(
 																	log.originalAmount - log.usage,
-																	log.chemical.unit
+																	log.unit
 																)}
 																)
 															</span>

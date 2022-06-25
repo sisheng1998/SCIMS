@@ -198,14 +198,14 @@ const UsageTable = ({ data }) => {
 												</td>
 
 												<td className='px-6 py-4'>
-													{FormatAmountWithUnit(log.usage, log.chemical.unit)}
+													{FormatAmountWithUnit(log.usage, log.unit)}
 												</td>
 
 												<td className='px-6 py-4'>
 													{log.originalAmount} →{' '}
 													{FormatAmountWithUnit(
 														log.originalAmount - log.usage,
-														log.chemical.unit
+														log.unit
 													)}
 												</td>
 											</tr>
