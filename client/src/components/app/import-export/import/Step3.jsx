@@ -3,8 +3,10 @@ import ImportChemicals from './components/ImportChemicals'
 import DataTable from './components/DataTable'
 
 const Step3 = ({
+	CSV,
 	processedData,
 	setProcessedData,
+	setResults,
 	errorMessage,
 	setErrorMessage,
 	setStep,
@@ -22,7 +24,9 @@ const Step3 = ({
 			</p>
 
 			<ImportChemicals
+				CSV={CSV}
 				processedData={processedData}
+				setResults={setResults}
 				errorMessage={errorMessage}
 				setErrorMessage={setErrorMessage}
 				setStep={setStep}

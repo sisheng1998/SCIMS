@@ -8,7 +8,9 @@ import useAxiosPrivate from '../../../../../hooks/useAxiosPrivate'
 import useAuth from '../../../../../hooks/useAuth'
 
 const ImportChemicals = ({
+	CSV,
 	processedData,
+	setResults,
 	errorMessage,
 	setErrorMessage,
 	setStep,
@@ -29,13 +31,14 @@ const ImportChemicals = ({
 			const { data } = await axiosPrivate.post('/api/private/import', {
 				labId: auth.currentLabId,
 				chemicals: processedData,
+				filename: CSV.name,
 			})
 
-			console.log(data)
-
+			setResults(data.results)
 			setIsLoading(false)
-			//window.scrollTo(0, 0)
-			//setStep(4)
+
+			window.scrollTo(0, 0)
+			setStep(4)
 		} catch (error) {
 			if (error.response?.status === 500) {
 				setErrorMessage('Server not responding. Please try again later.')
@@ -98,7 +101,8 @@ const ImportChemicals = ({
 					</>
 				) : (
 					<>
-						Import Chemicals
+						Import {processedData.length} Chemical
+						{processedData.length > 1 ? 's' : ''}
 						<ArrowNarrowRightIcon className='ml-2 h-4 w-4 stroke-2' />
 					</>
 				)}

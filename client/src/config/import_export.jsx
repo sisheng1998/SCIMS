@@ -151,7 +151,8 @@ const HEADERS = [
 		label: 'Location',
 		key: 'location',
 		sample: 'Cabinet A',
-		description: "Chemical's location in the current lab.",
+		description:
+			"Chemical's location in the current lab. The location will be auto created with 'Any Storage Groups' if the location not yet exist in the system.",
 	},
 	{
 		label: 'Storage Group',
@@ -163,7 +164,8 @@ const HEADERS = [
 		label: 'Status',
 		key: 'status',
 		sample: 'Normal',
-		description: 'Leave it blank to let system decide the status.',
+		description:
+			'Leave it blank, the system will decide the status of the chemical.',
 	},
 	{
 		label: 'Date In*',
@@ -188,7 +190,7 @@ const HEADERS = [
 		key: 'disposedDate',
 		sample: '30/06/2022',
 		description:
-			'Leave it blank if the chemical is not yet disposed. Format: DD/MM/YYYY',
+			'Leave it blank if the chemical is not disposed. Format: DD/MM/YYYY',
 	},
 	{
 		label: 'Supplier',
@@ -226,7 +228,6 @@ const CHEMICAL_STATUS = [
 	'expired',
 	'disposed',
 ]
-const DATE_REGEX = /^(0?[1-9]|[12][0-9]|3[01])[/](0?[1-9]|1[012])[/]\d{4}$/
 
 const Validate = (key, value) => {
 	switch (key) {
@@ -256,7 +257,11 @@ const Validate = (key, value) => {
 		case 'disposedDate':
 			if (value === '' && (key === 'dateOpen' || key === 'disposedDate'))
 				return true
-			else return DATE_REGEX.test(value)
+			else
+				return (
+					new Date(value.split('/').reverse().join('-')).toString() !==
+					'Invalid Date'
+				)
 		case 'supplier':
 		case 'brand':
 			return value === '' ? true : NAME_REGEX_WITH_NUMBER.test(value)

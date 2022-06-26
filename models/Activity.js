@@ -17,6 +17,7 @@ const ActivitySchema = new Schema(
 		},
 		description: String,
 		changes: String,
+		importLog: Object,
 		date: {
 			type: Date,
 			default: Date.now,

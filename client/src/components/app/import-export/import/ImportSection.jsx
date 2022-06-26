@@ -4,6 +4,7 @@ import Info from './components/Info'
 import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
+import Step4 from './Step4'
 
 const ImportSection = () => {
 	const [step, setStep] = useState(1)
@@ -12,6 +13,7 @@ const ImportSection = () => {
 	const [mappedColumns, setMappedColumns] = useState([])
 	const [data, setData] = useState([])
 	const [processedData, setProcessedData] = useState([])
+	const [results, setResults] = useState([])
 
 	const [errorMessage, setErrorMessage] = useState('')
 
@@ -30,7 +32,9 @@ const ImportSection = () => {
 					className={
 						step === 1
 							? 'pointer-events-none text-lg font-semibold text-indigo-600'
-							: 'cursor-pointer transition hover:text-indigo-700'
+							: step > 1 && step < 4
+							? 'cursor-pointer transition hover:text-indigo-700'
+							: 'pointer-events-none'
 					}
 					onClick={() => setCurrentStep(1)}
 				>
@@ -40,7 +44,7 @@ const ImportSection = () => {
 					className={
 						step === 2
 							? 'pointer-events-none text-lg font-semibold text-indigo-600'
-							: step > 2
+							: step > 2 && step < 4
 							? 'cursor-pointer transition hover:text-indigo-700'
 							: 'pointer-events-none'
 					}
@@ -52,7 +56,7 @@ const ImportSection = () => {
 					className={
 						step === 3
 							? 'pointer-events-none text-lg font-semibold text-indigo-600'
-							: step > 3
+							: step > 3 && step < 4
 							? 'cursor-pointer transition hover:text-indigo-700'
 							: 'pointer-events-none'
 					}
@@ -115,13 +119,17 @@ const ImportSection = () => {
 
 				{step === 3 && (
 					<Step3
+						CSV={CSV}
 						processedData={processedData}
 						setProcessedData={setProcessedData}
+						setResults={setResults}
 						errorMessage={errorMessage}
 						setErrorMessage={setErrorMessage}
 						setStep={setStep}
 					/>
 				)}
+
+				{step === 4 && <Step4 results={results} />}
 			</div>
 		</div>
 	)

@@ -6,6 +6,9 @@ const getTooltip = (value) => {
 	if (value === '_id')
 		return '24 characters with a-f, A-F and 0-9 only. (Optional)'
 
+	if (value === 'status')
+		return 'Normal, Low Amount, Expiring Soon, Expired or Disposed only. (Optional)'
+
 	const header = HEADERS.find((header) => header.key === value)
 	const isRequired = header.label.endsWith('*') ? ' (Required)' : ' (Optional)'
 
@@ -39,14 +42,6 @@ const CellEditor = ({
 			const processedValue = value.replace(/(^\w|\s\w)/g, (string) =>
 				string.toUpperCase()
 			)
-
-			editedData[index][cellKey] = processedValue
-		} else if (
-			cellKey === 'containerSize' ||
-			cellKey === 'amount' ||
-			cellKey === 'minAmount'
-		) {
-			const processedValue = String(parseFloat(Number(value).toFixed(2)))
 
 			editedData[index][cellKey] = processedValue
 		} else {

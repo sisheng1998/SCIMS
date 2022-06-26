@@ -10,6 +10,7 @@ import FormatDate from '../../utils/FormatDate'
 import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
 import { useNavigate } from 'react-router-dom'
 import ChangelogModal from './ChangelogModal'
+import ImportLogModal from './ImportLogModal'
 
 const tableHeaders = [
 	{
@@ -37,6 +38,9 @@ const ActivityLogsTable = (props) => {
 
 	const [changelogInfo, setChangelogInfo] = useState('')
 	const [openChangelogModal, setOpenChangelogModal] = useState(false)
+
+	const [importLogInfo, setImportLogInfo] = useState('')
+	const [openImportLogModal, setOpenImportLogModal] = useState(false)
 
 	const today = new Date()
 	const past = new Date(new Date().setDate(today.getDate() - 30))
@@ -105,6 +109,11 @@ const ActivityLogsTable = (props) => {
 	const viewChangelogHandler = (changelog, date) => {
 		setChangelogInfo({ changelog, date })
 		setOpenChangelogModal(true)
+	}
+
+	const viewImportLogHandler = (results, date) => {
+		setImportLogInfo({ results, date })
+		setOpenImportLogModal(true)
 	}
 
 	return (
@@ -313,18 +322,22 @@ const ActivityLogsTable = (props) => {
 													) : (
 														<p>
 															{log.description}
-															<span className='ml-1.5 text-sm'>
-																(
-																<span
-																	onClick={() =>
-																		navigate(`/inventory/${log.chemical._id}`)
-																	}
-																	className='inline cursor-pointer font-medium text-indigo-600 transition hover:text-indigo-700'
-																>
-																	{log.chemical.name}
+
+															{log.chemical && (
+																<span className='ml-1.5 text-sm'>
+																	(
+																	<span
+																		onClick={() =>
+																			navigate(`/inventory/${log.chemical._id}`)
+																		}
+																		className='inline cursor-pointer font-medium text-indigo-600 transition hover:text-indigo-700'
+																	>
+																		{log.chemical.name}
+																	</span>
+																	)
 																</span>
-																)
-															</span>
+															)}
+
 															{log.changes && (
 																<span className='ml-1.5 text-sm'>
 																	-
@@ -338,6 +351,23 @@ const ActivityLogsTable = (props) => {
 																		className='ml-1.5 inline cursor-pointer font-medium text-indigo-600 transition hover:text-indigo-700'
 																	>
 																		View Changelog
+																	</span>
+																</span>
+															)}
+
+															{log.importLog && (
+																<span className='ml-1.5 text-sm'>
+																	-
+																	<span
+																		onClick={() =>
+																			viewImportLogHandler(
+																				log.importLog,
+																				FormatDate(log.date)
+																			)
+																		}
+																		className='ml-1.5 inline cursor-pointer font-medium text-indigo-600 transition hover:text-indigo-700'
+																	>
+																		View Import Log
 																	</span>
 																</span>
 															)}
@@ -379,6 +409,14 @@ const ActivityLogsTable = (props) => {
 					info={changelogInfo}
 					openModal={openChangelogModal}
 					setOpenModal={setOpenChangelogModal}
+				/>
+			)}
+
+			{openImportLogModal && importLogInfo && (
+				<ImportLogModal
+					info={importLogInfo}
+					openModal={openImportLogModal}
+					setOpenModal={setOpenImportLogModal}
 				/>
 			)}
 		</>
