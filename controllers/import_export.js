@@ -47,28 +47,36 @@ exports.importChemicals = async (req, res, next) => {
 			errorMessage = validate(chemical, index)
 			if (errorMessage) break
 
-			await addChemical(
-				foundLab,
-				locations,
-				CASs,
-				chemical,
-				index,
-				session,
-				results
-			)
-		}
+			const foundChemical =
+				chemical._id !== '' ? await Chemical.findById(chemical._id) : ''
 
-		await Activity.create(
-			[
-				{
-					lab: foundLab._id,
-					user: req.user._id,
-					description: 'Import successful.',
-					importLog: results,
-				},
-			],
-			{ session }
-		)
+			if (foundChemical && foundChemical.lab.equals(foundLab._id)) {
+				const currentLocation = locations.find((location) =>
+					location._id.equals(foundChemical.locationId)
+				)
+
+				await updateChemical(
+					foundLab,
+					currentLocation,
+					locations,
+					foundChemical,
+					chemical,
+					index,
+					session,
+					results
+				)
+			} else {
+				await addChemical(
+					foundLab,
+					locations,
+					CASs,
+					chemical,
+					index,
+					session,
+					results
+				)
+			}
+		}
 
 		if (errorMessage) {
 			await session.abortTransaction()
@@ -79,8 +87,19 @@ exports.importChemicals = async (req, res, next) => {
 				error: errorMessage,
 			})
 		} else {
-			//await session.commitTransaction()
-			await session.abortTransaction()
+			await Activity.create(
+				[
+					{
+						lab: foundLab._id,
+						user: req.user._id,
+						description: 'Import successful.',
+						importLog: results,
+					},
+				],
+				{ session }
+			)
+
+			await session.commitTransaction()
 			session.endSession()
 
 			res.status(200).json({
@@ -149,6 +168,7 @@ const CHEMICAL_STATUS = [
 	'expired',
 	'disposed',
 ]
+const DATE_REGEX = /^(0?[1-9]|[12][0-9]|3[01])[/](0?[1-9]|1[012])[/]\d{4}$/
 
 const formatDate = (date) => new Date(date.split('/').reverse().join('-'))
 
@@ -215,17 +235,21 @@ const validate = (chemical, index) => {
 			!CHEMICAL_STATUS.includes(chemical.status.toLowerCase()):
 			errorMessage = 'Invalid Status.'
 			break
-		case formatDate(chemical.dateIn).toString() === 'Invalid Date':
+		case !DATE_REGEX.test(chemical.dateIn) &&
+			formatDate(chemical.dateIn).toString() === 'Invalid Date':
 			errorMessage = 'Invalid Date In.'
 			break
 		case chemical.dateOpen !== '' &&
+			!DATE_REGEX.test(chemical.dateOpen) &&
 			formatDate(chemical.dateOpen).toString() === 'Invalid Date':
 			errorMessage = 'Invalid Date Open.'
 			break
-		case formatDate(chemical.expirationDate).toString() === 'Invalid Date':
+		case !DATE_REGEX.test(chemical.expirationDate) &&
+			formatDate(chemical.expirationDate).toString() === 'Invalid Date':
 			errorMessage = 'Invalid Expiration Date.'
 			break
 		case chemical.disposedDate !== '' &&
+			!DATE_REGEX.test(chemical.disposedDate) &&
 			formatDate(chemical.disposedDate).toString() === 'Invalid Date':
 			errorMessage = 'Invalid Disposed Date.'
 			break
@@ -304,37 +328,41 @@ const addChemical = async (
 			chemicalData.dateOpen = dateOpen
 		}
 
-		const location = locations.find(
-			(location) =>
-				location.name.toLowerCase() === chemical.location.toLowerCase()
-		)
-
-		if (!location) {
-			const updatedLab = await Lab.findOneAndUpdate(
-				{ _id: lab._id },
-				{
-					$push: {
-						locations: {
-							name: chemical.location,
-							storageGroups: STORAGE_GROUPS.map((group) => group.toUpperCase()),
-						},
-					},
-					$set: {
-						lastUpdated: Date.now(),
-					},
-				},
-				{ new: true, session }
-			)
-
-			const newLocation = updatedLab.locations.find(
+		if (chemical.location !== '') {
+			const location = locations.find(
 				(location) =>
 					location.name.toLowerCase() === chemical.location.toLowerCase()
 			)
 
-			chemicalData.locationId = newLocation._id
-			locations.push({ _id: newLocation._id, name: chemical.location })
-		} else {
-			chemicalData.locationId = location._id
+			if (!location) {
+				const updatedLab = await Lab.findOneAndUpdate(
+					{ _id: lab._id },
+					{
+						$push: {
+							locations: {
+								name: chemical.location,
+								storageGroups: STORAGE_GROUPS.map((group) =>
+									group.toUpperCase()
+								),
+							},
+						},
+						$set: {
+							lastUpdated: Date.now(),
+						},
+					},
+					{ new: true, session }
+				)
+
+				const newLocation = updatedLab.locations.find(
+					(location) =>
+						location.name.toLowerCase() === chemical.location.toLowerCase()
+				)
+
+				chemicalData.locationId = newLocation._id
+				locations.push({ _id: newLocation._id, name: chemical.location })
+			} else {
+				chemicalData.locationId = location._id
+			}
 		}
 
 		const foundCAS = CASs.find((CAS) => CAS.CASNo === CASNo)
@@ -393,7 +421,7 @@ const addChemical = async (
 
 		if (disposedDate) {
 			await Lab.updateOne(
-				lab,
+				{ _id: lab._id },
 				{
 					$push: {
 						disposedChemicals: newChemical[0]._id,
@@ -406,7 +434,7 @@ const addChemical = async (
 			)
 		} else {
 			await Lab.updateOne(
-				lab,
+				{ _id: lab._id },
 				{
 					$push: {
 						chemicals: newChemical[0]._id,
@@ -419,11 +447,334 @@ const addChemical = async (
 			)
 		}
 
-		results.new.push({ index, CASNo: chemical.CASNo, name: chemical.name })
+		results.new.push({
+			index,
+			_id: newChemical[0]._id,
+			CASNo,
+			name: newChemical[0].name,
+		})
 	} catch (error) {
 		results.failed.push({
 			index,
-			CASNo: chemical.CASNo,
+			CASNo,
+			name: chemical.name,
+			reason: error.message,
+		})
+		return
+	}
+}
+
+const updateChemical = async (
+	lab,
+	currentLocation,
+	locations,
+	foundChemical,
+	chemical,
+	index,
+	session,
+	results
+) => {
+	try {
+		const today = new Date()
+		today.setUTCHours(0, 0, 0, 0)
+
+		const CASNo = chemical.CASNo
+		const dateIn = formatDate(chemical.dateIn)
+		const dateOpen =
+			chemical.dateOpen !== '' ? formatDate(chemical.dateOpen) : ''
+		const expirationDate = formatDate(chemical.expirationDate)
+		const disposedDate =
+			chemical.disposedDate !== '' ? formatDate(chemical.disposedDate) : ''
+
+		let status = 'Normal'
+
+		if (disposedDate) {
+			status = 'Disposed'
+		} else {
+			if (Number(chemical.amount) <= Number(chemical.minAmount)) {
+				status = 'Low Amount'
+			}
+
+			if (new Date(expirationDate) < today) {
+				status = 'Expired'
+			} else {
+				const future = new Date(
+					today.setDate(today.getDate() + settings.DAY_BEFORE_EXP)
+				)
+				if (new Date(expirationDate) < future) {
+					status = 'Expiring Soon'
+				}
+			}
+		}
+
+		const updateQuery = {}
+		const removeQuery = {}
+		let changes = ''
+		let isUnitChanged = false
+
+		if (status && status !== foundChemical.status) {
+			updateQuery.status = status
+			changes += `Status:\n${foundChemical.status} → ${status}\n\n`
+
+			if (status === 'Disposed') {
+				updateQuery.disposedDate = disposedDate
+
+				await Lab.updateOne(
+					{ _id: lab._id },
+					{
+						$pull: {
+							chemicals: chemical._id,
+						},
+						$push: {
+							disposedChemicals: chemical._id,
+						},
+						$set: {
+							lastUpdated: Date.now(),
+						},
+					},
+					{ session }
+				)
+			} else if (foundChemical.disposedDate) {
+				removeQuery.disposedDate = ''
+				changes += `Disposed Date:\n${new Date(
+					foundChemical.disposedDate
+				).toLocaleDateString('en-CA')} → -\n\n`
+
+				await Lab.updateOne(
+					{ _id: lab._id },
+					{
+						$pull: {
+							disposedChemicals: chemical._id,
+						},
+						$push: {
+							chemicals: chemical._id,
+						},
+						$set: {
+							lastUpdated: Date.now(),
+						},
+					},
+					{ session }
+				)
+			}
+		}
+
+		if (chemical.name && chemical.name !== foundChemical.name) {
+			updateQuery.name = chemical.name
+			changes += `Name:\n${foundChemical.name} → ${chemical.name}\n\n`
+		}
+
+		if (chemical.state && chemical.state !== foundChemical.state) {
+			updateQuery.state = chemical.state
+			changes += `State:\n${foundChemical.state} → ${chemical.state}\n\n`
+		}
+
+		if (chemical.unit && chemical.unit !== foundChemical.unit) {
+			updateQuery.unit = chemical.unit
+			changes += `Unit:\n${foundChemical.unit} → ${chemical.unit}\n\n`
+			isUnitChanged = true
+		}
+
+		if (
+			chemical.containerSize &&
+			Number(chemical.containerSize).toFixed(2) !==
+				Number(foundChemical.containerSize).toFixed(2)
+		) {
+			updateQuery.containerSize = Number(chemical.containerSize).toFixed(2)
+			changes += `Container Size:\n${foundChemical.containerSize} ${
+				foundChemical.unit
+			} → ${chemical.containerSize} ${
+				isUnitChanged ? updateQuery.unit : foundChemical.unit
+			}\n\n`
+		}
+
+		if (
+			chemical.amount &&
+			Number(chemical.amount).toFixed(2) !==
+				Number(foundChemical.amount).toFixed(2)
+		) {
+			updateQuery.amount = Number(chemical.amount).toFixed(2)
+			changes += `Amount:\n${foundChemical.amount} ${foundChemical.unit} → ${
+				chemical.amount
+			} ${isUnitChanged ? updateQuery.unit : foundChemical.unit}\n\n`
+		}
+
+		if (
+			chemical.minAmount &&
+			Number(chemical.minAmount).toFixed(2) !==
+				Number(foundChemical.minAmount).toFixed(2)
+		) {
+			updateQuery.minAmount = Number(chemical.minAmount).toFixed(2)
+			changes += `Minimum Amount:\n${foundChemical.minAmount} ${
+				foundChemical.unit
+			} → ${chemical.minAmount} ${
+				isUnitChanged ? updateQuery.unit : foundChemical.unit
+			}\n\n`
+		}
+
+		if (chemical.location !== '') {
+			const location = locations.find(
+				(location) =>
+					location.name.toLowerCase() === chemical.location.toLowerCase()
+			)
+
+			if (!location) {
+				const updatedLab = await Lab.findOneAndUpdate(
+					{ _id: lab._id },
+					{
+						$push: {
+							locations: {
+								name: chemical.location,
+								storageGroups: STORAGE_GROUPS.map((group) =>
+									group.toUpperCase()
+								),
+							},
+						},
+						$set: {
+							lastUpdated: Date.now(),
+						},
+					},
+					{ new: true, session }
+				)
+
+				const newLocation = updatedLab.locations.find(
+					(location) =>
+						location.name.toLowerCase() === chemical.location.toLowerCase()
+				)
+
+				updateQuery.locationId = newLocation._id
+				changes += `Location:\n${
+					currentLocation ? currentLocation.name : '-'
+				} → ${chemical.location}\n\n`
+				locations.push({ _id: newLocation._id, name: chemical.location })
+			} else {
+				if (!currentLocation || currentLocation._id !== location._id) {
+					updateQuery.locationId = location._id
+					changes += `Location:\n${
+						currentLocation ? currentLocation.name : '-'
+					} → ${location.name}\n\n`
+				}
+			}
+		} else {
+			if (currentLocation) {
+				removeQuery.locationId = ''
+				changes += `Location:\n${currentLocation.name} → -\n\n`
+			}
+		}
+
+		if (chemical.storageGroup !== foundChemical.storageGroup) {
+			updateQuery.storageGroup = chemical.storageGroup
+			changes += `Storage Group:\n${
+				foundChemical.storageGroup ? 'Group ' + foundChemical.storageGroup : '-'
+			} → ${chemical.storageGroup ? 'Group ' + chemical.storageGroup : '-'}\n\n`
+		}
+
+		if (
+			dateIn &&
+			new Date(dateIn).getTime() !== new Date(foundChemical.dateIn).getTime()
+		) {
+			updateQuery.dateIn = dateIn
+			changes += `Date In:\n${new Date(foundChemical.dateIn).toLocaleDateString(
+				'en-CA'
+			)} → ${new Date(dateIn).toLocaleDateString('en-CA')}\n\n`
+		}
+
+		if (dateOpen === '' && foundChemical.dateOpen) {
+			removeQuery.dateOpen = ''
+			changes += `Date Open:\n${new Date(
+				foundChemical.dateOpen
+			).toLocaleDateString('en-CA')} → -\n\n`
+		} else if (
+			dateOpen &&
+			new Date(dateOpen).getTime() !==
+				new Date(foundChemical.dateOpen).getTime()
+		) {
+			updateQuery.dateOpen = dateOpen
+			changes += `Date Open:\n${
+				foundChemical.dateOpen
+					? new Date(foundChemical.dateOpen).toLocaleDateString('en-CA')
+					: '-'
+			} → ${new Date(dateOpen).toLocaleDateString('en-CA')}\n\n`
+		}
+
+		if (
+			expirationDate &&
+			new Date(expirationDate).getTime() !==
+				new Date(foundChemical.expirationDate).getTime()
+		) {
+			updateQuery.expirationDate = expirationDate
+			changes += `Expiration Date:\n${new Date(
+				foundChemical.expirationDate
+			).toLocaleDateString('en-CA')} → ${new Date(
+				expirationDate
+			).toLocaleDateString('en-CA')}\n\n`
+		}
+
+		if (
+			disposedDate &&
+			new Date(disposedDate).getTime() !==
+				new Date(foundChemical.disposedDate).getTime()
+		) {
+			const today = new Date()
+			disposedDate.setUTCHours(
+				today.getUTCHours(),
+				today.getUTCMinutes(),
+				today.getUTCSeconds(),
+				today.getUTCMilliseconds()
+			)
+
+			updateQuery.disposedDate = disposedDate
+			changes += `Disposed Date:\n${
+				foundChemical.disposedDate
+					? new Date(foundChemical.disposedDate).toLocaleDateString('en-CA')
+					: '-'
+			} → ${new Date(disposedDate).toLocaleDateString('en-CA')}\n\n`
+		}
+
+		if (chemical.supplier !== foundChemical.supplier) {
+			updateQuery.supplier = chemical.supplier
+			changes += `Supplier:\n${
+				foundChemical.supplier ? foundChemical.supplier : '-'
+			} → ${chemical.supplier ? chemical.supplier : '-'}\n\n`
+		}
+
+		if (chemical.brand !== foundChemical.brand) {
+			updateQuery.brand = chemical.brand
+			changes += `Brand:\n${
+				foundChemical.brand ? foundChemical.brand : '-'
+			} → ${chemical.brand ? chemical.brand : '-'}\n\n`
+		}
+
+		if (chemical.notes !== foundChemical.notes) {
+			updateQuery.notes = chemical.notes
+			changes += `Notes:\n${
+				foundChemical.notes ? foundChemical.notes : '-'
+			}\n↓\n${chemical.notes ? chemical.notes : '-'}\n\n`
+		}
+
+		if (changes !== '') {
+			updateQuery.lastUpdated = Date.now()
+
+			await Chemical.updateOne(
+				{ _id: foundChemical._id },
+				{
+					$set: updateQuery,
+					$unset: removeQuery,
+				},
+				{ session }
+			)
+		}
+
+		results.updated.push({
+			index,
+			_id: chemical._id,
+			CASNo,
+			name: chemical.name,
+			changes: changes ? changes : 'No changes',
+		})
+	} catch (error) {
+		results.failed.push({
+			index,
+			CASNo,
 			name: chemical.name,
 			reason: error.message,
 		})

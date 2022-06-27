@@ -428,7 +428,7 @@ exports.updateChemical = async (req, res, next) => {
 				location._id.equals(foundChemical.locationId)
 			)
 
-			changes += `Location:\n${oldLocation.name ? oldLocation.name : '-'} → ${
+			changes += `Location:\n${oldLocation ? oldLocation.name : '-'} → ${
 				foundLocation.name
 			}\n\n`
 		}

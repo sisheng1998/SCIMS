@@ -10,14 +10,24 @@ const ImportLog = ({ results }) => {
 		`Failed (${results.failed.length})`,
 	]
 
+	const total =
+		results.new.length + results.updated.length + results.failed.length
+
 	return (
 		<>
-			<div className='mb-5 grid grid-cols-5 gap-4'>
-				<div className='col-span-2'>
-					<label htmlFor='filename' className='mb-0.5 text-gray-500'>
-						CSV File Name
+			<label htmlFor='filename' className='mb-0.5 text-gray-500'>
+				CSV File Name
+			</label>
+			<p className='truncate font-medium'>{results.filename}</p>
+
+			<div className='mb-6 mt-6 grid grid-cols-4 gap-4'>
+				<div>
+					<label htmlFor='total' className='mb-0.5 text-gray-500'>
+						Total
 					</label>
-					<p className='truncate font-medium'>{results.filename}</p>
+					<p className='truncate font-medium'>
+						{total} Chemical{total > 1 ? 's' : ''}
+					</p>
 				</div>
 
 				<div>

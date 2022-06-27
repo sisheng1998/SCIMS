@@ -108,7 +108,8 @@ const HEADERS = [
 		label: 'CAS No.*',
 		key: 'CASNo',
 		sample: '100-00-5',
-		description: 'Format: XXXXXXX-YY-Z',
+		description:
+			"Can't be changed once the chemical is added. Format: XXXXXXX-YY-Z",
 	},
 	{
 		label: 'Name*',
@@ -228,6 +229,7 @@ const CHEMICAL_STATUS = [
 	'expired',
 	'disposed',
 ]
+const DATE_REGEX = /^(0?[1-9]|[12][0-9]|3[01])[/](0?[1-9]|1[012])[/]\d{4}$/
 
 const Validate = (key, value) => {
 	switch (key) {
@@ -259,8 +261,9 @@ const Validate = (key, value) => {
 				return true
 			else
 				return (
+					DATE_REGEX.test(value) &&
 					new Date(value.split('/').reverse().join('-')).toString() !==
-					'Invalid Date'
+						'Invalid Date'
 				)
 		case 'supplier':
 		case 'brand':

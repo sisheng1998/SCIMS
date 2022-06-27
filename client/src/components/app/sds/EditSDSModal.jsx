@@ -196,12 +196,13 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
 												Safety Data Sheet (SDS)
 											</label>
 
-											{SDS.toString().toLowerCase().endsWith('.pdf') && (
+											{(SDS.toString().toLowerCase().endsWith('.pdf') ||
+												SDS === 'No SDS') && (
 												<span
 													onClick={() => setSDS('')}
 													className='mb-2 cursor-pointer text-xs font-medium text-indigo-600 transition hover:text-indigo-700'
 												>
-													Upload New SDS
+													{SDS === 'No SDS' ? 'Upload SDS' : 'Upload New SDS'}
 												</span>
 											)}
 										</div>

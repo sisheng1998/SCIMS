@@ -1,6 +1,9 @@
 import React from 'react'
 import FormatBytes from '../../utils/FormatBytes'
-import { DocumentTextIcon } from '@heroicons/react/outline'
+import {
+	DocumentTextIcon,
+	ExclamationCircleIcon,
+} from '@heroicons/react/outline'
 import { PaperClipIcon } from '@heroicons/react/solid'
 import useAuth from '../../../hooks/useAuth'
 
@@ -19,6 +22,11 @@ const RenderPDF = ({ PDF, setPDF, extractionResult }) => {
 						View
 					</a>
 				</div>
+			) : PDF === 'No SDS' ? (
+				<p className='mt-2 flex items-center text-sm font-medium text-red-600'>
+					<ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' /> No SDS
+					found, kindly upload one for this chemical.
+				</p>
 			) : (
 				<>
 					<div className='mt-3 flex items-center'>

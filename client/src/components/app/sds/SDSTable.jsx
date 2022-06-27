@@ -14,6 +14,7 @@ import EditSDSModal from './EditSDSModal'
 import ViewSDSModal from './ViewSDSModal'
 import { FormatChemicalDate } from '../../utils/FormatDate'
 import useMobile from '../../../hooks/useMobile'
+import { ExclamationCircleIcon } from '@heroicons/react/outline'
 
 const tableHeaders = [
 	{
@@ -188,6 +189,13 @@ const SDSTable = ({ SDS, setRefresh }) => {
 								key={CAS._id}
 								className='mb-4 rounded-lg bg-white p-4 text-sm shadow'
 							>
+								{CAS.SDS === 'No SDS' && (
+									<p className='mb-2 flex items-center text-xs font-medium text-red-600'>
+										<ExclamationCircleIcon className='mr-1.5 inline-block h-4 w-4 shrink-0 stroke-2' />{' '}
+										No SDS found, kindly upload one for this chemical.
+									</p>
+								)}
+
 								<div className='flex items-start justify-between space-x-4'>
 									<div>
 										<p className='text-lg font-medium leading-6 text-gray-900'>
@@ -196,14 +204,16 @@ const SDSTable = ({ SDS, setRefresh }) => {
 										<p className='text-gray-500'>{CAS.chemicalName}</p>
 									</div>
 
-									<a
-										href={auth.SDSPath + CAS.SDS}
-										target='_blank'
-										rel='noreferrer'
-										className='inline-flex items-center font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
-									>
-										View
-									</a>
+									{CAS.SDS !== 'No SDS' && (
+										<a
+											href={auth.SDSPath + CAS.SDS}
+											target='_blank'
+											rel='noreferrer'
+											className='inline-flex items-center font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+										>
+											View
+										</a>
+									)}
 								</div>
 
 								{CAS.classifications.length === 0 &&
@@ -299,7 +309,17 @@ const SDSTable = ({ SDS, setRefresh }) => {
 									) : (
 										currentItems.map((CAS) => (
 											<tr className='hover:bg-indigo-50/30' key={CAS._id}>
-												<td className='px-6 py-4'>{CAS.CASNo}</td>
+												<td className='px-6 py-4'>
+													{CAS.CASNo}
+													{CAS.SDS === 'No SDS' && (
+														<span
+															className='tooltip ml-1.5 whitespace-normal'
+															data-tooltip='No SDS found, kindly upload one for this chemical.'
+														>
+															<ExclamationCircleIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
+														</span>
+													)}
+												</td>
 
 												<td className='px-6 py-4'>{CAS.chemicalName}</td>
 

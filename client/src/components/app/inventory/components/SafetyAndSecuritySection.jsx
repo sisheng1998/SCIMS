@@ -24,7 +24,7 @@ const SafetyAndSecuritySection = ({
 	const [extractionResult, setExtractionResult] = useState('')
 
 	useEffect(() => {
-		if (SDS.toString().toLowerCase().endsWith('.pdf')) {
+		if (SDS.toString().toLowerCase().endsWith('.pdf') || SDS === 'No SDS') {
 			setValidated &&
 				setValidated((prev) => {
 					return {
@@ -52,7 +52,7 @@ const SafetyAndSecuritySection = ({
 		})
 	}, [classifications, COCs, setChemicalData, setValidated, SDS])
 
-	return SDS.toString().toLowerCase().endsWith('.pdf') ? (
+	return SDS.toString().toLowerCase().endsWith('.pdf') || SDS === 'No SDS' ? (
 		<>
 			<label htmlFor='SDS' className='mb-1'>
 				Safety Data Sheet (SDS)

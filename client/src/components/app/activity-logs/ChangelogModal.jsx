@@ -27,7 +27,7 @@ const ChangelogModal = ({ info, openModal, setOpenModal }) => {
 						/>
 					</div>
 
-					<p className='h-full max-h-80 overflow-auto whitespace-pre-line'>
+					<p className='-mb-6 h-full max-h-80 overflow-auto whitespace-pre-line'>
 						{info.changelog}
 					</p>
 
