@@ -324,8 +324,20 @@ const addChemical = async (
 			notes: chemical.notes,
 		}
 
-		if (dateOpen !== '') {
+		if (dateOpen) {
 			chemicalData.dateOpen = dateOpen
+		}
+
+		if (disposedDate) {
+			const today = new Date()
+			disposedDate.setUTCHours(
+				today.getUTCHours(),
+				today.getUTCMinutes(),
+				today.getUTCSeconds(),
+				today.getUTCMilliseconds()
+			)
+
+			chemicalData.disposedDate = disposedDate
 		}
 
 		if (chemical.location !== '') {
