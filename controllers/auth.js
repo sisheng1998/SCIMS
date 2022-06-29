@@ -330,6 +330,7 @@ exports.resetPassword = async (req, res, next) => {
 		}
 
 		user.password = req.body.password
+		user.refreshToken = undefined
 		user.resetPasswordToken = undefined
 		user.resetPasswordExpire = undefined
 		user.lastUpdated = Date.now()
