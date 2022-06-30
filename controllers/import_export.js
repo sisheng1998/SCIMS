@@ -9,6 +9,8 @@ const settings = require('../config/settings.json')
 const COCLists = require('../chemical_data/coc.json')
 const GHSLists = require('../chemical_data/ghs.json')
 const pictograms = require('../chemical_data/pictograms.json')
+const fs = require('fs')
+const path = require('path')
 
 exports.importChemicals = async (req, res, next) => {
 	const { labId, chemicals, filename } = req.body
@@ -66,6 +68,8 @@ exports.importChemicals = async (req, res, next) => {
 					results
 				)
 			} else {
+				const idNotExist = chemical._id !== '' && foundChemical === null
+
 				await addChemical(
 					foundLab,
 					locations,
@@ -73,7 +77,8 @@ exports.importChemicals = async (req, res, next) => {
 					chemical,
 					index,
 					session,
-					results
+					results,
+					idNotExist
 				)
 			}
 		}
@@ -272,7 +277,8 @@ const addChemical = async (
 	chemical,
 	index,
 	session,
-	results
+	results,
+	idNotExist
 ) => {
 	try {
 		const today = new Date()
@@ -322,6 +328,10 @@ const addChemical = async (
 			supplier: chemical.supplier,
 			brand: chemical.brand,
 			notes: chemical.notes,
+		}
+
+		if (idNotExist) {
+			chemicalData._id = chemical._id
 		}
 
 		if (dateOpen) {
@@ -379,6 +389,10 @@ const addChemical = async (
 
 		const foundCAS = CASs.find((CAS) => CAS.CASNo === CASNo)
 		if (!foundCAS) {
+			const isSDSExisted = fs.existsSync(
+				path.resolve(__dirname, `../public/SDSs/${CASNo}.pdf`)
+			)
+
 			let classifications = []
 			let COCs = []
 
@@ -403,7 +417,7 @@ const addChemical = async (
 					{
 						CASNo,
 						chemicalName: chemical.name,
-						SDS: 'No SDS',
+						SDS: isSDSExisted ? `${CASNo}.pdf` : 'No SDS',
 						classifications,
 						COCs,
 					},
