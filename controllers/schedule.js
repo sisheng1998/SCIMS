@@ -94,6 +94,7 @@ module.exports = async () => {
 	// At 00:15 (UTC) everyday - Update all chemical status
 	schedule.scheduleJob('15 8 * * *', async () => {
 		const today = new Date()
+		today.setUTCHours(0, 0, 0, 0)
 		const future = new Date(
 			new Date().setDate(today.getDate() + settings.DAY_BEFORE_EXP)
 		)

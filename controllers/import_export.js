@@ -735,6 +735,16 @@ const updateChemical = async (
 			).toLocaleDateString('en-CA')}\n\n`
 		}
 
+		if (foundChemical.disposedDate) {
+			const existedDisposedDate = new Date(foundChemical.disposedDate)
+			disposedDate.setUTCHours(
+				existedDisposedDate.getUTCHours(),
+				existedDisposedDate.getUTCMinutes(),
+				existedDisposedDate.getUTCSeconds(),
+				existedDisposedDate.getUTCMilliseconds()
+			)
+		}
+
 		if (
 			disposedDate &&
 			new Date(disposedDate).getTime() !==
