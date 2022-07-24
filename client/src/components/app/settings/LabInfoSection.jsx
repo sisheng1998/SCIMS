@@ -19,7 +19,7 @@ const LabInfoSection = ({ lab }) => {
 
 			<StaticLabInfo
 				labUsersNo={lab.labUsers.length + 1}
-				chemicalsNo={lab.chemicals.length}
+				chemicalsNo={lab.chemicals.length + lab.disposedChemicals.length}
 			/>
 
 			<button

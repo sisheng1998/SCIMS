@@ -243,7 +243,9 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
 
 								<StaticLabInfo
 									labUsersNo={lab.labUsers.length + 1}
-									chemicalsNo={lab.chemicals.length}
+									chemicalsNo={
+										lab.chemicals.length + lab.disposedChemicals.length
+									}
 								/>
 
 								<div className='mb-9 mt-6 flex items-center justify-between space-x-6 text-sm text-gray-500'>

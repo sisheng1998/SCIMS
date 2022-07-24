@@ -92,7 +92,7 @@ const notifyUsers = (chemicals, type) => {
 
 module.exports = async () => {
 	// At 00:15 (UTC) everyday - Update all chemical status
-	schedule.scheduleJob('15 8 * * *', async () => {
+	schedule.scheduleJob('Daily Status Update', '15 8 * * *', async () => {
 		const today = new Date()
 		today.setUTCHours(0, 0, 0, 0)
 		const future = new Date(
@@ -177,7 +177,7 @@ module.exports = async () => {
 	})
 
 	// At 00:30 (UTC) on Monday - Send weekly report to lab owner
-	schedule.scheduleJob('30 8 * * 1', async () => {
+	schedule.scheduleJob('Weekly Report', '30 8 * * 1', async () => {
 		const today = new Date()
 		const past = new Date(new Date().setDate(today.getDate() - 7))
 
@@ -262,24 +262,33 @@ module.exports = async () => {
 
 				const disposedChemicals = lab.disposedChemicals
 
-				const emailOptions = {
-					to: lab.labOwner.email,
-					subject: `SCIMS Weekly Report (${todayDate})`,
-					template: 'weekly_report',
-					context: {
-						todayDate,
-						pastDate,
-						lab: lab.labName,
-						usageRecords,
-						newChemicals,
-						lowAmountChemicals,
-						expiringChemicals,
-						expiredChemicals,
-						disposedChemicals,
-					},
-				}
+				if (
+					usageRecords.length !== 0 ||
+					newChemicals.length !== 0 ||
+					lowAmountChemicals.length !== 0 ||
+					expiringChemicals.length !== 0 ||
+					expiredChemicals.length !== 0 ||
+					disposedChemicals.length !== 0
+				) {
+					const emailOptions = {
+						to: lab.labOwner.email,
+						subject: `SCIMS Weekly Report (${todayDate})`,
+						template: 'weekly_report',
+						context: {
+							todayDate,
+							pastDate,
+							lab: lab.labName,
+							usageRecords,
+							newChemicals,
+							lowAmountChemicals,
+							expiringChemicals,
+							expiredChemicals,
+							disposedChemicals,
+						},
+					}
 
-				sendEmail(emailOptions)
+					sendEmail(emailOptions)
+				}
 			})
 		} catch (error) {
 			logEvents(`${error.name}: ${error.message}`, 'scheduleErrorLogs.txt')
