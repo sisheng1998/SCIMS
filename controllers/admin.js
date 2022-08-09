@@ -613,7 +613,7 @@ exports.updateSettings = async (req, res, next) => {
 	const settings = req.body
 
 	try {
-		await Config.findOneAndUpdate({}, settings)
+		await Config.create([settings])
 
 		res.status(200).json({
 			success: true,
