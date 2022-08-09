@@ -1,10 +1,12 @@
 const nodemailer = require('nodemailer')
-const settings = require('../config/settings.json')
+const Config = require('../models/Config')
 const logEvents = require('../middleware/logEvents')
 const hbs = require('nodemailer-express-handlebars')
 const path = require('path')
 
-const sendEmail = (options) => {
+const sendEmail = async (options) => {
+	const settings = await Config.findOne({}, '-_id')
+
 	const EMAIL_FROM = `${
 		options.FROM_NAME ? options.FROM_NAME : settings.FROM_NAME
 	} <${options.FROM_EMAIL ? options.FROM_EMAIL : settings.FROM_EMAIL}>`

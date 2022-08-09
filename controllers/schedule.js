@@ -5,7 +5,7 @@ const Lab = require('../models/Lab')
 const Subscriber = require('../models/Subscriber')
 const Notification = require('../models/Notification')
 const Usage = require('../models/Usage')
-const settings = require('../config/settings.json')
+const Config = require('../models/Config')
 const ROLES_LIST = require('../config/roles_list')
 const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
@@ -95,8 +95,11 @@ module.exports = async () => {
 	schedule.scheduleJob('Daily Status Update', '15 8 * * *', async () => {
 		const today = new Date()
 		today.setUTCHours(0, 0, 0, 0)
+
+		const config = await Config.findOne({}, '-_id')
+
 		const future = new Date(
-			new Date().setDate(today.getDate() + settings.DAY_BEFORE_EXP)
+			new Date().setDate(today.getDate() + config.DAY_BEFORE_EXP)
 		)
 
 		try {

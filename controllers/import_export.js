@@ -3,9 +3,9 @@ const Lab = require('../models/Lab')
 const Chemical = require('../models/Chemical')
 const CAS = require('../models/CAS')
 const Activity = require('../models/Activity')
+const Config = require('../models/Config')
 const { startSession } = require('mongoose')
 const generateQRCode = require('../utils/generateQRCode')
-const settings = require('../config/settings.json')
 const COCLists = require('../chemical_data/coc.json')
 const GHSLists = require('../chemical_data/ghs.json')
 const pictograms = require('../chemical_data/pictograms.json')
@@ -304,9 +304,12 @@ const addChemical = async (
 			if (new Date(expirationDate) < today) {
 				status = 'Expired'
 			} else {
+				const config = await Config.findOne({}, '-_id')
+
 				const future = new Date(
-					today.setDate(today.getDate() + settings.DAY_BEFORE_EXP)
+					today.setDate(today.getDate() + config.DAY_BEFORE_EXP)
 				)
+
 				if (new Date(expirationDate) < future) {
 					status = 'Expiring Soon'
 				}
@@ -524,9 +527,12 @@ const updateChemical = async (
 			if (new Date(expirationDate) < today) {
 				status = 'Expired'
 			} else {
+				const config = await Config.findOne({}, '-_id')
+
 				const future = new Date(
-					today.setDate(today.getDate() + settings.DAY_BEFORE_EXP)
+					today.setDate(today.getDate() + config.DAY_BEFORE_EXP)
 				)
+
 				if (new Date(expirationDate) < future) {
 					status = 'Expiring Soon'
 				}

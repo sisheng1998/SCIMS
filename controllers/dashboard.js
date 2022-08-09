@@ -2,7 +2,7 @@ const ErrorResponse = require('../utils/errorResponse')
 const User = require('../models/User')
 const Chemical = require('../models/Chemical')
 const Lab = require('../models/Lab')
-const settings = require('../config/settings.json')
+const Config = require('../models/Config')
 
 // Dashboard
 exports.getInfo = async (req, res, next) => {
@@ -11,6 +11,8 @@ exports.getInfo = async (req, res, next) => {
 	if (!labId) {
 		return next(new ErrorResponse('Missing required value.', 400))
 	}
+
+	const config = await Config.findOne({}, '-_id')
 
 	const today = new Date()
 	const past = new Date(today.setDate(today.getDate() - 30))
@@ -26,7 +28,7 @@ exports.getInfo = async (req, res, next) => {
 		expiredChemicals: 0,
 		disposedChemicals: 0,
 		chemicals: [],
-		dayBeforeExp: settings.DAY_BEFORE_EXP,
+		dayBeforeExp: config.DAY_BEFORE_EXP,
 	}
 
 	try {

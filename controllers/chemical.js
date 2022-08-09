@@ -6,12 +6,12 @@ const Usage = require('../models/Usage')
 const Activity = require('../models/Activity')
 const User = require('../models/User')
 const Subscriber = require('../models/Subscriber')
+const Config = require('../models/Config')
 const Notification = require('../models/Notification')
 const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId
 const generateQRCode = require('../utils/generateQRCode')
-const settings = require('../config/settings.json')
 const COCLists = require('../chemical_data/coc.json')
 const GHSLists = require('../chemical_data/ghs.json')
 const pictograms = require('../chemical_data/pictograms.json')
@@ -185,9 +185,12 @@ exports.addChemical = async (req, res, next) => {
 		if (new Date(expirationDate) < today) {
 			status = 'Expired'
 		} else {
+			const config = await Config.findOne({}, '-_id')
+
 			const future = new Date(
-				today.setDate(today.getDate() + settings.DAY_BEFORE_EXP)
+				today.setDate(today.getDate() + config.DAY_BEFORE_EXP)
 			)
+
 			if (new Date(expirationDate) < future) {
 				status = 'Expiring Soon'
 			}
@@ -346,9 +349,12 @@ exports.updateChemical = async (req, res, next) => {
 		if (new Date(expirationDate) < today) {
 			status = 'Expired'
 		} else {
+			const config = await Config.findOne({}, '-_id')
+
 			const future = new Date(
-				today.setDate(today.getDate() + settings.DAY_BEFORE_EXP)
+				today.setDate(today.getDate() + config.DAY_BEFORE_EXP)
 			)
+
 			if (new Date(expirationDate) < future) {
 				status = 'Expiring Soon'
 			}
@@ -836,9 +842,12 @@ exports.cancelDisposal = async (req, res, next) => {
 		if (new Date(foundChemical.expirationDate) < today) {
 			status = 'Expired'
 		} else {
+			const config = await Config.findOne({}, '-_id')
+
 			const future = new Date(
-				today.setDate(today.getDate() + settings.DAY_BEFORE_EXP)
+				today.setDate(today.getDate() + config.DAY_BEFORE_EXP)
 			)
+
 			if (new Date(foundChemical.expirationDate) < future) {
 				status = 'Expiring Soon'
 			}

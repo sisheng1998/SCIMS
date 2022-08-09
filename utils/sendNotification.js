@@ -1,10 +1,9 @@
 const webPush = require('web-push')
 const keys = require('../config/vapidKeys.json')
-const settings = require('../config/settings.json')
 const logEvents = require('../middleware/logEvents')
 
 webPush.setVapidDetails(
-	`mailto:${settings.FROM_EMAIL}`,
+	process.env.DOMAIN_NAME,
 	keys.PUBLIC_KEY,
 	keys.PRIVATE_KEY
 )

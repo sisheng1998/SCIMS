@@ -4,17 +4,14 @@ const User = require('../models/User')
 const Chemical = require('../models/Chemical')
 const Notification = require('../models/Notification')
 const Subscriber = require('../models/Subscriber')
+const Config = require('../models/Config')
 const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
 const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
-const fs = require('fs')
-const path = require('path')
-const settings = require('../config/settings.json')
 
 const UserInfo =
 	'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status'
-const SettingsPath = path.resolve(__dirname, '../config/settings.json')
 
 // Dashboard
 exports.getInfo = async (req, res, next) => {
@@ -52,7 +49,9 @@ exports.getInfo = async (req, res, next) => {
 		})
 
 		data.chemicals = await Chemical.find({}, 'name expirationDate')
-		data.dayBeforeExp = settings.DAY_BEFORE_EXP
+
+		const config = await Config.findOne({}, '-_id')
+		data.dayBeforeExp = config.DAY_BEFORE_EXP
 
 		res.status(200).json({
 			success: true,
@@ -599,11 +598,11 @@ exports.getUsers = async (req, res, next) => {
 // Settings
 exports.getSettings = async (req, res, next) => {
 	try {
-		const settings = fs.readFileSync(SettingsPath)
+		const settings = await Config.findOne({}, '-_id')
 
 		res.status(200).json({
 			success: true,
-			settings: JSON.parse(settings),
+			settings,
 		})
 	} catch (error) {
 		next(error)
@@ -614,7 +613,7 @@ exports.updateSettings = async (req, res, next) => {
 	const settings = req.body
 
 	try {
-		fs.writeFileSync(SettingsPath, JSON.stringify(settings, null, 2))
+		await Config.findOneAndUpdate({}, settings)
 
 		res.status(200).json({
 			success: true,
