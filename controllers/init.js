@@ -4,6 +4,7 @@ const User = require('../models/User')
 const Config = require('../models/Config')
 const init = require('../config/init.json')
 const ROLES_LIST = require('../config/roles_list')
+const logEvents = require('../middleware/logEvents')
 const { startSession } = require('mongoose')
 
 module.exports = async () => {
@@ -74,7 +75,7 @@ module.exports = async () => {
 			await session.abortTransaction()
 			session.endSession()
 
-			next(error)
+			logEvents(`${error.name}: ${error.message}`, 'initErrorLogs.txt')
 		}
 	}
 }
