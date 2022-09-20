@@ -68,7 +68,7 @@ const Settings = () => {
 				<div className='w-full max-w-md 2xl:max-w-xs xl:max-w-full'>
 					<h4>Email Configuration</h4>
 					<p className='text-sm text-gray-500'>
-						Settings for sending email with SMTP.
+						Settings for sending email with gmail.
 					</p>
 				</div>
 

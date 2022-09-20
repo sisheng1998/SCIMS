@@ -11,14 +11,6 @@ const ConfigSchema = new Schema(
 			type: String,
 			default: 'scims@domain.com',
 		},
-		EMAIL_HOST: {
-			type: String,
-			default: 'mail.domain.com',
-		},
-		EMAIL_PORT: {
-			type: Number,
-			default: 465,
-		},
 		EMAIL_USERNAME: {
 			type: String,
 			default: 'scims@domain.com',

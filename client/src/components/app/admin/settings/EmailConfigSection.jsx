@@ -35,41 +35,9 @@ const EmailConfigSection = ({ settings, setEditSuccess }) => {
 				</div>
 			</div>
 
-			<div className='mb-6 flex space-x-6'>
-				<div className='flex-1'>
-					<label htmlFor='host'>SMTP Host</label>
-					<input
-						className='w-full'
-						type='text'
-						name='host'
-						id='host'
-						readOnly
-						value={settings.EMAIL_HOST}
-					/>
-					<p className='mt-2 text-xs text-gray-400'>
-						Outgoing mail client server.
-					</p>
-				</div>
-
-				<div className='flex-1'>
-					<label htmlFor='port'>SMTP Port</label>
-					<input
-						className='w-full'
-						type='text'
-						name='port'
-						id='port'
-						readOnly
-						value={settings.EMAIL_PORT}
-					/>
-					<p className='mt-2 text-xs text-gray-400'>
-						Default port for the SMTP is 465.
-					</p>
-				</div>
-			</div>
-
 			<div className='flex space-x-6'>
 				<div className='flex-1'>
-					<label htmlFor='username'>SMTP Username</label>
+					<label htmlFor='username'>Gmail Username</label>
 					<input
 						className='w-full'
 						type='text'
@@ -78,13 +46,11 @@ const EmailConfigSection = ({ settings, setEditSuccess }) => {
 						readOnly
 						value={settings.EMAIL_USERNAME}
 					/>
-					<p className='mt-2 text-xs text-gray-400'>
-						Username for the mail client server.
-					</p>
+					<p className='mt-2 text-xs text-gray-400'>Username for the gmail.</p>
 				</div>
 
 				<div className='flex-1'>
-					<label htmlFor='password'>SMTP Password</label>
+					<label htmlFor='password'>App Password</label>
 					<input
 						className='w-full'
 						type='password'
@@ -94,7 +60,7 @@ const EmailConfigSection = ({ settings, setEditSuccess }) => {
 						value={settings.EMAIL_PASSWORD}
 					/>
 					<p className='mt-2 text-xs text-gray-400'>
-						Password for the mail client server.
+						Password for the custom app in gmail.
 					</p>
 				</div>
 			</div>

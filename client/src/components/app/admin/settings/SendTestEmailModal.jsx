@@ -99,24 +99,6 @@ const SendTestEmailModal = ({ emailConfig, openModal, setOpenModal }) => {
 								{emailConfig.FROM_NAME + ` <${emailConfig.FROM_EMAIL}>`}
 							</div>
 
-							<div className='flex space-x-6'>
-								<div className='flex-1'>
-									<label htmlFor='mailServer' className='mb-1'>
-										Mail Server (Host/Port)
-									</label>
-									{emailConfig.EMAIL_HOST + `:${emailConfig.EMAIL_PORT}`}
-								</div>
-
-								<div className='flex-1'>
-									<label htmlFor='serverUsername' className='mb-1'>
-										SMTP Username
-									</label>
-									{emailConfig.EMAIL_USERNAME}
-								</div>
-							</div>
-
-							<hr className='my-6 border-gray-200' />
-
 							<form
 								onSubmit={sendTestEmailHandler}
 								spellCheck='false'

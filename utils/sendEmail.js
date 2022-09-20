@@ -12,12 +12,7 @@ const sendEmail = async (options) => {
 	} <${options.FROM_EMAIL ? options.FROM_EMAIL : settings.FROM_EMAIL}>`
 
 	const transporter = nodemailer.createTransport({
-		host: options.EMAIL_HOST ? options.EMAIL_HOST : settings.EMAIL_HOST,
-		port: options.EMAIL_PORT ? options.EMAIL_PORT : settings.EMAIL_PORT,
-		secure:
-			(options.EMAIL_PORT ? options.EMAIL_PORT : settings.EMAIL_PORT) === 465
-				? true
-				: false,
+		service: 'gmail',
 		auth: {
 			user: options.EMAIL_USERNAME
 				? options.EMAIL_USERNAME
@@ -58,6 +53,7 @@ const sendEmail = async (options) => {
 				}`,
 				'emailErrorLogs.txt'
 			)
+		else logEvents(JSON.stringify(info), 'emailSenderLogs.txt')
 	})
 }
 

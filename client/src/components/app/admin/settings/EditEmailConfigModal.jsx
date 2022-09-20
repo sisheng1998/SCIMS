@@ -20,8 +20,6 @@ const EditEmailConfigModal = ({
 
 	const [fromName, setFromName] = useState(settings.FROM_NAME)
 	const [fromEmail, setFromEmail] = useState(settings.FROM_EMAIL)
-	const [host, setHost] = useState(settings.EMAIL_HOST)
-	const [port, setPort] = useState(settings.EMAIL_PORT)
 	const [username, setUsername] = useState(settings.EMAIL_USERNAME)
 	const [password, setPassword] = useState(settings.EMAIL_PASSWORD)
 
@@ -38,8 +36,6 @@ const EditEmailConfigModal = ({
 				...settings,
 				FROM_NAME: fromName,
 				FROM_EMAIL: fromEmail,
-				EMAIL_HOST: host,
-				EMAIL_PORT: port,
 				EMAIL_USERNAME: username,
 				EMAIL_PASSWORD: password,
 			}
@@ -59,12 +55,10 @@ const EditEmailConfigModal = ({
 		setAllowed(
 			(fromName !== '' && fromName !== settings.FROM_NAME) ||
 				(fromEmail !== '' && fromEmail !== settings.FROM_EMAIL) ||
-				(host !== '' && host !== settings.EMAIL_HOST) ||
-				(port !== '' && port !== settings.EMAIL_PORT) ||
 				(username !== '' && username !== settings.EMAIL_USERNAME) ||
 				(password !== '' && password !== settings.EMAIL_PASSWORD)
 		)
-	}, [settings, fromName, fromEmail, host, port, username, password])
+	}, [settings, fromName, fromEmail, username, password])
 
 	const closeHandler = () => {
 		setErrorMessage('')
@@ -176,53 +170,13 @@ const EditEmailConfigModal = ({
 									</div>
 								</div>
 
-								<div className='mb-6 flex space-x-6'>
-									<div className='flex-1'>
-										<label htmlFor='editHost' className='required-input-label'>
-											SMTP Host
-										</label>
-										<input
-											className='w-full'
-											type='text'
-											name='editHost'
-											id='editHost'
-											placeholder='Enter host'
-											required
-											value={host}
-											onChange={(e) => setHost(e.target.value)}
-										/>
-										<p className='mt-2 text-xs text-gray-400'>
-											Outgoing mail client server.
-										</p>
-									</div>
-
-									<div className='flex-1'>
-										<label htmlFor='editPort' className='required-input-label'>
-											SMTP Port
-										</label>
-										<input
-											className='w-full'
-											type='text'
-											name='editPort'
-											id='editPort'
-											placeholder='Enter port number'
-											required
-											value={port}
-											onChange={(e) => setPort(Number(e.target.value))}
-										/>
-										<p className='mt-2 text-xs text-gray-400'>
-											Default port for the SMTP is 465.
-										</p>
-									</div>
-								</div>
-
 								<div className='flex space-x-6'>
 									<div className='flex-1'>
 										<label
 											htmlFor='editUsername'
 											className='required-input-label'
 										>
-											SMTP Username
+											Gmail Username
 										</label>
 										<input
 											className='w-full'
@@ -235,7 +189,7 @@ const EditEmailConfigModal = ({
 											onChange={(e) => setUsername(e.target.value)}
 										/>
 										<p className='mt-2 text-xs text-gray-400'>
-											Username for the mail client server.
+											Username for the gmail.
 										</p>
 									</div>
 
@@ -244,7 +198,7 @@ const EditEmailConfigModal = ({
 											htmlFor='editPassword'
 											className='required-input-label'
 										>
-											SMTP Password
+											App Password
 										</label>
 										<div className='relative'>
 											<input
@@ -262,7 +216,7 @@ const EditEmailConfigModal = ({
 											<ViewPasswordToggle fieldId='editPassword' />
 										</div>
 										<p className='mt-2 text-xs text-gray-400'>
-											Password for the mail client server.
+											Password for the custom app in gmail.
 										</p>
 									</div>
 								</div>
@@ -299,8 +253,6 @@ const EditEmailConfigModal = ({
 					emailConfig={{
 						FROM_NAME: fromName,
 						FROM_EMAIL: fromEmail,
-						EMAIL_HOST: host,
-						EMAIL_PORT: port,
 						EMAIL_USERNAME: username,
 						EMAIL_PASSWORD: password,
 					}}
