@@ -4,33 +4,33 @@ import useRefreshToken from '../../hooks/useRefreshToken'
 import useAuth from '../../hooks/useAuth'
 
 const RemainLogin = () => {
-	const [isLoading, setIsLoading] = useState(true)
-	const refresh = useRefreshToken()
-	const { auth } = useAuth()
+  const [isLoading, setIsLoading] = useState(true)
+  const refresh = useRefreshToken()
+  const { auth } = useAuth()
 
-	useEffect(() => {
-		let isMounted = true
+  useEffect(() => {
+    let isMounted = true
 
-		const verifyRefreshToken = async () => {
-			try {
-				await refresh()
-			} catch (error) {
-				return
-			} finally {
-				isMounted && setIsLoading(false)
-			}
-		}
+    const verifyRefreshToken = async () => {
+      try {
+        await refresh()
+      } catch (error) {
+        return
+      } finally {
+        isMounted && setIsLoading(false)
+      }
+    }
 
-		!auth?.accessToken ? verifyRefreshToken() : setIsLoading(false)
+    !auth?.accessToken ? verifyRefreshToken() : setIsLoading(false)
 
-		return () => {
-			isMounted = false
-		}
+    return () => {
+      isMounted = false
+    }
 
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-	return isLoading ? null : <Outlet />
+  return isLoading ? null : <Outlet />
 }
 
 export default RemainLogin

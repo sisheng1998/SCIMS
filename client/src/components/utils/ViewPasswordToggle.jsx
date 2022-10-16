@@ -2,34 +2,30 @@ import React, { useState } from 'react'
 import { EyeOffIcon, EyeIcon } from '@heroicons/react/outline'
 
 const ViewPasswordToggle = (props) => {
-	const [visible, setVisibility] = useState(false)
+  const [visible, setVisibility] = useState(false)
 
-	const viewPassword = () => {
-		document.getElementById(props.fieldId).type = 'text'
-		setVisibility((visibility) => !visibility)
-	}
+  const viewPassword = () => {
+    document.getElementById(props.fieldId).type = 'text'
+    setVisibility((visibility) => !visibility)
+  }
 
-	const hidePassword = () => {
-		document.getElementById(props.fieldId).type = 'password'
-		setVisibility((visibility) => !visibility)
-	}
+  const hidePassword = () => {
+    document.getElementById(props.fieldId).type = 'password'
+    setVisibility((visibility) => !visibility)
+  }
 
-	return (
-		<>
-			{visible ? (
-				<EyeIcon
-					className='absolute top-2 right-2 h-7 w-7 cursor-pointer rounded-full p-1 text-gray-500 transition hover:bg-indigo-50 hover:text-indigo-600'
-					onClick={hidePassword}
-				/>
-			) : (
-				<EyeOffIcon
-					id='viewPassword'
-					className='absolute top-2 right-2 h-7 w-7 cursor-pointer rounded-full p-1 text-gray-500 transition hover:bg-indigo-50 hover:text-indigo-600'
-					onClick={viewPassword}
-				/>
-			)}
-		</>
-	)
+  return visible ? (
+    <EyeIcon
+      className='absolute top-2 right-2 h-7 w-7 cursor-pointer rounded-full p-1 text-gray-500 transition hover:bg-indigo-50 hover:text-indigo-600'
+      onClick={hidePassword}
+    />
+  ) : (
+    <EyeOffIcon
+      id='viewPassword'
+      className='absolute top-2 right-2 h-7 w-7 cursor-pointer rounded-full p-1 text-gray-500 transition hover:bg-indigo-50 hover:text-indigo-600'
+      onClick={viewPassword}
+    />
+  )
 }
 
 export default ViewPasswordToggle

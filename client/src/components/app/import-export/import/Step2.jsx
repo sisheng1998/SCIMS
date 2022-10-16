@@ -4,80 +4,80 @@ import ColumnMapping from './components/ColumnMapping'
 import { Validate } from '../../../../config/import_export'
 
 const removeSingleQuote = (value) =>
-	value.startsWith("'") ? value.substring(1) : value
+  value.startsWith("'") ? value.substring(1) : value
 
 const Step2 = ({
-	data,
-	setProcessedData,
-	detectedColumns,
-	mappedColumns,
-	setMappedColumns,
-	setStep,
+  data,
+  setProcessedData,
+  detectedColumns,
+  mappedColumns,
+  setMappedColumns,
+  setStep,
 }) => {
-	const getLabel = (value) =>
-		mappedColumns.find((column) => column.key === value)['label']
+  const getLabel = (value) =>
+    mappedColumns.find((column) => column.key === value)['label']
 
-	const continueHandler = () => {
-		const processedData = data.map((chemical) => {
-			const processedChemical = {
-				validated: true,
-			}
+  const continueHandler = () => {
+    const processedData = data.map((chemical) => {
+      const processedChemical = {
+        validated: true,
+      }
 
-			mappedColumns.forEach((column) => {
-				const value = chemical[getLabel(column.key)]
-				const processedValue = value ? removeSingleQuote(String(value)) : ''
+      mappedColumns.forEach((column) => {
+        const value = chemical[getLabel(column.key)]
+        const processedValue = value ? removeSingleQuote(String(value)) : ''
 
-				processedChemical[column.key] = processedValue
+        processedChemical[column.key] = processedValue
 
-				const isValid = Validate(column.key, processedValue)
-				if (processedChemical['validated'] && !isValid) {
-					processedChemical['validated'] = false
-				}
-			})
+        const isValid = Validate(column.key, processedValue)
+        if (processedChemical['validated'] && !isValid) {
+          processedChemical['validated'] = false
+        }
+      })
 
-			return processedChemical
-		})
+      return processedChemical
+    })
 
-		setProcessedData(processedData)
+    setProcessedData(processedData)
 
-		window.scrollTo(0, 0)
-		setStep(3)
-	}
+    window.scrollTo(0, 0)
+    setStep(3)
+  }
 
-	return (
-		<>
-			<label htmlFor='columnMapping' className='required-input-label'>
-				Map CSV Fields to Chemicals
-			</label>
-			<ColumnMapping
-				detectedColumns={detectedColumns}
-				mappedColumns={mappedColumns}
-				setMappedColumns={setMappedColumns}
-			/>
-			<p className='mt-2 text-xs text-gray-400'>
-				Select fields from CSV file to map against chemicals fields, or to
-				ignore during import.
-			</p>
+  return (
+    <>
+      <label htmlFor='columnMapping' className='required-input-label'>
+        Map CSV Fields to Chemicals
+      </label>
+      <ColumnMapping
+        detectedColumns={detectedColumns}
+        mappedColumns={mappedColumns}
+        setMappedColumns={setMappedColumns}
+      />
+      <p className='mt-2 text-xs text-gray-400'>
+        Select fields from CSV file to map against chemicals fields, or to
+        ignore during import.
+      </p>
 
-			<div className='mt-9 flex items-center justify-end'>
-				<p
-					onClick={() => setStep(1)}
-					className='mr-auto inline-flex cursor-pointer items-center self-end font-medium text-indigo-600 transition hover:text-indigo-700'
-				>
-					<ArrowLeftIcon className='mr-1 h-4 w-4' />
-					Return Back
-				</p>
+      <div className='mt-9 flex items-center justify-end'>
+        <p
+          onClick={() => setStep(1)}
+          className='mr-auto inline-flex cursor-pointer items-center self-end font-medium text-indigo-600 transition hover:text-indigo-700'
+        >
+          <ArrowLeftIcon className='mr-1 h-4 w-4' />
+          Return Back
+        </p>
 
-				<button
-					className='button button-outline justify-center px-4 py-3'
-					onClick={continueHandler}
-				>
-					Continue
-					<ArrowNarrowRightIcon className='ml-2 h-4 w-4 stroke-2' />
-				</button>
-			</div>
-		</>
-	)
+        <button
+          className='button button-outline justify-center px-4 py-3'
+          onClick={continueHandler}
+        >
+          Continue
+          <ArrowNarrowRightIcon className='ml-2 h-4 w-4 stroke-2' />
+        </button>
+      </div>
+    </>
+  )
 }
 
 export default Step2

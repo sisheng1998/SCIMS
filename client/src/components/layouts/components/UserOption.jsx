@@ -10,75 +10,75 @@ import GetLetterPicture from '../../utils/GetLetterPicture'
 const USER_MENU = ['Profile', 'My Labs', 'Logout']
 
 const UserOption = () => {
-	const logout = useLogout()
-	const navigate = useNavigate()
-	const { auth } = useAuth()
+  const logout = useLogout()
+  const navigate = useNavigate()
+  const { auth } = useAuth()
 
-	const menuHandler = (index) => {
-		if (index === 0) {
-			navigate('/profile')
-		} else if (index === 1) {
-			navigate('/labs')
-		} else if (index === 2) {
-			logout()
-		}
-	}
+  const menuHandler = (index) => {
+    if (index === 0) {
+      navigate('/profile')
+    } else if (index === 1) {
+      navigate('/labs')
+    } else if (index === 2) {
+      logout()
+    }
+  }
 
-	const imageSrc = auth.avatar
-		? auth.avatarPath + auth.avatar
-		: GetLetterPicture(auth.name)
+  const imageSrc = auth.avatar
+    ? auth.avatarPath + auth.avatar
+    : GetLetterPicture(auth.name)
 
-	return (
-		<Menu as='div' className='relative flex items-center'>
-			<Menu.Button className='outline-gray-300'>
-				<img
-					src={imageSrc}
-					onError={(event) => (event.target.src = GetLetterPicture(auth.name))}
-					alt='Avatar'
-					className='h-9 w-9 rounded-full object-cover'
-					height='64'
-					width='64'
-					draggable={false}
-				/>
-			</Menu.Button>
+  return (
+    <Menu as='div' className='relative flex items-center'>
+      <Menu.Button className='outline-gray-300'>
+        <img
+          src={imageSrc}
+          onError={(event) => (event.target.src = GetLetterPicture(auth.name))}
+          alt='Avatar'
+          className='h-9 w-9 rounded-full object-cover'
+          height='64'
+          width='64'
+          draggable={false}
+        />
+      </Menu.Button>
 
-			<Menu.Items className='absolute right-0 top-full mt-2 w-auto min-w-[200px] rounded-lg bg-white py-2 shadow-md outline-gray-300 ring-1 ring-gray-300'>
-				<div className='mb-2 border-b pl-3 pr-6 pt-1 pb-3'>
-					<p className='font-medium capitalize'>
-						{GetRoleName(auth.currentRole)}
-					</p>
-					<p className='text-sm text-gray-500'>{auth.email}</p>
-				</div>
+      <Menu.Items className='absolute right-0 top-full mt-2 w-auto min-w-[200px] rounded-lg bg-white py-2 shadow-md outline-gray-300 ring-1 ring-gray-300'>
+        <div className='mb-2 border-b pl-3 pr-6 pt-1 pb-3'>
+          <p className='font-medium capitalize'>
+            {GetRoleName(auth.currentRole)}
+          </p>
+          <p className='text-sm text-gray-500'>{auth.email}</p>
+        </div>
 
-				{USER_MENU.map((menu, index) => (
-					<React.Fragment key={index}>
-						{index === 2 && <hr className='my-2' />}
-						<Menu.Item>
-							{({ active }) => (
-								<button
-									onClick={() => menuHandler(index)}
-									className={`group flex w-full items-center px-3 py-1 text-sm font-medium leading-6 ${
-										index === 2 ? '' : 'hover:bg-indigo-50'
-									} ${active ? 'text-indigo-600' : ''}`}
-								>
-									{index === 0 && (
-										<UserIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
-									)}
-									{index === 1 && (
-										<ColorSwatchIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
-									)}
-									{index === 2 && (
-										<LogoutIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
-									)}
-									{menu}
-								</button>
-							)}
-						</Menu.Item>
-					</React.Fragment>
-				))}
-			</Menu.Items>
-		</Menu>
-	)
+        {USER_MENU.map((menu, index) => (
+          <React.Fragment key={index}>
+            {index === 2 && <hr className='my-2' />}
+            <Menu.Item>
+              {({ active }) => (
+                <button
+                  onClick={() => menuHandler(index)}
+                  className={`group flex w-full items-center px-3 py-1 text-sm font-medium leading-6 ${
+                    index === 2 ? '' : 'hover:bg-indigo-50'
+                  } ${active ? 'text-indigo-600' : ''}`}
+                >
+                  {index === 0 && (
+                    <UserIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
+                  )}
+                  {index === 1 && (
+                    <ColorSwatchIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
+                  )}
+                  {index === 2 && (
+                    <LogoutIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
+                  )}
+                  {menu}
+                </button>
+              )}
+            </Menu.Item>
+          </React.Fragment>
+        ))}
+      </Menu.Items>
+    </Menu>
+  )
 }
 
 export default UserOption

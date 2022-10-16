@@ -5,17 +5,17 @@ const ROLES_LIST = require('../config/roles_list')
 const verifyRoles = require('../middleware/verifyRoles')
 
 const {
-	getInfo,
-	getChemicals,
-	getLabs,
-	addLab,
-	addLabWithExistingUser,
-	updateLab,
-	removeLab,
-	getUsers,
-	getSettings,
-	updateSettings,
-	sendTestEmail,
+  getInfo,
+  getChemicals,
+  getLabs,
+  addLab,
+  addLabWithExistingUser,
+  updateLab,
+  removeLab,
+  getUsers,
+  getSettings,
+  updateSettings,
+  sendTestEmail,
 } = require('../controllers/admin')
 
 // Dashboard
@@ -28,8 +28,8 @@ router.route('/chemicals').get(verifyRoles(ROLES_LIST.admin), getChemicals)
 router.route('/labs').get(verifyRoles(ROLES_LIST.admin), getLabs)
 router.route('/lab').post(verifyRoles(ROLES_LIST.admin), addLab)
 router
-	.route('/lab-existing-user')
-	.post(verifyRoles(ROLES_LIST.admin), addLabWithExistingUser)
+  .route('/lab-existing-user')
+  .post(verifyRoles(ROLES_LIST.admin), addLabWithExistingUser)
 router.route('/lab').put(verifyRoles(ROLES_LIST.admin), updateLab)
 router.route('/lab').delete(verifyRoles(ROLES_LIST.admin), removeLab)
 
@@ -40,7 +40,7 @@ router.route('/users').get(verifyRoles(ROLES_LIST.admin), getUsers)
 router.route('/settings').get(verifyRoles(ROLES_LIST.admin), getSettings)
 router.route('/settings').put(verifyRoles(ROLES_LIST.admin), updateSettings)
 router
-	.route('/settings/test-email')
-	.put(verifyRoles(ROLES_LIST.admin), sendTestEmail)
+  .route('/settings/test-email')
+  .put(verifyRoles(ROLES_LIST.admin), sendTestEmail)
 
 module.exports = router

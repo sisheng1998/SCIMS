@@ -5,238 +5,238 @@
 <p><strong>{{pastDate}}</strong> ~ <strong>{{todayDate}}</strong></p>
 <p style='margin-bottom: 5px;'>Status Changes</p>
 <table
-	style='font-size:100%;vertical-align:baseline;border-collapse:collapse;border-spacing:0;width:100%;max-width:100%;margin:0 0 15px;padding:0;border:0;'
+  style='font-size:100%;vertical-align:baseline;border-collapse:collapse;border-spacing:0;width:100%;max-width:100%;margin:0 0 15px;padding:0;border:0;'
 >
-	<thead
-		style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
-	>
-		<tr
-			style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
-		>
-			<th
-				style='font-size:100%;vertical-align:baseline;font-weight:bold;text-align:left;background-color:#4F46E5;margin:0;padding:6px;border:1px solid #4F46E5'
-				align='left'
-				bgcolor='#4F46E5'
-				valign='baseline'
-			>
-				<p
-					style='margin: 0; color:#ffffff !important; font-weight: bold;'
-				>Status</p>
-			</th>
-			<th
-				style='font-size:100%;vertical-align:baseline;font-weight:bold;text-align:left;background-color:#4F46E5;margin:0;padding:6px;border:1px solid #4F46E5'
-				align='left'
-				bgcolor='#4F46E5'
-				valign='baseline'
-			>
-				<p
-					style='margin: 0; color:#ffffff !important; font-weight: bold;'
-				>Chemicals</p>
-			</th>
-		</tr>
-	</thead>
-	<tbody
-		style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
-	>
-		<tr
-			style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
-		>
-			<td
-				style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
-				align='left'
-				valign='baseline'
-			>
-				<p style='margin: 3px 0;'>Newly Added</p>
-			</td>
-			<td
-				style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
-				align='left'
-				valign='baseline'
-			>
-				{{#each newChemicals}}
-					<p style='margin: 3px 0;'>{{name}} ({{CASId.CASNo}})</p>
-				{{else}}
-					<p style='margin: 3px 0;'>-</p>
-				{{/each}}
-			</td>
-		</tr>
-		<tr
-			style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
-		>
-			<td
-				style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
-				align='left'
-				valign='baseline'
-			>
-				<p style='margin: 3px 0;'>Low Amount</p>
-			</td>
-			<td
-				style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
-				align='left'
-				valign='baseline'
-			>
-				{{#each lowAmountChemicals}}
-					<p style='margin: 3px 0;'>{{name}} ({{CASId.CASNo}})</p>
-				{{else}}
-					<p style='margin: 3px 0;'>-</p>
-				{{/each}}
-			</td>
-		</tr>
-		<tr
-			style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
-		>
-			<td
-				style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
-				align='left'
-				valign='baseline'
-			>
-				<p style='margin: 3px 0;'>Expiring Soon</p>
-			</td>
-			<td
-				style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
-				align='left'
-				valign='baseline'
-			>
-				{{#each expiringChemicals}}
-					<p style='margin: 3px 0;'>{{name}} ({{CASId.CASNo}})</p>
-				{{else}}
-					<p style='margin: 3px 0;'>-</p>
-				{{/each}}
-			</td>
-		</tr>
-		<tr
-			style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
-		>
-			<td
-				style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
-				align='left'
-				valign='baseline'
-			>
-				<p style='margin: 3px 0;'>Expired</p>
-			</td>
-			<td
-				style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
-				align='left'
-				valign='baseline'
-			>
-				{{#each expiredChemicals}}
-					<p style='margin: 3px 0;'>{{name}} ({{CASId.CASNo}})</p>
-				{{else}}
-					<p style='margin: 3px 0;'>-</p>
-				{{/each}}
-			</td>
-		</tr>
-		<tr
-			style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
-		>
-			<td
-				style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
-				align='left'
-				valign='baseline'
-			>
-				<p style='margin: 3px 0;'>Disposed</p>
-			</td>
-			<td
-				style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
-				align='left'
-				valign='baseline'
-			>
-				{{#each disposedChemicals}}
-					<p style='margin: 3px 0;'>{{name}} ({{CASId.CASNo}})</p>
-				{{else}}
-					<p style='margin: 3px 0;'>-</p>
-				{{/each}}
-			</td>
-		</tr>
-	</tbody>
+  <thead
+    style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
+  >
+    <tr
+      style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
+    >
+      <th
+        style='font-size:100%;vertical-align:baseline;font-weight:bold;text-align:left;background-color:#4F46E5;margin:0;padding:6px;border:1px solid #4F46E5'
+        align='left'
+        bgcolor='#4F46E5'
+        valign='baseline'
+      >
+        <p
+          style='margin: 0; color:#ffffff !important; font-weight: bold;'
+        >Status</p>
+      </th>
+      <th
+        style='font-size:100%;vertical-align:baseline;font-weight:bold;text-align:left;background-color:#4F46E5;margin:0;padding:6px;border:1px solid #4F46E5'
+        align='left'
+        bgcolor='#4F46E5'
+        valign='baseline'
+      >
+        <p
+          style='margin: 0; color:#ffffff !important; font-weight: bold;'
+        >Chemicals</p>
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
+  >
+    <tr
+      style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
+    >
+      <td
+        style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+        align='left'
+        valign='baseline'
+      >
+        <p style='margin: 3px 0;'>Newly Added</p>
+      </td>
+      <td
+        style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+        align='left'
+        valign='baseline'
+      >
+        {{#each newChemicals}}
+          <p style='margin: 3px 0;'>{{name}} ({{CASId.CASNo}})</p>
+        {{else}}
+          <p style='margin: 3px 0;'>-</p>
+        {{/each}}
+      </td>
+    </tr>
+    <tr
+      style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
+    >
+      <td
+        style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+        align='left'
+        valign='baseline'
+      >
+        <p style='margin: 3px 0;'>Low Amount</p>
+      </td>
+      <td
+        style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+        align='left'
+        valign='baseline'
+      >
+        {{#each lowAmountChemicals}}
+          <p style='margin: 3px 0;'>{{name}} ({{CASId.CASNo}})</p>
+        {{else}}
+          <p style='margin: 3px 0;'>-</p>
+        {{/each}}
+      </td>
+    </tr>
+    <tr
+      style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
+    >
+      <td
+        style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+        align='left'
+        valign='baseline'
+      >
+        <p style='margin: 3px 0;'>Expiring Soon</p>
+      </td>
+      <td
+        style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+        align='left'
+        valign='baseline'
+      >
+        {{#each expiringChemicals}}
+          <p style='margin: 3px 0;'>{{name}} ({{CASId.CASNo}})</p>
+        {{else}}
+          <p style='margin: 3px 0;'>-</p>
+        {{/each}}
+      </td>
+    </tr>
+    <tr
+      style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
+    >
+      <td
+        style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+        align='left'
+        valign='baseline'
+      >
+        <p style='margin: 3px 0;'>Expired</p>
+      </td>
+      <td
+        style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+        align='left'
+        valign='baseline'
+      >
+        {{#each expiredChemicals}}
+          <p style='margin: 3px 0;'>{{name}} ({{CASId.CASNo}})</p>
+        {{else}}
+          <p style='margin: 3px 0;'>-</p>
+        {{/each}}
+      </td>
+    </tr>
+    <tr
+      style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
+    >
+      <td
+        style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+        align='left'
+        valign='baseline'
+      >
+        <p style='margin: 3px 0;'>Disposed</p>
+      </td>
+      <td
+        style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+        align='left'
+        valign='baseline'
+      >
+        {{#each disposedChemicals}}
+          <p style='margin: 3px 0;'>{{name}} ({{CASId.CASNo}})</p>
+        {{else}}
+          <p style='margin: 3px 0;'>-</p>
+        {{/each}}
+      </td>
+    </tr>
+  </tbody>
 </table>
 <p style='font-size: 12px;'>Note: The status changes are based on the chemical's
-	last updated date.</p>
+  last updated date.</p>
 <p style='margin-bottom: 5px;'>Chemical Usages</p>
 <table
-	style='font-size:100%;vertical-align:baseline;border-collapse:collapse;border-spacing:0;width:100%;max-width:100%;margin:0 0 15px;padding:0;border:0;'
+  style='font-size:100%;vertical-align:baseline;border-collapse:collapse;border-spacing:0;width:100%;max-width:100%;margin:0 0 15px;padding:0;border:0;'
 >
-	<thead
-		style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
-	>
-		<tr
-			style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
-		>
-			<th
-				style='font-size:100%;vertical-align:baseline;font-weight:bold;text-align:left;background-color:#4F46E5;margin:0;padding:6px;border:1px solid #4F46E5'
-				align='left'
-				bgcolor='#4F46E5'
-				valign='baseline'
-			>
-				<p
-					style='margin: 0; color:#ffffff !important; font-weight: bold;'
-				>Date</p>
-			</th>
-			<th
-				style='font-size:100%;vertical-align:baseline;font-weight:bold;text-align:left;background-color:#4F46E5;margin:0;padding:6px;border:1px solid #4F46E5'
-				align='left'
-				bgcolor='#4F46E5'
-				valign='baseline'
-			>
-				<p
-					style='margin: 0; color:#ffffff !important; font-weight: bold;'
-				>Chemical</p>
-			</th>
-			<th
-				style='font-size:100%;vertical-align:baseline;font-weight:bold;text-align:left;background-color:#4F46E5;margin:0;padding:6px;border:1px solid #4F46E5'
-				align='left'
-				bgcolor='#4F46E5'
-				valign='baseline'
-			>
-				<p
-					style='margin: 0; color:#ffffff !important; font-weight: bold;'
-				>Usage</p>
-			</th>
-		</tr>
-	</thead>
-	<tbody
-		style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
-	>
-		{{#each usageRecords}}
-			<tr
-				style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
-			>
-				<td
-					style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
-					align='left'
-					valign='baseline'
-				>
-					<p style='margin: 3px 0;'>{{date}}</p>
-				</td>
-				<td
-					style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
-					align='left'
-					valign='baseline'
-				>
-					<p style='margin: 3px 0;'>{{chemical.name}}
-						({{chemical.CASId.CASNo}})</p>
-				</td>
-				<td
-					style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
-					align='left'
-					valign='baseline'
-				>
-					<p style='margin: 3px 0;'>{{usage}} {{unit}}</p>
-				</td>
-			</tr>
-		{{else}}
-			<tr
-				style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
-			>
-				<td
-					style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:center;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
-					align='center'
-					valign='baseline'
-					colspan='3'
-				>
-					<p style='margin: 3px 0;'>No record.</p>
-				</td>
-			</tr>
-		{{/each}}
-	</tbody>
+  <thead
+    style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
+  >
+    <tr
+      style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
+    >
+      <th
+        style='font-size:100%;vertical-align:baseline;font-weight:bold;text-align:left;background-color:#4F46E5;margin:0;padding:6px;border:1px solid #4F46E5'
+        align='left'
+        bgcolor='#4F46E5'
+        valign='baseline'
+      >
+        <p
+          style='margin: 0; color:#ffffff !important; font-weight: bold;'
+        >Date</p>
+      </th>
+      <th
+        style='font-size:100%;vertical-align:baseline;font-weight:bold;text-align:left;background-color:#4F46E5;margin:0;padding:6px;border:1px solid #4F46E5'
+        align='left'
+        bgcolor='#4F46E5'
+        valign='baseline'
+      >
+        <p
+          style='margin: 0; color:#ffffff !important; font-weight: bold;'
+        >Chemical</p>
+      </th>
+      <th
+        style='font-size:100%;vertical-align:baseline;font-weight:bold;text-align:left;background-color:#4F46E5;margin:0;padding:6px;border:1px solid #4F46E5'
+        align='left'
+        bgcolor='#4F46E5'
+        valign='baseline'
+      >
+        <p
+          style='margin: 0; color:#ffffff !important; font-weight: bold;'
+        >Usage</p>
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
+  >
+    {{#each usageRecords}}
+      <tr
+        style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
+      >
+        <td
+          style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+          align='left'
+          valign='baseline'
+        >
+          <p style='margin: 3px 0;'>{{date}}</p>
+        </td>
+        <td
+          style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+          align='left'
+          valign='baseline'
+        >
+          <p style='margin: 3px 0;'>{{chemical.name}}
+            ({{chemical.CASId.CASNo}})</p>
+        </td>
+        <td
+          style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+          align='left'
+          valign='baseline'
+        >
+          <p style='margin: 3px 0;'>{{usage}} {{unit}}</p>
+        </td>
+      </tr>
+    {{else}}
+      <tr
+        style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
+      >
+        <td
+          style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:center;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+          align='center'
+          valign='baseline'
+          colspan='3'
+        >
+          <p style='margin: 3px 0;'>No record.</p>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
 </table>

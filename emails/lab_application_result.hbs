@@ -3,29 +3,29 @@
 <p><strong>Lab {{lab}}</strong></p>
 <p class='last'>Result</p>
 <p>
-	{{#if approve}}
-		<strong class='status green'>Approved</strong>
-	{{else}}
-		<strong class='status red'>Declined</strong>
-	{{/if}}
+  {{#if approve}}
+    <strong class='status green'>Approved</strong>
+  {{else}}
+    <strong class='status red'>Declined</strong>
+  {{/if}}
 </p>
 {{#if approve}}
-	<p class='last'>User Role</p>
-	<p><strong>{{role}}</strong></p>
+  <p class='last'>User Role</p>
+  <p><strong>{{role}}</strong></p>
 {{/if}}
 <p class='last'>Lab Owner's Message</p>
 <p>
-	<strong>
-		{{#if message}}
-			{{message}}
-		{{else}}
-			-
-		{{/if}}
-	</strong>
+  <strong>
+    {{#if message}}
+      {{message}}
+    {{else}}
+      -
+    {{/if}}
+  </strong>
 </p>
 {{#if approve}}
-	<p>You are now able to access the lab from the system.</p>
+  <p>You are now able to access the lab from the system.</p>
 {{else}}
-	<p>You may try to apply for the lab again after fulfilled the requirement (if
-		there is any requirement mentioned in the lab owner's message).</p>
+  <p>You may try to apply for the lab again after fulfilled the requirement (if
+    there is any requirement mentioned in the lab owner's message).</p>
 {{/if}}

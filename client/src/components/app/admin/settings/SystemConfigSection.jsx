@@ -2,44 +2,44 @@ import React, { useState } from 'react'
 import EditSystemConfigModal from './EditSystemConfigModal'
 
 const SystemConfigSection = ({ settings, setEditSuccess }) => {
-	const [openEditSystemConfigModal, setOpenEditSystemConfigModal] =
-		useState(false)
+  const [openEditSystemConfigModal, setOpenEditSystemConfigModal] =
+    useState(false)
 
-	return (
-		<div className='w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:max-w-full'>
-			<div className='max-w-lg'>
-				<label htmlFor='duration'>Duration Before Chemical Expired</label>
-				<input
-					className='w-full'
-					type='text'
-					name='duration'
-					id='duration'
-					readOnly
-					value={settings.DAY_BEFORE_EXP + ' Days'}
-				/>
-				<p className='mt-2 text-xs text-gray-400'>
-					To get notified and change the status of the chemical to "Expiring
-					Soon".
-				</p>
-			</div>
+  return (
+    <div className='w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:max-w-full'>
+      <div className='max-w-lg'>
+        <label htmlFor='duration'>Duration Before Chemical Expired</label>
+        <input
+          className='w-full'
+          type='text'
+          name='duration'
+          id='duration'
+          readOnly
+          value={settings.DAY_BEFORE_EXP + ' Days'}
+        />
+        <p className='mt-2 text-xs text-gray-400'>
+          To get notified and change the status of the chemical to "Expiring
+          Soon".
+        </p>
+      </div>
 
-			<button
-				className='button button-outline mt-9 block w-60 justify-center px-4 py-3'
-				onClick={() => setOpenEditSystemConfigModal(true)}
-			>
-				Edit System Configuration
-			</button>
+      <button
+        className='button button-outline mt-9 block w-60 justify-center px-4 py-3'
+        onClick={() => setOpenEditSystemConfigModal(true)}
+      >
+        Edit System Configuration
+      </button>
 
-			{openEditSystemConfigModal && (
-				<EditSystemConfigModal
-					settings={settings}
-					openModal={openEditSystemConfigModal}
-					setOpenModal={setOpenEditSystemConfigModal}
-					setEditSuccess={setEditSuccess}
-				/>
-			)}
-		</div>
-	)
+      {openEditSystemConfigModal && (
+        <EditSystemConfigModal
+          settings={settings}
+          openModal={openEditSystemConfigModal}
+          setOpenModal={setOpenEditSystemConfigModal}
+          setEditSuccess={setEditSuccess}
+        />
+      )}
+    </div>
+  )
 }
 
 export default SystemConfigSection

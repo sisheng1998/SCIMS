@@ -2,18 +2,18 @@ const express = require('express')
 const router = express.Router()
 
 const {
-	register,
-	emailVerification,
-	sendEmailVerification,
-	changeEmail,
-	login,
-	logout,
-	forgotPassword,
-	resetPassword,
-	refreshToken,
-	labs,
-	emails,
-	applyNewLab,
+  register,
+  emailVerification,
+  sendEmailVerification,
+  changeEmail,
+  login,
+  logout,
+  forgotPassword,
+  resetPassword,
+  refreshToken,
+  labs,
+  emails,
+  applyNewLab,
 } = require('../controllers/auth')
 
 router.route('/register').post(register)

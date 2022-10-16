@@ -3,18 +3,18 @@ import CSVTable from './components/CSVTable'
 import DownloadCSV from './components/DownloadCSV'
 
 const Step2 = ({ data, setNextStep }) => {
-	return (
-		<>
-			<label htmlFor='preview'>CSV File Preview</label>
-			<CSVTable data={data} />
-			<p className='mt-2 text-xs text-gray-400'>
-				Single quotation marks (') are added for certain columns to prevent
-				Excel auto formatting.
-			</p>
+  return (
+    <>
+      <label htmlFor='preview'>CSV File Preview</label>
+      <CSVTable data={data} />
+      <p className='mt-2 text-xs text-gray-400'>
+        Single quotation marks (') are added for certain columns to prevent
+        Excel auto formatting.
+      </p>
 
-			<DownloadCSV data={data} setNextStep={setNextStep} />
-		</>
-	)
+      <DownloadCSV data={data} setNextStep={setNextStep} />
+    </>
+  )
 }
 
 export default Step2

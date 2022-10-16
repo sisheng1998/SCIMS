@@ -14,75 +14,75 @@ import Calendar from './Calendar'
 import Chart from './Chart'
 
 const Dashboard = () => {
-	const navigate = useNavigate()
-	const { auth } = useAuth()
-	const isMobile = useMobile()
+  const navigate = useNavigate()
+  const { auth } = useAuth()
+  const isMobile = useMobile()
 
-	useEffect(() => {
-		!isMobile &&
-			auth.currentLabId === ROLES_LIST.admin.toString() &&
-			navigate('/admin')
-	}, [auth.currentLabId, navigate, isMobile])
+  useEffect(() => {
+    !isMobile &&
+      auth.currentLabId === ROLES_LIST.admin.toString() &&
+      navigate('/admin')
+  }, [auth.currentLabId, navigate, isMobile])
 
-	const axiosPrivate = useAxiosPrivate()
-	const [isLoading, setIsLoading] = useState(true)
-	const [info, setInfo] = useState({})
+  const axiosPrivate = useAxiosPrivate()
+  const [isLoading, setIsLoading] = useState(true)
+  const [info, setInfo] = useState({})
 
-	useEffect(() => {
-		if (isMobile) {
-			return
-		}
+  useEffect(() => {
+    if (isMobile) {
+      return
+    }
 
-		let isMounted = true
-		const controller = new AbortController()
+    let isMounted = true
+    const controller = new AbortController()
 
-		setIsLoading(true)
+    setIsLoading(true)
 
-		const getInfo = async () => {
-			try {
-				const { data } = await axiosPrivate.put(
-					'/api/private/dashboard',
-					{ labId: auth.currentLabId },
-					{
-						signal: controller.signal,
-					}
-				)
-				if (isMounted) {
-					setInfo(data.data)
-					setIsLoading(false)
-				}
-			} catch (error) {
-				return
-			}
-		}
+    const getInfo = async () => {
+      try {
+        const { data } = await axiosPrivate.put(
+          '/api/private/dashboard',
+          { labId: auth.currentLabId },
+          {
+            signal: controller.signal,
+          }
+        )
+        if (isMounted) {
+          setInfo(data.data)
+          setIsLoading(false)
+        }
+      } catch (error) {
+        return
+      }
+    }
 
-		getInfo()
+    getInfo()
 
-		return () => {
-			isMounted = false
-			controller.abort()
-		}
-	}, [axiosPrivate, auth.currentLabId, isMobile])
+    return () => {
+      isMounted = false
+      controller.abort()
+    }
+  }, [axiosPrivate, auth.currentLabId, isMobile])
 
-	return isMobile ? (
-		<>
-			<UserInfoCard />
-			<QuickAccessCard />
-			<ScanQRCode />
-		</>
-	) : isLoading ? (
-		<LoadingScreen />
-	) : (
-		<>
-			<Title title='Dashboard' hasButton={false} hasRefreshButton={false} />
-			<Overview info={info} />
+  return isMobile ? (
+    <>
+      <UserInfoCard />
+      <QuickAccessCard />
+      <ScanQRCode />
+    </>
+  ) : isLoading ? (
+    <LoadingScreen />
+  ) : (
+    <>
+      <Title title='Dashboard' hasButton={false} hasRefreshButton={false} />
+      <Overview info={info} />
 
-			<div className='mb-6 flex space-x-4 xl:block xl:space-x-0 xl:space-y-6'>
-				<Calendar chemicals={info.chemicals} dayBeforeExp={info.dayBeforeExp} />
-				<Chart info={info} />
-			</div>
-		</>
-	)
+      <div className='mb-6 flex space-x-4 xl:block xl:space-x-0 xl:space-y-6'>
+        <Calendar chemicals={info.chemicals} dayBeforeExp={info.dayBeforeExp} />
+        <Chart info={info} />
+      </div>
+    </>
+  )
 }
 
 export default Dashboard

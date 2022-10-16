@@ -33,12 +33,12 @@ app.use(cookieParser())
 app.use('/public', express.static('public'))
 
 if (isLiveSite) {
-	app.use(express.static('client/build')) // For live site
+  app.use(express.static('client/build')) // For live site
 } else {
-	// Connecting Routes - For dev site
-	app.get('/', (req, res, next) => {
-		res.status(200).send('API running.')
-	})
+  // Connecting Routes - For dev site
+  app.get('/', (req, res, next) => {
+    res.status(200).send('API running.')
+  })
 }
 
 // Public Route
@@ -50,35 +50,35 @@ app.use('/api/admin', verifyUser, require('./routes/admin'))
 app.use('/api/subscribe', verifyUser, require('./routes/subscribe'))
 
 if (isLiveSite) {
-	// Let React Handle UI - For live site
-	app.get('*', (req, res) => {
-		res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-	})
+  // Let React Handle UI - For live site
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+  })
 } else {
-	// Other Routes - For dev site
-	app.get('*', (req, res) => {
-		res.sendStatus(404)
-	})
+  // Other Routes - For dev site
+  app.get('*', (req, res) => {
+    res.sendStatus(404)
+  })
 }
 
 // Error Handler (should be last piece of middleware)
 app.use(errorHandler)
 
 mongoose.connection.once('open', () => {
-	console.log('Connected to MongoDB')
+  console.log('Connected to MongoDB')
 
-	const server = app.listen(PORT, () => {
-		console.log(`Server running on Port ${PORT}`)
+  const server = app.listen(PORT, () => {
+    console.log(`Server running on Port ${PORT}`)
 
-		// Initialize - Create admin user + first lab + settings if not yet exist
-		// require('./controllers/init')()
+    // Initialize - Create admin user + first lab + settings if not yet exist
+    // require('./controllers/init')()
 
-		// Scheduled Jobs
-		scheduleJobs()
-	})
+    // Scheduled Jobs
+    scheduleJobs()
+  })
 
-	process.on('unhandledRejection', (err, promise) => {
-		logEvents(`${err.name}: ${err.message}`, 'connectionErrorLogs.txt')
-		server.close(() => process.exit(1))
-	})
+  process.on('unhandledRejection', (err, promise) => {
+    logEvents(`${err.name}: ${err.message}`, 'connectionErrorLogs.txt')
+    server.close(() => process.exit(1))
+  })
 })

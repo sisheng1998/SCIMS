@@ -4,180 +4,180 @@ const Chemical = require('../models/Chemical')
 const { startSession } = require('mongoose')
 
 exports.addLocation = async (req, res, next) => {
-	const { labId, name, storageGroups } = req.body
+  const { labId, name, storageGroups } = req.body
 
-	if (!labId || !name || storageGroups.length === 0) {
-		return next(new ErrorResponse('Missing value for required field.', 400))
-	}
+  if (!labId || !name || storageGroups.length === 0) {
+    return next(new ErrorResponse('Missing value for required field.', 400))
+  }
 
-	try {
-		const foundLab = await Lab.findById(labId)
-		if (!foundLab) {
-			return next(new ErrorResponse('Lab not found.', 404))
-		}
+  try {
+    const foundLab = await Lab.findById(labId)
+    if (!foundLab) {
+      return next(new ErrorResponse('Lab not found.', 404))
+    }
 
-		const isLocationExisted = foundLab.locations.some(
-			(location) => location.name.toLowerCase() === name.toLowerCase()
-		)
+    const isLocationExisted = foundLab.locations.some(
+      (location) => location.name.toLowerCase() === name.toLowerCase()
+    )
 
-		if (isLocationExisted) {
-			return next(new ErrorResponse('Location existed.', 409))
-		}
+    if (isLocationExisted) {
+      return next(new ErrorResponse('Location existed.', 409))
+    }
 
-		await Lab.updateOne(foundLab, {
-			$push: {
-				locations: {
-					name,
-					storageGroups,
-				},
-			},
-			$set: {
-				lastUpdated: Date.now(),
-			},
-		})
+    await Lab.updateOne(foundLab, {
+      $push: {
+        locations: {
+          name,
+          storageGroups,
+        },
+      },
+      $set: {
+        lastUpdated: Date.now(),
+      },
+    })
 
-		res.status(201).json({
-			success: true,
-			data: 'New location created.',
-		})
-	} catch (error) {
-		next(error)
-	}
+    res.status(201).json({
+      success: true,
+      data: 'New location created.',
+    })
+  } catch (error) {
+    next(error)
+  }
 }
 
 exports.editLocation = async (req, res, next) => {
-	const { labId, locationId, name, storageGroups } = req.body
+  const { labId, locationId, name, storageGroups } = req.body
 
-	if (!labId || !locationId || !name || storageGroups.length === 0) {
-		return next(new ErrorResponse('Missing value for required field.', 400))
-	}
+  if (!labId || !locationId || !name || storageGroups.length === 0) {
+    return next(new ErrorResponse('Missing value for required field.', 400))
+  }
 
-	try {
-		const foundLab = await Lab.findById(labId)
-		if (!foundLab) {
-			return next(new ErrorResponse('Lab not found.', 404))
-		}
+  try {
+    const foundLab = await Lab.findById(labId)
+    if (!foundLab) {
+      return next(new ErrorResponse('Lab not found.', 404))
+    }
 
-		const isLocationExisted = foundLab.locations.some(
-			(location) =>
-				location.name.toLowerCase() === name.toLowerCase() &&
-				!location._id.equals(locationId)
-		)
+    const isLocationExisted = foundLab.locations.some(
+      (location) =>
+        location.name.toLowerCase() === name.toLowerCase() &&
+        !location._id.equals(locationId)
+    )
 
-		if (isLocationExisted) {
-			return next(new ErrorResponse('Location existed.', 409))
-		}
+    if (isLocationExisted) {
+      return next(new ErrorResponse('Location existed.', 409))
+    }
 
-		await Lab.updateOne(
-			foundLab,
-			{
-				$set: {
-					'locations.$[el].name': name,
-					'locations.$[el].storageGroups': storageGroups,
-					lastUpdated: Date.now(),
-				},
-			},
-			{ arrayFilters: [{ 'el._id': locationId }], new: true }
-		)
+    await Lab.updateOne(
+      foundLab,
+      {
+        $set: {
+          'locations.$[el].name': name,
+          'locations.$[el].storageGroups': storageGroups,
+          lastUpdated: Date.now(),
+        },
+      },
+      { arrayFilters: [{ 'el._id': locationId }], new: true }
+    )
 
-		res.status(201).json({
-			success: true,
-			data: 'Location updated.',
-		})
-	} catch (error) {
-		next(error)
-	}
+    res.status(201).json({
+      success: true,
+      data: 'Location updated.',
+    })
+  } catch (error) {
+    next(error)
+  }
 }
 
 exports.removeLocation = async (req, res, next) => {
-	const { labId, locationId } = req.body
+  const { labId, locationId } = req.body
 
-	if (!labId || !locationId) {
-		return next(new ErrorResponse('Missing required value.', 400))
-	}
+  if (!labId || !locationId) {
+    return next(new ErrorResponse('Missing required value.', 400))
+  }
 
-	const foundLab = await Lab.findById(labId)
-	if (!foundLab) {
-		return next(new ErrorResponse('Lab not found.', 404))
-	}
+  const foundLab = await Lab.findById(labId)
+  if (!foundLab) {
+    return next(new ErrorResponse('Lab not found.', 404))
+  }
 
-	const session = await startSession()
+  const session = await startSession()
 
-	try {
-		session.startTransaction()
+  try {
+    session.startTransaction()
 
-		await Lab.updateOne(
-			foundLab,
-			{
-				$pull: {
-					locations: {
-						_id: locationId,
-					},
-				},
-				$set: {
-					lastUpdated: Date.now(),
-				},
-			},
-			{ new: true, session }
-		)
+    await Lab.updateOne(
+      foundLab,
+      {
+        $pull: {
+          locations: {
+            _id: locationId,
+          },
+        },
+        $set: {
+          lastUpdated: Date.now(),
+        },
+      },
+      { new: true, session }
+    )
 
-		await Chemical.updateMany(
-			{ locationId: locationId },
-			{
-				$unset: {
-					locationId: '',
-				},
-				$set: {
-					lastUpdated: Date.now(),
-				},
-			},
-			{ new: true, session }
-		)
+    await Chemical.updateMany(
+      { locationId: locationId },
+      {
+        $unset: {
+          locationId: '',
+        },
+        $set: {
+          lastUpdated: Date.now(),
+        },
+      },
+      { new: true, session }
+    )
 
-		await session.commitTransaction()
-		session.endSession()
+    await session.commitTransaction()
+    session.endSession()
 
-		res.status(200).json({
-			success: true,
-			data: 'Location removed.',
-		})
-	} catch (error) {
-		await session.abortTransaction()
-		session.endSession()
+    res.status(200).json({
+      success: true,
+      data: 'Location removed.',
+    })
+  } catch (error) {
+    await session.abortTransaction()
+    session.endSession()
 
-		next(error)
-	}
+    next(error)
+  }
 }
 
 exports.editLab = async (req, res, next) => {
-	const { labId, labName } = req.body
+  const { labId, labName } = req.body
 
-	if (!labId || !labName) {
-		return next(new ErrorResponse('Missing value.', 400))
-	}
+  if (!labId || !labName) {
+    return next(new ErrorResponse('Missing value.', 400))
+  }
 
-	const foundLab = await Lab.findById(labId)
-	if (!foundLab) {
-		return next(new ErrorResponse('Lab not found.', 404))
-	}
+  const foundLab = await Lab.findById(labId)
+  if (!foundLab) {
+    return next(new ErrorResponse('Lab not found.', 404))
+  }
 
-	try {
-		await Lab.updateOne(foundLab, {
-			$set: {
-				labName,
-				lastUpdated: Date.now(),
-			},
-		})
+  try {
+    await Lab.updateOne(foundLab, {
+      $set: {
+        labName,
+        lastUpdated: Date.now(),
+      },
+    })
 
-		res.status(200).json({
-			success: true,
-			data: 'Lab information updated.',
-		})
-	} catch (error) {
-		if (error.code === 11000) {
-			return next(new ErrorResponse('Lab name existed.', 409))
-		}
+    res.status(200).json({
+      success: true,
+      data: 'Lab information updated.',
+    })
+  } catch (error) {
+    if (error.code === 11000) {
+      return next(new ErrorResponse('Lab name existed.', 409))
+    }
 
-		next(error)
-	}
+    next(error)
+  }
 }

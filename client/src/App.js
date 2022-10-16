@@ -52,150 +52,150 @@ import AuthLayout from './components/layouts/AuthLayout'
 import AppLayout from './components/layouts/AppLayout'
 
 const App = () => {
-	const isMobile = useMobile()
-	const isOnline = useNetwork()
+  const isMobile = useMobile()
+  const isOnline = useNetwork()
 
-	return isOnline ? (
-		<Routes>
-			<Route element={<RemainLogin />}>
-				{/* Private route */}
-				<Route element={<PrivateRoute />}>
-					<Route element={<AppLayout />}>
-						{/* Accessible by all roles */}
-						<Route exact path='/' element={<Dashboard />} />
-						<Route exact path='/inventory' element={<Inventory />} />
-						{!isMobile && <Route exact path='/users' element={<Users />} />}
-						<Route exact path='/sds' element={<SDS />} />
-						<Route exact path='/labs' element={<Labs />} />
-						<Route exact path='/profile' element={<Profile />} />
-						<Route exact path='/notifications' element={<Notifications />} />
+  return isOnline ? (
+    <Routes>
+      <Route element={<RemainLogin />}>
+        {/* Private route */}
+        <Route element={<PrivateRoute />}>
+          <Route element={<AppLayout />}>
+            {/* Accessible by all roles */}
+            <Route exact path='/' element={<Dashboard />} />
+            <Route exact path='/inventory' element={<Inventory />} />
+            {!isMobile && <Route exact path='/users' element={<Users />} />}
+            <Route exact path='/sds' element={<SDS />} />
+            <Route exact path='/labs' element={<Labs />} />
+            <Route exact path='/profile' element={<Profile />} />
+            <Route exact path='/notifications' element={<Notifications />} />
 
-						{/* Allow view only by Guest and Undergraduate, edit by postgraduate and above */}
-						<Route
-							exact
-							path='/inventory/:chemicalId'
-							element={<ChemicalInfo />}
-						/>
+            {/* Allow view only by Guest and Undergraduate, edit by postgraduate and above */}
+            <Route
+              exact
+              path='/inventory/:chemicalId'
+              element={<ChemicalInfo />}
+            />
 
-						{/* Accessible by postgraduate or lab owner or admin only */}
-						<Route
-							element={<Authorization minRole={ROLES_LIST.postgraduate} />}
-						>
-							<Route
-								exact
-								path='/inventory/new-chemical'
-								element={<AddChemical />}
-							/>
-						</Route>
+            {/* Accessible by postgraduate or lab owner or admin only */}
+            <Route
+              element={<Authorization minRole={ROLES_LIST.postgraduate} />}
+            >
+              <Route
+                exact
+                path='/inventory/new-chemical'
+                element={<AddChemical />}
+              />
+            </Route>
 
-						{/* Accessible by lab owner or admin only */}
-						<Route element={<Authorization minRole={ROLES_LIST.labOwner} />}>
-							{!isMobile ? (
-								<>
-									<Route exact path='/reports' element={<Reports />} />
-									<Route
-										exact
-										path='/reports/:reportId'
-										element={<StockCheckReport />}
-									/>
-									<Route
-										exact
-										path='/import-export'
-										element={<ImportExport />}
-									/>
-									<Route
-										exact
-										path='/activity-logs'
-										element={<ActivityLogs />}
-									/>
-									<Route exact path='/settings' element={<Settings />} />
-								</>
-							) : (
-								<Route exact path='/stock-check' element={<StockCheck />} />
-							)}
-						</Route>
+            {/* Accessible by lab owner or admin only */}
+            <Route element={<Authorization minRole={ROLES_LIST.labOwner} />}>
+              {!isMobile ? (
+                <>
+                  <Route exact path='/reports' element={<Reports />} />
+                  <Route
+                    exact
+                    path='/reports/:reportId'
+                    element={<StockCheckReport />}
+                  />
+                  <Route
+                    exact
+                    path='/import-export'
+                    element={<ImportExport />}
+                  />
+                  <Route
+                    exact
+                    path='/activity-logs'
+                    element={<ActivityLogs />}
+                  />
+                  <Route exact path='/settings' element={<Settings />} />
+                </>
+              ) : (
+                <Route exact path='/stock-check' element={<StockCheck />} />
+              )}
+            </Route>
 
-						{/* Accessible by admin only */}
-						{!isMobile && (
-							<Route element={<Authorization minRole={ROLES_LIST.admin} />}>
-								<Route exact path='/admin' element={<AdminDashboard />} />
-								<Route
-									exact
-									path='/admin/inventory'
-									element={<AdminInventory />}
-								/>
-								<Route
-									exact
-									path='/admin/inventory/:chemicalId'
-									element={<ChemicalInfo />}
-								/>
-								<Route exact path='/admin/labs' element={<AdminLabs />} />
-								<Route exact path='/admin/users' element={<AdminUsers />} />
-								<Route
-									exact
-									path='/admin/settings'
-									element={<AdminSettings />}
-								/>
-							</Route>
-						)}
-					</Route>
+            {/* Accessible by admin only */}
+            {!isMobile && (
+              <Route element={<Authorization minRole={ROLES_LIST.admin} />}>
+                <Route exact path='/admin' element={<AdminDashboard />} />
+                <Route
+                  exact
+                  path='/admin/inventory'
+                  element={<AdminInventory />}
+                />
+                <Route
+                  exact
+                  path='/admin/inventory/:chemicalId'
+                  element={<ChemicalInfo />}
+                />
+                <Route exact path='/admin/labs' element={<AdminLabs />} />
+                <Route exact path='/admin/users' element={<AdminUsers />} />
+                <Route
+                  exact
+                  path='/admin/settings'
+                  element={<AdminSettings />}
+                />
+              </Route>
+            )}
+          </Route>
 
-					<Route element={<AuthLayout />}>
-						{/* Haven't complete profile */}
-						<Route exact path='/profile-update' element={<ProfileUpdate />} />
-						{/* Haven't approved by lab owner */}
-						<Route
-							exact
-							path='/pending-approval'
-							element={<PendingApproval />}
-						/>
-						{/* Apply for other lab */}
-						<Route exact path='/apply-new-lab' element={<ApplyNewLab />} />
-					</Route>
-				</Route>
+          <Route element={<AuthLayout />}>
+            {/* Haven't complete profile */}
+            <Route exact path='/profile-update' element={<ProfileUpdate />} />
+            {/* Haven't approved by lab owner */}
+            <Route
+              exact
+              path='/pending-approval'
+              element={<PendingApproval />}
+            />
+            {/* Apply for other lab */}
+            <Route exact path='/apply-new-lab' element={<ApplyNewLab />} />
+          </Route>
+        </Route>
 
-				{/* Public route */}
-				<Route element={<PublicRoute />}>
-					<Route element={<AuthLayout />}>
-						<Route exact path='/login' element={<Login />} />
-						<Route exact path='/register' element={<Register />} />
-						<Route exact path='/forgot-password' element={<ForgotPassword />} />
-						<Route
-							exact
-							path='/reset-password/:resetToken'
-							element={<ResetPassword />}
-						/>
-						<Route
-							exact
-							path='/verify-email/:emailVerificationToken'
-							element={<EmailVerification />}
-						/>
-						<Route
-							exact
-							path='/verify-email'
-							element={<SendEmailVerification />}
-						/>
-						<Route exact path='/change-email' element={<ChangeEmail />} />
+        {/* Public route */}
+        <Route element={<PublicRoute />}>
+          <Route element={<AuthLayout />}>
+            <Route exact path='/login' element={<Login />} />
+            <Route exact path='/register' element={<Register />} />
+            <Route exact path='/forgot-password' element={<ForgotPassword />} />
+            <Route
+              exact
+              path='/reset-password/:resetToken'
+              element={<ResetPassword />}
+            />
+            <Route
+              exact
+              path='/verify-email/:emailVerificationToken'
+              element={<EmailVerification />}
+            />
+            <Route
+              exact
+              path='/verify-email'
+              element={<SendEmailVerification />}
+            />
+            <Route exact path='/change-email' element={<ChangeEmail />} />
 
-						{/* Redirect all to login page */}
-						<Route path='*' element={<Navigate to='/login' />} />
-					</Route>
-				</Route>
-			</Route>
-		</Routes>
-	) : (
-		<main className='flex min-h-screen flex-col items-center justify-center p-4'>
-			<h1 className='font-semibold'>No Internet</h1>
-			<p className='mb-4 mt-1 text-center'>Kindly connect to the Internet.</p>
-			<button
-				onClick={() => window.location.reload()}
-				className='button button-outline'
-			>
-				<RefreshIcon className='-ml-0.5 mr-1 h-3.5 w-3.5 stroke-2' />
-				Refresh
-			</button>
-		</main>
-	)
+            {/* Redirect all to login page */}
+            <Route path='*' element={<Navigate to='/login' />} />
+          </Route>
+        </Route>
+      </Route>
+    </Routes>
+  ) : (
+    <main className='flex min-h-screen flex-col items-center justify-center p-4'>
+      <h1 className='font-semibold'>No Internet</h1>
+      <p className='mb-4 mt-1 text-center'>Kindly connect to the Internet.</p>
+      <button
+        onClick={() => window.location.reload()}
+        className='button button-outline'
+      >
+        <RefreshIcon className='-ml-0.5 mr-1 h-3.5 w-3.5 stroke-2' />
+        Refresh
+      </button>
+    </main>
+  )
 }
 
 export default App
