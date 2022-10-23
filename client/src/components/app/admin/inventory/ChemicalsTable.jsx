@@ -298,7 +298,7 @@ const ChemicalsTable = (props) => {
                     {chemical.CASId.CASNo}
                     {chemical.CASId.COCs.length !== 0 && (
                       <span
-                        className='tooltip ml-1.5 inline-block -translate-y-0.5 whitespace-normal'
+                        className='tooltip ml-1.5 inline-block -translate-y-0.5'
                         data-tooltip='Chemical of Concerns'
                       >
                         <ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
@@ -420,7 +420,7 @@ const ChemicalsTable = (props) => {
                               {chemical.CASId.CASNo}
                               {chemical.CASId.COCs.length !== 0 && (
                                 <span
-                                  className='tooltip ml-1.5 whitespace-normal'
+                                  className='tooltip ml-1.5'
                                   data-tooltip='Chemical of Concerns'
                                 >
                                   <ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />

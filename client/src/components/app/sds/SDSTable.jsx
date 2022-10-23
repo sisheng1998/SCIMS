@@ -313,7 +313,7 @@ const SDSTable = ({ SDS, setRefresh }) => {
                           {CAS.CASNo}
                           {CAS.SDS === 'No SDS' && (
                             <span
-                              className='tooltip ml-1.5 whitespace-normal'
+                              className='tooltip ml-1.5'
                               data-tooltip='No SDS found, kindly upload one for this chemical.'
                             >
                               <ExclamationCircleIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
@@ -353,7 +353,7 @@ const SDSTable = ({ SDS, setRefresh }) => {
                                   CAS.COCs.includes(security) && (
                                     <span
                                       key={index}
-                                      className={`inline-flex whitespace-normal rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-600 ${
+                                      className={`inline-flex rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-600 ${
                                         security !== 'Other' ? 'tooltip' : ''
                                       }`}
                                       data-tooltip={COC_DESCRIPTION[index]}

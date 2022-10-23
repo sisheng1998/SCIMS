@@ -240,7 +240,7 @@
   .tooltip::before {
     --translate-y: calc(-100% - var(--arrow-size));
     content: attr(data-tooltip) !important;
-    @apply w-max max-w-[180px] rounded-lg bg-gray-700 py-1.5 px-3 text-center text-xs font-medium text-white;
+    @apply w-max max-w-[180px] whitespace-normal rounded-lg bg-gray-700 py-1.5 px-3 text-center text-xs font-medium text-white;
   }
 
   .tooltip::after {
