@@ -4,7 +4,7 @@ import ROLES_LIST from '../../../config/roles_list'
 import ImageLightBox from '../../utils/ImageLightBox'
 import FormatDate, { FormatChemicalDate } from '../../utils/FormatDate'
 import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
-import STORAGE_GROUPS from '../../../config/storage_groups'
+import STORAGE_CLASSES from '../../../config/storage_classes'
 import {
   ExclamationIcon,
   PencilAltIcon,
@@ -53,20 +53,22 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
   }
 
   let chemicalLocation = '-'
-  let allowedStorageGroups = []
+  let allowedStorageClasses = []
 
   if (lab && chemical && chemical.locationId) {
     lab.locations.forEach((location) => {
       if (location._id === chemical.locationId) {
         chemicalLocation = location.name
-        allowedStorageGroups = location.storageGroups
+        allowedStorageClasses = location.storageClasses
       }
     })
   }
 
-  const storageGroup =
-    chemical.storageGroup &&
-    STORAGE_GROUPS.filter((group) => group.code === chemical.storageGroup)
+  const storageClass =
+    chemical.storageClass &&
+    STORAGE_CLASSES.find(
+      (storage_class) => storage_class.code === chemical.storageClass
+    )
 
   const currentUser = auth.roles.find((role) => role.lab._id === lab._id)
 
@@ -251,13 +253,14 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
               </label>
               <p className='font-medium'>
                 {chemicalLocation}
-                {chemical.storageGroup &&
+                {chemical.storageClass &&
                   chemicalLocation !== '-' &&
-                  !allowedStorageGroups.includes(storageGroup[0].code) &&
+                  storageClass &&
+                  !allowedStorageClasses.includes(storageClass.code) &&
                   !isDisposed && (
                     <span
                       className='tooltip ml-1.5'
-                      data-tooltip={`Group ${storageGroup[0].code} is not allowed in this location`}
+                      data-tooltip={`Class ${storageClass.code} is not allowed in this location`}
                     >
                       <ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
                     </span>
@@ -267,12 +270,12 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
           </div>
 
           <div className='mb-6'>
-            <label htmlFor='storageGroup' className='mb-0.5 text-gray-500'>
-              Storage Group
+            <label htmlFor='storageClass' className='mb-0.5 text-gray-500'>
+              Storage Class
             </label>
             <p className='font-medium'>
-              {chemical.storageGroup
-                ? `${storageGroup[0].code} - ${storageGroup[0].description}`
+              {chemical.storageClass && storageClass
+                ? `${storageClass.code} - ${storageClass.description}`
                 : '-'}
             </p>
           </div>

@@ -23,7 +23,7 @@ const getKeysByValue = (object, value) =>
 
 const labOption = 'labName labUsers chemicals locations createdAt lastUpdated'
 const chemicalOption =
-  'QRCode CASId name unit containerSize minAmount amount lab expirationDate disposedDate locationId storageGroup status createdAt lastUpdated'
+  'QRCode CASId name unit containerSize minAmount amount lab expirationDate disposedDate locationId storageClass status createdAt lastUpdated'
 
 exports.getChemicals = async (req, res, next) => {
   const labId = req.body.labId
@@ -130,7 +130,7 @@ exports.addChemical = async (req, res, next) => {
     minAmount,
     labId,
     locationId,
-    storageGroup,
+    storageClass,
     dateIn,
     dateOpen,
     expirationDate,
@@ -205,7 +205,7 @@ exports.addChemical = async (req, res, next) => {
       minAmount: Number(minAmount).toFixed(2),
       lab: foundLab._id,
       locationId: foundLocation[0]._id,
-      storageGroup,
+      storageClass,
       status,
       dateIn,
       expirationDate,
@@ -304,7 +304,7 @@ exports.updateChemical = async (req, res, next) => {
     minAmount,
     labId,
     locationId,
-    storageGroup,
+    storageClass,
     dateIn,
     dateOpen,
     expirationDate,
@@ -439,11 +439,11 @@ exports.updateChemical = async (req, res, next) => {
       }\n\n`
     }
 
-    if (storageGroup !== foundChemical.storageGroup) {
-      updateQuery.storageGroup = storageGroup
-      changes += `Storage Group:\n${
-        foundChemical.storageGroup ? 'Group ' + foundChemical.storageGroup : '-'
-      } → ${storageGroup ? 'Group ' + storageGroup : '-'}\n\n`
+    if (storageClass !== foundChemical.storageClass) {
+      updateQuery.storageClass = storageClass
+      changes += `Storage Class:\n${
+        foundChemical.storageClass ? 'Class ' + foundChemical.storageClass : '-'
+      } → ${storageClass ? 'Class ' + storageClass : '-'}\n\n`
     }
 
     if (

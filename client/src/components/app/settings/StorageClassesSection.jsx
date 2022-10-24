@@ -1,9 +1,9 @@
 import React from 'react'
-import STORAGE_GROUPS from '../../../config/storage_groups'
+import STORAGE_CLASSES from '../../../config/storage_classes'
 
 const tableHeaders = ['Code', 'Description']
 
-const StorageGroupsSection = () => {
+const StorageClassesSection = () => {
   return (
     <div className='w-full max-w-4xl overflow-hidden rounded-lg border border-gray-200 bg-gray-50 shadow-sm xl:max-w-full'>
       <div className='overflow-x-auto'>
@@ -15,9 +15,7 @@ const StorageGroupsSection = () => {
                   <th
                     scope='col'
                     key={index}
-                    className={`px-6 py-4 font-medium text-gray-500 ${
-                      index === 0 ? 'text-center' : 'text-left'
-                    }`}
+                    className='px-6 py-4 text-left font-medium text-gray-500'
                   >
                     {title}
                   </th>
@@ -26,10 +24,10 @@ const StorageGroupsSection = () => {
             </thead>
 
             <tbody className='divide-y divide-gray-200 bg-white'>
-              {STORAGE_GROUPS.map((group, index) => (
+              {STORAGE_CLASSES.map((storage_class, index) => (
                 <tr className='hover:bg-indigo-50/30' key={index}>
-                  <td className='px-6 py-4 text-center'>{group.code}</td>
-                  <td className='px-6 py-4'>{group.description}</td>
+                  <td className='px-6 py-4'>{storage_class.code}</td>
+                  <td className='px-6 py-4'>{storage_class.description}</td>
                 </tr>
               ))}
             </tbody>
@@ -40,4 +38,4 @@ const StorageGroupsSection = () => {
   )
 }
 
-export default StorageGroupsSection
+export default StorageClassesSection

@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import EditLocationModal from './EditLocationModal'
-import STORAGE_GROUPS from '../../../config/storage_groups'
+import STORAGE_CLASSES from '../../../config/storage_classes'
 
-const tableHeaders = ['Location', 'Storage Group(s)', 'Action']
+const tableHeaders = ['Location', 'Storage Class(es)', 'Action']
 
 const LocationsSection = ({ locations, setEditLocationSuccess }) => {
   const [location, setLocation] = useState('')
@@ -52,11 +52,11 @@ const LocationsSection = ({ locations, setEditLocationSuccess }) => {
                       <tr className='hover:bg-indigo-50/30' key={location._id}>
                         <td className='px-6 py-4'>{location.name}</td>
                         <td className='px-6 py-4'>
-                          {location.storageGroups.length ===
-                          STORAGE_GROUPS.length
-                            ? 'Any Storage Groups'
-                            : location.storageGroups.map(
-                                (group, index) => (index ? ', ' : '') + group
+                          {location.storageClasses.length ===
+                          STORAGE_CLASSES.length
+                            ? 'Any Storage Classes'
+                            : location.storageClasses.map(
+                                (code, index) => (index ? ', ' : '') + code
                               )}
                         </td>
                         <td className='px-6 py-4'>

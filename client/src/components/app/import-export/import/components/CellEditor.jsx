@@ -15,6 +15,9 @@ const getTooltip = (value) => {
   return header['description'] + isRequired
 }
 
+const capitalizeFirstLetter = (value) =>
+  value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+
 const CellEditor = ({
   cellKey,
   chemical,
@@ -34,21 +37,16 @@ const CellEditor = ({
 
     const editedData = [...processedData]
 
-    if (
-      cellKey === 'state' ||
-      cellKey === 'storageGroup' ||
-      cellKey === 'status'
-    ) {
-      const processedValue = value.replace(/(^\w|\s\w)/g, (string) =>
-        string.toUpperCase()
-      )
-
-      editedData[index][cellKey] = processedValue
+    if (cellKey === 'state' || cellKey === 'status') {
+      editedData[index][cellKey] = capitalizeFirstLetter(value)
+    } else if (cellKey === 'storageClass') {
+      editedData[index][cellKey] = value.toUpperCase()
     } else {
       editedData[index][cellKey] = value
     }
 
     const isValid = Validate(cellKey, editedData[index][cellKey])
+
     if (!isValid) {
       editedData[index]['validated'] = false
     } else {

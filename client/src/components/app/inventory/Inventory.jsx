@@ -122,8 +122,8 @@ const Inventory = () => {
                     ...chemical,
                     CAS: chemical.CASId.CASNo,
                     location: location ? location.name : '-',
-                    allowedStorageGroups: location
-                      ? location.storageGroups
+                    allowedStorageClasses: location
+                      ? location.storageClasses
                       : [],
                     index: index,
                   }
@@ -146,8 +146,8 @@ const Inventory = () => {
                     ...chemical,
                     CAS: chemical.CASId.CASNo,
                     location: location ? location.name : '-',
-                    allowedStorageGroups: location
-                      ? location.storageGroups
+                    allowedStorageClasses: location
+                      ? location.storageClasses
                       : [],
                     index: index,
                   }

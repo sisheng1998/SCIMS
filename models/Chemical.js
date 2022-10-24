@@ -37,7 +37,7 @@ const ChemicalSchema = new Schema(
       ref: 'Lab',
     },
     locationId: String,
-    storageGroup: String,
+    storageClass: String,
     status: {
       type: String,
       default: 'Normal',

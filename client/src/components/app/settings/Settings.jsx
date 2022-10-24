@@ -5,7 +5,7 @@ import useAuth from '../../../hooks/useAuth'
 import LoadingScreen from '../../utils/LoadingScreen'
 import LabInfoSection from './LabInfoSection'
 import LocationsSection from './LocationsSection'
-import StorageGroupsSection from './StorageGroupsSection'
+import StorageClassesSection from './StorageClassesSection'
 import AddLocationModal from './AddLocationModal'
 import FormatDate from '../../utils/FormatDate'
 
@@ -119,13 +119,13 @@ const Settings = () => {
 
       <div className='mb-6 flex space-x-6 xl:flex-col xl:space-x-0 xl:space-y-6'>
         <div className='w-full max-w-md 2xl:max-w-xs xl:max-w-full'>
-          <h4>Storage Groups</h4>
+          <h4>Storage Classes (TRGS-510 Standard)</h4>
           <p className='text-sm text-gray-500'>
             A group of chemicals that will not react violently if&nbsp;mixed.
           </p>
         </div>
 
-        <StorageGroupsSection />
+        <StorageClassesSection />
       </div>
 
       {openAddLocationModal && (

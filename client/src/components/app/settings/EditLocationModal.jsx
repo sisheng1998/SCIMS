@@ -8,7 +8,8 @@ import {
 import useAuth from '../../../hooks/useAuth'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import NameField from '../../validations/NameField'
-import StorageGroupsField from '../../validations/StorageGroupsField'
+import StorageClassesField from '../../validations/StorageClassesField'
+import STORAGE_CLASSES from '../../../config/storage_classes'
 
 const EditLocationModal = ({
   location,
@@ -23,7 +24,7 @@ const EditLocationModal = ({
   const labId = auth.currentLabId
   const locationId = location._id
   const [name, setName] = useState(location.name)
-  const [storageGroups, setStorageGroups] = useState(location.storageGroups)
+  const [storageClasses, setStorageClasses] = useState(location.storageClasses)
 
   const [nameValidated, setNameValidated] = useState(false)
 
@@ -53,11 +54,18 @@ const EditLocationModal = ({
       }
     } else {
       try {
+        const sortedStorageClasses =
+          storageClasses.length === STORAGE_CLASSES.length
+            ? STORAGE_CLASSES.map((storage_class) => storage_class.code)
+            : STORAGE_CLASSES.filter((storage_class) =>
+                storageClasses.includes(storage_class.code)
+              ).map((storage_class) => storage_class.code)
+
         await axiosPrivate.put('/api/private/location', {
           labId,
           locationId,
           name,
-          storageGroups,
+          storageClasses: sortedStorageClasses,
         })
         setSuccess(true)
       } catch (error) {
@@ -76,11 +84,11 @@ const EditLocationModal = ({
     setErrorMessage('')
     setAllowed(
       nameValidated &&
-        storageGroups.length !== 0 &&
+        storageClasses.length !== 0 &&
         (name !== location.name ||
-          storageGroups.join('') !== location.storageGroups.join(''))
+          storageClasses.join('') !== location.storageClasses.join(''))
     )
-  }, [location, name, nameValidated, storageGroups])
+  }, [location, name, nameValidated, storageClasses])
 
   const closeHandler = () => {
     setErrorMessage('')
@@ -166,12 +174,15 @@ const EditLocationModal = ({
                   withNumber={true}
                 />
 
-                <label htmlFor='storageGroups' className='required-input-label'>
-                  Storage Group(s)
+                <label
+                  htmlFor='storageClasses'
+                  className='required-input-label'
+                >
+                  Storage Class(es)
                 </label>
-                <StorageGroupsField
-                  value={storageGroups}
-                  setValue={setStorageGroups}
+                <StorageClassesField
+                  value={storageClasses}
+                  setValue={setStorageClasses}
                 />
 
                 {isRemove ? (

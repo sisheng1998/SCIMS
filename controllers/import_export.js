@@ -11,6 +11,7 @@ const GHSLists = require('../chemical_data/ghs.json')
 const pictograms = require('../chemical_data/pictograms.json')
 const fs = require('fs')
 const path = require('path')
+const STORAGE_CLASSES = require('../config/storage_classes')
 
 exports.importChemicals = async (req, res, next) => {
   const { labId, chemicals, filename } = req.body
@@ -165,7 +166,7 @@ const NAME_REGEX_WITH_NUMBER = /^[a-zA-Z0-9,.'-/]+( [a-zA-Z0-9,.'-/]+)*$/
 const STATE = ['solid', 'liquid', 'gas']
 const UNIT = ['kg', 'g', 'mg', 'L', 'mL']
 const NUMBER_REGEX = /^\d{1,}(\.\d{1,2})?$/
-const STORAGE_GROUPS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'j', 'k', 'l', 'x']
+const STORAGE_CLASSES_CODE = STORAGE_CLASSES.map((code) => code.toLowerCase())
 const CHEMICAL_STATUS = [
   'normal',
   'low amount',
@@ -232,9 +233,9 @@ const validate = (chemical, index) => {
       !NAME_REGEX_WITH_NUMBER.test(chemical.location):
       errorMessage = 'Invalid Location.'
       break
-    case chemical.storageGroup !== '' &&
-      !STORAGE_GROUPS.includes(chemical.storageGroup.toLowerCase()):
-      errorMessage = 'Invalid Storage Group.'
+    case chemical.storageClass !== '' &&
+      !STORAGE_CLASSES_CODE.includes(chemical.storageClass.toLowerCase()):
+      errorMessage = 'Invalid Storage Class.'
       break
     case chemical.status !== '' &&
       !CHEMICAL_STATUS.includes(chemical.status.toLowerCase()):
@@ -324,7 +325,7 @@ const addChemical = async (
       amount: Number(chemical.amount).toFixed(2),
       minAmount: Number(chemical.minAmount).toFixed(2),
       lab: lab._id,
-      storageGroup: chemical.storageGroup,
+      storageClass: chemical.storageClass,
       status,
       dateIn,
       expirationDate,
@@ -366,9 +367,7 @@ const addChemical = async (
             $push: {
               locations: {
                 name: chemical.location,
-                storageGroups: STORAGE_GROUPS.map((group) =>
-                  group.toUpperCase()
-                ),
+                storageClasses: STORAGE_CLASSES,
               },
             },
             $set: {
@@ -656,9 +655,7 @@ const updateChemical = async (
             $push: {
               locations: {
                 name: chemical.location,
-                storageGroups: STORAGE_GROUPS.map((group) =>
-                  group.toUpperCase()
-                ),
+                storageClasses: STORAGE_CLASSES,
               },
             },
             $set: {
@@ -693,11 +690,11 @@ const updateChemical = async (
       }
     }
 
-    if (chemical.storageGroup !== foundChemical.storageGroup) {
-      updateQuery.storageGroup = chemical.storageGroup
-      changes += `Storage Group:\n${
-        foundChemical.storageGroup ? 'Group ' + foundChemical.storageGroup : '-'
-      } → ${chemical.storageGroup ? 'Group ' + chemical.storageGroup : '-'}\n\n`
+    if (chemical.storageClass !== foundChemical.storageClass) {
+      updateQuery.storageClass = chemical.storageClass
+      changes += `Storage Class:\n${
+        foundChemical.storageClass ? 'Class ' + foundChemical.storageClass : '-'
+      } → ${chemical.storageClass ? 'Class ' + chemical.storageClass : '-'}\n\n`
     }
 
     if (

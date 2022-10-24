@@ -54,8 +54,8 @@ const ChemicalsTable = (props) => {
       sortable: true,
     },
     {
-      key: 'storageGroup',
-      label: 'Group',
+      key: 'storageClass',
+      label: 'Storage Class',
       sortable: true,
     },
     {
@@ -441,14 +441,14 @@ const ChemicalsTable = (props) => {
 
                           <td className='px-6 py-4'>
                             {chemical.location}
-                            {chemical.storageGroup &&
+                            {chemical.storageClass &&
                               chemical.location !== '-' &&
-                              !chemical.allowedStorageGroups.includes(
-                                chemical.storageGroup
+                              !chemical.allowedStorageClasses.includes(
+                                chemical.storageClass
                               ) && (
                                 <span
                                   className='tooltip ml-1.5'
-                                  data-tooltip={`Group ${chemical.storageGroup} is not allowed in this location`}
+                                  data-tooltip={`Class ${chemical.storageClass} is not allowed in this location`}
                                 >
                                   <ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
                                 </span>
@@ -456,8 +456,8 @@ const ChemicalsTable = (props) => {
                           </td>
 
                           <td className='px-6 py-4'>
-                            {chemical.storageGroup
-                              ? chemical.storageGroup
+                            {chemical.storageClass
+                              ? chemical.storageClass
                               : '-'}
                           </td>
 

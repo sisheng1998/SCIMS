@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import STORAGE_GROUPS from '../../../../config/storage_groups'
+import STORAGE_CLASSES from '../../../../config/storage_classes'
 
 const StorageInfoSection = ({
   lab,
@@ -21,8 +21,8 @@ const StorageInfoSection = ({
 
   const [location, setLocation] = useState(initialLocation)
   const [locationIndex, setLocationIndex] = useState(initialLocationIndex)
-  const [storageGroup, setStorageGroup] = useState(
-    chemical ? chemical.storageGroup : ''
+  const [storageClass, setStorageClass] = useState(
+    chemical ? chemical.storageClass : ''
   )
 
   const today = new Date()
@@ -47,7 +47,7 @@ const StorageInfoSection = ({
       return {
         ...prev,
         locationId: location?._id,
-        storageGroup,
+        storageClass,
         dateIn,
         dateOpen,
         expirationDate,
@@ -60,11 +60,17 @@ const StorageInfoSection = ({
         locationValidated: location?._id ? true : false,
         dateInValidated: dateIn ? true : false,
         expirationDateValidated: expirationDate ? true : false,
+        storageClassValidated:
+          location === '' ||
+          location.storageClasses.includes(storageClass) ||
+          storageClass === ''
+            ? true
+            : false,
       }
     })
   }, [
     location,
-    storageGroup,
+    storageClass,
     setChemicalData,
     setValidated,
     dateIn,
@@ -73,7 +79,6 @@ const StorageInfoSection = ({
   ])
 
   const locationChangeHandler = (e) => {
-    setStorageGroup('')
     setLocationIndex(e.target.value)
 
     if (e.target.value !== '') {
@@ -129,25 +134,52 @@ const StorageInfoSection = ({
         </div>
 
         <div className='w-1/3'>
-          <label htmlFor='storageGroupSelection'>Storage Group</label>
+          <label htmlFor='storageClassSelection'>Storage Class</label>
           <select
-            className='w-full'
-            id='storageGroupSelection'
-            value={storageGroup}
-            onChange={(e) => setStorageGroup(e.target.value)}
+            className={`w-full ${
+              location !== '' &&
+              !location.storageClasses.includes(storageClass) &&
+              storageClass !== ''
+                ? 'input-invalid'
+                : ''
+            }`}
+            id='storageClassSelection'
+            value={storageClass}
+            onChange={(e) => setStorageClass(e.target.value)}
           >
             <option value=''>Select</option>
-            {location &&
-              STORAGE_GROUPS.filter((group) =>
-                location.storageGroups.includes(group.code)
-              ).map((group, index) => (
-                <option key={index} value={group.code}>
-                  {group.code} - {group.description}
-                </option>
-              ))}
+            {STORAGE_CLASSES.filter(
+              (storage_class) =>
+                location === '' ||
+                location.storageClasses.includes(storage_class.code) ||
+                storage_class.code === storageClass
+            ).map((storage_class, index) => (
+              <option
+                key={index}
+                value={storage_class.code}
+                disabled={
+                  location !== '' &&
+                  !location.storageClasses.includes(storage_class.code)
+                }
+              >
+                {storage_class.code} - {storage_class.description}
+              </option>
+            ))}
           </select>
-          <p className='mt-2 text-xs text-gray-400'>
-            The chemical storage group.
+          <p
+            className={`mt-2 text-xs ${
+              location !== '' &&
+              !location.storageClasses.includes(storageClass) &&
+              storageClass !== ''
+                ? 'text-red-600'
+                : 'text-gray-400'
+            }`}
+          >
+            {location !== '' &&
+            !location.storageClasses.includes(storageClass) &&
+            storageClass !== ''
+              ? `Not allowed in ${lab.locations[locationIndex].name}.`
+              : 'Based on TRGS-510 Standard.'}
           </p>
         </div>
       </div>

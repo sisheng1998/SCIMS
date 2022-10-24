@@ -8,7 +8,8 @@ import {
 import useAuth from '../../../hooks/useAuth'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import NameField from '../../validations/NameField'
-import StorageGroupsField from '../../validations/StorageGroupsField'
+import StorageClassesField from '../../validations/StorageClassesField'
+import STORAGE_CLASSES from '../../../config/storage_classes'
 
 const AddLocationModal = ({
   openModal,
@@ -21,7 +22,7 @@ const AddLocationModal = ({
 
   const labId = auth.currentLabId
   const [name, setName] = useState('')
-  const [storageGroups, setStorageGroups] = useState([])
+  const [storageClasses, setStorageClasses] = useState([])
   const [nameValidated, setNameValidated] = useState(false)
 
   const [allowed, setAllowed] = useState(false)
@@ -32,10 +33,17 @@ const AddLocationModal = ({
     e.preventDefault()
 
     try {
+      const sortedStorageClasses =
+        storageClasses.length === STORAGE_CLASSES.length
+          ? STORAGE_CLASSES.map((storage_class) => storage_class.code)
+          : STORAGE_CLASSES.filter((storage_class) =>
+              storageClasses.includes(storage_class.code)
+            ).map((storage_class) => storage_class.code)
+
       await axiosPrivate.post('/api/private/location', {
         labId,
         name,
-        storageGroups,
+        storageClasses: sortedStorageClasses,
       })
       setSuccess(true)
     } catch (error) {
@@ -51,13 +59,13 @@ const AddLocationModal = ({
 
   useEffect(() => {
     setErrorMessage('')
-    setAllowed(nameValidated && storageGroups.length !== 0)
-  }, [name, nameValidated, storageGroups])
+    setAllowed(nameValidated && storageClasses.length !== 0)
+  }, [name, nameValidated, storageClasses])
 
   const closeHandler = () => {
     setErrorMessage('')
     setName('')
-    setStorageGroups([])
+    setStorageClasses([])
 
     if (success) {
       setSuccess(false)
@@ -133,12 +141,15 @@ const AddLocationModal = ({
                   showValidated={true}
                 />
 
-                <label htmlFor='storageGroups' className='required-input-label'>
-                  Storage Group(s)
+                <label
+                  htmlFor='storageClasses'
+                  className='required-input-label'
+                >
+                  Storage Class(es)
                 </label>
-                <StorageGroupsField
-                  value={storageGroups}
-                  setValue={setStorageGroups}
+                <StorageClassesField
+                  value={storageClasses}
+                  setValue={setStorageClasses}
                 />
 
                 <div className='mt-9 flex items-center justify-end'>

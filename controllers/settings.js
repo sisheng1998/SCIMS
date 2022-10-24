@@ -4,9 +4,9 @@ const Chemical = require('../models/Chemical')
 const { startSession } = require('mongoose')
 
 exports.addLocation = async (req, res, next) => {
-  const { labId, name, storageGroups } = req.body
+  const { labId, name, storageClasses } = req.body
 
-  if (!labId || !name || storageGroups.length === 0) {
+  if (!labId || !name || storageClasses.length === 0) {
     return next(new ErrorResponse('Missing value for required field.', 400))
   }
 
@@ -24,17 +24,20 @@ exports.addLocation = async (req, res, next) => {
       return next(new ErrorResponse('Location existed.', 409))
     }
 
-    await Lab.updateOne(foundLab, {
-      $push: {
-        locations: {
-          name,
-          storageGroups,
+    await Lab.updateOne(
+      { _id: foundLab._id },
+      {
+        $push: {
+          locations: {
+            name,
+            storageClasses,
+          },
         },
-      },
-      $set: {
-        lastUpdated: Date.now(),
-      },
-    })
+        $set: {
+          lastUpdated: Date.now(),
+        },
+      }
+    )
 
     res.status(201).json({
       success: true,
@@ -46,9 +49,9 @@ exports.addLocation = async (req, res, next) => {
 }
 
 exports.editLocation = async (req, res, next) => {
-  const { labId, locationId, name, storageGroups } = req.body
+  const { labId, locationId, name, storageClasses } = req.body
 
-  if (!labId || !locationId || !name || storageGroups.length === 0) {
+  if (!labId || !locationId || !name || storageClasses.length === 0) {
     return next(new ErrorResponse('Missing value for required field.', 400))
   }
 
@@ -69,11 +72,11 @@ exports.editLocation = async (req, res, next) => {
     }
 
     await Lab.updateOne(
-      foundLab,
+      { _id: foundLab._id },
       {
         $set: {
           'locations.$[el].name': name,
-          'locations.$[el].storageGroups': storageGroups,
+          'locations.$[el].storageClasses': storageClasses,
           lastUpdated: Date.now(),
         },
       },
@@ -107,7 +110,7 @@ exports.removeLocation = async (req, res, next) => {
     session.startTransaction()
 
     await Lab.updateOne(
-      foundLab,
+      { _id: foundLab._id },
       {
         $pull: {
           locations: {
@@ -162,12 +165,15 @@ exports.editLab = async (req, res, next) => {
   }
 
   try {
-    await Lab.updateOne(foundLab, {
-      $set: {
-        labName,
-        lastUpdated: Date.now(),
-      },
-    })
+    await Lab.updateOne(
+      { _id: foundLab._id },
+      {
+        $set: {
+          labName,
+          lastUpdated: Date.now(),
+        },
+      }
+    )
 
     res.status(200).json({
       success: true,

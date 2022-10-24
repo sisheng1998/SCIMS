@@ -33,7 +33,7 @@ const LabSchema = new Schema(
     locations: [
       {
         name: String,
-        storageGroups: [String],
+        storageClasses: [String],
       },
     ],
     status: {

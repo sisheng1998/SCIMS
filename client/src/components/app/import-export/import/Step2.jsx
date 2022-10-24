@@ -6,6 +6,21 @@ import { Validate } from '../../../../config/import_export'
 const removeSingleQuote = (value) =>
   value.startsWith("'") ? value.substring(1) : value
 
+const capitalizeFirstLetter = (value) =>
+  value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+
+const processValue = (value, key) => {
+  let processedValue = removeSingleQuote(String(value))
+
+  if (key === 'state' || key === 'status') {
+    processedValue = capitalizeFirstLetter(processedValue)
+  } else if (key === 'storageClass') {
+    processedValue = processedValue.toUpperCase()
+  }
+
+  return processedValue
+}
+
 const Step2 = ({
   data,
   setProcessedData,
@@ -25,11 +40,13 @@ const Step2 = ({
 
       mappedColumns.forEach((column) => {
         const value = chemical[getLabel(column.key)]
-        const processedValue = value ? removeSingleQuote(String(value)) : ''
+
+        const processedValue = value ? processValue(value, column.key) : ''
 
         processedChemical[column.key] = processedValue
 
         const isValid = Validate(column.key, processedValue)
+
         if (processedChemical['validated'] && !isValid) {
           processedChemical['validated'] = false
         }

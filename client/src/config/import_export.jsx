@@ -1,3 +1,5 @@
+import STORAGE_CLASSES from '../config/storage_classes'
+
 const COLUMNS = [
   {
     label: 'ID',
@@ -36,8 +38,8 @@ const COLUMNS = [
     value: 'locationId',
   },
   {
-    label: 'Storage Group',
-    value: 'storageGroup',
+    label: 'Storage Class',
+    value: 'storageClass',
   },
   {
     label: 'Status',
@@ -153,13 +155,14 @@ const HEADERS = [
     key: 'location',
     sample: 'Cabinet A',
     description:
-      "Chemical's location in the current lab. The location will be auto created with 'Any Storage Groups' if the location not yet exist in the system.",
+      "Chemical's location in the current lab. The location will be auto created with 'Any Storage Classes' if the location not yet exist in the system.",
   },
   {
-    label: 'Storage Group',
-    key: 'storageGroup',
-    sample: 'A',
-    description: 'A, B, C, D, E, F, G, J, K, L, or X only.',
+    label: 'Storage Class',
+    key: 'storageClass',
+    sample: '2A',
+    description:
+      '1, 2A, 2B, 3, 4.1A, 4.1B, 4.2, 4.3, 5.1A, 5.1B, 5.1C, 5.2, 6.1A, 6.1B, 6.1C, 6.1D, 6.2, 7, 8A, 8B, 10, 11, 12, 13, or 10-13 only.',
   },
   {
     label: 'Status',
@@ -221,7 +224,9 @@ const NAME_REGEX_WITH_NUMBER = /^[a-zA-Z0-9,.'-/]+( [a-zA-Z0-9,.'-/]+)*$/
 const STATE = ['solid', 'liquid', 'gas']
 const UNIT = ['kg', 'g', 'mg', 'L', 'mL']
 const NUMBER_REGEX = /^\d{1,}(\.\d{1,2})?$/
-const STORAGE_GROUPS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'j', 'k', 'l', 'x']
+const STORAGE_CLASSES_CODE = STORAGE_CLASSES.map((storage_class) =>
+  storage_class.code.toLowerCase()
+)
 const CHEMICAL_STATUS = [
   'normal',
   'low amount',
@@ -249,8 +254,10 @@ const Validate = (key, value) => {
       return NUMBER_REGEX.test(value)
     case 'location':
       return value === '' ? true : NAME_REGEX_WITH_NUMBER.test(value)
-    case 'storageGroup':
-      return value === '' ? true : STORAGE_GROUPS.includes(value.toLowerCase())
+    case 'storageClass':
+      return value === ''
+        ? true
+        : STORAGE_CLASSES_CODE.includes(value.toLowerCase())
     case 'status':
       return value === '' ? true : CHEMICAL_STATUS.includes(value.toLowerCase())
     case 'dateIn':
