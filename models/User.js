@@ -64,6 +64,7 @@ const UserSchema = new Schema(
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     refreshToken: String,
+    isUnsubscribed: Boolean,
     createdAt: {
       type: Date,
       immutable: true,

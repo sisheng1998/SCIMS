@@ -1,0 +1,4 @@
+const APPLICATION_KEY =
+  'BANL8KjFuxD9hS61IIwI9GSbsVR-_3mhCXGyfuYi54BX-VGKePa7sFRdkI3MrUkmnAZbisIwKqF5gtkwlQQASZo'
+
+export default APPLICATION_KEY

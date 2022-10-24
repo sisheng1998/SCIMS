@@ -20,6 +20,8 @@ const useRefreshToken = () => {
     const notification = data.notification
     const avatarPath = data.avatarPath
     const SDSPath = data.SDSPath
+    const subscriber = data.subscriber
+    const isUnsubscribed = data.isUnsubscribed ? true : false
 
     setAuth((prev) => {
       return {
@@ -33,6 +35,8 @@ const useRefreshToken = () => {
         notification,
         avatarPath,
         SDSPath,
+        subscriber,
+        isUnsubscribed,
       }
     })
 

@@ -6,6 +6,7 @@ import Footer from './components/Footer'
 import MobileMenu from './components/MobileMenu'
 import useMobile from '../../hooks/useMobile'
 import ScrollToTop from './components/ScrollToTop'
+import PromptSubscription from '../app/components/PromptSubscription'
 
 const AppLayout = () => {
   const isMobile = useMobile()
@@ -21,6 +22,7 @@ const AppLayout = () => {
         {isMobile ? <MobileMenu /> : <Footer />}
       </div>
 
+      {isMobile && <PromptSubscription />}
       {isMobile && <ScrollToTop />}
     </>
   )

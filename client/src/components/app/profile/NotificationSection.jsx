@@ -1,23 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
-
-const applicationKey =
-  'BANL8KjFuxD9hS61IIwI9GSbsVR-_3mhCXGyfuYi54BX-VGKePa7sFRdkI3MrUkmnAZbisIwKqF5gtkwlQQASZo'
-
-// Url encryption
-const urlB64ToUint8Array = (base64String) => {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
-
-  const rawData = window.atob(base64)
-  const outputArray = new Uint8Array(rawData.length)
-
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i)
-  }
-  return outputArray
-}
+import APPLICATION_KEY from '../../../config/mobile_push_notification'
+import UrlB64ToUint8Array from '../../utils/UrlB64ToUnit8Array'
 
 const NotificationSection = ({ subscriber }) => {
   const axiosPrivate = useAxiosPrivate()
@@ -26,48 +11,65 @@ const NotificationSection = ({ subscriber }) => {
   const [isNavigatorSupported, setIsNavigatorSupported] = useState(false)
 
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      setIsNavigatorSupported(true)
-
-      navigator.serviceWorker.ready.then((registration) => {
-        registration.pushManager
-          .getSubscription()
-          .then(
-            (subscription) =>
-              subscription &&
-              subscriber &&
-              setSubscribed(subscription.endpoint === subscriber.endpoint)
-          )
-      })
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      return
     }
+
+    setIsNavigatorSupported(true)
+
+    navigator.serviceWorker.ready.then((registration) => {
+      registration.pushManager
+        .getSubscription()
+        .then(
+          (subscription) =>
+            subscription &&
+            subscriber &&
+            setSubscribed(subscription.endpoint === subscriber.endpoint)
+        )
+    })
   }, [subscriber])
 
   const subscribe = () => {
     setErrorMessage('')
 
-    Notification.requestPermission().then((result) => {
-      if (result === 'granted') {
-        navigator.serviceWorker.ready.then((registration) => {
-          registration.pushManager
-            .subscribe({
-              userVisibleOnly: true,
-              applicationServerKey: urlB64ToUint8Array(applicationKey),
-            })
-            .then(async (subscription) => {
-              const { data } = await axiosPrivate.post(
-                '/api/subscribe',
-                subscription
-              )
-              setSubscribed(data.success)
-            })
-            .catch(() =>
-              setErrorMessage('Something went wrong. Please try again later.')
+    const subscribeToPushNotification = () => {
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.pushManager
+          .subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: UrlB64ToUint8Array(APPLICATION_KEY),
+          })
+          .then(async (subscription) => {
+            const { data } = await axiosPrivate.post(
+              '/api/subscribe',
+              subscription
             )
-        })
-      } else {
+            setSubscribed(data.success)
+          })
+          .catch(() =>
+            setErrorMessage('Something went wrong. Please try again later.')
+          )
+      })
+    }
+
+    if (Notification.permission === 'granted') {
+      subscribeToPushNotification()
+    } else {
+      if (Notification.permission === 'denied') {
         setErrorMessage('Kindly allow the permission to receive notifications.')
+        return
       }
-    })
+
+      Notification.requestPermission().then((result) => {
+        if (result === 'granted') {
+          subscribeToPushNotification()
+        } else {
+          setErrorMessage(
+            'Kindly allow the permission to receive notifications.'
+          )
+        }
+      })
+    }
   }
 
   const unsubscribe = () => {

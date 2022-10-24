@@ -373,6 +373,11 @@ exports.refreshToken = async (req, res, next) => {
 
     const accessToken = foundUser.getAccessToken()
 
+    const subscriber = await Subscriber.findOne(
+      { user: foundUser._id },
+      'endpoint'
+    )
+
     res.status(200).json({
       success: true,
       email: foundUser.email,
@@ -384,6 +389,8 @@ exports.refreshToken = async (req, res, next) => {
       notification: foundUser.notification,
       avatarPath: '/public/avatars/',
       SDSPath: '/public/SDSs/',
+      subscriber,
+      isUnsubscribed: foundUser.isUnsubscribed,
     })
   } catch (error) {
     return next(new ErrorResponse('Invalid refresh token.', 401))
@@ -544,6 +551,8 @@ const sendToken = async (user, rememberMe, statusCode, res) => {
   user.refreshToken = refreshToken
   await user.save()
 
+  const subscriber = await Subscriber.findOne({ user: user._id }, 'endpoint')
+
   // 86400000ms = 1 day
   let expiryDate = new Date(
     Date.now() + Number(process.env.COOKIE_REFRESH_TOKEN_EXPIRE) * 86400000
@@ -567,6 +576,8 @@ const sendToken = async (user, rememberMe, statusCode, res) => {
     notification: user.notification,
     avatarPath: '/public/avatars/',
     SDSPath: '/public/SDSs/',
+    subscriber,
+    isUnsubscribed: user.isUnsubscribed,
   })
 }
 

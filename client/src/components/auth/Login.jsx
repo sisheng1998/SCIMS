@@ -46,6 +46,8 @@ const Login = () => {
       const notification = data.notification
       const avatarPath = data.avatarPath
       const SDSPath = data.SDSPath
+      const subscriber = data.subscriber
+      const isUnsubscribed = data.isUnsubscribed ? true : false
 
       setAuth((prev) => {
         return {
@@ -59,6 +61,8 @@ const Login = () => {
           notification,
           avatarPath,
           SDSPath,
+          subscriber,
+          isUnsubscribed,
         }
       })
 
