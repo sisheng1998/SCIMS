@@ -6,8 +6,8 @@ import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import LoadingScreen from '../../../utils/LoadingScreen'
 import Title from '../../components/Title'
 import Overview from './Overview'
-import Calendar from '../../dashboard/Calendar'
-import Chart from '../../dashboard/Chart'
+// import Calendar from '../../dashboard/Calendar'
+// import Chart from '../../dashboard/Chart'
 
 const Dashboard = () => {
   const navigate = useNavigate()
@@ -58,12 +58,13 @@ const Dashboard = () => {
         hasButton={false}
         hasRefreshButton={false}
       />
+
       <Overview info={info} />
 
-      <div className='mb-6 flex space-x-4 xl:block xl:space-x-0 xl:space-y-6'>
+      {/* <div className='mb-6 flex space-x-4 xl:block xl:space-x-0 xl:space-y-6'>
         <Calendar chemicals={info.chemicals} dayBeforeExp={info.dayBeforeExp} />
         <Chart info={info} />
-      </div>
+      </div> */}
     </>
   )
 }

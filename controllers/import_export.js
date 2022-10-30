@@ -699,7 +699,8 @@ const updateChemical = async (
 
     if (
       dateIn &&
-      new Date(dateIn).getTime() !== new Date(foundChemical.dateIn).getTime()
+      new Date(dateIn).toLocaleDateString('en-CA') !==
+        new Date(foundChemical.dateIn).toLocaleDateString('en-CA')
     ) {
       updateQuery.dateIn = dateIn
       changes += `Date In:\n${new Date(foundChemical.dateIn).toLocaleDateString(
@@ -714,8 +715,8 @@ const updateChemical = async (
       ).toLocaleDateString('en-CA')} → -\n\n`
     } else if (
       dateOpen &&
-      new Date(dateOpen).getTime() !==
-        new Date(foundChemical.dateOpen).getTime()
+      new Date(dateOpen).toLocaleDateString('en-CA') !==
+        new Date(foundChemical.dateOpen).toLocaleDateString('en-CA')
     ) {
       updateQuery.dateOpen = dateOpen
       changes += `Date Open:\n${
@@ -727,8 +728,8 @@ const updateChemical = async (
 
     if (
       expirationDate &&
-      new Date(expirationDate).getTime() !==
-        new Date(foundChemical.expirationDate).getTime()
+      new Date(expirationDate).toLocaleDateString('en-CA') !==
+        new Date(foundChemical.expirationDate).toLocaleDateString('en-CA')
     ) {
       updateQuery.expirationDate = expirationDate
       changes += `Expiration Date:\n${new Date(
@@ -750,8 +751,8 @@ const updateChemical = async (
 
     if (
       disposedDate &&
-      new Date(disposedDate).getTime() !==
-        new Date(foundChemical.disposedDate).getTime()
+      new Date(disposedDate).toLocaleDateString('en-CA') !==
+        new Date(foundChemical.disposedDate).toLocaleDateString('en-CA')
     ) {
       const today = new Date()
       disposedDate.setUTCHours(

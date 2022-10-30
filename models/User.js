@@ -47,6 +47,7 @@ const UserSchema = new Schema(
         },
       },
     ],
+    isAdmin: Boolean,
     avatar: String,
     notification: {
       type: Boolean,

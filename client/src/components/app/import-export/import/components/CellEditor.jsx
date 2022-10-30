@@ -18,6 +18,16 @@ const getTooltip = (value) => {
 const capitalizeFirstLetter = (value) =>
   value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
 
+const capitalizeFirstLetterForEachWord = (value) => {
+  const words = value.split(' ')
+
+  for (let i = 0; i < words.length; i++) {
+    words[i] = capitalizeFirstLetter(words[i])
+  }
+
+  return words.join(' ')
+}
+
 const CellEditor = ({
   cellKey,
   chemical,
@@ -37,8 +47,10 @@ const CellEditor = ({
 
     const editedData = [...processedData]
 
-    if (cellKey === 'state' || cellKey === 'status') {
+    if (cellKey === 'state') {
       editedData[index][cellKey] = capitalizeFirstLetter(value)
+    } else if (cellKey === 'status') {
+      editedData[index][cellKey] = capitalizeFirstLetterForEachWord(value)
     } else if (cellKey === 'storageClass') {
       editedData[index][cellKey] = value.toUpperCase()
     } else {

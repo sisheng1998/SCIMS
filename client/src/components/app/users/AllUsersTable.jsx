@@ -259,21 +259,23 @@ const AllUsersTable = (props) => {
                         </td>
                         <td className='space-y-0.5 px-6 py-4'>
                           {user.roles.length !== 0
-                            ? user.roles
-                                .sort((a, b) =>
-                                  a.lab.labName.toLowerCase() >
-                                  b.lab.labName.toLowerCase()
-                                    ? 1
-                                    : -1
-                                )
-                                .map((role) => (
-                                  <p
-                                    key={role.lab._id}
-                                    className='flex items-center'
-                                  >
-                                    Lab {role.lab.labName}
-                                  </p>
-                                ))
+                            ? user.isAdmin
+                              ? 'All Labs'
+                              : user.roles
+                                  .sort((a, b) =>
+                                    a.lab.labName.toLowerCase() >
+                                    b.lab.labName.toLowerCase()
+                                      ? 1
+                                      : -1
+                                  )
+                                  .map((role) => (
+                                    <p
+                                      key={role.lab._id}
+                                      className='flex items-center'
+                                    >
+                                      Lab {role.lab.labName}
+                                    </p>
+                                  ))
                             : '-'}
                         </td>
                         <td className='px-6 py-4 text-center'>

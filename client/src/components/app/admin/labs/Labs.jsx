@@ -33,9 +33,10 @@ const Labs = () => {
         if (isMounted) {
           const processedLabData = data.labs.reverse().map((lab, index) => ({
             ...lab,
-            index: index,
+            index,
             ownerName: lab.labOwner.name,
             ownerEmail: lab.labOwner.email,
+            admins: data.admins,
           }))
           setLabsData(processedLabData)
 
@@ -76,7 +77,6 @@ const Labs = () => {
           users={users}
           openModal={openAddLabModal}
           setOpenModal={setOpenAddLabModal}
-          setAddLabSuccess={setRefresh}
         />
       )}
     </>

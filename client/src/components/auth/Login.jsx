@@ -40,6 +40,7 @@ const Login = () => {
 
       const accessToken = data.accessToken
       const roles = data.roles
+      const isAdmin = data.isAdmin ? true : false
       const id = data.id
       const name = data.name
       const avatar = data.avatar
@@ -55,6 +56,7 @@ const Login = () => {
           email,
           accessToken,
           roles,
+          isAdmin,
           id,
           name,
           avatar,

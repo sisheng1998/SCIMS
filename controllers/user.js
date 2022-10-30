@@ -9,26 +9,33 @@ const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
 
 const UserInfo =
-  'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status'
+  'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status isAdmin'
 
 exports.getUsers = async (req, res, next) => {
   const { labId } = req.body
 
   try {
     if (labId === 'All Labs') {
-      const labs = req.user.roles.map((role) => {
-        if (role.status === 'Active') return role.lab
-      })
+      const labs = req.user.roles
+        .filter((role) => role.status === 'Active')
+        .map((role) => role.lab)
 
-      const foundLabs = await Lab.find(
-        {
-          _id: {
-            $in: labs,
-          },
-          status: 'In Use',
-        },
-        'labName'
-      )
+      const foundLabs = req.user.isAdmin
+        ? await Lab.find(
+            {
+              status: 'In Use',
+            },
+            'labName'
+          )
+        : await Lab.find(
+            {
+              _id: {
+                $in: labs,
+              },
+              status: 'In Use',
+            },
+            'labName'
+          )
 
       if (foundLabs.length === 0) {
         return next(new ErrorResponse('Lab not found.', 404))
@@ -43,6 +50,16 @@ exports.getUsers = async (req, res, next) => {
               },
             },
           },
+          $or: [{ isAdmin: { $exists: false } }, { isAdmin: false }],
+        },
+        UserInfo
+      )
+        .populate('roles.lab', 'labName status')
+        .sort({ createdAt: -1 })
+
+      const admins = await User.find(
+        {
+          isAdmin: true,
         },
         UserInfo
       )
@@ -52,35 +69,61 @@ exports.getUsers = async (req, res, next) => {
       res.status(200).json({
         success: true,
         data: {
-          users,
           labs: foundLabs,
+          users,
+          admins,
         },
       })
     } else {
       const foundLab = await Lab.findById(labId)
-        .populate('labOwner', UserInfo)
-        .populate('labUsers', UserInfo)
+        .populate({
+          path: 'labOwner',
+          match: {
+            $or: [{ isAdmin: { $exists: false } }, { isAdmin: false }],
+          },
+          select: UserInfo,
+        })
+        .populate({
+          path: 'labUsers',
+          match: {
+            $or: [{ isAdmin: { $exists: false } }, { isAdmin: false }],
+          },
+          select: UserInfo,
+        })
 
       if (!foundLab) {
         return next(new ErrorResponse('Lab not found.', 404))
       }
 
+      const admins = await User.find(
+        {
+          isAdmin: true,
+        },
+        UserInfo
+      )
+
       // Get all existing users that are not in the current lab - for lab owner or admin to add existing user to their lab
       if (res.locals.user.role >= ROLES_LIST.labOwner) {
         const otherUsers = await User.find(
-          { isEmailVerified: true, 'roles.lab': { $ne: labId } },
+          {
+            isEmailVerified: true,
+            'roles.lab': { $ne: labId },
+            $or: [{ isAdmin: { $exists: false } }, { isAdmin: false }],
+          },
           'name email'
         )
 
         res.status(200).json({
           success: true,
           data: foundLab,
-          otherUsers: otherUsers,
+          admins,
+          otherUsers,
         })
       } else {
         res.status(200).json({
           success: true,
           data: foundLab,
+          admins,
         })
       }
     }

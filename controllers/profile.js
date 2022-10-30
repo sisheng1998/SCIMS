@@ -1,10 +1,12 @@
 const ErrorResponse = require('../utils/errorResponse')
 const User = require('../models/User')
-const { sendVerificationEmail } = require('./auth')
+const Lab = require('../models/Lab')
 const Subscriber = require('../models/Subscriber')
+const { sendVerificationEmail } = require('./auth')
+const ROLES_LIST = require('../config/roles_list')
 
 const UserInfo =
-  'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status'
+  'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status isAdmin'
 
 exports.getProfile = async (req, res, next) => {
   try {
@@ -22,9 +24,27 @@ exports.getProfile = async (req, res, next) => {
       'endpoint'
     )
 
+    let admin = {}
+
+    if (user.isAdmin) {
+      const adminRoles = []
+      const labs = await Lab.find({}, 'labName status')
+
+      labs.forEach((lab) =>
+        adminRoles.push({
+          _id: lab._id,
+          lab,
+          role: ROLES_LIST.admin,
+          status: 'Active',
+        })
+      )
+
+      admin = { ...user._doc, roles: adminRoles }
+    }
+
     res.status(200).json({
       success: true,
-      user,
+      user: user.isAdmin && Object.keys(admin).length !== 0 ? admin : user,
       subscriber,
     })
   } catch (error) {

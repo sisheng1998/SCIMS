@@ -8,12 +8,10 @@ import {
 } from '@heroicons/react/outline'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import LabNameField from '../../../validations/LabNameField'
-import useAuth from '../../../../hooks/useAuth'
 import RegisterNewUser from '../../components/RegisterNewUser'
 
-const AddLabModal = ({ users, openModal, setOpenModal, setAddLabSuccess }) => {
+const AddLabModal = ({ users, openModal, setOpenModal }) => {
   const axiosPrivate = useAxiosPrivate()
-  const { auth } = useAuth()
   const divRef = useRef(null)
 
   const [email, setEmail] = useState('')
@@ -112,12 +110,7 @@ const AddLabModal = ({ users, openModal, setOpenModal, setAddLabSuccess }) => {
     setSelectUser(true)
 
     if (success) {
-      if (ownerId === auth.id) {
-        window.location.reload(false)
-      } else {
-        setSuccess(false)
-        setAddLabSuccess(true)
-      }
+      window.location.reload(false)
     }
 
     setOpenModal(false)

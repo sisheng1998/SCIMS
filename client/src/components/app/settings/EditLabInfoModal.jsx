@@ -22,6 +22,10 @@ const EditLabInfoModal = ({ lab, openModal, setOpenModal }) => {
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
+  const labUsersNo =
+    lab.labUsers.length + lab.admins + (lab.labOwner === null ? 0 : 1)
+  const chemicalsNo = lab.chemicals.length + lab.disposedChemicals.length
+
   const editLabInfoHandler = async (e) => {
     e.preventDefault()
 
@@ -130,10 +134,8 @@ const EditLabInfoModal = ({ lab, openModal, setOpenModal }) => {
                 </div>
 
                 <StaticLabInfo
-                  labUsersNo={lab.labUsers.length + 1}
-                  chemicalsNo={
-                    lab.chemicals.length + lab.disposedChemicals.length
-                  }
+                  labUsersNo={labUsersNo}
+                  chemicalsNo={chemicalsNo}
                 />
 
                 <div className='mb-9 mt-6 flex items-center justify-between space-x-6 text-sm text-gray-500'>

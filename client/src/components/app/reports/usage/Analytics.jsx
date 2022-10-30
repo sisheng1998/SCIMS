@@ -11,7 +11,7 @@ const UnitTabLabels = ['kg', 'g', 'mg', 'L', 'mL']
 const Analytics = ({ data, chemicals, users }) => {
   const [activeTab, setActiveTab] = useState('Tab0')
   const [activeUnitTab, setActiveUnitTab] = useState(0)
-  const [indexAxis, setIndexAxis] = useState('x')
+  const [indexAxis, setIndexAxis] = useState('y')
 
   return (
     <div className='mb-6 grid grid-cols-5 gap-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm'>

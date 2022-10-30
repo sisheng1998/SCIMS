@@ -33,19 +33,26 @@ exports.getInfo = async (req, res, next) => {
 
   try {
     if (labId === 'All Labs') {
-      const labs = req.user.roles.map((role) => {
-        if (role.status === 'Active') return role.lab
-      })
+      const labs = req.user.roles
+        .filter((role) => role.status === 'Active')
+        .map((role) => role.lab)
 
-      const foundLabs = await Lab.find(
-        {
-          _id: {
-            $in: labs,
-          },
-          status: 'In Use',
-        },
-        'chemicals disposedChemicals'
-      ).populate('chemicals disposedChemicals', 'name expirationDate')
+      const foundLabs = req.user.isAdmin
+        ? await Lab.find(
+            {
+              status: 'In Use',
+            },
+            'chemicals disposedChemicals'
+          ).populate('chemicals disposedChemicals', 'name expirationDate')
+        : await Lab.find(
+            {
+              _id: {
+                $in: labs,
+              },
+              status: 'In Use',
+            },
+            'chemicals disposedChemicals'
+          ).populate('chemicals disposedChemicals', 'name expirationDate')
 
       if (foundLabs.length === 0) {
         return next(new ErrorResponse('Lab not found.', 404))
@@ -135,9 +142,16 @@ exports.getInfo = async (req, res, next) => {
         return next(new ErrorResponse('Lab not found.', 404))
       }
 
-      data.totalUsers = await User.countDocuments({
+      const users = await User.countDocuments({
         roles: { $elemMatch: { lab: foundLab._id } },
+        $or: [{ isAdmin: { $exists: false } }, { isAdmin: false }],
       })
+
+      const admins = await User.countDocuments({
+        isAdmin: true,
+      })
+
+      data.totalUsers = users + admins
       data.newUsers = await User.countDocuments({
         roles: { $elemMatch: { lab: foundLab._id } },
         createdAt: { $gte: past },

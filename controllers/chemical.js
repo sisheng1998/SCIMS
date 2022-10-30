@@ -21,9 +21,12 @@ const sendNotification = require('../utils/sendNotification')
 const getKeysByValue = (object, value) =>
   Object.keys(object).filter((key) => object[key] === value)
 
-const labOption = 'labName labUsers chemicals locations createdAt lastUpdated'
+const labOption =
+  'labName labOwner labUsers chemicals locations createdAt lastUpdated'
 const chemicalOption =
   'QRCode CASId name unit containerSize minAmount amount lab expirationDate disposedDate locationId storageClass status createdAt lastUpdated'
+const UserInfo =
+  'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status isAdmin'
 
 exports.getChemicals = async (req, res, next) => {
   const labId = req.body.labId
@@ -32,23 +35,35 @@ exports.getChemicals = async (req, res, next) => {
     foundLabs: [],
     chemicals: [],
     disposedChemicals: [],
+    admins: 0,
   }
 
   try {
-    if (labId === 'All Labs') {
-      const labs = req.user.roles.map((role) => {
-        if (role.status === 'Active') return role.lab
-      })
+    const admins = await User.countDocuments({
+      isAdmin: true,
+    })
 
-      const foundLabs = await Lab.find(
-        {
-          _id: {
-            $in: labs,
-          },
-          status: 'In Use',
-        },
-        'labName locations'
-      )
+    if (labId === 'All Labs') {
+      const labs = req.user.roles
+        .filter((role) => role.status === 'Active')
+        .map((role) => role.lab)
+
+      const foundLabs = req.user.isAdmin
+        ? await Lab.find(
+            {
+              status: 'In Use',
+            },
+            'labName locations'
+          )
+        : await Lab.find(
+            {
+              _id: {
+                $in: labs,
+              },
+              status: 'In Use',
+            },
+            'labName locations'
+          )
 
       if (foundLabs.length === 0) {
         return next(new ErrorResponse('Lab not found.', 404))
@@ -86,28 +101,44 @@ exports.getChemicals = async (req, res, next) => {
         labs: foundLabs,
         chemicals,
         disposedChemicals,
+        admins,
       }
     } else {
-      const foundLab = await Lab.findById(labId, labOption).populate({
-        path: 'chemicals disposedChemicals',
-        select: chemicalOption,
-        populate: [
-          {
-            path: 'CASId',
-            model: 'CAS',
+      const foundLab = await Lab.findById(labId, labOption)
+        .populate({
+          path: 'chemicals disposedChemicals',
+          select: chemicalOption,
+          populate: [
+            {
+              path: 'CASId',
+              model: 'CAS',
+            },
+            {
+              path: 'lab',
+              select: 'labName _id',
+            },
+          ],
+        })
+        .populate({
+          path: 'labOwner',
+          match: {
+            $or: [{ isAdmin: { $exists: false } }, { isAdmin: false }],
           },
-          {
-            path: 'lab',
-            select: 'labName _id',
+          select: UserInfo,
+        })
+        .populate({
+          path: 'labUsers',
+          match: {
+            $or: [{ isAdmin: { $exists: false } }, { isAdmin: false }],
           },
-        ],
-      })
+          select: UserInfo,
+        })
 
       if (!foundLab) {
         return next(new ErrorResponse('Lab not found.', 404))
       }
 
-      data = foundLab
+      data = { ...foundLab._doc, admins }
     }
 
     res.status(200).json({
@@ -448,7 +479,8 @@ exports.updateChemical = async (req, res, next) => {
 
     if (
       dateIn &&
-      new Date(dateIn).getTime() !== new Date(foundChemical.dateIn).getTime()
+      new Date(dateIn).toLocaleDateString('en-CA') !==
+        new Date(foundChemical.dateIn).toLocaleDateString('en-CA')
     ) {
       updateQuery.dateIn = dateIn
       changes += `Date In:\n${new Date(foundChemical.dateIn).toLocaleDateString(
@@ -463,8 +495,8 @@ exports.updateChemical = async (req, res, next) => {
       ).toLocaleDateString('en-CA')} → -\n\n`
     } else if (
       dateOpen &&
-      new Date(dateOpen).getTime() !==
-        new Date(foundChemical.dateOpen).getTime()
+      new Date(dateOpen).toLocaleDateString('en-CA') !==
+        new Date(foundChemical.dateOpen).toLocaleDateString('en-CA')
     ) {
       updateQuery.dateOpen = dateOpen
       changes += `Date Open:\n${
@@ -476,8 +508,8 @@ exports.updateChemical = async (req, res, next) => {
 
     if (
       expirationDate &&
-      new Date(expirationDate).getTime() !==
-        new Date(foundChemical.expirationDate).getTime()
+      new Date(expirationDate).toLocaleDateString('en-CA') !==
+        new Date(foundChemical.expirationDate).toLocaleDateString('en-CA')
     ) {
       updateQuery.expirationDate = expirationDate
       changes += `Expiration Date:\n${new Date(

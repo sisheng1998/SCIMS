@@ -59,9 +59,10 @@ const runScript = async () => {
               password: init.password,
               roles: {
                 lab: lab[0]._id,
-                role: ROLES_LIST.admin,
+                role: ROLES_LIST.labOwner,
                 status: 'Active',
               },
+              isAdmin: true,
               isEmailVerified: true,
             },
           ],

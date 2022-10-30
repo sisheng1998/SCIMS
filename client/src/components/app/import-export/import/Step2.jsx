@@ -9,11 +9,23 @@ const removeSingleQuote = (value) =>
 const capitalizeFirstLetter = (value) =>
   value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
 
+const capitalizeFirstLetterForEachWord = (value) => {
+  const words = value.split(' ')
+
+  for (let i = 0; i < words.length; i++) {
+    words[i] = capitalizeFirstLetter(words[i])
+  }
+
+  return words.join(' ')
+}
+
 const processValue = (value, key) => {
   let processedValue = removeSingleQuote(String(value))
 
-  if (key === 'state' || key === 'status') {
+  if (key === 'state') {
     processedValue = capitalizeFirstLetter(processedValue)
+  } else if (key === 'status') {
+    processedValue = capitalizeFirstLetterForEachWord(processedValue)
   } else if (key === 'storageClass') {
     processedValue = processedValue.toUpperCase()
   }

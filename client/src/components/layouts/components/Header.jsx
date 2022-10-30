@@ -32,7 +32,9 @@ const Header = () => {
       </div>
 
       <div className='flex flex-1 items-center justify-end'>
-        {!isMobile && <Search searchRef={searchRef} isAdmin={isAdmin} />}
+        {!isMobile && !isAdmin && (
+          <Search searchRef={searchRef} isAdmin={isAdmin} />
+        )}
         {!isMobile && <Notification />}
         <UserOption />
       </div>

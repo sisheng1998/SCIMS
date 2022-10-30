@@ -14,6 +14,7 @@ const useRefreshToken = () => {
     const email = data.email
     const accessToken = data.accessToken
     const roles = data.roles
+    const isAdmin = data.isAdmin ? true : false
     const id = data.id
     const name = data.name
     const avatar = data.avatar
@@ -29,6 +30,7 @@ const useRefreshToken = () => {
         email,
         accessToken,
         roles,
+        isAdmin,
         id,
         name,
         avatar,

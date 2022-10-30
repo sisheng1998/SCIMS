@@ -23,11 +23,7 @@ const LabSelection = ({ searchRef }) => {
   const isMobile = useMobile()
 
   // Check whether user is admin
-  const isAdmin =
-    !isMobile &&
-    auth.roles.some(
-      (role) => role.role === ROLES_LIST.admin && role.status === 'Active'
-    )
+  const isAdmin = !isMobile && auth.isAdmin
 
   const currentLab = localStorage.getItem('currentLab')
   if (!currentLab) {
@@ -112,7 +108,7 @@ const LabSelection = ({ searchRef }) => {
         </svg>
       </Listbox.Button>
 
-      <Listbox.Options className='absolute top-full mt-2 w-36 rounded-lg bg-white py-2 text-sm font-medium leading-6 shadow-md outline-gray-300 ring-1 ring-gray-300'>
+      <Listbox.Options className='absolute top-full mt-2 max-h-80 w-36 overflow-y-auto rounded-lg bg-white py-2 text-sm font-medium leading-6 shadow-md outline-gray-300 ring-1 ring-gray-300'>
         {isAdmin ? (
           <Listbox.Option value={admin} as={Fragment}>
             <li

@@ -20,7 +20,7 @@ const Labs = () => {
           <LabCard key={role._id} role={role} />
         ))}
 
-        {!isMobile && (
+        {!isMobile && !auth.isAdmin && (
           <div className='mb-4 w-1/5 2xl:w-1/4 xl:w-1/3 lg:w-1/2 sm:mb-0 sm:w-full'>
             <div
               className='group mr-4 flex h-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 hover:border-indigo-600 hover:bg-indigo-50'
@@ -35,7 +35,7 @@ const Labs = () => {
         )}
       </div>
 
-      {isMobile && (
+      {isMobile && !auth.isAdmin && (
         <button
           className='button button-solid fixed bottom-2 right-2 z-10 -translate-y-12 justify-center py-2 shadow-md'
           onClick={() => setOpenApplyNewLabModal(true)}

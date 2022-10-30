@@ -40,11 +40,7 @@ const PrivateRoute = () => {
       navigate('/pending-approval')
     } else {
       // Check whether user is admin
-      const isAdmin =
-        !isMobile &&
-        auth.roles.some(
-          (role) => role.role === ROLES_LIST.admin && role.status === 'Active'
-        )
+      const isAdmin = !isMobile && auth.isAdmin
 
       // Check if local storage has stored current lab
       const currentLab = localStorage.getItem('currentLab')

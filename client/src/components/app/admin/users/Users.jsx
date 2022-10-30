@@ -4,6 +4,7 @@ import Title from '../../components/Title'
 import UsersTable from './UsersTable'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import LoadingScreen from '../../../utils/LoadingScreen'
+import ROLES_LIST from '../../../../config/roles_list'
 
 const Users = () => {
   const axiosPrivate = useAxiosPrivate()
@@ -32,12 +33,21 @@ const Users = () => {
           signal: controller.signal,
         })
         if (isMounted) {
+          setLabsData(data.labs)
+
+          const adminRoles = data.labs.map((lab) => ({
+            lab: { ...lab, status: 'In Use' },
+            role: ROLES_LIST.admin,
+            status: 'Active',
+          }))
+
           const processedData = data.users.reverse().map((user, index) => ({
             ...user,
+            roles: user.isAdmin ? adminRoles : user.roles,
             index,
           }))
           setUsersData(processedData)
-          setLabsData(data.labs)
+
           setIsLoading(false)
         }
       } catch (error) {

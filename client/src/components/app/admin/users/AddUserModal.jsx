@@ -41,7 +41,9 @@ const AddUserModal = ({
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
-  const verifiedUser = users.filter((user) => user.isEmailVerified)
+  const verifiedUser = users.filter(
+    (user) => user.isEmailVerified && !user.isAdmin
+  )
   const inUseLab = labs.filter((lab) => lab.status === 'In Use')
 
   const addUserHandler = async (e) => {

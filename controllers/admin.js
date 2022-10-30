@@ -11,7 +11,7 @@ const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
 
 const UserInfo =
-  'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status'
+  'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status isAdmin'
 
 // Dashboard
 exports.getInfo = async (req, res, next) => {
@@ -101,13 +101,25 @@ exports.getChemicals = async (req, res, next) => {
 // Labs
 exports.getLabs = async (req, res, next) => {
   try {
-    const labs = await Lab.find({}).populate('labOwner', 'name email avatar')
+    const labs = await Lab.find({})
+      .populate('labOwner', 'name email avatar isAdmin')
+      .populate({
+        path: 'labUsers',
+        match: {
+          $or: [{ isAdmin: { $exists: false } }, { isAdmin: false }],
+        },
+        select: 'name email avatar isAdmin',
+      })
     const users = await User.find({}, 'name email avatar')
+    const admins = await User.countDocuments({
+      isAdmin: true,
+    })
 
     res.status(200).json({
       success: true,
       labs,
       users,
+      admins,
     })
   } catch (error) {
     next(error)

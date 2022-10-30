@@ -52,6 +52,7 @@
   }
 
   html {
+    -webkit-tap-highlight-color: transparent;
     @apply bg-gray-100 text-gray-700 antialiased selection:bg-indigo-600 selection:text-white;
   }
 

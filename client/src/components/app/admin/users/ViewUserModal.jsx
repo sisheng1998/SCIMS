@@ -60,6 +60,16 @@ const ViewUserModal = ({ user, openModal, setOpenModal }) => {
                         <td className='px-3 py-2'>-</td>
                         <td className='px-3 py-2'>-</td>
                       </tr>
+                    ) : user.isAdmin ? (
+                      <tr className='hover:bg-indigo-50/30'>
+                        <td className='px-3 py-2'>All Labs</td>
+                        <td className='px-3 py-2'>
+                          <span className='inline-flex rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-600'>
+                            Active
+                          </span>
+                        </td>
+                        <td className='px-3 py-2 capitalize'>Admin</td>
+                      </tr>
                     ) : (
                       user.roles
                         .sort((a, b) =>

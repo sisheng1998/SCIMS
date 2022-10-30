@@ -73,7 +73,10 @@ const Pagination = ({
           className={`pointer-events-none inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-l-lg border border-gray-200 bg-white hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 ${
             currentPage > 1 ? 'pointer-events-auto' : 'text-gray-300'
           }`}
-          onClick={() => paginate(currentPage - 1)}
+          onClick={() => {
+            paginate(currentPage - 1)
+            window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+          }}
         >
           <ChevronLeftIcon className='h-3.5 w-3.5 stroke-2' />
         </li>
@@ -86,7 +89,10 @@ const Pagination = ({
                 : ''
             }${number === '...' ? ' pointer-events-none text-gray-300' : ''}`}
             key={index}
-            onClick={() => paginate(number)}
+            onClick={() => {
+              paginate(number)
+              window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+            }}
           >
             {number}
           </li>
@@ -98,7 +104,10 @@ const Pagination = ({
               ? 'pointer-events-auto'
               : 'text-gray-300'
           }`}
-          onClick={() => paginate(currentPage + 1)}
+          onClick={() => {
+            paginate(currentPage + 1)
+            window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+          }}
         >
           <ChevronRightIcon className='h-3.5 w-3.5 stroke-2' />
         </li>

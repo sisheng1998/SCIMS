@@ -7,15 +7,20 @@ const allLabs = {
   _id: 'All Labs',
 }
 
+const admin = {
+  lab: 'Admin',
+  role: ROLES_LIST.admin,
+  status: 'Active',
+  _id: 'Admin',
+}
+
 const verifyRoles = (minRoles) => {
   return (req, res, next) => {
     if (!req?.user) return res.sendStatus(401)
 
-    const admin = req.user.roles.find(
-      (role) => role.role === ROLES_LIST.admin && role.status === 'Active'
-    )
+    const isAdmin = req.user.isAdmin ? true : false
 
-    if (admin) {
+    if (isAdmin) {
       res.locals.user = admin
     } else {
       if (req.body.labId === 'All Labs') {

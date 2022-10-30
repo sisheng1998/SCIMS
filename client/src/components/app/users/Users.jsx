@@ -49,6 +49,16 @@ const Users = () => {
           if (isAllLabs) {
             setLabsData(data.data.labs)
 
+            const adminRoles = data.data.labs.map((lab) => ({
+              lab: { ...lab, status: 'In Use' },
+              role: ROLES_LIST.admin,
+              status: 'Active',
+            }))
+
+            if (data.data.admins.length !== 0) {
+              data.data.users.push(...data.data.admins)
+            }
+
             const processedData = data.data.users.map((user, index) => {
               const userRoles = user.roles.filter((role) =>
                 data.data.labs.some((lab) => lab._id === role.lab._id)
@@ -56,27 +66,34 @@ const Users = () => {
 
               return {
                 ...user,
-                roles: userRoles,
+                roles: user.isAdmin ? adminRoles : userRoles,
                 index,
               }
             })
 
             setUsersData(processedData)
           } else {
-            data.data.labUsers.unshift(data.data.labOwner)
+            if (data.data.labOwner !== null) {
+              data.data.labUsers.unshift(data.data.labOwner)
+            }
+
+            if (data.admins.length !== 0) {
+              data.data.labUsers.unshift(...data.admins)
+            }
+
             const processedData = data.data.labUsers
               .reverse()
               .map((user, index) => {
-                const currentRole = user.roles.find((role) => {
-                  return role.lab === data.data._id
-                })
+                const currentRole = user.roles.find(
+                  (role) => role.lab === data.data._id
+                )
 
                 return {
                   ...user,
                   index,
-                  role: GetRoleName(currentRole.role),
-                  roleValue: currentRole.role,
-                  status: currentRole.status,
+                  role: user.isAdmin ? 'Admin' : GetRoleName(currentRole.role),
+                  roleValue: user.isAdmin ? ROLES_LIST.admin : currentRole.role,
+                  status: user.isAdmin ? 'Active' : currentRole.status,
                 }
               })
             // LabUsers array

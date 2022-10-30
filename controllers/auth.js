@@ -378,11 +378,30 @@ exports.refreshToken = async (req, res, next) => {
       'endpoint'
     )
 
+    const adminRoles = []
+
+    if (foundUser.isAdmin) {
+      const labs = await Lab.find({}, 'labName status')
+
+      labs.forEach((lab) =>
+        adminRoles.push({
+          _id: lab._id,
+          lab,
+          role: ROLES_LIST.admin,
+          status: 'Active',
+        })
+      )
+    }
+
     res.status(200).json({
       success: true,
       email: foundUser.email,
       accessToken: accessToken,
-      roles: foundUser.roles,
+      roles:
+        foundUser.isAdmin && adminRoles.length !== 0
+          ? adminRoles
+          : foundUser.roles,
+      isAdmin: foundUser.isAdmin,
       id: foundUser._id,
       name: foundUser.name,
       avatar: foundUser.avatar,
@@ -553,6 +572,21 @@ const sendToken = async (user, rememberMe, statusCode, res) => {
 
   const subscriber = await Subscriber.findOne({ user: user._id }, 'endpoint')
 
+  const adminRoles = []
+
+  if (user.isAdmin) {
+    const labs = await Lab.find({}, 'labName status')
+
+    labs.forEach((lab) =>
+      adminRoles.push({
+        _id: lab._id,
+        lab,
+        role: ROLES_LIST.admin,
+        status: 'Active',
+      })
+    )
+  }
+
   // 86400000ms = 1 day
   let expiryDate = new Date(
     Date.now() + Number(process.env.COOKIE_REFRESH_TOKEN_EXPIRE) * 86400000
@@ -569,7 +603,8 @@ const sendToken = async (user, rememberMe, statusCode, res) => {
   res.status(statusCode).json({
     success: true,
     accessToken: accessToken,
-    roles: user.roles,
+    roles: user.isAdmin && adminRoles.length !== 0 ? adminRoles : user.roles,
+    isAdmin: user.isAdmin,
     id: user._id,
     name: user.name,
     avatar: user.avatar,

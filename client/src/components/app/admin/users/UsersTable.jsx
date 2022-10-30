@@ -271,36 +271,38 @@ const UsersTable = (props) => {
                         </td>
                         <td className='space-y-0.5 px-6 py-4'>
                           {user.roles.length !== 0
-                            ? user.roles
-                                .sort((a, b) =>
-                                  a.lab.labName.toLowerCase() >
-                                  b.lab.labName.toLowerCase()
-                                    ? 1
-                                    : -1
-                                )
-                                .map((role) => (
-                                  <div
-                                    key={role.lab._id}
-                                    className='flex items-center'
-                                  >
-                                    <p>{'Lab ' + role.lab.labName}</p>
-                                    {!(
-                                      user.email === auth.email ||
-                                      role.role === ROLES_LIST.admin ||
-                                      role.role === ROLES_LIST.labOwner ||
-                                      role.status === 'Pending'
-                                    ) && (
-                                      <button
-                                        onClick={() =>
-                                          editUserHandler(user, role)
-                                        }
-                                        className='ml-2 text-gray-400 transition hover:text-indigo-700 focus:outline-none'
-                                      >
-                                        <PencilAltIcon className='h-5 w-5' />
-                                      </button>
-                                    )}
-                                  </div>
-                                ))
+                            ? user.isAdmin
+                              ? 'All Labs'
+                              : user.roles
+                                  .sort((a, b) =>
+                                    a.lab.labName.toLowerCase() >
+                                    b.lab.labName.toLowerCase()
+                                      ? 1
+                                      : -1
+                                  )
+                                  .map((role) => (
+                                    <div
+                                      key={role.lab._id}
+                                      className='flex items-center'
+                                    >
+                                      <p>{'Lab ' + role.lab.labName}</p>
+                                      {!(
+                                        user.email === auth.email ||
+                                        role.role === ROLES_LIST.admin ||
+                                        role.role === ROLES_LIST.labOwner ||
+                                        role.status === 'Pending'
+                                      ) && (
+                                        <button
+                                          onClick={() =>
+                                            editUserHandler(user, role)
+                                          }
+                                          className='ml-2 text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+                                        >
+                                          <PencilAltIcon className='h-5 w-5' />
+                                        </button>
+                                      )}
+                                    </div>
+                                  ))
                             : '-'}
                         </td>
                         <td className='px-6 py-4 text-center'>

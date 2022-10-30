@@ -76,12 +76,12 @@ const ADMIN_MENU_LIST = [
     icon: <ViewGridIcon />,
     minRole: ROLES_LIST.admin,
   },
-  {
-    text: 'Inventory',
-    link: '/admin/inventory',
-    icon: <CubeIcon />,
-    minRole: ROLES_LIST.admin,
-  },
+  // {
+  //   text: 'Inventory',
+  //   link: '/admin/inventory',
+  //   icon: <CubeIcon />,
+  //   minRole: ROLES_LIST.admin,
+  // },
   {
     text: 'Labs',
     link: '/admin/labs',

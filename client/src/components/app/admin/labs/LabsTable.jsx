@@ -5,7 +5,6 @@ import Filters from '../../components/Filters'
 import Pagination from '../../components/Pagination'
 import EditLabModal from './EditLabModal'
 import useAuth from '../../../../hooks/useAuth'
-import ROLES_LIST from '../../../../config/roles_list'
 import GetLetterPicture from '../../../utils/GetLetterPicture'
 import ImageLightBox from '../../../utils/ImageLightBox'
 
@@ -191,6 +190,14 @@ const LabsTable = (props) => {
                       ? auth.avatarPath + lab.labOwner.avatar
                       : GetLetterPicture(lab.labOwner.name)
 
+                    const chemicalsNo =
+                      lab.chemicals.length + lab.disposedChemicals.length
+
+                    const labUsersNo =
+                      lab.labUsers.length +
+                      lab.admins +
+                      (lab.labOwner.isAdmin ? 0 : 1)
+
                     return (
                       <tr className='hover:bg-indigo-50/30' key={lab._id}>
                         <td className='px-6 py-4'>{'Lab ' + lab.labName}</td>
@@ -231,10 +238,8 @@ const LabsTable = (props) => {
                           </div>
                         </td>
 
-                        <td className='px-6 py-4'>{lab.labUsers.length + 1}</td>
-                        <td className='px-6 py-4'>
-                          {lab.chemicals.length + lab.disposedChemicals.length}
-                        </td>
+                        <td className='px-6 py-4'>{labUsersNo}</td>
+                        <td className='px-6 py-4'>{chemicalsNo}</td>
 
                         <td className='px-6 py-4'>
                           <span
@@ -248,12 +253,7 @@ const LabsTable = (props) => {
                           </span>
                         </td>
                         <td className='px-6 py-4 text-center'>
-                          {auth.email === lab.ownerEmail &&
-                          auth.roles.some(
-                            (role) =>
-                              role.role === ROLES_LIST.admin &&
-                              role.lab._id === lab._id
-                          ) ? (
+                          {auth.email === lab.ownerEmail && auth.isAdmin ? (
                             <button
                               onClick={() => editLabHandler(lab, false)}
                               className='flex font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
