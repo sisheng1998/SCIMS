@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import useAuth from '../../../hooks/useAuth'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 
-const Search = ({ searchRef, isAdmin }) => {
+const Search = ({ searchRef }) => {
   const navigate = useNavigate()
   const { auth, setAuth } = useAuth()
   const axiosPrivate = useAxiosPrivate()
@@ -21,41 +21,26 @@ const Search = ({ searchRef, isAdmin }) => {
 
     const getChemicals = async () => {
       try {
-        if (isAdmin) {
-          const { data } = await axiosPrivate.get('/api/admin/chemicals', {
+        const { data } = await axiosPrivate.post(
+          '/api/private/chemicals',
+          {
+            labId: auth.currentLabId,
+          },
+          {
             signal: controller.signal,
-          })
-          if (isMounted) {
-            setAuth((prev) => {
-              return {
-                ...prev,
-                chemicals: [...data.chemicals, ...data.disposedChemicals],
-              }
-            })
-            setSearchable(true)
           }
-        } else {
-          const { data } = await axiosPrivate.post(
-            '/api/private/chemicals',
-            {
-              labId: auth.currentLabId,
-            },
-            {
-              signal: controller.signal,
+        )
+        if (isMounted) {
+          setAuth((prev) => {
+            return {
+              ...prev,
+              chemicals: [
+                ...data.data.chemicals,
+                ...data.data.disposedChemicals,
+              ],
             }
-          )
-          if (isMounted) {
-            setAuth((prev) => {
-              return {
-                ...prev,
-                chemicals: [
-                  ...data.data.chemicals,
-                  ...data.data.disposedChemicals,
-                ],
-              }
-            })
-            setSearchable(true)
-          }
+          })
+          setSearchable(true)
         }
       } catch (error) {
         return
@@ -68,7 +53,7 @@ const Search = ({ searchRef, isAdmin }) => {
       isMounted = false
       controller.abort()
     }
-  }, [axiosPrivate, auth.currentLabId, setAuth, isAdmin])
+  }, [axiosPrivate, auth.currentLabId, setAuth])
 
   const filteredChemicals = query
     ? auth.chemicals.filter(
@@ -84,9 +69,7 @@ const Search = ({ searchRef, isAdmin }) => {
         onChange={(chemical) => {
           searchRef.current.value = ''
           setQuery('')
-          isAdmin
-            ? navigate(`/admin/inventory/${chemical._id}`)
-            : navigate(`/inventory/${chemical._id}`)
+          navigate(`/inventory/${chemical._id}`)
         }}
         as='div'
         className={`relative w-full max-w-sm ${

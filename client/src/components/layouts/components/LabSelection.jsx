@@ -35,6 +35,7 @@ const LabSelection = ({ searchRef }) => {
   const index = auth.roles.findIndex(
     (role) => role.lab._id === currentLab && role.lab.status === 'In Use'
   )
+
   if (!isAdmin && !isAllLabs && index === -1) {
     window.location.reload(false)
   }
@@ -61,14 +62,12 @@ const LabSelection = ({ searchRef }) => {
     const getAuth = () => {
       if (redirect) {
         localStorage.setItem('currentLab', selected.lab._id)
-        setAuth((prev) => {
-          return {
-            ...prev,
-            currentLabId: selected.lab._id,
-            currentLabName: selected.lab.labName,
-            currentRole: selected.role,
-          }
-        })
+        setAuth((prev) => ({
+          ...prev,
+          currentLabId: selected.lab._id,
+          currentLabName: selected.lab.labName,
+          currentRole: selected.role,
+        }))
 
         navigate(
           selected.lab._id !== ROLES_LIST.admin.toString() ? '/' : '/admin'
@@ -150,21 +149,19 @@ const LabSelection = ({ searchRef }) => {
           .map((role) =>
             role.status === 'Active' && role.lab.status === 'In Use' ? (
               <Listbox.Option key={role._id} value={role} as={Fragment}>
-                {() => (
-                  <li
-                    className={`flex cursor-pointer items-center justify-between px-3 py-1 hover:bg-indigo-50 hover:text-indigo-600 ${
-                      auth.currentLabId === role.lab._id
-                        ? 'pointer-events-none font-semibold text-indigo-600'
-                        : ''
-                    }`}
-                    onClick={() => setRedirect(true)}
-                  >
-                    {'Lab ' + role.lab.labName}
-                    {auth.currentLabId === role.lab._id && (
-                      <CheckIcon className='ml-2 h-4 w-4 stroke-2' />
-                    )}
-                  </li>
-                )}
+                <li
+                  className={`flex cursor-pointer items-center justify-between px-3 py-1 hover:bg-indigo-50 hover:text-indigo-600 ${
+                    auth.currentLabId === role.lab._id
+                      ? 'pointer-events-none font-semibold text-indigo-600'
+                      : ''
+                  }`}
+                  onClick={() => setRedirect(true)}
+                >
+                  {'Lab ' + role.lab.labName}
+                  {auth.currentLabId === role.lab._id && (
+                    <CheckIcon className='ml-2 h-4 w-4 stroke-2' />
+                  )}
+                </li>
               </Listbox.Option>
             ) : null
           )}
