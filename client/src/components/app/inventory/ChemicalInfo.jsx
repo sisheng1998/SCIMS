@@ -10,6 +10,7 @@ import FormatDate from '../../utils/FormatDate'
 import { XIcon, ExclamationIcon } from '@heroicons/react/outline'
 import useMobile from '../../../hooks/useMobile'
 import ScanQRCode from '../components/ScanQRCode'
+import ROLES_LIST from '../../../config/roles_list'
 
 const ID_REGEX = /^[a-f\d]{24}$/i
 
@@ -127,7 +128,9 @@ const ChemicalInfo = () => {
             </p>
           </Title>
 
-          {!isMobile && isEdit ? (
+          {!isMobile &&
+          isEdit &&
+          auth.currentRole >= ROLES_LIST.postgraduate ? (
             <EditChemicalInfo
               chemical={chemical}
               labData={labData}

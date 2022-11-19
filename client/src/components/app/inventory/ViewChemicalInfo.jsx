@@ -384,7 +384,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
           )}
 
           {auth.currentLabId === lab._id &&
-            currentUser.role >= ROLES_LIST.postgraduate &&
+            auth.currentRole >= ROLES_LIST.postgraduate &&
             !isMobile && (
               <div className='mt-9'>
                 {isDisposed ? (
