@@ -25,7 +25,7 @@ exports.subscribe = async (req, res, next) => {
 
     if (subscribedUser) {
       await Subscriber.updateOne(
-        subscribedUser,
+        { _id: subscribedUser._id },
         {
           $set: {
             endpoint,
@@ -49,7 +49,7 @@ exports.subscribe = async (req, res, next) => {
     }
 
     await User.updateOne(
-      foundUser,
+      { _id: foundUser._id },
       {
         $unset: {
           isUnsubscribed: '',
@@ -102,10 +102,10 @@ exports.unsubscribe = async (req, res, next) => {
   try {
     session.startTransaction()
 
-    await Subscriber.deleteOne(subscribedUser, { session })
+    await Subscriber.deleteOne({ _id: subscribedUser._id }, { session })
 
     await User.updateOne(
-      foundUser,
+      { _id: foundUser._id },
       {
         $set: {
           isUnsubscribed: true,

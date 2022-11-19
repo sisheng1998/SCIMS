@@ -70,7 +70,7 @@ const runScript = async () => {
         )
 
         await Lab.updateOne(
-          lab[0],
+          { _id: lab[0]._id },
           {
             $set: {
               labOwner: user[0]._id,

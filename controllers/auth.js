@@ -48,7 +48,7 @@ exports.register = async (req, res, next) => {
     )
 
     await Lab.updateOne(
-      foundLab,
+      { _id: foundLab._id },
       {
         $push: {
           labUsers: user[0]._id,
@@ -477,7 +477,7 @@ exports.applyNewLab = async (req, res, next) => {
     session.startTransaction()
 
     await User.updateOne(
-      foundUser,
+      { _id: foundUser._id },
       {
         $push: {
           roles: {
@@ -493,7 +493,7 @@ exports.applyNewLab = async (req, res, next) => {
     )
 
     await Lab.updateOne(
-      foundLab,
+      { _id: foundLab._id },
       {
         $push: {
           labUsers: foundUser._id,

@@ -171,7 +171,7 @@ exports.addUser = async (req, res, next) => {
     )
 
     await Lab.updateOne(
-      foundLab,
+      { _id: foundLab._id },
       {
         $push: {
           labUsers: user[0]._id,
@@ -240,7 +240,7 @@ exports.userApproval = async (req, res, next) => {
 
     if (approve) {
       await User.updateOne(
-        foundUser,
+        { _id: foundUser._id },
         {
           $set: {
             'roles.$[el].role': role,
@@ -253,7 +253,7 @@ exports.userApproval = async (req, res, next) => {
       )
     } else {
       await User.updateOne(
-        foundUser,
+        { _id: foundUser._id },
         {
           $pull: {
             roles: {
@@ -269,7 +269,7 @@ exports.userApproval = async (req, res, next) => {
       )
 
       await Lab.updateOne(
-        foundLab,
+        { _id: foundLab._id },
         {
           $pull: {
             labUsers: foundUser._id,
@@ -372,26 +372,32 @@ exports.addExistingUser = async (req, res, next) => {
       return next(new ErrorResponse('User existed.', 409))
     }
 
-    await User.updateOne(foundUser, {
-      $push: {
-        roles: {
-          lab: foundLab._id,
-          role,
+    await User.updateOne(
+      { _id: foundUser._id },
+      {
+        $push: {
+          roles: {
+            lab: foundLab._id,
+            role,
+          },
         },
-      },
-      $set: {
-        lastUpdated: Date.now(),
-      },
-    })
+        $set: {
+          lastUpdated: Date.now(),
+        },
+      }
+    )
 
-    await Lab.updateOne(foundLab, {
-      $push: {
-        labUsers: userId,
-      },
-      $set: {
-        lastUpdated: Date.now(),
-      },
-    })
+    await Lab.updateOne(
+      { _id: foundLab._id },
+      {
+        $push: {
+          labUsers: userId,
+        },
+        $set: {
+          lastUpdated: Date.now(),
+        },
+      }
+    )
 
     res.status(200).json({
       success: true,
@@ -425,7 +431,7 @@ exports.updateUser = async (req, res, next) => {
     session.startTransaction()
 
     await User.updateOne(
-      foundUser,
+      { _id: foundUser._id },
       {
         $set: {
           'roles.$[el].role': role,
@@ -536,7 +542,7 @@ exports.removeUser = async (req, res, next) => {
     session.startTransaction()
 
     await User.updateOne(
-      foundUser,
+      { _id: foundUser._id },
       {
         $pull: {
           roles: {
@@ -552,7 +558,7 @@ exports.removeUser = async (req, res, next) => {
     )
 
     await Lab.updateOne(
-      foundLab,
+      { _id: foundLab._id },
       {
         $pull: {
           labUsers: userId,

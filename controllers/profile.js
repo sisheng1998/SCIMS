@@ -172,12 +172,15 @@ exports.updateAvatar = async (req, res, next) => {
       return next(new ErrorResponse('User not found.', 404))
     }
 
-    await User.updateOne(foundUser, {
-      $set: {
-        avatar: req.file.filename,
-        lastUpdated: Date.now(),
-      },
-    })
+    await User.updateOne(
+      { _id: foundUser._id },
+      {
+        $set: {
+          avatar: req.file.filename,
+          lastUpdated: Date.now(),
+        },
+      }
+    )
 
     res.status(201).json({
       success: true,

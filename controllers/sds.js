@@ -93,7 +93,7 @@ exports.updateSDS = async (req, res, next) => {
     }
 
     await CAS.updateOne(
-      foundCAS,
+      { _id: foundCAS._id },
       {
         $set: updateQuery,
       },

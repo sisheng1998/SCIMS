@@ -171,7 +171,7 @@ exports.addLab = async (req, res, next) => {
     )
 
     await Lab.updateOne(
-      lab[0],
+      { _id: lab[0]._id },
       {
         $set: {
           labOwner: user[0]._id,
@@ -256,7 +256,7 @@ exports.addLabWithExistingUser = async (req, res, next) => {
     )
 
     await User.updateOne(
-      foundUser,
+      { _id: foundUser._id },
       {
         $push: {
           roles: {
@@ -403,7 +403,7 @@ exports.updateLab = async (req, res, next) => {
       if (foundLab.labUsers.some((user) => user.equals(ownerId))) {
         // Update the role and status of new lab owner (role existed)
         await User.updateOne(
-          foundUser,
+          { _id: foundUser._id },
           {
             $set: {
               'roles.$[el].role': ROLES_LIST.labOwner,
@@ -453,7 +453,7 @@ exports.updateLab = async (req, res, next) => {
       } else {
         // Push new role to new lab owner's roles (role not exist)
         await User.updateOne(
-          foundUser,
+          { _id: foundUser._id },
           {
             $push: {
               roles: {

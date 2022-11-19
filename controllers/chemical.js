@@ -274,7 +274,7 @@ exports.addChemical = async (req, res, next) => {
     const QRCode = await generateQRCode(chemical[0]._id)
 
     await Chemical.updateOne(
-      chemical[0],
+      { _id: chemical[0]._id },
       {
         $set: {
           QRCode,
@@ -284,7 +284,7 @@ exports.addChemical = async (req, res, next) => {
     )
 
     await Lab.updateOne(
-      foundLab,
+      { _id: foundLab._id },
       {
         $push: {
           chemicals: chemical[0]._id,
@@ -542,7 +542,7 @@ exports.updateChemical = async (req, res, next) => {
       updateQuery.lastUpdated = Date.now()
 
       await Chemical.updateOne(
-        foundChemical,
+        { _id: foundChemical._id },
         {
           $set: updateQuery,
           $unset: removeQuery,
@@ -743,7 +743,7 @@ exports.updateAmount = async (req, res, next) => {
     )
 
     await Chemical.updateOne(
-      foundChemical,
+      { _id: foundChemical._id },
       {
         $set: updateQuery,
       },
@@ -788,7 +788,7 @@ exports.disposeChemical = async (req, res, next) => {
     session.startTransaction()
 
     await Lab.updateOne(
-      foundLab,
+      { _id: foundLab._id },
       {
         $pull: {
           chemicals: chemicalId,
@@ -804,7 +804,7 @@ exports.disposeChemical = async (req, res, next) => {
     )
 
     await Chemical.updateOne(
-      foundChemical,
+      { _id: foundChemical._id },
       {
         $set: {
           status: 'Disposed',
@@ -886,7 +886,7 @@ exports.cancelDisposal = async (req, res, next) => {
     }
 
     await Lab.updateOne(
-      foundLab,
+      { _id: foundLab._id },
       {
         $pull: {
           disposedChemicals: chemicalId,
@@ -902,7 +902,7 @@ exports.cancelDisposal = async (req, res, next) => {
     )
 
     await Chemical.updateOne(
-      foundChemical,
+      { _id: foundChemical._id },
       {
         $set: {
           status,

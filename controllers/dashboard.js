@@ -58,15 +58,17 @@ exports.getInfo = async (req, res, next) => {
         return next(new ErrorResponse('Lab not found.', 404))
       }
 
-      data.totalUsers = await User.countDocuments({
-        roles: {
-          $elemMatch: {
-            lab: {
-              $in: foundLabs,
+      data.totalUsers = req.user.isAdmin
+        ? await User.countDocuments({})
+        : await User.countDocuments({
+            roles: {
+              $elemMatch: {
+                lab: {
+                  $in: foundLabs,
+                },
+              },
             },
-          },
-        },
-      })
+          })
       data.newUsers = await User.countDocuments({
         roles: {
           $elemMatch: {

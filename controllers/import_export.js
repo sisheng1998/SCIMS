@@ -438,7 +438,7 @@ const addChemical = async (
     const QRCode = await generateQRCode(newChemical[0]._id)
 
     await Chemical.updateOne(
-      newChemical[0],
+      { _id: newChemical[0]._id },
       {
         $set: {
           QRCode,
