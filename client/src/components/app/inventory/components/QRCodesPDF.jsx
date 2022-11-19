@@ -6,58 +6,80 @@ import {
   Text,
   Image,
   StyleSheet,
+  Font,
 } from '@react-pdf/renderer'
 import { FormatChemicalDate } from '../../../utils/FormatDate'
+import GilroyNormal from './PDFFonts/Gilroy-Regular.ttf'
+import GilroyMedium from './PDFFonts/Gilroy-Medium.ttf'
+
+Font.register({
+  family: 'Gilroy',
+  fonts: [
+    {
+      src: GilroyNormal,
+      fontStyle: 'normal',
+      fontWeight: 'normal',
+    },
+    {
+      src: GilroyMedium,
+      fontStyle: 'normal',
+      fontWeight: 'medium',
+    },
+  ],
+})
 
 const styles = StyleSheet.create({
   page: {
-    paddingVertical: '24pt',
-    paddingHorizontal: '32pt',
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'flex-start',
+    padding: 21,
+    fontFamily: 'Gilroy',
+    fontWeight: 'normal',
+    fontSize: 6,
+    lineHeight: 1.25,
+    color: 'black',
   },
   card: {
     width: '25%',
     border: '0.25pt solid black',
-    paddingHorizontal: '12pt',
-    paddingVertical: '16pt',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: 11,
+    paddingBottom: 9,
+    paddingHorizontal: 8,
   },
   CASNo: {
-    fontSize: '6pt',
-    marginBottom: '4pt',
-    opacity: 0.6,
-    letterSpacing: 0.5,
+    marginBottom: 4,
+    color: 'rgba(0,0,0,0.6)',
     textAlign: 'center',
   },
   name: {
-    fontSize: '8pt',
-    letterSpacing: 0.5,
-    opacity: 0.8,
+    fontSize: 8,
+    color: 'rgba(0,0,0,0.8)',
+    fontWeight: 'medium',
     textAlign: 'center',
   },
   QRCode: {
-    marginVertical: '10pt',
-    width: '72pt',
+    marginTop: 6,
+    marginBottom: 9,
+    width: 72,
   },
   label: {
-    fontSize: '6pt',
-    opacity: 0.6,
+    fontSize: 5,
+    color: 'rgba(0,0,0,0.6)',
     textAlign: 'center',
   },
   expDate: {
-    fontSize: '8pt',
-    letterSpacing: 0.5,
-    opacity: 0.8,
+    fontSize: 8,
+    fontWeight: 'medium',
+    color: 'rgba(0,0,0,0.8)',
   },
   location: {
-    fontSize: '7pt',
-    marginTop: '6pt',
-    opacity: 0.7,
+    marginTop: 3,
+    color: 'rgba(0,0,0,0.6)',
     textAlign: 'center',
   },
 })
@@ -68,24 +90,37 @@ const QRCodesPDF = ({ chemicals, selected, labName }) => {
   )
 
   return (
-    <Document>
+    <Document
+      title='Chemical QR Codes'
+      author='Ooi Si Sheng'
+      subject='Chemical QR Codes'
+      creator='Ooi Si Sheng'
+      producer='Ooi Si Sheng'
+    >
       <Page size='A4' style={styles.page}>
-        {selectedChemicals.map((chemical) => (
-          <View key={chemical._id} style={styles.card} wrap={false}>
-            <Text style={styles.CASNo}>SCIMS • {chemical.CASId.CASNo}</Text>
-            <Text style={styles.name}>{chemical.name}</Text>
-            <Image style={styles.QRCode} src={chemical.QRCode} />
-            <Text style={styles.label}>
-              Expiry Date:{' '}
-              <Text style={styles.expDate}>
-                {FormatChemicalDate(chemical.expirationDate)}
+        {selectedChemicals
+          .sort((a, b) => a.name.length - b.name.length)
+          .map((chemical) => (
+            <View key={chemical._id} style={styles.card} wrap={false}>
+              <Text style={styles.CASNo}>SCIMS • {chemical.CASId.CASNo}</Text>
+              <Text style={styles.name}>
+                {chemical.name
+                  .replace(/([ -])/g, '\u00ad$&')
+                  .replace(/([ ),'-])/g, '$&\u00ad')
+                  .replace(/\u00ad\u00ad/g, '\u00ad')}
               </Text>
-            </Text>
-            <Text style={styles.location}>
-              Lab {labName} • {chemical.location}
-            </Text>
-          </View>
-        ))}
+              <Image style={styles.QRCode} src={chemical.QRCode} />
+              <Text style={styles.label}>
+                Exp. Date:{' '}
+                <Text style={styles.expDate}>
+                  {FormatChemicalDate(chemical.expirationDate)}
+                </Text>
+              </Text>
+              <Text style={styles.location}>
+                Lab {labName} • {chemical.location}
+              </Text>
+            </View>
+          ))}
       </Page>
     </Document>
   )

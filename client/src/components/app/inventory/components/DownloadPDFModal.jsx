@@ -63,7 +63,7 @@ const DownloadPDFModal = ({ chemicals, selected, openModal, setOpenModal }) => {
                   className='button button-solid mt-6 w-full justify-center'
                   disabled={true}
                 >
-                  Loading...
+                  Generating...
                 </button>
               ) : (
                 <a
