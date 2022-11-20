@@ -7,10 +7,7 @@ const QuickAccessCard = () => {
   const { auth } = useAuth()
   const navigate = useNavigate()
 
-  const menuHandler = (link) => {
-    window.scrollTo(0, 0)
-    navigate(link)
-  }
+  const menuHandler = (link) => navigate(link)
 
   return (
     <>

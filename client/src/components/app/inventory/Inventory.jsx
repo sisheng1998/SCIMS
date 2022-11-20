@@ -13,8 +13,6 @@ import ScanQRCodeModal from '../components/ScanQRCodeModal'
 import AllLabsChemicalsTable from '../admin/inventory/ChemicalsTable'
 
 const Inventory = () => {
-  window.scrollTo(0, 0)
-
   const { auth, setAuth } = useAuth()
   const navigate = useNavigate()
   const axiosPrivate = useAxiosPrivate()

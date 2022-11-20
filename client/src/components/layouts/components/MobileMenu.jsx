@@ -8,10 +8,7 @@ const MobileMenu = () => {
   const { pathname } = useLocation()
   const navigate = useNavigate()
 
-  const menuHandler = (link) => {
-    window.scrollTo(0, 0)
-    navigate(link)
-  }
+  const menuHandler = (link) => navigate(link)
 
   return (
     <nav className='fixed left-0 right-0 bottom-0 z-10 w-full bg-white shadow-[0_-1px_2px_0_rgba(0,0,0,0.1)]'>
