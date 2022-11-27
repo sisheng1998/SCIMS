@@ -15,8 +15,6 @@ const ProfileUpdate = () => {
   const [user, setUser] = useState('')
   const [refresh, setRefresh] = useState(false)
 
-  const profileCompleted = user && user.avatar && user.altEmail
-
   useEffect(() => {
     if (refresh) {
       setRefresh(false)
@@ -56,22 +54,18 @@ const ProfileUpdate = () => {
     </div>
   ) : (
     <>
-      <h1 className='my-6 text-center'>
-        {profileCompleted ? 'Update' : 'Complete'} Your Profile
-      </h1>
+      <h1 className='my-6 text-center'>Update Your Profile</h1>
 
       <div className='auth-card'>
-        {profileCompleted && (
-          <div className='mb-6'>
-            <p
-              onClick={() => navigate('/pending-approval')}
-              className='inline-flex cursor-pointer items-center font-semibold text-indigo-600 transition hover:text-indigo-700'
-            >
-              <ArrowLeftIcon className='mr-1 h-4 w-4' />
-              Return
-            </p>
-          </div>
-        )}
+        <div className='mb-6'>
+          <p
+            onClick={() => navigate('/pending-approval')}
+            className='inline-flex cursor-pointer items-center font-semibold text-indigo-600 transition hover:text-indigo-700'
+          >
+            <ArrowLeftIcon className='mr-1 h-4 w-4' />
+            Return
+          </p>
+        </div>
 
         <PersonalSection user={user} setRefresh={setRefresh} />
       </div>

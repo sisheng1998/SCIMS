@@ -21,9 +21,11 @@ const {
   addChemical,
   updateChemical,
   getChemicalInfo,
+  getChemicalList,
   updateAmount,
   disposeChemical,
   cancelDisposal,
+  deleteChemical,
   getCASInfo,
 } = require('../controllers/chemical')
 
@@ -32,6 +34,7 @@ const {
   updateProfile,
   changeEmail,
   changePassword,
+  completeProfile,
   updateAvatar,
 } = require('../controllers/profile')
 
@@ -86,6 +89,9 @@ router
   .route('/chemical/:chemicalId')
   .put(verifyRoles(ROLES_LIST.guest), getChemicalInfo)
 router
+  .route('/chemical-list')
+  .post(verifyRoles(ROLES_LIST.guest), getChemicalList)
+router
   .route('/chemical/usage')
   .post(verifyRoles(ROLES_LIST.undergraduate), updateAmount)
 router
@@ -94,6 +100,9 @@ router
 router
   .route('/chemical/cancel-disposal')
   .post(verifyRoles(ROLES_LIST.labOwner), cancelDisposal)
+router
+  .route('/chemical/delete')
+  .post(verifyRoles(ROLES_LIST.labOwner), deleteChemical)
 router.route('/cas').put(getCASInfo)
 
 // Profile
@@ -101,6 +110,9 @@ router.route('/profile').get(getProfile)
 router.route('/profile').post(updateProfile)
 router.route('/profile/email').post(changeEmail)
 router.route('/profile/password').post(changePassword)
+router
+  .route('/profile/complete-profile')
+  .post(uploadAvatar.single('avatar'), completeProfile)
 router
   .route('/profile/avatar')
   .post(uploadAvatar.single('avatar'), updateAvatar)

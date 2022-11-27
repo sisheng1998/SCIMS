@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useLocation, Link, useNavigate } from 'react-router-dom'
-import { CheckIcon, ExclamationCircleIcon } from '@heroicons/react/outline'
+import {
+  CheckIcon,
+  ExclamationCircleIcon,
+  ArrowLeftIcon,
+} from '@heroicons/react/outline'
 import USMEmailField from '../../components/validations/USMEmailField'
 
 const ChangeEmail = () => {
@@ -71,6 +75,18 @@ const ChangeEmail = () => {
         <>
           <h1 className='my-6 text-center'>Change Email</h1>
           <div className='auth-card'>
+            <div className='mb-6'>
+              <p
+                onClick={() =>
+                  navigate('/verify-email', { state: { email: email } })
+                }
+                className='inline-flex cursor-pointer items-center font-medium text-indigo-600 transition hover:text-indigo-700'
+              >
+                <ArrowLeftIcon className='mr-1 h-4 w-4' />
+                Back
+              </p>
+            </div>
+
             {errorMessage && (
               <p className='mb-6 flex items-center text-left text-sm font-medium text-red-600'>
                 <ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}

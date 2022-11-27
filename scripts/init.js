@@ -25,13 +25,7 @@ const runScript = async () => {
     const users = await User.countDocuments({})
 
     if (users === 0) {
-      if (
-        !init.name ||
-        !init.email ||
-        !init.matricNo ||
-        !init.password ||
-        !init.labName
-      ) {
+      if (!init.email || !init.password || !init.labName) {
         console.log('Missing value for required field.')
         return
       }
@@ -53,8 +47,6 @@ const runScript = async () => {
         const user = await User.create(
           [
             {
-              name: init.name,
-              matricNo: init.matricNo,
               email: init.email,
               password: init.password,
               roles: {
@@ -64,6 +56,7 @@ const runScript = async () => {
               },
               isAdmin: true,
               isEmailVerified: true,
+              isProfileNotCompleted: true,
             },
           ],
           { session }

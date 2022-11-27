@@ -69,13 +69,16 @@ const ChemicalUsageModal = ({
     setErrorMessage('')
 
     if (ownUse) {
-      setAllowed(usageValidated && usage !== '0')
+      setAllowed(usageValidated && Number(usage) !== 0)
     } else {
-      setAllowed(usageValidated && usage !== '0' && remark !== '')
+      setAllowed(usageValidated && Number(usage) !== 0 && remark !== '')
     }
 
     if (usage) {
-      setRemainingAmount(Number(chemical.amount) - Number(usage))
+      const remainingAmount = Number(chemical.amount) - Number(usage)
+      setRemainingAmount(remainingAmount)
+
+      if (remainingAmount < 0) setAllowed(false)
     }
   }, [usage, usageValidated, ownUse, remark, chemical])
 

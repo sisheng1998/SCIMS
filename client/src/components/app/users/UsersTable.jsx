@@ -273,7 +273,7 @@ const UsersTable = (props) => {
                           {auth.currentRole >= ROLES_LIST.labOwner ? (
                             auth.email === user.email ||
                             user.roleValue >= ROLES_LIST.labOwner ||
-                            !user.avatar ? (
+                            user.isProfileNotCompleted ? (
                               <button
                                 onClick={() => editUserHandler(user, false)}
                                 className='flex font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'

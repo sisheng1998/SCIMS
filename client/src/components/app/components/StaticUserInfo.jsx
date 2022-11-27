@@ -39,7 +39,7 @@ const StaticUserInfo = ({ user }) => {
 
             <div className='flex-1'>
               <label htmlFor='matricNo' className='mb-1'>
-                Matric/Staff No.
+                Matric/Staff Number
               </label>
               {user.matricNo}
             </div>

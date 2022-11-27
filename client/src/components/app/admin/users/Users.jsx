@@ -44,6 +44,8 @@ const Users = () => {
           const processedData = data.users.reverse().map((user, index) => ({
             ...user,
             roles: user.isAdmin ? adminRoles : user.roles,
+            name: user.name ? user.name : '-',
+            matricNo: user.matricNo ? user.matricNo : '-',
             index,
           }))
           setUsersData(processedData)

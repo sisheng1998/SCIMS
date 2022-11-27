@@ -11,7 +11,7 @@ const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
 
 const UserInfo =
-  'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status isAdmin'
+  'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status isAdmin isProfileNotCompleted'
 
 // Dashboard
 exports.getInfo = async (req, res, next) => {
@@ -127,9 +127,9 @@ exports.getLabs = async (req, res, next) => {
 }
 
 exports.addLab = async (req, res, next) => {
-  const { name, email, matricNo, password, labName } = req.body
+  const { email, password, labName } = req.body
 
-  if (!name || !email || !matricNo || !password || !labName) {
+  if (!email || !password || !labName) {
     return next(new ErrorResponse('Missing value for required field.', 400))
   }
 
@@ -155,9 +155,7 @@ exports.addLab = async (req, res, next) => {
     const user = await User.create(
       [
         {
-          name,
           email,
-          matricNo,
           password,
           roles: {
             lab: lab[0]._id,
@@ -165,6 +163,7 @@ exports.addLab = async (req, res, next) => {
             status: 'Active',
           },
           notification: true,
+          isProfileNotCompleted: true,
         },
       ],
       { session }
@@ -219,8 +218,6 @@ exports.addLab = async (req, res, next) => {
     if (error.code === 11000) {
       if (error.keyPattern.hasOwnProperty('labName')) {
         return next(new ErrorResponse('Lab name existed.', 409))
-      } else if (error.keyPattern.hasOwnProperty('matricNo')) {
-        return next(new ErrorResponse('Matric number existed.', 409))
       }
     }
 
@@ -439,7 +436,7 @@ exports.updateLab = async (req, res, next) => {
 
           const payload = JSON.stringify({
             title: 'User Role Changed',
-            message: `[Lab ${foundLab.labName}] You are now the lab owner of the lab.`,
+            message: `[Lab ${foundLab.labName}] You are now the Lab Owner of the lab.`,
             url: '/notifications',
           })
 
@@ -494,7 +491,7 @@ exports.updateLab = async (req, res, next) => {
 
           const payload = JSON.stringify({
             title: 'User Role Changed',
-            message: `[Lab ${foundLab.labName}] You are now the lab owner of the lab.`,
+            message: `[Lab ${foundLab.labName}] You are now the Lab Owner of the lab.`,
             url: '/notifications',
           })
 
@@ -555,7 +552,7 @@ exports.removeLab = async (req, res, next) => {
     userIds.push(foundLab.labOwner)
 
     await User.updateMany(
-      { _id: { $in: userIds } },
+      { _id: { $in: userIds.map((user) => user._id) } },
       {
         $pull: {
           roles: {

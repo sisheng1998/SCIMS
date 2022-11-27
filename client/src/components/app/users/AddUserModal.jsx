@@ -32,8 +32,6 @@ const AddUserModal = ({
 
   const [USMEmailValidated, setUSMEmailValidated] = useState(false)
   const [passwordValidated, setPasswordValidated] = useState(false)
-  const [nameValidated, setNameValidated] = useState(false)
-  const [matricNoValidated, setMatricNoValidated] = useState(false)
 
   const [allowed, setAllowed] = useState(false)
   const [selectUser, setSelectUser] = useState(true)
@@ -52,10 +50,8 @@ const AddUserModal = ({
         })
       } else {
         await axiosPrivate.post('/api/private/user', {
-          name,
           email,
           password,
-          matricNo,
           labId,
           role: ROLES_LIST[role],
         })
@@ -65,10 +61,6 @@ const AddUserModal = ({
       if (error.response?.status === 409) {
         if (error.response.data.error === 'User existed.') {
           setErrorMessage('The user already exists in the current lab.')
-        } else if (error.response.data.error === 'Matric number existed.') {
-          setErrorMessage(
-            'An account with this matric number or staff number already exists.'
-          )
         } else {
           setErrorMessage('An account with this email already exists.')
         }
@@ -88,21 +80,9 @@ const AddUserModal = ({
     if (selectUser) {
       setAllowed(userId !== '')
     } else {
-      setAllowed(
-        USMEmailValidated &&
-          passwordValidated &&
-          nameValidated &&
-          matricNoValidated
-      )
+      setAllowed(USMEmailValidated && passwordValidated)
     }
-  }, [
-    USMEmailValidated,
-    passwordValidated,
-    nameValidated,
-    matricNoValidated,
-    selectUser,
-    userId,
-  ])
+  }, [USMEmailValidated, passwordValidated, selectUser, userId])
 
   const resetInputField = () => {
     setEmail('')
@@ -210,14 +190,6 @@ const AddUserModal = ({
                     setPassword={setPassword}
                     passwordValidated={passwordValidated}
                     setPasswordValidated={setPasswordValidated}
-                    name={name}
-                    setName={setName}
-                    nameValidated={nameValidated}
-                    setNameValidated={setNameValidated}
-                    matricNo={matricNo}
-                    setMatricNo={setMatricNo}
-                    matricNoValidated={matricNoValidated}
-                    setMatricNoValidated={setMatricNoValidated}
                   />
                 )}
 

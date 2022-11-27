@@ -63,7 +63,7 @@ const notifyUsers = (chemicals, type) => {
     })
 
     const subscribers = await Subscriber.find(
-      { user: { $in: users } },
+      { user: { $in: users.map((user) => user._id) } },
       'endpoint keys'
     )
 

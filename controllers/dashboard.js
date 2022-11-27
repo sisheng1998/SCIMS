@@ -47,7 +47,7 @@ exports.getInfo = async (req, res, next) => {
         : await Lab.find(
             {
               _id: {
-                $in: labs,
+                $in: labs.map((lab) => lab._id),
               },
               status: 'In Use',
             },
@@ -58,13 +58,15 @@ exports.getInfo = async (req, res, next) => {
         return next(new ErrorResponse('Lab not found.', 404))
       }
 
+      const labIds = foundLabs.map((lab) => lab._id)
+
       data.totalUsers = req.user.isAdmin
         ? await User.countDocuments({})
         : await User.countDocuments({
             roles: {
               $elemMatch: {
                 lab: {
-                  $in: foundLabs,
+                  $in: labIds,
                 },
               },
             },
@@ -73,7 +75,7 @@ exports.getInfo = async (req, res, next) => {
         roles: {
           $elemMatch: {
             lab: {
-              $in: foundLabs,
+              $in: labIds,
             },
           },
         },
@@ -83,7 +85,7 @@ exports.getInfo = async (req, res, next) => {
         roles: {
           $elemMatch: {
             lab: {
-              $in: foundLabs,
+              $in: labIds,
             },
             status: 'Pending',
           },
@@ -92,36 +94,36 @@ exports.getInfo = async (req, res, next) => {
 
       data.totalChemicals = await Chemical.countDocuments({
         lab: {
-          $in: foundLabs,
+          $in: labIds,
         },
       })
       data.newChemicals = await Chemical.countDocuments({
         lab: {
-          $in: foundLabs,
+          $in: labIds,
         },
         createdAt: { $gte: past },
       })
       data.lowAmountChemicals = await Chemical.countDocuments({
         lab: {
-          $in: foundLabs,
+          $in: labIds,
         },
         status: 'Low Amount',
       })
       data.expiringChemicals = await Chemical.countDocuments({
         lab: {
-          $in: foundLabs,
+          $in: labIds,
         },
         status: 'Expiring Soon',
       })
       data.expiredChemicals = await Chemical.countDocuments({
         lab: {
-          $in: foundLabs,
+          $in: labIds,
         },
         status: 'Expired',
       })
       data.disposedChemicals = await Chemical.countDocuments({
         lab: {
-          $in: foundLabs,
+          $in: labIds,
         },
         status: 'Disposed',
       })

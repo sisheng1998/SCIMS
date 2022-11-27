@@ -197,9 +197,9 @@ const EditUserModal = ({
                         id='statusSelection'
                         readOnly
                         value={
-                          user.avatar
-                            ? user.status
-                            : 'Pending Profile Completion'
+                          user.isProfileNotCompleted
+                            ? 'Pending Profile Completion'
+                            : user.status
                         }
                       />
                     )}

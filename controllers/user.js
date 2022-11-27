@@ -9,7 +9,7 @@ const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
 
 const UserInfo =
-  'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status isAdmin'
+  'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status isAdmin isProfileNotCompleted'
 
 exports.getUsers = async (req, res, next) => {
   const { labId } = req.body
@@ -30,7 +30,7 @@ exports.getUsers = async (req, res, next) => {
         : await Lab.find(
             {
               _id: {
-                $in: labs,
+                $in: labs.map((lab) => lab._id),
               },
               status: 'In Use',
             },
@@ -46,7 +46,7 @@ exports.getUsers = async (req, res, next) => {
           roles: {
             $elemMatch: {
               lab: {
-                $in: foundLabs,
+                $in: foundLabs.map((lab) => lab._id),
               },
             },
           },
@@ -133,9 +133,9 @@ exports.getUsers = async (req, res, next) => {
 }
 
 exports.addUser = async (req, res, next) => {
-  const { name, email, matricNo, password, labId, role } = req.body
+  const { email, password, labId, role } = req.body
 
-  if (!name || !email || !matricNo || !password || !labId || !role) {
+  if (!email || !password || !labId || !role) {
     return next(new ErrorResponse('Missing value for required field.', 400))
   }
 
@@ -157,14 +157,13 @@ exports.addUser = async (req, res, next) => {
     const user = await User.create(
       [
         {
-          name,
           email,
-          matricNo,
           password,
           roles: {
             lab: foundLab._id,
             role,
           },
+          isProfileNotCompleted: true,
         },
       ],
       { session }
@@ -207,10 +206,6 @@ exports.addUser = async (req, res, next) => {
   } catch (error) {
     await session.abortTransaction()
     session.endSession()
-
-    if (error.code === 11000 && error.keyPattern.hasOwnProperty('matricNo')) {
-      return next(new ErrorResponse('Matric number existed.', 409))
-    }
 
     next(error)
   }

@@ -50,17 +50,10 @@ const LabSelectionField = (props) => {
 
       <p className='mt-2 text-xs text-gray-400'>
         {!props.value ? (
-          `The ${
-            props.checkExist ? '' : 'registration '
-          }request will be sent to the lab owner.`
+          'The request will be sent to the lab owner.'
         ) : (
           <span className='text-green-600'>
-            The owner of this lab will receive your{' '}
-            {props.checkExist ? '' : 'registration '}request
-            {props.checkExist
-              ? ''
-              : ' after your email verified and profile completed'}
-            .
+            The owner of the lab will receive your request.
           </span>
         )}
       </p>

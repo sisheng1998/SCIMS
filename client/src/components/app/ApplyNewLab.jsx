@@ -78,10 +78,19 @@ const PendingApproval = () => {
             <CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
             <h2 className='mt-6 mb-2 text-green-600'>Request Sent!</h2>
             <p>The request has been sent.</p>
+
             <p className='mt-6'>
               You will be able to interact with the system after your request is
               approved.
             </p>
+
+            <button
+              className='mt-6 w-32'
+              type='submit'
+              onClick={() => window.location.reload(false)}
+            >
+              Okay
+            </button>
           </>
         ) : (
           <>

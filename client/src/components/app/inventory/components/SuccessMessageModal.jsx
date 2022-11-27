@@ -19,6 +19,8 @@ const SuccessMessageModal = ({
 
     if (type === 'Add' && chemicalId) {
       navigate(`/inventory/${chemicalId}`)
+    } else if (type === 'Delete') {
+      navigate('/inventory')
     } else if (type === 'Dispose') {
       setEdit(false)
       setEditSuccess(true)
@@ -46,6 +48,13 @@ const SuccessMessageModal = ({
             <>
               <h2 className='mt-6 mb-2 text-green-600'>New Chemical Added!</h2>
               <p>The new chemical have been added.</p>
+            </>
+          )}
+
+          {type === 'Delete' && (
+            <>
+              <h2 className='mt-6 mb-2 text-green-600'>Chemical Deleted!</h2>
+              <p>The chemical have been deleted.</p>
             </>
           )}
 

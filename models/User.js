@@ -7,10 +7,7 @@ const ROLES_LIST = require('../config/roles_list')
 
 const UserSchema = new Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
+    name: String,
     email: {
       type: String,
       required: true,
@@ -28,7 +25,6 @@ const UserSchema = new Schema(
     },
     matricNo: {
       type: String,
-      required: true,
       unique: true,
     },
     roles: [
@@ -57,6 +53,7 @@ const UserSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    isProfileNotCompleted: Boolean,
     rememberMe: {
       type: Boolean,
       default: false,

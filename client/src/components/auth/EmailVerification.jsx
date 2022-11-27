@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { XIcon, CheckIcon } from '@heroicons/react/outline'
 
 const EmailVerification = () => {
   const params = useParams()
+  const navigate = useNavigate()
+
   const [success, setSuccess] = useState('')
   const [profileCompleted, setProfileCompleted] = useState(false)
 
@@ -22,7 +24,7 @@ const EmailVerification = () => {
           config
         )
 
-        setProfileCompleted(data.avatar ? true : false)
+        setProfileCompleted(data.isProfileNotCompleted ? false : true)
         setSuccess(true)
       } catch (error) {
         setSuccess(false)
@@ -44,9 +46,18 @@ const EmailVerification = () => {
             <CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
             <h2 className='mt-6 mb-2 text-green-600'>Email Verified!</h2>
             <p>Your email has been verified.</p>
+
             {!profileCompleted && (
-              <p className='mt-6'>Kindly login and complete your profile.</p>
+              <p className='mt-6'>Kindly login to complete your profile.</p>
             )}
+
+            <button
+              className='mt-6 w-32'
+              type='submit'
+              onClick={() => navigate('/login')}
+            >
+              Login
+            </button>
           </>
         ) : (
           <>
@@ -60,6 +71,7 @@ const EmailVerification = () => {
           </>
         )}
       </div>
+
       <p className='mt-6'>
         Return to <Link to='/login'>Login</Link>
       </p>

@@ -2,8 +2,12 @@ const ErrorResponse = require('../utils/errorResponse')
 const User = require('../models/User')
 const Lab = require('../models/Lab')
 const Subscriber = require('../models/Subscriber')
+const Notification = require('../models/Notification')
 const { sendVerificationEmail } = require('./auth')
 const ROLES_LIST = require('../config/roles_list')
+const { startSession } = require('mongoose')
+const sendEmail = require('../utils/sendEmail')
+const sendNotification = require('../utils/sendNotification')
 
 const UserInfo =
   'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status isAdmin'
@@ -159,6 +163,150 @@ exports.changePassword = async (req, res, next) => {
       data: 'Password changed.',
     })
   } catch (error) {
+    next(error)
+  }
+}
+
+exports.completeProfile = async (req, res, next) => {
+  const userId = req.user._id
+
+  const foundUser = await User.findById(userId)
+  if (!foundUser) {
+    return next(new ErrorResponse('User not found.', 404))
+  }
+
+  const { matricNo, name, altEmail, labId } = JSON.parse(req.body.profileInfo)
+  const avatar = req.file.filename
+
+  if (!matricNo || !name || !altEmail || !avatar) {
+    return next(new ErrorResponse('Missing value for required field.', 400))
+  }
+
+  const session = await startSession()
+
+  try {
+    session.startTransaction()
+
+    await User.updateOne(
+      { _id: foundUser._id },
+      {
+        $unset: {
+          isProfileNotCompleted: '',
+        },
+        $set: {
+          matricNo,
+          name,
+          altEmail,
+          avatar,
+          lastUpdated: Date.now(),
+        },
+      },
+      { session }
+    )
+
+    if (labId) {
+      const foundLab = await Lab.findById(labId)
+      if (!foundLab) {
+        return next(new ErrorResponse('Lab not found.', 404))
+      }
+
+      await User.updateOne(
+        { _id: foundUser._id },
+        {
+          $push: {
+            roles: {
+              lab: foundLab._id,
+            },
+          },
+        },
+        { session }
+      )
+
+      await Lab.updateOne(
+        { _id: foundLab._id },
+        {
+          $push: {
+            labUsers: foundUser._id,
+          },
+          $set: {
+            lastUpdated: Date.now(),
+          },
+        },
+        { session }
+      )
+
+      await User.updateOne(
+        { _id: foundLab.labOwner },
+        {
+          $set: {
+            notification: true,
+          },
+        },
+        { session }
+      )
+
+      await Notification.create(
+        [
+          {
+            lab: foundLab._id,
+            users: [foundLab.labOwner],
+            requestor: foundUser._id,
+            type: 'Request Approval',
+          },
+        ],
+        { session }
+      )
+
+      const labOwner = await User.findOne({ _id: foundLab.labOwner }, 'email')
+
+      sendEmail({
+        to: labOwner.email,
+        subject: 'New User Request',
+        template: 'new_user_request',
+        context: {
+          lab: foundLab.labName,
+          matricNo,
+          name,
+          email: foundUser.email,
+        },
+      })
+
+      const subscribedUser = await Subscriber.findOne(
+        { user: foundLab.labOwner },
+        'endpoint keys'
+      )
+
+      if (subscribedUser) {
+        const subscription = {
+          endpoint: subscribedUser.endpoint,
+          keys: subscribedUser.keys,
+        }
+
+        const payload = JSON.stringify({
+          title: 'New User Request',
+          message: `[Lab ${foundLab.labName}] ${name} requested access to your lab.`,
+          url: '/notifications',
+        })
+
+        sendNotification(subscription, payload)
+      }
+    }
+
+    await session.commitTransaction()
+    session.endSession()
+
+    res.status(200).json({
+      success: true,
+      data: 'Profile completed.',
+    })
+  } catch (error) {
+    await session.abortTransaction()
+    session.endSession()
+
+    if (error.code === 11000 && error.keyPattern.hasOwnProperty('matricNo')) {
+      return next(new ErrorResponse('Matric number existed.', 409))
+    }
+
     next(error)
   }
 }

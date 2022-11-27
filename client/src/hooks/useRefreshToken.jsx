@@ -23,24 +23,24 @@ const useRefreshToken = () => {
     const SDSPath = data.SDSPath
     const subscriber = data.subscriber
     const isUnsubscribed = data.isUnsubscribed ? true : false
+    const isProfileNotCompleted = data.isProfileNotCompleted ? true : false
 
-    setAuth((prev) => {
-      return {
-        ...prev,
-        email,
-        accessToken,
-        roles,
-        isAdmin,
-        id,
-        name,
-        avatar,
-        notification,
-        avatarPath,
-        SDSPath,
-        subscriber,
-        isUnsubscribed,
-      }
-    })
+    setAuth((prev) => ({
+      ...prev,
+      email,
+      accessToken,
+      roles,
+      isAdmin,
+      id,
+      name,
+      avatar,
+      notification,
+      avatarPath,
+      SDSPath,
+      subscriber,
+      isUnsubscribed,
+      isProfileNotCompleted,
+    }))
 
     return accessToken
   }

@@ -227,7 +227,7 @@ const ChemicalsTable = (props) => {
               type='checkbox'
               className='peer hidden'
               id='showDisposedChemicals'
-              onChange={() => setViewDisposedChemicals(!viewDisposedChemicals)}
+              onChange={() => setViewDisposedChemicals((prev) => !prev)}
             />
             <span className='relative flex before:ml-2 before:h-5 before:w-9 before:rounded-full before:bg-gray-300 before:transition after:absolute after:top-1/2 after:left-0 after:ml-2.5 after:h-4 after:w-4 after:-translate-y-1/2 after:rounded-full after:bg-white after:transition before:peer-checked:bg-indigo-600 after:peer-checked:translate-x-full'></span>
           </label>
@@ -457,7 +457,7 @@ const ChemicalsTable = (props) => {
 
                           <td className='px-6 py-4'>
                             {chemical.storageClass
-                              ? chemical.storageClass
+                              ? 'Class ' + chemical.storageClass
                               : '-'}
                           </td>
 

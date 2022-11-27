@@ -58,7 +58,7 @@ exports.getChemicals = async (req, res, next) => {
         : await Lab.find(
             {
               _id: {
-                $in: labs,
+                $in: labs.map((lab) => lab._id),
               },
               status: 'In Use',
             },
@@ -72,7 +72,7 @@ exports.getChemicals = async (req, res, next) => {
       const chemicals = await Chemical.find(
         {
           lab: {
-            $in: foundLabs,
+            $in: foundLabs.map((lab) => lab._id),
           },
           status: {
             $ne: 'Disposed',
@@ -87,7 +87,7 @@ exports.getChemicals = async (req, res, next) => {
       const disposedChemicals = await Chemical.find(
         {
           lab: {
-            $in: foundLabs,
+            $in: foundLabs.map((lab) => lab._id),
           },
           status: 'Disposed',
         },
@@ -609,6 +609,152 @@ exports.getChemicalInfo = async (req, res, next) => {
   }
 }
 
+exports.getChemicalList = async (req, res, next) => {
+  const { labId } = req.body
+
+  if (!labId) {
+    return next(new ErrorResponse('Missing required value.', 400))
+  }
+
+  const pipeline = [
+    {
+      $project: {
+        CASId: 1,
+        state: 1,
+        storageClass: 1,
+      },
+    },
+    {
+      $lookup: {
+        from: CAS.collection.name,
+        localField: 'CASId',
+        foreignField: '_id',
+        as: 'CAS',
+      },
+    },
+    { $unwind: '$CAS' },
+    {
+      $group: {
+        _id: '$CASId',
+        CASInfo: {
+          $first: '$CAS',
+        },
+        CASNo: {
+          $first: '$CAS.CASNo',
+        },
+        chemicalName: {
+          $first: '$CAS.chemicalName',
+        },
+        state: {
+          $first: '$state',
+        },
+        storageClass: {
+          $first: '$storageClass',
+        },
+        classifications: {
+          $first: '$CAS.classifications',
+        },
+        COCs: {
+          $first: '$CAS.COCs',
+        },
+        quantity: {
+          $sum: 1,
+        },
+      },
+    },
+  ]
+
+  try {
+    if (labId === 'All Labs') {
+      const labs = req.user.roles
+        .filter((role) => role.status === 'Active')
+        .map((role) => role.lab)
+
+      const foundLabs = req.user.isAdmin
+        ? await Lab.find({
+            status: 'In Use',
+          })
+        : await Lab.find({
+            _id: {
+              $in: labs.map((lab) => lab._id),
+            },
+            status: 'In Use',
+          })
+
+      if (foundLabs.length === 0) {
+        return next(new ErrorResponse('Lab not found.', 404))
+      }
+
+      const chemicals = await Chemical.aggregate([
+        {
+          $match: {
+            lab: {
+              $in: foundLabs.map((lab) => lab._id),
+            },
+            status: {
+              $ne: 'Disposed',
+            },
+          },
+        },
+        ...pipeline,
+      ])
+
+      const disposedChemicals = await Chemical.aggregate([
+        {
+          $match: {
+            lab: {
+              $in: foundLabs.map((lab) => lab._id),
+            },
+            status: 'Disposed',
+          },
+        },
+        ...pipeline,
+      ])
+
+      res.status(200).json({
+        success: true,
+        chemicals,
+        disposedChemicals,
+      })
+    } else {
+      const foundLab = await Lab.findById(labId)
+      if (!foundLab) {
+        return next(new ErrorResponse('Lab not found.', 404))
+      }
+
+      const chemicals = await Chemical.aggregate([
+        {
+          $match: {
+            lab: foundLab._id,
+            status: {
+              $ne: 'Disposed',
+            },
+          },
+        },
+        ...pipeline,
+      ])
+
+      const disposedChemicals = await Chemical.aggregate([
+        {
+          $match: {
+            lab: foundLab._id,
+            status: 'Disposed',
+          },
+        },
+        ...pipeline,
+      ])
+
+      res.status(200).json({
+        success: true,
+        chemicals,
+        disposedChemicals,
+      })
+    }
+  } catch (error) {
+    next(error)
+  }
+}
+
 exports.updateAmount = async (req, res, next) => {
   const { chemicalId, usage, remark } = req.body
 
@@ -704,7 +850,7 @@ exports.updateAmount = async (req, res, next) => {
       )
 
       const subscribers = await Subscriber.find(
-        { user: { $in: users } },
+        { user: { $in: users.map((user) => user._id) } },
         'endpoint keys'
       ).session(session)
 
@@ -791,10 +937,10 @@ exports.disposeChemical = async (req, res, next) => {
       { _id: foundLab._id },
       {
         $pull: {
-          chemicals: chemicalId,
+          chemicals: foundChemical._id,
         },
         $push: {
-          disposedChemicals: chemicalId,
+          disposedChemicals: foundChemical._id,
         },
         $set: {
           lastUpdated: Date.now(),
@@ -889,10 +1035,10 @@ exports.cancelDisposal = async (req, res, next) => {
       { _id: foundLab._id },
       {
         $pull: {
-          disposedChemicals: chemicalId,
+          disposedChemicals: foundChemical._id,
         },
         $push: {
-          chemicals: chemicalId,
+          chemicals: foundChemical._id,
         },
         $set: {
           lastUpdated: Date.now(),
@@ -933,6 +1079,82 @@ exports.cancelDisposal = async (req, res, next) => {
     res.status(200).json({
       success: true,
       data: 'Chemical disposal cancelled.',
+    })
+  } catch (error) {
+    await session.abortTransaction()
+    session.endSession()
+
+    next(error)
+  }
+}
+
+exports.deleteChemical = async (req, res, next) => {
+  const { chemicalId, labId } = req.body
+
+  if (!chemicalId || !labId) {
+    return next(new ErrorResponse('Missing required value.', 400))
+  }
+
+  const foundLab = await Lab.findById(labId)
+  if (!foundLab) {
+    return next(new ErrorResponse('Lab not found.', 404))
+  }
+
+  const foundChemical = await Chemical.findById(chemicalId)
+  if (!foundChemical) {
+    return next(new ErrorResponse('Chemical not found.', 404))
+  }
+
+  const session = await startSession()
+
+  try {
+    session.startTransaction()
+
+    await Lab.updateOne(
+      { _id: foundLab._id },
+      {
+        $pull: {
+          disposedChemicals: foundChemical._id,
+        },
+        $set: {
+          lastUpdated: Date.now(),
+        },
+      },
+      { new: true, session }
+    )
+
+    await Chemical.deleteOne({ _id: foundChemical._id }, { new: true, session })
+
+    await Activity.deleteMany(
+      {
+        lab: foundLab._id,
+        chemical: foundChemical._id,
+      },
+      { session }
+    )
+
+    await Usage.deleteMany(
+      {
+        lab: foundLab._id,
+        chemical: foundChemical._id,
+      },
+      { session }
+    )
+
+    await Notification.deleteMany(
+      {
+        lab: foundLab._id,
+        chemical: foundChemical._id,
+      },
+      { session }
+    )
+
+    await session.commitTransaction()
+    session.endSession()
+
+    res.status(200).json({
+      success: true,
+      data: 'Chemical deleted.',
     })
   } catch (error) {
     await session.abortTransaction()

@@ -34,15 +34,19 @@ const Labs = () => {
           const processedLabData = data.labs.reverse().map((lab, index) => ({
             ...lab,
             index,
-            ownerName: lab.labOwner.name,
+            labOwner: {
+              ...lab.labOwner,
+              name: lab.labOwner.name ? lab.labOwner.name : '-',
+            },
+            ownerName: lab.labOwner.name ? lab.labOwner.name : '-',
             ownerEmail: lab.labOwner.email,
             admins: data.admins,
           }))
           setLabsData(processedLabData)
 
-          const processedUserData = data.users.filter(
-            (user) => !user.email.includes('@student.usm.my')
-          )
+          const processedUserData = data.users
+            .filter((user) => !user.email.includes('@student.usm.my'))
+            .map((user) => ({ ...user, name: user.name ? user.name : '-' }))
           setUsers(processedUserData)
           setIsLoading(false)
         }
@@ -71,7 +75,9 @@ const Labs = () => {
         buttonAction={() => setOpenAddLabModal(true)}
         setRefresh={setRefresh}
       />
+
       <LabsTable data={labsData} users={users} />
+
       {openAddLabModal && users && (
         <AddLabModal
           users={users}

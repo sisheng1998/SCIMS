@@ -34,6 +34,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
   const [QRCodeInfo, setQRCodeInfo] = useState('')
   const [openViewImageModal, setOpenViewImageModal] = useState(false)
   const [openChemicalUsageModal, setOpenChemicalUsageModal] = useState(false)
+  const [isDelete, setIsDelete] = useState(false)
 
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -85,6 +86,29 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
         chemicalId: chemical._id,
         labId: lab._id,
       })
+
+      if (isMounted.current) {
+        setOpenModal(true)
+        setSuccess(true)
+      }
+    } catch (error) {
+      if (error.response?.status === 500) {
+        setErrorMessage('Server not responding. Please try again later.')
+      } else {
+        setErrorMessage('Oops. Something went wrong. Please try again later.')
+      }
+    }
+  }
+
+  const deleteHandler = async () => {
+    setErrorMessage('')
+
+    try {
+      await axiosPrivate.post('/api/private/chemical/delete', {
+        chemicalId: chemical._id,
+        labId: lab._id,
+      })
+
       if (isMounted.current) {
         setOpenModal(true)
         setSuccess(true)
@@ -385,28 +409,66 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 
           {auth.currentLabId === lab._id &&
             auth.currentRole >= ROLES_LIST.postgraduate &&
-            !isMobile && (
+            !isMobile &&
+            (isDisposed ? (
+              auth.currentRole >= ROLES_LIST.labOwner && (
+                <div className='mt-9 flex items-center justify-end'>
+                  {isDelete ? (
+                    <>
+                      <div className='mr-auto'>
+                        <p className='font-medium text-gray-900'>
+                          Confirm delete chemical for the current lab?
+                        </p>
+                        <p className='mt-1 flex items-center text-sm font-medium text-red-600'>
+                          <ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}
+                          This action is irreversible!
+                        </p>
+                      </div>
+                      <span
+                        onClick={() => setIsDelete(false)}
+                        className='cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'
+                      >
+                        Cancel
+                      </span>
+                      <button
+                        className='button button-solid button-red ml-6 w-40 justify-center font-semibold'
+                        onClick={deleteHandler}
+                      >
+                        Delete
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <span
+                        onClick={() => setIsDelete(true)}
+                        className='mr-auto cursor-pointer self-end text-sm font-medium text-red-600 transition hover:text-red-700'
+                      >
+                        Delete Chemical
+                      </span>
+
+                      <button
+                        className='button button-outline w-60 justify-center px-4 py-[0.8125rem]'
+                        onClick={cancelDisposalHandler}
+                      >
+                        Cancel Disposal
+                      </button>
+                    </>
+                  )}
+                </div>
+              )
+            ) : (
               <div className='mt-9'>
-                {isDisposed ? (
-                  <span
-                    className='cursor-pointer text-sm font-medium text-red-600 transition hover:text-red-700'
-                    onClick={cancelDisposalHandler}
-                  >
-                    Cancel Disposal
-                  </span>
-                ) : (
-                  <button
-                    className='button button-outline w-60 justify-center px-4 py-3'
-                    onClick={() => {
-                      setEdit(true)
-                      window.scrollTo(0, 0)
-                    }}
-                  >
-                    Edit Chemical Info
-                  </button>
-                )}
+                <button
+                  className='button button-outline w-60 justify-center px-4 py-3'
+                  onClick={() => {
+                    setEdit(true)
+                    window.scrollTo(0, 0)
+                  }}
+                >
+                  Edit Chemical Info
+                </button>
               </div>
-            )}
+            ))}
         </div>
       </div>
 
@@ -440,7 +502,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 
       {success && openModal && (
         <SuccessMessageModal
-          type='Cancel Disposal'
+          type={isDelete ? 'Delete' : 'Cancel Disposal'}
           openModal={openModal}
           setOpenModal={setOpenModal}
           setEditSuccess={setUpdateSuccess}

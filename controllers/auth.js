@@ -11,9 +11,9 @@ const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
 
 exports.register = async (req, res, next) => {
-  const { name, email, password, labId, matricNo } = req.body
+  const { email, password } = req.body
 
-  if (!name || !email || !password || !labId || !matricNo) {
+  if (!email || !password) {
     return next(new ErrorResponse('Missing value for required field.', 400))
   }
 
@@ -22,102 +22,19 @@ exports.register = async (req, res, next) => {
     return next(new ErrorResponse('Email registered.', 409))
   }
 
-  const foundLab = await Lab.findById(labId)
-  if (!foundLab) {
-    return next(new ErrorResponse('Lab not found.', 404))
-  }
-
-  const session = await startSession()
-
   try {
-    session.startTransaction()
+    const user = await User.create({
+      email,
+      password,
+      isProfileNotCompleted: true,
+    })
 
-    const user = await User.create(
-      [
-        {
-          name,
-          email,
-          password,
-          matricNo,
-          roles: {
-            lab: foundLab._id,
-          },
-        },
-      ],
-      { session }
-    )
+    const emailVerificationToken = user.getEmailVerificationToken()
 
-    await Lab.updateOne(
-      { _id: foundLab._id },
-      {
-        $push: {
-          labUsers: user[0]._id,
-        },
-        $set: {
-          lastUpdated: Date.now(),
-        },
-      },
-      { new: true, session }
-    )
+    await user.save()
 
-    const emailVerificationToken = user[0].getEmailVerificationToken()
-
-    await user[0].save()
-
-    await User.updateOne(
-      { _id: foundLab.labOwner },
-      {
-        $set: {
-          notification: true,
-        },
-      },
-      { new: true, session }
-    )
-
-    await Notification.create(
-      [
-        {
-          lab: foundLab._id,
-          users: [foundLab.labOwner],
-          requestor: user[0]._id,
-          type: 'Request Approval',
-        },
-      ],
-      { session }
-    )
-
-    const subscribedUser = await Subscriber.findOne(
-      { user: foundLab.labOwner },
-      'endpoint keys'
-    )
-
-    if (subscribedUser) {
-      const subscription = {
-        endpoint: subscribedUser.endpoint,
-        keys: subscribedUser.keys,
-      }
-
-      const payload = JSON.stringify({
-        title: 'New User Request',
-        message: `[Lab ${foundLab.labName}] ${user[0].name} requested access to your lab.`,
-        url: '/notifications',
-      })
-
-      sendNotification(subscription, payload)
-    }
-
-    await session.commitTransaction()
-    session.endSession()
-
-    sendVerificationEmail(user[0], emailVerificationToken, res, next)
+    sendVerificationEmail(user, emailVerificationToken, res, next)
   } catch (error) {
-    await session.abortTransaction()
-    session.endSession()
-
-    if (error.code === 11000 && error.keyPattern.hasOwnProperty('matricNo')) {
-      return next(new ErrorResponse('Matric number existed.', 409))
-    }
-
     next(error)
   }
 }
@@ -146,7 +63,7 @@ exports.emailVerification = async (req, res, next) => {
     res.status(201).json({
       success: true,
       data: 'Account activated.',
-      avatar: user.avatar,
+      isProfileNotCompleted: user.isProfileNotCompleted,
     })
   } catch (error) {
     next(error)
@@ -410,6 +327,7 @@ exports.refreshToken = async (req, res, next) => {
       SDSPath: '/public/SDSs/',
       subscriber,
       isUnsubscribed: foundUser.isUnsubscribed,
+      isProfileNotCompleted: foundUser.isProfileNotCompleted,
     })
   } catch (error) {
     return next(new ErrorResponse('Invalid refresh token.', 401))
@@ -527,6 +445,20 @@ exports.applyNewLab = async (req, res, next) => {
       { session }
     )
 
+    const labOwner = await User.findOne({ _id: foundLab.labOwner }, 'email')
+
+    sendEmail({
+      to: labOwner.email,
+      subject: 'New User Request',
+      template: 'new_user_request',
+      context: {
+        lab: foundLab.labName,
+        matricNo: foundUser.matricNo,
+        name: foundUser.name,
+        email: foundUser.email,
+      },
+    })
+
     const subscribedUser = await Subscriber.findOne(
       { user: foundLab.labOwner },
       'endpoint keys'
@@ -613,6 +545,7 @@ const sendToken = async (user, rememberMe, statusCode, res) => {
     SDSPath: '/public/SDSs/',
     subscriber,
     isUnsubscribed: user.isUnsubscribed,
+    isProfileNotCompleted: user.isProfileNotCompleted,
   })
 }
 

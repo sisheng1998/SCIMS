@@ -56,7 +56,7 @@ const NotificationCard = ({ notification }) => {
       break
     case 'Lab Owner Role':
       title = 'User Role Changed'
-      description = `You are now the lab owner of Lab ${notification.lab.labName}.`
+      description = `You are now the Lab Owner of Lab ${notification.lab.labName}.`
       break
     case 'Postgraduate Role':
       title = 'User Role Changed'

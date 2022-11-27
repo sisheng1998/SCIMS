@@ -67,6 +67,8 @@ const Users = () => {
               return {
                 ...user,
                 roles: user.isAdmin ? adminRoles : userRoles,
+                name: user.name ? user.name : '-',
+                matricNo: user.matricNo ? user.matricNo : '-',
                 index,
               }
             })
@@ -94,6 +96,8 @@ const Users = () => {
                   role: user.isAdmin ? 'Admin' : GetRoleName(currentRole.role),
                   roleValue: user.isAdmin ? ROLES_LIST.admin : currentRole.role,
                   status: user.isAdmin ? 'Active' : currentRole.status,
+                  name: user.name ? user.name : '-',
+                  matricNo: user.matricNo ? user.matricNo : '-',
                 }
               })
             // LabUsers array
