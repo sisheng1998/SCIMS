@@ -52,7 +52,7 @@ const CellEditor = ({
     } else if (cellKey === 'status') {
       editedData[index][cellKey] = capitalizeFirstLetterForEachWord(value)
     } else if (cellKey === 'storageClass') {
-      editedData[index][cellKey] = value.toUpperCase()
+      editedData[index][cellKey] = value.toUpperCase().replace(/\s/g, '')
     } else {
       editedData[index][cellKey] = value
     }

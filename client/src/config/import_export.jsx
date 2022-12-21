@@ -118,7 +118,7 @@ const HEADERS = [
     key: 'name',
     sample: '1-Chloro-4-Nitrobenzene',
     description:
-      "Only alphabets, numbers, spaces, and symbols (-/,'.+) are allowed.",
+      "Only alphabets, numbers, spaces, and symbols (-/,'.+%&*) are allowed.",
   },
   {
     label: 'State*',
@@ -201,14 +201,14 @@ const HEADERS = [
     key: 'supplier',
     sample: 'Merck',
     description:
-      "Only alphabets, numbers, spaces, and symbols (-/,'.+) are allowed.",
+      "Only alphabets, numbers, spaces, and symbols (-/,'.+%&*) are allowed.",
   },
   {
     label: 'Brand',
     key: 'brand',
     sample: 'Sigma Aldrich',
     description:
-      "Only alphabets, numbers, spaces, and symbols (-/,'.+) are allowed.",
+      "Only alphabets, numbers, spaces, and symbols (-/,'.+%&*) are allowed.",
   },
   {
     label: 'Notes',
@@ -220,7 +220,8 @@ const HEADERS = [
 
 const ID_REGEX = /^[a-f\d]{24}$/i
 const CAS_REGEX = /^\b[1-9]{1}[0-9]{1,6}-\d{2}-\d\b$/
-const NAME_REGEX_WITH_NUMBER = /^[a-zA-Z0-9,.'-/]+( [a-zA-Z0-9,.'-/]+)*$/
+const NAME_REGEX_WITH_NUMBER =
+  /^[a-zA-Z0-9,.%&()*'-/]+( [a-zA-Z0-9,.%&()*'-/]+)*$/
 const STATE = ['solid', 'liquid', 'gas']
 const UNIT = ['kg', 'g', 'mg', 'L', 'mL']
 const NUMBER_REGEX = /^\d{1,}(\.\d{1,2})?$/
@@ -280,4 +281,4 @@ const Validate = (key, value) => {
   }
 }
 
-export { COLUMNS, STATUS, HEADERS, Validate }
+export { COLUMNS, STATUS, HEADERS, Validate, CHEMICAL_STATUS }

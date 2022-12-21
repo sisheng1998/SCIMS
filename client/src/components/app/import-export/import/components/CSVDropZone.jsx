@@ -25,21 +25,24 @@ const CSVDropZone = ({
         setErrorMessage('')
 
         const text = await CSV.text()
-        const result = parse(text.replace(/\r\n+$/, ''), { header: true })
+        const result = parse(text.replace(/\r\n+$/, ''), {
+          header: true,
+          skipEmptyLines: 'greedy',
+          transform: (text) => text.trim(),
+        })
 
         const initialMapping = HEADERS.map((header) => {
           const label = result.meta.fields.find(
             (field) => field === header.label
           )
-          const key = header.key
 
           return {
             label: label ? label : '',
-            key,
+            key: header.key,
           }
         })
 
-        setDetectedColumns(result.meta.fields)
+        setDetectedColumns(result.meta.fields.filter((header) => header !== ''))
         setMappedColumns(initialMapping)
         setData(result.data)
 

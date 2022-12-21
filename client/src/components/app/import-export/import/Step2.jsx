@@ -1,7 +1,7 @@
 import React from 'react'
 import { ArrowLeftIcon, ArrowNarrowRightIcon } from '@heroicons/react/outline'
 import ColumnMapping from './components/ColumnMapping'
-import { Validate } from '../../../../config/import_export'
+import { Validate, STATUS } from '../../../../config/import_export'
 
 const removeSingleQuote = (value) =>
   value.startsWith("'") ? value.substring(1) : value
@@ -25,9 +25,20 @@ const processValue = (value, key) => {
   if (key === 'state') {
     processedValue = capitalizeFirstLetter(processedValue)
   } else if (key === 'status') {
-    processedValue = capitalizeFirstLetterForEachWord(processedValue)
+    const isValid = STATUS.includes(processedValue.toLowerCase())
+
+    processedValue = isValid
+      ? capitalizeFirstLetterForEachWord(processedValue)
+      : ''
   } else if (key === 'storageClass') {
-    processedValue = processedValue.toUpperCase()
+    processedValue = processedValue.toUpperCase().replace(/\s/g, '')
+  } else if (
+    key === 'dateIn' ||
+    key === 'dateOpen' ||
+    key === 'expirationDate' ||
+    key === 'disposedDate'
+  ) {
+    processedValue = processedValue.replace(/\b\d\b/g, '0$&')
   }
 
   return processedValue
@@ -52,11 +63,9 @@ const Step2 = ({
 
       mappedColumns.forEach((column) => {
         const value = chemical[getLabel(column.key)]
-
         const processedValue = value ? processValue(value, column.key) : ''
 
         processedChemical[column.key] = processedValue
-
         const isValid = Validate(column.key, processedValue)
 
         if (processedChemical['validated'] && !isValid) {

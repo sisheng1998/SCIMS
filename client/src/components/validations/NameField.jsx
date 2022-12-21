@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 
 const NAME_REGEX = /^[a-zA-Z,.'-/]+( [a-zA-Z,.'-/]+)*$/
-const NAME_REGEX_WITH_NUMBER = /^[a-zA-Z0-9,.'-/]+( [a-zA-Z0-9,.'-/]+)*$/
+const NAME_REGEX_WITH_NUMBER =
+  /^[a-zA-Z0-9,.%&()*'-/]+( [a-zA-Z0-9,.%&()*'-/]+)*$/
 
 const NameField = (props) => {
   useEffect(() => {
@@ -35,7 +36,7 @@ const NameField = (props) => {
         {!props.value || (!props.showValidated && props.validated) ? (
           <span>
             Only alphabets, {props.withNumber ? 'numbers, ' : ''}spaces, and
-            symbols {props.withNumber ? "(-/,'.+) " : "(-/,'.) "}are allowed.
+            symbols {props.withNumber ? "(-/,'.+%&*) " : "(-/,'.) "}are allowed.
           </span>
         ) : props.validated ? (
           <span className='text-green-600'>Looks good!</span>

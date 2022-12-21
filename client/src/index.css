@@ -263,4 +263,12 @@
   .sticky-border-b {
     box-shadow: inset 0 -1px 0 rgb(229 231 235);
   }
+
+  .sticky-border-r {
+    box-shadow: inset -1px 0 0 rgb(229 231 235);
+  }
+
+  .sticky-border-br {
+    box-shadow: inset -1px -1px 0 rgb(229 231 235);
+  }
 }
