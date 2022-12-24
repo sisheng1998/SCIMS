@@ -6,7 +6,7 @@ const GetMonth = (month = dayjs().month()) => {
 
   let currentMonthCount = 0 - firstDayOfTheMonth
 
-  const daysMatrix = new Array(5).fill([]).map(() =>
+  const daysMatrix = new Array(6).fill([]).map(() =>
     new Array(7).fill(null).map(() => {
       currentMonthCount++
       return dayjs(new Date(year, month, currentMonthCount))
