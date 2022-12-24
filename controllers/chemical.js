@@ -620,6 +620,7 @@ exports.getChemicalList = async (req, res, next) => {
     {
       $project: {
         CASId: 1,
+        name: 1,
         state: 1,
         storageClass: 1,
       },
@@ -644,6 +645,9 @@ exports.getChemicalList = async (req, res, next) => {
         },
         chemicalName: {
           $first: '$CAS.chemicalName',
+        },
+        names: {
+          $addToSet: '$name',
         },
         state: {
           $first: '$state',

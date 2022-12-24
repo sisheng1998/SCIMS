@@ -239,9 +239,7 @@ const ListTable = ({ chemicals, disposedChemicals }) => {
                         </td>
 
                         <td className='px-6 py-4'>
-                          {chemical.storageClass
-                            ? 'Class ' + chemical.storageClass
-                            : '-'}
+                          {chemical.storageClass ? chemical.storageClass : '-'}
                         </td>
 
                         <td className='px-6 py-4'>{chemical.quantity}</td>

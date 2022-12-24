@@ -457,7 +457,7 @@ const ChemicalsTable = (props) => {
 
                           <td className='px-6 py-4'>
                             {chemical.storageClass
-                              ? 'Class ' + chemical.storageClass
+                              ? chemical.storageClass
                               : '-'}
                           </td>
 

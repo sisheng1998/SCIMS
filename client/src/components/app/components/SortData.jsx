@@ -11,13 +11,31 @@ const SortData = ({
   const sortedData = tableData
     .filter(
       (data) =>
-        searchCols.some(
-          (col) =>
+        searchCols.some((col) => {
+          // Filter for chemical list
+          if (col === 'chemicalName' && data.hasOwnProperty('names')) {
+            return (
+              data[col]
+                .toString()
+                .toLowerCase()
+                .indexOf(searchTerm.toLowerCase()) > -1 ||
+              data['names'].some(
+                (name) =>
+                  name
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(searchTerm.toLowerCase()) > -1
+              )
+            )
+          }
+
+          return (
             data[col]
               .toString()
               .toLowerCase()
               .indexOf(searchTerm.toLowerCase()) > -1
-        ) &&
+          )
+        }) &&
         Object.entries(filterTerms).every(([col, value]) => {
           // All labs filter for admin
           if (col === 'roles') {

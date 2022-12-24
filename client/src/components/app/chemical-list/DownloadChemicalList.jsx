@@ -27,9 +27,7 @@ const DownloadChemicalList = ({ chemicals, disposedChemicals }) => {
           : '-',
       COCs: chemical.COCs.length !== 0 ? chemical.COCs.join(', ') : '-',
       state: chemical.state,
-      storageClass: chemical.storageClass
-        ? 'Class ' + chemical.storageClass
-        : '-',
+      storageClass: chemical.storageClass ? chemical.storageClass : '-',
       quantity: chemical.quantity,
       disposed: disposedChemical ? disposedChemical.quantity : 0,
     }
@@ -46,9 +44,7 @@ const DownloadChemicalList = ({ chemicals, disposedChemicals }) => {
           : '-',
       COCs: chemical.COCs.length !== 0 ? chemical.COCs.join(', ') : '-',
       state: chemical.state,
-      storageClass: chemical.storageClass
-        ? 'Class ' + chemical.storageClass
-        : '-',
+      storageClass: chemical.storageClass ? chemical.storageClass : '-',
       quantity: 0,
       disposed: chemical.quantity,
     }))
