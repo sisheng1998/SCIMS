@@ -10,7 +10,7 @@ import ChemicalsTable from './ChemicalsTable'
 import ExportQRCodesModal from './components/ExportQRCodesModal'
 import useMobile from '../../../hooks/useMobile'
 import ScanQRCodeModal from '../components/ScanQRCodeModal'
-import AllLabsChemicalsTable from '../admin/inventory/ChemicalsTable'
+import AllLabsChemicalsTable from './AllLabsChemicalsTable'
 
 const Inventory = () => {
   const { auth, setAuth } = useAuth()

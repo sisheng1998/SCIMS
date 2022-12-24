@@ -1,10 +1,10 @@
 import React, { useCallback, useState, useEffect } from 'react'
-import useAuth from '../../../../hooks/useAuth'
-import SortData from '../../components/SortData'
-import SortButton from '../../components/SortButton'
-import Filters from '../../components/Filters'
-import Pagination from '../../components/Pagination'
-import ImageLightBox from '../../../utils/ImageLightBox'
+import useAuth from '../../../hooks/useAuth'
+import SortData from '../components/SortData'
+import SortButton from '../components/SortButton'
+import Filters from '../components/Filters'
+import Pagination from '../components/Pagination'
+import ImageLightBox from '../../utils/ImageLightBox'
 import {
   PencilAltIcon,
   QrcodeIcon,
@@ -13,13 +13,13 @@ import {
   BeakerIcon,
   CalendarIcon,
 } from '@heroicons/react/outline'
-import { FormatChemicalDate } from '../../../utils/FormatDate'
-import FormatAmountWithUnit from '../../../utils/FormatAmountWithUnit'
-import ViewSDSModal from '../../sds/ViewSDSModal'
+import { FormatChemicalDate } from '../../utils/FormatDate'
+import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
+import ViewSDSModal from '../sds/ViewSDSModal'
 import { useNavigate } from 'react-router-dom'
-import ROLES_LIST from '../../../../config/roles_list'
-import ChemicalUsageModal from '../../inventory/components/ChemicalUsageModal'
-import useMobile from '../../../../hooks/useMobile'
+import ROLES_LIST from '../../../config/roles_list'
+import ChemicalUsageModal from './components/ChemicalUsageModal'
+import useMobile from '../../../hooks/useMobile'
 
 const ChemicalsTable = (props) => {
   const { auth } = useAuth()
@@ -503,9 +503,7 @@ const ChemicalsTable = (props) => {
                           <td className='space-x-1 px-6 py-4'>
                             <button
                               onClick={() =>
-                                auth.currentLabId === 'All Labs'
-                                  ? navigate(`/inventory/${chemical._id}`)
-                                  : navigate(`/admin/inventory/${chemical._id}`)
+                                navigate(`/inventory/${chemical._id}`)
                               }
                               className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
                             >
