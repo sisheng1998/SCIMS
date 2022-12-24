@@ -19,9 +19,8 @@ const ChemicalInfo = () => {
   const { auth } = useAuth()
   const axiosPrivate = useAxiosPrivate()
   const params = useParams()
-  const { pathname, state } = useLocation()
+  const { state } = useLocation()
   const { edit } = state || { edit: false }
-  const isAdmin = pathname.includes('/admin')
 
   const [isEdit, setIsEdit] = useState(edit)
   const [chemical, setChemical] = useState('')
@@ -152,10 +151,7 @@ const ChemicalInfo = () => {
           <h2 className='mt-6 mb-2 text-red-600'>Invalid Link</h2>
           <p>The link / QR code is invalid.</p>
           <p className='mt-6 text-sm'>
-            Back to{' '}
-            <Link to={isAdmin ? '/admin/inventory' : '/inventory'}>
-              Inventory
-            </Link>
+            Back to <Link to='/inventory'>Inventory</Link>
           </p>
         </div>
       )}
@@ -170,10 +166,7 @@ const ChemicalInfo = () => {
           <h2 className='mt-6 mb-2 text-yellow-600'>Chemical Not Found</h2>
           <p>The chemical does not exist in any lab.</p>
           <p className='mt-6 text-sm'>
-            Back to{' '}
-            <Link to={isAdmin ? '/admin/inventory' : '/inventory'}>
-              Inventory
-            </Link>
+            Back to <Link to='/inventory'>Inventory</Link>
           </p>
         </div>
       )}
@@ -252,11 +245,7 @@ const ChemicalInfo = () => {
 
           <p className='text-center text-sm'>
             <span>
-              Back to{' '}
-              <Link to={isAdmin ? '/admin/inventory' : '/inventory'}>
-                Inventory
-              </Link>{' '}
-              or{' '}
+              Back to <Link to='/inventory'>Inventory</Link> or{' '}
             </span>
             <Link to='/labs'>Apply New Lab</Link>
           </p>

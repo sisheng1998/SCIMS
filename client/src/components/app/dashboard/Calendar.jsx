@@ -13,7 +13,7 @@ const Calendar = ({ chemicals, dayBeforeExp }) => {
   }, [monthIndex])
 
   return (
-    <div className='max-w-6xl flex-1'>
+    <div className='flex-1'>
       <p className='mb-2 font-medium text-gray-500'>
         Calendar{' '}
         <span className='text-xs text-gray-400'>

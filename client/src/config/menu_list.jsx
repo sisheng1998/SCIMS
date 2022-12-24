@@ -14,6 +14,7 @@ import {
   BellIcon,
   ClipboardListIcon,
   DocumentTextIcon,
+  SupportIcon,
 } from '@heroicons/react/outline'
 
 const ListIcon = () => (
@@ -99,12 +100,6 @@ const ADMIN_MENU_LIST = [
     icon: <ViewGridIcon />,
     minRole: ROLES_LIST.admin,
   },
-  // {
-  //   text: 'Inventory',
-  //   link: '/admin/inventory',
-  //   icon: <CubeIcon />,
-  //   minRole: ROLES_LIST.admin,
-  // },
   {
     text: 'Labs',
     link: '/admin/labs',
@@ -166,6 +161,12 @@ const MOBILE_MENU_LIST = [
     text: 'Notifications',
     link: '/notifications',
     icon: <BellIcon />,
+    minRole: ROLES_LIST.guest,
+  },
+  {
+    text: 'Support',
+    link: '/support',
+    icon: <SupportIcon />,
     minRole: ROLES_LIST.guest,
   },
 ]
