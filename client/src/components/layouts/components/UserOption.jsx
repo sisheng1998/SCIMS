@@ -1,26 +1,31 @@
 import React from 'react'
 import { Menu } from '@headlessui/react'
-import { UserIcon, ColorSwatchIcon, LogoutIcon } from '@heroicons/react/outline'
+import {
+  UserIcon,
+  ColorSwatchIcon,
+  LogoutIcon,
+  SupportIcon,
+} from '@heroicons/react/outline'
 import useLogout from '../../../hooks/useLogout'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import useAuth from '../../../hooks/useAuth'
 import GetRoleName from '../../utils/GetRoleName'
 import GetLetterPicture from '../../utils/GetLetterPicture'
 
-const USER_MENU = ['Profile', 'My Labs', 'Logout']
+const USER_MENU = ['Profile', 'My Labs', 'Support', 'Logout']
+const PATH = ['/profile', '/labs', '/support']
 
 const UserOption = () => {
-  const logout = useLogout()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const { auth } = useAuth()
+  const logout = useLogout()
 
   const menuHandler = (index) => {
-    if (index === 0) {
-      navigate('/profile')
-    } else if (index === 1) {
-      navigate('/labs')
-    } else if (index === 2) {
+    if (index === 3) {
       logout()
+    } else {
+      navigate(PATH[index])
     }
   }
 
@@ -52,22 +57,47 @@ const UserOption = () => {
 
         {USER_MENU.map((menu, index) => (
           <React.Fragment key={index}>
-            {index === 2 && <hr className='my-2' />}
+            {(index === 2 || index === 3) && <hr className='my-2' />}
             <Menu.Item>
               {({ active }) => (
                 <button
                   onClick={() => menuHandler(index)}
                   className={`group flex w-full items-center px-3 py-1 text-sm font-medium leading-6 ${
-                    index === 2 ? '' : 'hover:bg-indigo-50'
-                  } ${active ? 'text-indigo-600' : ''}`}
+                    index === 3 ? '' : 'hover:bg-indigo-50'
+                  } ${active ? 'text-indigo-600' : ''} ${
+                    PATH[index] === pathname
+                      ? 'pointer-events-none text-indigo-600'
+                      : ''
+                  }`}
                 >
                   {index === 0 && (
-                    <UserIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
+                    <UserIcon
+                      className={`mr-2 h-5 w-5 group-hover:text-indigo-600 ${
+                        PATH[index] === pathname
+                          ? 'text-indigo-600'
+                          : 'text-gray-500'
+                      }`}
+                    />
                   )}
                   {index === 1 && (
-                    <ColorSwatchIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
+                    <ColorSwatchIcon
+                      className={`mr-2 h-5 w-5 group-hover:text-indigo-600 ${
+                        PATH[index] === pathname
+                          ? 'text-indigo-600'
+                          : 'text-gray-500'
+                      }`}
+                    />
                   )}
                   {index === 2 && (
+                    <SupportIcon
+                      className={`mr-2 h-5 w-5 group-hover:text-indigo-600 ${
+                        PATH[index] === pathname
+                          ? 'text-indigo-600'
+                          : 'text-gray-500'
+                      }`}
+                    />
+                  )}
+                  {index === 3 && (
                     <LogoutIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
                   )}
                   {menu}

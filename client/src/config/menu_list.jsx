@@ -14,6 +14,7 @@ import {
   BellIcon,
   ClipboardListIcon,
   DocumentTextIcon,
+  SupportIcon,
 } from '@heroicons/react/outline'
 
 const ListIcon = () => (
@@ -160,6 +161,12 @@ const MOBILE_MENU_LIST = [
     text: 'Notifications',
     link: '/notifications',
     icon: <BellIcon />,
+    minRole: ROLES_LIST.guest,
+  },
+  {
+    text: 'Support',
+    link: '/support',
+    icon: <SupportIcon />,
     minRole: ROLES_LIST.guest,
   },
 ]

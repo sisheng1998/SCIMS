@@ -41,6 +41,7 @@ import AddChemical from './components/app/inventory/AddChemical'
 import ChemicalInfo from './components/app/inventory/ChemicalInfo'
 import StockCheckReport from './components/app/reports/stock-check/StockCheckReport'
 import SDS from './components/app/sds/SDS'
+import Support from './components/app/support/Support'
 
 // Admin
 import AdminDashboard from './components/app/admin/dashboard/Dashboard'
@@ -77,6 +78,7 @@ const App = () => {
               <Route exact path='/labs' element={<Labs />} />
               <Route exact path='/profile' element={<Profile />} />
               <Route exact path='/notifications' element={<Notifications />} />
+              <Route exact path='/support' element={<Support />} />
 
               {/* Allow view only by Guest and Undergraduate, edit by Postgraduate and above */}
               <Route
