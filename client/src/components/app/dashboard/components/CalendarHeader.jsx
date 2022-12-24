@@ -33,9 +33,9 @@ const CalendarHeader = ({ monthIndex, setMonthIndex, dayBeforeExp }) => {
         />
       </div>
 
-      <h4 className='ml-2.5 mr-6 text-gray-700 xl:mr-4'>
+      <h5 className='ml-2.5 mr-6 text-lg text-gray-700 xl:mr-4'>
         {dayjs(new Date(dayjs().year(), monthIndex)).format('MMMM YYYY')}
-      </h4>
+      </h5>
 
       <div className='ml-auto flex items-center space-x-6 text-sm font-medium text-gray-500 xl:space-x-4 xl:text-xs'>
         <p className='flex items-center'>
