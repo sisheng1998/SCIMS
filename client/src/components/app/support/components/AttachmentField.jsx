@@ -87,10 +87,13 @@ const AttachmentField = ({ attachments, setAttachments }) => {
                 <p className='text-sm text-gray-400'>
                   {FormatBytes(attachment.size)}
                 </p>
-                <TrashIcon
+                <span
+                  className='tooltip ml-2 cursor-pointer'
+                  data-tooltip='Delete file'
                   onClick={() => handleRemove(index)}
-                  className='ml-2 h-5 w-5 cursor-pointer text-red-600'
-                />
+                >
+                  <TrashIcon className='h-5 w-5 text-red-600' />
+                </span>
               </div>
             </div>
           ))}

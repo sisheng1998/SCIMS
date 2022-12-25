@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
 import { useNavigate } from 'react-router-dom'
 import Title from '../components/Title'
@@ -7,37 +7,54 @@ import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import SubjectField from './components/SubjectField'
 import MessageField from './components/MessageField'
 import AttachmentField from './components/AttachmentField'
+import SuccessMessageModal from './components/SuccessMessageModal'
 
 const NewTicket = () => {
   const { auth } = useAuth()
   const navigate = useNavigate()
   const axiosPrivate = useAxiosPrivate()
 
+  const [ticketId, setTicketId] = useState('')
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
   const [attachments, setAttachments] = useState([])
 
   const [errorMessage, setErrorMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const [openModal, setOpenModal] = useState(false)
+
+  useEffect(() => {
+    setErrorMessage('')
+  }, [subject, message])
 
   const submitHandler = async (e) => {
     e.preventDefault()
     setErrorMessage('')
-
-    console.log(subject)
-    console.log(message)
-    console.log(attachments)
+    setIsLoading(true)
 
     try {
-      // const formData = new FormData()
-      // formData.append('chemicalInfo', JSON.stringify(chemicalData))
-      // !chemicalData.SDSLink && formData.append('SDS', SDS)
+      const formData = new FormData()
 
-      // const { data } = await axiosPrivate.post(
-      //   '/api/private/chemical',
-      //   formData
-      // )
-      // setChemicalId(data.chemicalId)
+      formData.append(
+        'ticketInfo',
+        JSON.stringify({
+          labId: auth.currentLabId,
+          role: auth.currentRole,
+          subject,
+          message,
+        })
+      )
+
+      if (attachments.length !== 0) {
+        for (let i = 0; i < attachments.length; i++) {
+          formData.append('attachments', attachments[i])
+        }
+      }
+
+      const { data } = await axiosPrivate.post('/api/ticket', formData)
+
+      setTicketId(data.ticketId)
+      setIsLoading(false)
       setOpenModal(true)
     } catch (error) {
       if (error.response?.status === 500) {
@@ -45,13 +62,15 @@ const NewTicket = () => {
       } else {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
+
+      setIsLoading(false)
     }
   }
 
   return (
     <>
       <Title
-        title='Open New Ticket'
+        title='Open New Support Ticket'
         hasButton={false}
         hasRefreshButton={false}
       />
@@ -94,16 +113,47 @@ const NewTicket = () => {
               </span>
 
               <button
-                className='ml-6 w-40'
+                className='ml-6 flex w-40 items-center justify-center'
                 type='submit'
-                disabled={subject === '' || message === ''}
+                disabled={subject === '' || message === '' || isLoading}
               >
-                Open Ticket
+                {isLoading ? (
+                  <>
+                    Loading
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      stroke='currentColor'
+                      aria-hidden='true'
+                      className='ml-2 h-4 w-4 animate-spin stroke-2'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth='2'
+                        d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
+                        className='origin-center -scale-x-100'
+                      ></path>
+                    </svg>
+                  </>
+                ) : (
+                  'Open Ticket'
+                )}
               </button>
             </div>
           </div>
         </div>
       </form>
+
+      {openModal && ticketId && (
+        <SuccessMessageModal
+          ticketId={ticketId}
+          type='Open'
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+        />
+      )}
     </>
   )
 }

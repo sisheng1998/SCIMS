@@ -39,4 +39,15 @@ const SDSStorage = multer.diskStorage({
 
 const uploadSDS = multer({ storage: SDSStorage })
 
-module.exports = { uploadAvatar, uploadSDS }
+const ticketAttachmentsStorage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, './public/tickets')
+  },
+  filename: (req, file, callback) => {
+    callback(null, Date.now() + '-' + file.originalname)
+  },
+})
+
+const uploadTicketAttachments = multer({ storage: ticketAttachmentsStorage })
+
+module.exports = { uploadAvatar, uploadSDS, uploadTicketAttachments }
