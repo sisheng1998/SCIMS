@@ -33,12 +33,12 @@ const ResizeImage = (image, setImage) => {
       canvasContext.canvas.toBlob(
         (blob) => {
           const compressedImage = new File([blob], image.name, {
-            type: 'image/jpeg',
+            type: image.type ? image.type : 'image/jpeg',
           })
 
           setImage(compressedImage)
         },
-        'image/jpeg',
+        image.type ? image.type : 'image/jpeg',
         1
       )
     }

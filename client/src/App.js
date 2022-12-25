@@ -42,6 +42,8 @@ import ChemicalInfo from './components/app/inventory/ChemicalInfo'
 import StockCheckReport from './components/app/reports/stock-check/StockCheckReport'
 import SDS from './components/app/sds/SDS'
 import Support from './components/app/support/Support'
+import NewTicket from './components/app/support/NewTicket'
+import Ticket from './components/app/support/Ticket'
 
 // Admin
 import AdminDashboard from './components/app/admin/dashboard/Dashboard'
@@ -79,6 +81,8 @@ const App = () => {
               <Route exact path='/profile' element={<Profile />} />
               <Route exact path='/notifications' element={<Notifications />} />
               <Route exact path='/support' element={<Support />} />
+              <Route exact path='/support/new-ticket' element={<NewTicket />} />
+              <Route exact path='/support/:ticketId' element={<Ticket />} />
 
               {/* Allow view only by Guest and Undergraduate, edit by Postgraduate and above */}
               <Route
