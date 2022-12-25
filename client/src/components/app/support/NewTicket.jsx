@@ -51,7 +51,10 @@ const NewTicket = () => {
         }
       }
 
-      const { data } = await axiosPrivate.post('/api/ticket', formData)
+      const { data } = await axiosPrivate.post(
+        '/api/support/new-ticket',
+        formData
+      )
 
       setTicketId(data.ticketId)
       setIsLoading(false)

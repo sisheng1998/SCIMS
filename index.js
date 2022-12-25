@@ -48,7 +48,7 @@ app.use('/api/auth', require('./routes/auth'))
 app.use('/api/private', verifyUser, require('./routes/private'))
 app.use('/api/admin', verifyUser, require('./routes/admin'))
 app.use('/api/subscribe', verifyUser, require('./routes/subscribe'))
-app.use('/api/ticket', verifyUser, require('./routes/ticket'))
+app.use('/api/support', verifyUser, require('./routes/support'))
 
 if (isLiveSite) {
   // Let React Handle UI - For live site
