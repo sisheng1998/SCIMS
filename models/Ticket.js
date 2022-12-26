@@ -33,6 +33,11 @@ const TicketSchema = new Schema(
         },
         message: String,
         attachments: [String],
+        createdAt: {
+          type: Date,
+          immutable: true,
+          default: Date.now,
+        },
       },
     ],
     status: {

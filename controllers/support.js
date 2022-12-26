@@ -1,125 +1,87 @@
-const ErrorResponse = require('../utils/errorResponse')
+const { startSession } = require('mongoose')
 const Lab = require('../models/Lab')
 const Ticket = require('../models/Ticket')
 const User = require('../models/User')
+const ErrorResponse = require('../utils/errorResponse')
 const sendEmail = require('../utils/sendEmail')
-const { startSession } = require('mongoose')
+const ROLES_LIST = require('../config/roles_list')
 
 const PIC_EMAIL = 'sisheng1998@gmail.com'
 
 exports.getTickets = async (req, res, next) => {
   const user = req.user
-  console.log(user)
+  const isAdmin = user.isAdmin
+
+  const TICKET_OPTIONS = 'user subject status lastUpdated'
+  const USER_OPTIONS = 'name email avatar'
+
+  const tickets = {
+    active: [],
+    resolved: [],
+  }
 
   try {
-    // const admins = await User.countDocuments({
-    //   isAdmin: true,
-    // })
+    const activeTickets = isAdmin
+      ? await Ticket.find(
+          {
+            status: {
+              $ne: 'Resolved',
+            },
+          },
+          TICKET_OPTIONS
+        )
+          .populate('user', USER_OPTIONS)
+          .sort({ createdAt: -1 })
+      : await Ticket.find(
+          {
+            user: user._id,
+            status: {
+              $ne: 'Resolved',
+            },
+          },
+          TICKET_OPTIONS
+        )
+          .populate('user', USER_OPTIONS)
+          .sort({ createdAt: -1 })
 
-    // if (labId === 'All Labs') {
-    //   const labs = req.user.roles
-    //     .filter((role) => role.status === 'Active')
-    //     .map((role) => role.lab)
+    const resolvedTickets = isAdmin
+      ? await Ticket.find(
+          {
+            status: 'Resolved',
+          },
+          TICKET_OPTIONS
+        )
+          .populate('user', USER_OPTIONS)
+          .sort({ createdAt: -1 })
+      : await Ticket.find(
+          {
+            user: user._id,
+            status: 'Resolved',
+          },
+          TICKET_OPTIONS
+        )
+          .populate('user', USER_OPTIONS)
+          .sort({ createdAt: -1 })
 
-    //   const foundLabs = req.user.isAdmin
-    //     ? await Lab.find(
-    //         {
-    //           status: 'In Use',
-    //         },
-    //         'labName locations'
-    //       )
-    //     : await Lab.find(
-    //         {
-    //           _id: {
-    //             $in: labs.map((lab) => lab._id),
-    //           },
-    //           status: 'In Use',
-    //         },
-    //         'labName locations'
-    //       )
-
-    //   if (foundLabs.length === 0) {
-    //     return next(new ErrorResponse('Lab not found.', 404))
-    //   }
-
-    //   const chemicals = await Chemical.find(
-    //     {
-    //       lab: {
-    //         $in: foundLabs.map((lab) => lab._id),
-    //       },
-    //       status: {
-    //         $ne: 'Disposed',
-    //       },
-    //     },
-    //     'CASId QRCode amount minAmount containerSize expirationDate locationId lab name status unit lastUpdated'
-    //   )
-    //     .populate('CASId', '-_id')
-    //     .populate('lab', 'labName')
-    //     .sort({ createdAt: -1 })
-
-    //   const disposedChemicals = await Chemical.find(
-    //     {
-    //       lab: {
-    //         $in: foundLabs.map((lab) => lab._id),
-    //       },
-    //       status: 'Disposed',
-    //     },
-    //     'CASId QRCode amount minAmount expirationDate disposedDate locationId lab name status unit'
-    //   )
-    //     .populate('CASId', '-_id')
-    //     .populate('lab', 'labName')
-    //     .sort({ disposedDate: -1 })
-
-    //   data = {
-    //     labs: foundLabs,
-    //     chemicals,
-    //     disposedChemicals,
-    //     admins,
-    //   }
-    // } else {
-    //   const foundLab = await Lab.findById(labId, labOption)
-    //     .populate({
-    //       path: 'chemicals disposedChemicals',
-    //       select: chemicalOption,
-    //       populate: [
-    //         {
-    //           path: 'CASId',
-    //           model: 'CAS',
-    //         },
-    //         {
-    //           path: 'lab',
-    //           select: 'labName _id',
-    //         },
-    //       ],
-    //     })
-    //     .populate({
-    //       path: 'labOwner',
-    //       match: {
-    //         $or: [{ isAdmin: { $exists: false } }, { isAdmin: false }],
-    //       },
-    //       select: UserInfo,
-    //     })
-    //     .populate({
-    //       path: 'labUsers',
-    //       match: {
-    //         $or: [{ isAdmin: { $exists: false } }, { isAdmin: false }],
-    //       },
-    //       select: UserInfo,
-    //     })
-
-    //   if (!foundLab) {
-    //     return next(new ErrorResponse('Lab not found.', 404))
-    //   }
-
-    //   data = { ...foundLab._doc, admins }
-    // }
+    tickets.active = activeTickets.map((ticket, index) => ({
+      index,
+      userName: ticket.user.name,
+      userEmail: ticket.user.email,
+      ...ticket._doc,
+    }))
+    tickets.resolved = resolvedTickets.map((ticket, index) => ({
+      index,
+      userName: ticket.user.name,
+      userEmail: ticket.user.email,
+      ...ticket._doc,
+    }))
 
     res.status(200).json({
       success: true,
-      // data,
+      tickets,
     })
   } catch (error) {
-    return next(new ErrorResponse('Lab not found.', 404))
+    return next(error)
   }
 }
 
@@ -130,7 +92,7 @@ exports.openTicket = async (req, res, next) => {
     return next(new ErrorResponse('Missing value for required field.', 400))
   }
 
-  if (labId !== 'All Labs' && labId !== '9999') {
+  if (labId !== 'All Labs' && labId !== ROLES_LIST.admin.toString()) {
     const foundLab = await Lab.findById(labId)
     if (!foundLab) {
       return next(new ErrorResponse('Lab not found.', 404))
