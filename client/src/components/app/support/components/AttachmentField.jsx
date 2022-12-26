@@ -80,15 +80,17 @@ const AttachmentField = ({ attachments, setAttachments }) => {
           {attachments.map((attachment, index) => (
             <div
               key={index}
-              className='flex items-center justify-between space-x-6 rounded-lg border border-gray-200 py-2.5 pl-4 pr-3'
+              className='flex items-center justify-between space-x-6 rounded-lg border border-gray-200 py-2.5 pl-4 pr-3 lg:block lg:space-x-0 lg:space-y-2'
             >
-              <p>{attachment.name}</p>
-              <div className='flex items-center'>
+              <p className='truncate'>{attachment.name}</p>
+
+              <div className='flex items-center justify-between space-x-2'>
                 <p className='text-sm text-gray-400'>
                   {FormatBytes(attachment.size)}
                 </p>
+
                 <span
-                  className='tooltip ml-2 cursor-pointer'
+                  className='tooltip cursor-pointer'
                   data-tooltip='Delete file'
                   onClick={() => handleRemove(index)}
                 >
