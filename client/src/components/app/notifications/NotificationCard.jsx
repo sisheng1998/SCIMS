@@ -1,29 +1,10 @@
 import React from 'react'
 import { BeakerIcon, CalendarIcon, ClockIcon } from '@heroicons/react/outline'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import updateLocale from 'dayjs/plugin/updateLocale'
-
-dayjs.extend(relativeTime)
-dayjs.extend(updateLocale)
-
-dayjs.updateLocale('en', {
-  relativeTime: {
-    future: 'in %s',
-    past: '%s ago',
-    s: 'a few seconds',
-    m: '1 minute',
-    mm: '%d minutes',
-    h: '1 hour',
-    hh: '%d hours',
-    d: '1 day',
-    dd: '%d days',
-    M: '1 month',
-    MM: '%d months',
-    y: '1 year',
-    yy: '%d years',
-  },
-})
+import {
+  FromNow,
+  NotificationDate,
+  NotificationTime,
+} from '../../utils/FormatDate'
 
 const NotificationCard = ({ notification }) => {
   let title
@@ -96,7 +77,7 @@ const NotificationCard = ({ notification }) => {
       <p className='flex items-baseline justify-between text-lg font-medium'>
         {title}
         <span className='ml-2 shrink-0 text-sm font-normal text-gray-400 lg:text-xs'>
-          {dayjs(notification.date).fromNow()}
+          {FromNow(notification.date)}
         </span>
       </p>
 
@@ -110,12 +91,12 @@ const NotificationCard = ({ notification }) => {
 
         <p className='mt-2 mr-6 flex items-center lg:mr-4'>
           <CalendarIcon className='mr-2 inline-block h-5 w-5 stroke-2 text-indigo-600 lg:mr-1.5 lg:h-4 lg:w-4' />
-          {dayjs(notification.date).format('DD/MM/YYYY')}
+          {NotificationDate(notification.date)}
         </p>
 
         <p className='mt-2 flex items-center'>
           <ClockIcon className='mr-2 inline-block h-5 w-5 stroke-2 text-indigo-600 lg:mr-1.5 lg:h-4 lg:w-4' />
-          {dayjs(notification.date).format('h:mm A')}
+          {NotificationTime(notification.date)}
         </p>
       </div>
     </div>

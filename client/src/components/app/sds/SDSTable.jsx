@@ -12,7 +12,7 @@ import {
 import useAuth from '../../../hooks/useAuth'
 import EditSDSModal from './EditSDSModal'
 import ViewSDSModal from './ViewSDSModal'
-import { FormatChemicalDate } from '../../utils/FormatDate'
+import { FromNow, DateTime } from '../../utils/FormatDate'
 import useMobile from '../../../hooks/useMobile'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
 
@@ -366,7 +366,12 @@ const SDSTable = ({ SDS, setRefresh }) => {
                         </td>
 
                         <td className='px-6 py-4'>
-                          {FormatChemicalDate(CAS.lastUpdated)}
+                          <span
+                            className='tooltip'
+                            data-tooltip={DateTime(CAS.lastUpdated)}
+                          >
+                            {FromNow(CAS.lastUpdated)}
+                          </span>
                         </td>
 
                         <td className='space-x-1 px-6 py-4'>
