@@ -2,6 +2,7 @@ import React from 'react'
 import { TicketIcon } from '@heroicons/react/outline'
 
 import InfoCard from './InfoCard'
+import UserManual from './UserManual'
 import useAuth from '../../../../hooks/useAuth'
 import useMobile from '../../../../hooks/useMobile'
 import ROLES_LIST from '../../../../config/roles_list'
@@ -33,46 +34,52 @@ const Overview = ({ allTickets }) => {
     tickets.total += 1
   })
 
-  return !isMobile ? (
+  return (
     <>
-      <p className='mb-2 font-medium text-gray-500'>Overview</p>
+      {!isMobile && <p className='mb-2 font-medium text-gray-500'>Overview</p>}
 
-      <div className='mb-6 grid grid-cols-5 gap-4 xl:grid-cols-3'>
-        <InfoCard
-          icon={
-            <TicketIcon className='h-14 w-14 rounded-full bg-indigo-50 p-3 text-indigo-500' />
-          }
-          value={tickets.total}
-          text='Total Ticket'
-          haveLetterS={true}
-        />
+      <div className='mb-6 grid grid-cols-5 gap-4 xl:grid-cols-3 lg:grid-cols-1'>
+        <UserManual />
 
-        <InfoCard
-          icon={
-            <TicketIcon className='h-14 w-14 rounded-full bg-blue-50 p-3 text-blue-500' />
-          }
-          value={tickets.open}
-          text='Open'
-        />
+        {!isMobile && (
+          <>
+            <InfoCard
+              icon={
+                <TicketIcon className='h-14 w-14 rounded-full bg-purple-50 p-3 text-purple-500' />
+              }
+              value={tickets.total}
+              text='Total Ticket'
+              haveLetterS={true}
+            />
 
-        <InfoCard
-          icon={
-            <TicketIcon className='h-14 w-14 rounded-full bg-yellow-50 p-3 text-yellow-500' />
-          }
-          value={tickets.inProgress}
-          text='In Progress'
-        />
+            <InfoCard
+              icon={
+                <TicketIcon className='h-14 w-14 rounded-full bg-blue-50 p-3 text-blue-500' />
+              }
+              value={tickets.open}
+              text='Open'
+            />
 
-        <InfoCard
-          icon={
-            <TicketIcon className='h-14 w-14 rounded-full bg-green-50 p-3 text-green-500' />
-          }
-          value={tickets.resolved}
-          text='Resolved'
-        />
+            <InfoCard
+              icon={
+                <TicketIcon className='h-14 w-14 rounded-full bg-yellow-50 p-3 text-yellow-500' />
+              }
+              value={tickets.inProgress}
+              text='In Progress'
+            />
+
+            <InfoCard
+              icon={
+                <TicketIcon className='h-14 w-14 rounded-full bg-green-50 p-3 text-green-500' />
+              }
+              value={tickets.resolved}
+              text='Resolved'
+            />
+          </>
+        )}
       </div>
     </>
-  ) : null
+  )
 }
 
 export default Overview
