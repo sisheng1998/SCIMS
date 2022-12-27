@@ -48,14 +48,8 @@ const FromNow = (value) => dayjs(value).fromNow()
 const DateTime = (value) =>
   dayjs(value).format('dddd, MMMM D, YYYY [at] h:mm A')
 
-const NotificationDate = (value) => dayjs(value).format('DD/MM/YYYY')
+const GetDate = (value) => dayjs(value).format('DD/MM/YYYY')
 
-const NotificationTime = (value) => dayjs(value).format('h:mm A')
+const GetTime = (value) => dayjs(value).format('h:mm A')
 
-export {
-  FormatChemicalDate,
-  FromNow,
-  DateTime,
-  NotificationDate,
-  NotificationTime,
-}
+export { FormatChemicalDate, FromNow, DateTime, GetDate, GetTime }

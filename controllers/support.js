@@ -12,7 +12,7 @@ exports.getTickets = async (req, res, next) => {
   const user = req.user
   const isAdmin = user.isAdmin
 
-  const TICKET_OPTIONS = 'user subject status lastUpdated'
+  const TICKET_OPTIONS = 'user subject status createdAt lastUpdated'
   const USER_OPTIONS = 'name email avatar'
 
   const tickets = {

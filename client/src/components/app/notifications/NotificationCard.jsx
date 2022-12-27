@@ -1,10 +1,6 @@
 import React from 'react'
 import { BeakerIcon, CalendarIcon, ClockIcon } from '@heroicons/react/outline'
-import {
-  FromNow,
-  NotificationDate,
-  NotificationTime,
-} from '../../utils/FormatDate'
+import { FromNow, GetDate, GetTime } from '../../utils/FormatDate'
 
 const NotificationCard = ({ notification }) => {
   let title
@@ -91,12 +87,12 @@ const NotificationCard = ({ notification }) => {
 
         <p className='mt-2 mr-6 flex items-center lg:mr-4'>
           <CalendarIcon className='mr-2 inline-block h-5 w-5 stroke-2 text-indigo-600 lg:mr-1.5 lg:h-4 lg:w-4' />
-          {NotificationDate(notification.date)}
+          {GetDate(notification.date)}
         </p>
 
         <p className='mt-2 flex items-center'>
           <ClockIcon className='mr-2 inline-block h-5 w-5 stroke-2 text-indigo-600 lg:mr-1.5 lg:h-4 lg:w-4' />
-          {NotificationTime(notification.date)}
+          {GetTime(notification.date)}
         </p>
       </div>
     </div>

@@ -77,7 +77,7 @@ const Support = () => {
 
       <Overview allTickets={[...activeTickets, ...resolvedTickets]} />
 
-      <div className='mb-6 border-b border-gray-200 font-medium text-gray-500'>
+      <div className='mb-6 border-b border-gray-200 font-medium text-gray-500 lg:mb-4'>
         <ul className='-mb-px flex flex-wrap space-x-6'>
           {TabLabels.map((label, index) => (
             <li
