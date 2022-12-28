@@ -86,7 +86,9 @@ exports.getTickets = async (req, res, next) => {
 }
 
 exports.openTicket = async (req, res, next) => {
-  const { labId, role, subject, message } = JSON.parse(req.body.ticketInfo)
+  const { labId, role, subject, message, deviceInfo } = JSON.parse(
+    req.body.ticketInfo
+  )
 
   if (!labId || !subject || !message) {
     return next(new ErrorResponse('Missing value for required field.', 400))
@@ -113,6 +115,7 @@ exports.openTicket = async (req, res, next) => {
           subject,
           message,
           attachments: req.files.map((file) => file.filename),
+          deviceInfo,
         },
       ],
       { session }
@@ -120,6 +123,12 @@ exports.openTicket = async (req, res, next) => {
 
     await session.commitTransaction()
     session.endSession()
+
+    res.status(201).json({
+      success: true,
+      data: 'New ticket opened.',
+      ticketId: newTicket[0]._id,
+    })
 
     sendEmail({
       to: PIC_EMAIL,
@@ -131,12 +140,6 @@ exports.openTicket = async (req, res, next) => {
         ticketId: newTicket[0]._id,
         url: `${process.env.DOMAIN_NAME}/support/${newTicket[0]._id}`,
       },
-    })
-
-    res.status(201).json({
-      success: true,
-      data: 'New ticket opened.',
-      ticketId: newTicket[0]._id,
     })
   } catch (error) {
     await session.abortTransaction()

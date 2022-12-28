@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { ExclamationCircleIcon, ArrowLeftIcon } from '@heroicons/react/outline'
 import { useNavigate } from 'react-router-dom'
+import { UAParser } from 'ua-parser-js'
 
 import useAuth from '../../../hooks/useAuth'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
@@ -37,6 +38,16 @@ const NewTicket = () => {
     setIsLoading(true)
 
     try {
+      const UAInfo = new UAParser().getResult()
+
+      const deviceInfo = {
+        ...UAInfo,
+        resolution: {
+          width: window.innerWidth,
+          height: window.innerHeight,
+        },
+      }
+
       const formData = new FormData()
 
       formData.append(
@@ -46,6 +57,7 @@ const NewTicket = () => {
           role: auth.currentRole,
           subject,
           message,
+          deviceInfo,
         })
       )
 

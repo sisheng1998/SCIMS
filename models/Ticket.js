@@ -44,6 +44,7 @@ const TicketSchema = new Schema(
       type: String,
       default: 'Open', // Open / In Progress / Resolved
     },
+    deviceInfo: Object,
     createdAt: {
       type: Date,
       immutable: true,
