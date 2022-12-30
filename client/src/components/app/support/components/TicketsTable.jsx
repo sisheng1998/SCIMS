@@ -20,12 +20,12 @@ const tableHeaders = [
   },
   {
     key: 'userName',
-    label: 'Created By',
+    label: 'Opened By',
     sortable: true,
   },
   {
     key: 'createdAt',
-    label: 'Created At',
+    label: 'Opened',
     sortable: true,
   },
   {

@@ -14,7 +14,6 @@ const Overview = ({ allTickets }) => {
   const isMasquerading = auth.isAdmin && auth.currentRole !== ROLES_LIST.admin
 
   const tickets = {
-    total: 0,
     open: 0,
     inProgress: 0,
     resolved: 0,
@@ -30,28 +29,17 @@ const Overview = ({ allTickets }) => {
     } else {
       tickets.inProgress += 1
     }
-
-    tickets.total += 1
   })
 
   return (
     <>
       {!isMobile && <p className='mb-2 font-medium text-gray-500'>Overview</p>}
 
-      <div className='mb-6 grid grid-cols-5 gap-4 xl:grid-cols-3 lg:grid-cols-1'>
+      <div className='mb-6 grid grid-cols-4 gap-4 lg:grid-cols-1'>
         <UserManual />
 
         {!isMobile && (
           <>
-            <InfoCard
-              icon={
-                <TicketIcon className='h-14 w-14 rounded-full bg-purple-50 p-3 text-purple-500' />
-              }
-              value={tickets.total}
-              text='Total Ticket'
-              haveLetterS={true}
-            />
-
             <InfoCard
               icon={
                 <TicketIcon className='h-14 w-14 rounded-full bg-blue-50 p-3 text-blue-500' />
