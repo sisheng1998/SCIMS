@@ -5,6 +5,7 @@ const User = require('../models/User')
 const ErrorResponse = require('../utils/errorResponse')
 const sendEmail = require('../utils/sendEmail')
 const ROLES_LIST = require('../config/roles_list')
+const ObjectId = require('mongoose').Types.ObjectId
 
 const PIC_EMAIL = 'sisheng1998@gmail.com'
 
@@ -145,6 +146,34 @@ exports.openTicket = async (req, res, next) => {
     await session.abortTransaction()
     session.endSession()
 
+    next(error)
+  }
+}
+
+exports.getTicketDetails = async (req, res, next) => {
+  const ticketId = ObjectId(req.params.ticketId)
+
+  const USER_OPTIONS = 'name email avatar'
+
+  try {
+    const foundTicket = await Ticket.findOne({
+      _id: ticketId,
+    }).populate('user', USER_OPTIONS)
+
+    if (!foundTicket) {
+      return next(new ErrorResponse('Ticket not found.', 404))
+    } else if (
+      !req.user.isAdmin &&
+      !foundTicket.user._id.equals(req.user._id)
+    ) {
+      return next(new ErrorResponse('Unauthorized.', 401))
+    }
+
+    res.status(200).json({
+      success: true,
+      ticket: foundTicket,
+    })
+  } catch (error) {
     next(error)
   }
 }

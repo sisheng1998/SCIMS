@@ -38,6 +38,10 @@ const TicketSchema = new Schema(
           immutable: true,
           default: Date.now,
         },
+        lastUpdated: {
+          type: Date,
+          default: Date.now,
+        },
       },
     ],
     status: {
