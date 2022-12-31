@@ -114,8 +114,13 @@ exports.openTicket = async (req, res, next) => {
           lab: labId,
           role,
           subject,
-          message,
-          attachments: req.files.map((file) => file.filename),
+          messages: [
+            {
+              user: req.user._id,
+              message,
+              attachments: req.files.map((file) => file.filename),
+            },
+          ],
           deviceInfo,
         },
       ],
@@ -156,10 +161,9 @@ exports.getTicketDetails = async (req, res, next) => {
   const USER_OPTIONS = 'name email avatar'
 
   try {
-    const foundTicket = await Ticket.findById(ticketId).populate(
-      'user',
-      USER_OPTIONS
-    )
+    const foundTicket = await Ticket.findById(ticketId)
+      .populate('user', USER_OPTIONS)
+      .populate('messages.user', USER_OPTIONS)
 
     if (!foundTicket) {
       return next(new ErrorResponse('Ticket not found.', 404))
@@ -191,20 +195,21 @@ exports.getTicketDetails = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      ticket: { ...foundTicket._doc, labName },
+      ticket: {
+        ...foundTicket._doc,
+        labName,
+        attachmentPath: '/public/tickets/',
+      },
     })
   } catch (error) {
     next(error)
   }
 }
 
-exports.updateStatus = async (req, res, next) => {
+exports.updateTicket = async (req, res, next) => {
   const ticketId = ObjectId(req.params.ticketId)
 
-  const { status } = req.body
-  if (!status) {
-    return next(new ErrorResponse('Missing value for required field.', 400))
-  }
+  const { subject, status } = req.body
 
   const session = await startSession()
 
@@ -216,13 +221,22 @@ exports.updateStatus = async (req, res, next) => {
       return next(new ErrorResponse('Ticket not found.', 404))
     }
 
+    const updateQuery = {
+      lastUpdated: Date.now(),
+    }
+
+    if (subject && subject !== foundTicket.subject) {
+      updateQuery.subject = subject
+    }
+
+    if (status && status !== foundTicket.status) {
+      updateQuery.status = status
+    }
+
     await Ticket.updateOne(
       { _id: foundTicket._id },
       {
-        $set: {
-          status,
-          lastUpdated: Date.now(),
-        },
+        $set: updateQuery,
       },
       { session }
     )
@@ -232,7 +246,7 @@ exports.updateStatus = async (req, res, next) => {
 
     res.status(204).json({
       success: true,
-      data: 'Status updated.',
+      data: 'Ticket updated.',
     })
   } catch (error) {
     await session.abortTransaction()

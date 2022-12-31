@@ -20,12 +20,7 @@ const TicketSchema = new Schema(
       type: String,
       required: true,
     },
-    message: {
-      type: String,
-      required: true,
-    },
-    attachments: [String],
-    replies: [
+    messages: [
       {
         user: {
           type: Schema.Types.ObjectId,

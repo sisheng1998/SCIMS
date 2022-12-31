@@ -6,7 +6,7 @@ const {
   getTickets,
   openTicket,
   getTicketDetails,
-  updateStatus,
+  updateTicket,
 } = require('../controllers/support')
 
 router.route('/tickets').get(getTickets)
@@ -14,6 +14,6 @@ router
   .route('/new-ticket')
   .post(uploadTicketAttachments.array('attachments'), openTicket)
 router.route('/ticket/:ticketId').get(getTicketDetails)
-router.route('/ticket/:ticketId/status').patch(updateStatus)
+router.route('/ticket/:ticketId').patch(updateTicket)
 
 module.exports = router

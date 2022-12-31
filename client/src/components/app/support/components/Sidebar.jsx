@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { ArrowLeftIcon, ExclamationCircleIcon } from '@heroicons/react/outline'
 import { useNavigate } from 'react-router-dom'
 
-import ImageLightBox from '../../../utils/ImageLightBox'
 import GetLetterPicture from '../../../utils/GetLetterPicture'
 import FormatDate, { FromNow } from '../../../utils/FormatDate'
 import GetRoleName from '../../../utils/GetRoleName'
@@ -14,7 +13,7 @@ import TICKET_STATUS from '../../../../config/ticket_status'
 
 import LoadingButtonText from '../../components/LoadingButtonText'
 
-const Sidebar = ({ ticket, setRefresh }) => {
+const Sidebar = ({ ticket, setRefresh, viewImage }) => {
   const { auth } = useAuth()
   const navigate = useNavigate()
 
@@ -44,7 +43,7 @@ const Sidebar = ({ ticket, setRefresh }) => {
 
         {tab === TAB_LABELS[1] ? (
           <>
-            <OpenedBy user={ticket.user} />
+            <OpenedBy user={ticket.user} viewImage={viewImage} />
             <Lab name={ticket.labName} />
             <Role role={ticket.role} />
           </>
@@ -136,23 +135,15 @@ const Time = ({ type, time }) => (
   </div>
 )
 
-const OpenedBy = ({ user }) => (
+const OpenedBy = ({ user, viewImage }) => (
   <div>
     <label className='mb-1 text-gray-500'>Opened By</label>
-    <User user={user} />
+    <User user={user} viewImage={viewImage} />
   </div>
 )
 
-const User = ({ user }) => {
+const User = ({ user, viewImage }) => {
   const { auth } = useAuth()
-
-  const [avatarInfo, setAvatarInfo] = useState('')
-  const [openViewImageModal, setOpenViewImageModal] = useState(false)
-
-  const viewImageHandler = (name, imageSrc) => {
-    setAvatarInfo({ name, imageSrc })
-    setOpenViewImageModal(true)
-  }
 
   const imageSrc = user.avatar
     ? auth.avatarPath + user.avatar
@@ -168,7 +159,7 @@ const User = ({ user }) => {
         height='64'
         width='64'
         draggable={false}
-        onClick={() => viewImageHandler(user.name, imageSrc)}
+        onClick={() => viewImage(user.name, imageSrc)}
       />
 
       <div>
@@ -180,15 +171,6 @@ const User = ({ user }) => {
         </p>
         <p className='text-sm leading-4 text-gray-400'>{user.email}</p>
       </div>
-
-      {openViewImageModal && avatarInfo && (
-        <ImageLightBox
-          object={avatarInfo}
-          type='Avatar'
-          openModal={openViewImageModal}
-          setOpenModal={setOpenViewImageModal}
-        />
-      )}
     </div>
   )
 }
@@ -256,7 +238,7 @@ const TicketAction = ({ ticket, setRefresh }) => {
     setIsLoading(true)
 
     try {
-      await axiosPrivate.patch(`/api/support/ticket/${ticket._id}/status`, {
+      await axiosPrivate.patch(`/api/support/ticket/${ticket._id}`, {
         status,
       })
       setRefresh(true)
@@ -273,7 +255,7 @@ const TicketAction = ({ ticket, setRefresh }) => {
 
   return (
     <div>
-      <label className='mb-1 text-gray-500'>Ticket Action</label>
+      <label className='mb-1.5 text-gray-500'>Ticket Action</label>
       {ticket.status !== 'Resolved' ? (
         <div className='space-y-2'>
           {isAdmin && ticket.status !== TICKET_STATUS.inProgress ? (
