@@ -156,9 +156,10 @@ exports.getTicketDetails = async (req, res, next) => {
   const USER_OPTIONS = 'name email avatar'
 
   try {
-    const foundTicket = await Ticket.findOne({
-      _id: ticketId,
-    }).populate('user', USER_OPTIONS)
+    const foundTicket = await Ticket.findById(ticketId).populate(
+      'user',
+      USER_OPTIONS
+    )
 
     if (!foundTicket) {
       return next(new ErrorResponse('Ticket not found.', 404))
@@ -169,11 +170,74 @@ exports.getTicketDetails = async (req, res, next) => {
       return next(new ErrorResponse('Unauthorized.', 401))
     }
 
+    let labName = ''
+
+    if (
+      foundTicket.lab !== 'All Labs' &&
+      foundTicket.lab !== ROLES_LIST.admin.toString()
+    ) {
+      const foundLab = await Lab.findById(foundTicket.lab, 'labName')
+
+      if (!foundLab) {
+        return next(new ErrorResponse('Lab not found.', 404))
+      }
+
+      labName = `Lab ${foundLab.labName}`
+    } else if (foundTicket.lab === ROLES_LIST.admin.toString()) {
+      labName = 'Admin'
+    } else {
+      labName = foundTicket.lab
+    }
+
     res.status(200).json({
       success: true,
-      ticket: foundTicket,
+      ticket: { ...foundTicket._doc, labName },
     })
   } catch (error) {
+    next(error)
+  }
+}
+
+exports.updateStatus = async (req, res, next) => {
+  const ticketId = ObjectId(req.params.ticketId)
+
+  const { status } = req.body
+  if (!status) {
+    return next(new ErrorResponse('Missing value for required field.', 400))
+  }
+
+  const session = await startSession()
+
+  try {
+    session.startTransaction()
+
+    const foundTicket = await Ticket.findById(ticketId)
+    if (!foundTicket) {
+      return next(new ErrorResponse('Ticket not found.', 404))
+    }
+
+    await Ticket.updateOne(
+      { _id: foundTicket._id },
+      {
+        $set: {
+          status,
+          lastUpdated: Date.now(),
+        },
+      },
+      { session }
+    )
+
+    await session.commitTransaction()
+    session.endSession()
+
+    res.status(204).json({
+      success: true,
+      data: 'Status updated.',
+    })
+  } catch (error) {
+    await session.abortTransaction()
+    session.endSession()
+
     next(error)
   }
 }

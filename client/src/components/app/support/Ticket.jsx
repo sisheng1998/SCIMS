@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import Title from '../components/Title'
+import { useParams, Link } from 'react-router-dom'
 import { XIcon, ExclamationIcon } from '@heroicons/react/outline'
+
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import useAuth from '../../../hooks/useAuth'
-import LoadingScreen from '../../utils/LoadingScreen'
-import { useParams, Link } from 'react-router-dom'
-import FormatDate from '../../utils/FormatDate'
 import useMobile from '../../../hooks/useMobile'
+
+import LoadingScreen from '../../utils/LoadingScreen'
 import ROLES_LIST from '../../../config/roles_list'
+
+import TicketDetails from './components/TicketDetails'
 
 const ID_REGEX = /^[a-f\d]{24}$/i
 
@@ -15,7 +17,10 @@ const Ticket = () => {
   const isMobile = useMobile()
   const { auth } = useAuth()
   const axiosPrivate = useAxiosPrivate()
+
   const params = useParams()
+
+  const [ticket, setTicket] = useState('')
 
   const [success, setSuccess] = useState(false)
   const [notFound, setNotFound] = useState(false)
@@ -23,6 +28,8 @@ const Ticket = () => {
   const [unauthorized, setUnauthorized] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [refresh, setRefresh] = useState(false)
+
+  const isMasquerading = auth.isAdmin && auth.currentRole !== ROLES_LIST.admin
 
   useEffect(() => {
     if (!ID_REGEX.test(params.ticketId)) {
@@ -46,39 +53,25 @@ const Ticket = () => {
 
     const getTicketDetails = async () => {
       try {
-        // const { data } = await axiosPrivate.put(
-        //   `/api/private/chemical/${params.chemicalId}`,
-        //   {
-        //     labId: auth.currentLabId,
-        //   },
-        //   {
-        //     signal: controller.signal,
-        //   }
-        // )
+        const { data } = await axiosPrivate.get(
+          `/api/support/ticket/${params.ticketId}`,
+          {
+            signal: controller.signal,
+          }
+        )
         if (isMounted) {
-          // const { lab, ...chemicalInfo } = data.data
-          // setChemical({
-          //   ...chemicalInfo,
-          //   lab: { _id: lab._id, labName: lab.labName },
-          // })
-          // setLabData(lab)
+          const ticket = data.ticket
 
-          // const currentUser = auth.roles.find(
-          //   (role) =>
-          //     role.lab._id === lab._id &&
-          //     role.lab.status === 'In Use' &&
-          //     role.status === 'Active'
-          // )
+          if (isMasquerading && ticket.user._id !== auth.id) {
+            setInvalid(false)
+            setUnauthorized(true)
+            setNotFound(false)
+            setSuccess(false)
+          } else {
+            setTicket(ticket)
+            setSuccess(true)
+          }
 
-          // if (currentUser) {
-          //   setSuccess(true)
-          // } else {
-          //   setInvalid(false)
-          //   setUnauthorized(true)
-          //   setNotFound(false)
-          //   setSuccess(false)
-          // }
-          setSuccess(true)
           setIsLoading(false)
         }
       } catch (error) {
@@ -86,6 +79,12 @@ const Ticket = () => {
           setInvalid(false)
           setUnauthorized(false)
           setNotFound(true)
+          setSuccess(false)
+          setIsLoading(false)
+        } else if (error.response?.status === 401) {
+          setInvalid(false)
+          setUnauthorized(true)
+          setNotFound(false)
           setSuccess(false)
           setIsLoading(false)
         }
@@ -100,18 +99,12 @@ const Ticket = () => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params, axiosPrivate, refresh])
+  }, [params, axiosPrivate, refresh, isMasquerading])
 
   return isLoading ? (
     <LoadingScreen />
-  ) : success ? (
-    <>
-      <Title
-        title='Support Ticket'
-        hasButton={false}
-        hasRefreshButton={false}
-      />
-    </>
+  ) : success && ticket !== '' ? (
+    <TicketDetails ticket={ticket} setRefresh={setRefresh} />
   ) : (
     <>
       {invalid && (

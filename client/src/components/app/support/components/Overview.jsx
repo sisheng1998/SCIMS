@@ -6,6 +6,7 @@ import UserManual from './UserManual'
 import useAuth from '../../../../hooks/useAuth'
 import useMobile from '../../../../hooks/useMobile'
 import ROLES_LIST from '../../../../config/roles_list'
+import TICKET_STATUS from '../../../../config/ticket_status'
 
 const Overview = ({ allTickets }) => {
   const { auth } = useAuth()
@@ -22,9 +23,9 @@ const Overview = ({ allTickets }) => {
   allTickets.forEach((ticket) => {
     if (isMasquerading && ticket.user._id !== auth.id) return
 
-    if (ticket.status === 'Open') {
+    if (ticket.status === TICKET_STATUS.open) {
       tickets.open += 1
-    } else if (ticket.status === 'Resolved') {
+    } else if (ticket.status === TICKET_STATUS.resolved) {
       tickets.resolved += 1
     } else {
       tickets.inProgress += 1

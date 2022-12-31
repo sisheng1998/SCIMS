@@ -11,6 +11,7 @@ import { FromNow, DateTime, GetDate, GetTime } from '../../../utils/FormatDate'
 import GetLetterPicture from '../../../utils/GetLetterPicture'
 import ImageLightBox from '../../../utils/ImageLightBox'
 import ROLES_LIST from '../../../../config/roles_list'
+import TICKET_STATUS from '../../../../config/ticket_status'
 
 const tableHeaders = [
   {
@@ -167,8 +168,10 @@ const TicketsTable = ({ tickets, isResolved }) => {
               }
             >
               <option value=''>Any</option>
-              <option value='Open'>Open</option>
-              <option value='In Progress'>In Progress</option>
+              <option value={TICKET_STATUS.open}>{TICKET_STATUS.open}</option>
+              <option value={TICKET_STATUS.inProgress}>
+                {TICKET_STATUS.inProgress}
+              </option>
             </select>
           </div>
         )}
@@ -223,9 +226,9 @@ const TicketsTable = ({ tickets, isResolved }) => {
 
                       let classes
 
-                      if (ticket.status === 'Resolved') {
+                      if (ticket.status === TICKET_STATUS.resolved) {
                         classes = 'bg-green-100 text-green-600'
-                      } else if (ticket.status === 'Open') {
+                      } else if (ticket.status === TICKET_STATUS.open) {
                         classes = 'bg-blue-100 text-blue-600'
                       } else {
                         // In Progress
@@ -336,9 +339,9 @@ const TicketsTable = ({ tickets, isResolved }) => {
         currentItems.map((ticket) => {
           let classes
 
-          if (ticket.status === 'Resolved') {
+          if (ticket.status === TICKET_STATUS.resolved) {
             classes = 'bg-green-100 text-green-600'
-          } else if (ticket.status === 'Open') {
+          } else if (ticket.status === TICKET_STATUS.open) {
             classes = 'bg-blue-100 text-blue-600'
           } else {
             // In Progress
