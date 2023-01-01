@@ -235,6 +235,7 @@ const TicketAction = ({ ticket, setRefresh }) => {
   const [errorMessage, setErrorMessage] = useState('')
 
   const updateStatus = async (status) => {
+    setErrorMessage('')
     setIsLoading(true)
 
     try {

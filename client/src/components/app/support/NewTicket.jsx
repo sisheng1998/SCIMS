@@ -138,6 +138,7 @@ const NewTicket = () => {
               placeholder='Describe it as detailed as you can'
               message={message}
               setMessage={setMessage}
+              required={true}
             />
 
             <AttachmentField

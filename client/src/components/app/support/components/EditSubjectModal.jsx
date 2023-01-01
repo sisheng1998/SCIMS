@@ -16,6 +16,7 @@ const EditSubjectModal = ({ ticket, openModal, setOpenModal, setRefresh }) => {
   const updateSubject = async (e) => {
     e.preventDefault()
 
+    setErrorMessage('')
     setIsLoading(true)
 
     try {

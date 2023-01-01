@@ -9,23 +9,23 @@ const Status = ({ status, createdAt, lastUpdated }) => {
   let time
 
   if (status === TICKET_STATUS.resolved) {
-    classes = 'bg-green-100 text-green-600'
+    classes = 'bg-green-50 text-green-600'
     text = 'This ticket was resolved '
     time = lastUpdated
   } else if (status === TICKET_STATUS.open) {
-    classes = 'bg-blue-100 text-blue-600'
+    classes = 'bg-blue-50 text-blue-600'
     text = 'This ticket was opened '
     time = createdAt
   } else {
     // In Progress
-    classes = 'bg-yellow-100 text-yellow-600'
+    classes = 'bg-yellow-50 text-yellow-600'
     text = 'This ticket is in progress. It was updated '
     time = lastUpdated
   }
 
   return (
     <div
-      className={`mt-4 mb-6 flex items-center space-x-2 rounded-lg p-3 ${classes}`}
+      className={`mt-4 mb-6 flex items-start space-x-2 rounded-lg p-3 ${classes}`}
     >
       <InformationCircleIcon className='h-5 w-5 shrink-0' />
       <p className='text-sm font-medium'>

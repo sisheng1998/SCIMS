@@ -1,10 +1,14 @@
 import React, { useState } from 'react'
+
 import ImageLightBox from '../../../utils/ImageLightBox'
+import TICKET_STATUS from '../../../../config/ticket_status'
+
 import Title from '../../components/Title'
 import Sidebar from './Sidebar'
 import Subject from './Subject'
 import Status from './Status'
 import MessageCard from './MessageCard'
+import NewMessage from './NewMessage'
 
 const TicketDetails = ({ ticket, setRefresh }) => {
   const [avatarInfo, setAvatarInfo] = useState('')
@@ -42,16 +46,24 @@ const TicketDetails = ({ ticket, setRefresh }) => {
           />
 
           {ticket.messages.length !== 0 && (
-            <div>
+            <div className='space-y-4'>
               {ticket.messages.map((message) => (
                 <MessageCard
                   key={message._id}
+                  ticketId={ticket._id}
                   message={message}
                   viewImage={viewImage}
                   attachmentPath={ticket.attachmentPath}
                 />
               ))}
             </div>
+          )}
+
+          {ticket.status !== TICKET_STATUS.resolved && (
+            <>
+              <hr className='mb-6 mt-8 border-gray-200' />
+              <NewMessage ticketId={ticket._id} setRefresh={setRefresh} />
+            </>
           )}
         </div>
       </div>

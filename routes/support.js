@@ -7,6 +7,8 @@ const {
   openTicket,
   getTicketDetails,
   updateTicket,
+  addMessage,
+  deleteMessage,
 } = require('../controllers/support')
 
 router.route('/tickets').get(getTickets)
@@ -15,5 +17,10 @@ router
   .post(uploadTicketAttachments.array('attachments'), openTicket)
 router.route('/ticket/:ticketId').get(getTicketDetails)
 router.route('/ticket/:ticketId').patch(updateTicket)
+
+router
+  .route('/ticket/:ticketId/new-message')
+  .post(uploadTicketAttachments.array('attachments'), addMessage)
+router.route('/ticket/:ticketId/message/:messageId').delete(deleteMessage)
 
 module.exports = router

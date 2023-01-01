@@ -1,9 +1,12 @@
 import React from 'react'
 
-const MessageField = ({ placeholder, message, setMessage }) => {
+const MessageField = ({ placeholder, message, setMessage, required }) => {
   return (
     <div>
-      <label htmlFor='message' className='required-input-label'>
+      <label
+        htmlFor='message'
+        className={required ? 'required-input-label' : ''}
+      >
         Message
       </label>
       <textarea
@@ -13,7 +16,7 @@ const MessageField = ({ placeholder, message, setMessage }) => {
         rows='5'
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        required
+        required={required}
       ></textarea>
     </div>
   )

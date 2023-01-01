@@ -255,3 +255,95 @@ exports.updateTicket = async (req, res, next) => {
     next(error)
   }
 }
+
+exports.addMessage = async (req, res, next) => {
+  const ticketId = ObjectId(req.params.ticketId)
+
+  const { message } = JSON.parse(req.body.message)
+
+  const session = await startSession()
+
+  try {
+    session.startTransaction()
+
+    const foundTicket = await Ticket.findById(ticketId)
+    if (!foundTicket) {
+      return next(new ErrorResponse('Ticket not found.', 404))
+    }
+
+    await Ticket.updateOne(
+      { _id: foundTicket._id },
+      {
+        $push: {
+          messages: {
+            user: req.user._id,
+            message,
+            attachments: req.files.map((file) => file.filename),
+          },
+        },
+        $set: {
+          lastUpdated: Date.now(),
+        },
+      },
+      { session }
+    )
+
+    await session.commitTransaction()
+    session.endSession()
+
+    res.status(201).json({
+      success: true,
+      data: 'Message added.',
+    })
+  } catch (error) {
+    await session.abortTransaction()
+    session.endSession()
+
+    next(error)
+  }
+}
+
+exports.deleteMessage = async (req, res, next) => {
+  const ticketId = ObjectId(req.params.ticketId)
+  const messageId = ObjectId(req.params.messageId)
+
+  console.log(ticketId)
+  console.log(messageId)
+
+  const session = await startSession()
+
+  try {
+    session.startTransaction()
+
+    const foundTicket = await Ticket.findById(ticketId)
+    if (!foundTicket) {
+      return next(new ErrorResponse('Ticket not found.', 404))
+    }
+
+    // await Ticket.updateOne(
+    //   { _id: foundTicket._id },
+    //   {
+    //     $pull: {
+    //       messages: messageId,
+    //     },
+    //     $set: {
+    //       lastUpdated: Date.now(),
+    //     },
+    //   },
+    //   { session }
+    // )
+
+    await session.commitTransaction()
+    session.endSession()
+
+    res.status(200).json({
+      success: true,
+      data: 'Message deleted.',
+    })
+  } catch (error) {
+    await session.abortTransaction()
+    session.endSession()
+
+    next(error)
+  }
+}
