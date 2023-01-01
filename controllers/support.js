@@ -307,9 +307,6 @@ exports.deleteMessage = async (req, res, next) => {
   const ticketId = ObjectId(req.params.ticketId)
   const messageId = ObjectId(req.params.messageId)
 
-  console.log(ticketId)
-  console.log(messageId)
-
   const session = await startSession()
 
   try {
@@ -320,18 +317,20 @@ exports.deleteMessage = async (req, res, next) => {
       return next(new ErrorResponse('Ticket not found.', 404))
     }
 
-    // await Ticket.updateOne(
-    //   { _id: foundTicket._id },
-    //   {
-    //     $pull: {
-    //       messages: messageId,
-    //     },
-    //     $set: {
-    //       lastUpdated: Date.now(),
-    //     },
-    //   },
-    //   { session }
-    // )
+    await Ticket.updateOne(
+      { _id: foundTicket._id },
+      {
+        $pull: {
+          messages: {
+            _id: messageId,
+          },
+        },
+        $set: {
+          lastUpdated: Date.now(),
+        },
+      },
+      { session }
+    )
 
     await session.commitTransaction()
     session.endSession()

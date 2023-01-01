@@ -54,6 +54,7 @@ const TicketDetails = ({ ticket, setRefresh }) => {
                   message={message}
                   viewImage={viewImage}
                   attachmentPath={ticket.attachmentPath}
+                  setRefresh={setRefresh}
                 />
               ))}
             </div>
