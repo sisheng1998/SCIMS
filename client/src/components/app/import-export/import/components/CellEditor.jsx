@@ -121,7 +121,7 @@ const CellEditor = ({
 
         {!valid && (
           <p
-            className='tooltip tooltip-right whitespace-pre-wrap hover:before:z-[1] hover:after:z-[1]'
+            className='tooltip tooltip-right whitespace-pre-wrap hover:before:z-[2] hover:after:z-[2]'
             data-tooltip={getTooltip(cellKey)}
           >
             <ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />

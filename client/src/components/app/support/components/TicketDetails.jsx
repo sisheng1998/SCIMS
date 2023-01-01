@@ -3,6 +3,7 @@ import ImageLightBox from '../../../utils/ImageLightBox'
 import Title from '../../components/Title'
 import Sidebar from './Sidebar'
 import Subject from './Subject'
+import Status from './Status'
 import MessageCard from './MessageCard'
 
 const TicketDetails = ({ ticket, setRefresh }) => {
@@ -34,7 +35,11 @@ const TicketDetails = ({ ticket, setRefresh }) => {
         <div className='max-w-4xl flex-1 rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:max-w-none'>
           <Subject ticket={ticket} setRefresh={setRefresh} />
 
-          <hr className='mt-4 mb-6 border-gray-200' />
+          <Status
+            status={ticket.status}
+            createdAt={ticket.createdAt}
+            lastUpdated={ticket.lastUpdated}
+          />
 
           {ticket.messages.length !== 0 && (
             <div>
