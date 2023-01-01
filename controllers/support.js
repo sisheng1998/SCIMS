@@ -138,10 +138,10 @@ exports.openTicket = async (req, res, next) => {
     sendEmail({
       to: PIC_EMAIL,
       subject: 'New Support Ticket',
-      template: 'new_support_ticket',
+      template: 'support_ticket',
       context: {
+        newTicket: true,
         subject,
-        message,
         ticketId: newTicket[0]._id,
         url: `${process.env.DOMAIN_NAME}/support/${newTicket[0]._id}`,
       },
@@ -265,7 +265,10 @@ exports.addMessage = async (req, res, next) => {
   try {
     session.startTransaction()
 
-    const foundTicket = await Ticket.findById(ticketId)
+    const foundTicket = await Ticket.findById(ticketId).populate(
+      'user',
+      'email'
+    )
     if (!foundTicket) {
       return next(new ErrorResponse('Ticket not found.', 404))
     }
@@ -293,6 +296,22 @@ exports.addMessage = async (req, res, next) => {
     res.status(201).json({
       success: true,
       data: 'Message added.',
+    })
+
+    const toEmail = foundTicket.user._id.equals(req.user._id)
+      ? PIC_EMAIL
+      : foundTicket.user.email
+
+    sendEmail({
+      to: toEmail,
+      subject: 'New Support Ticket Message',
+      template: 'support_ticket',
+      context: {
+        newTicket: false,
+        subject: foundTicket.subject,
+        ticketId: foundTicket._id,
+        url: `${process.env.DOMAIN_NAME}/support/${foundTicket._id}`,
+      },
     })
   } catch (error) {
     await session.abortTransaction()

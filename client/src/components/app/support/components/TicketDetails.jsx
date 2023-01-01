@@ -24,7 +24,8 @@ const TicketDetails = ({ ticket, setRefresh }) => {
       <Title
         title='Support Ticket'
         hasButton={false}
-        hasRefreshButton={false}
+        hasRefreshButton={true}
+        setRefresh={setRefresh}
       />
 
       <div className='mb-6 flex items-start justify-center space-x-6 lg:block lg:space-x-0 lg:space-y-4'>
