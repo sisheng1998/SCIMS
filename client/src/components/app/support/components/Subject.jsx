@@ -11,7 +11,7 @@ const Subject = ({ ticket, setRefresh }) => {
 
       <button
         onClick={() => setOpenModal(true)}
-        className='tooltip text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+        className='tooltip cursor-pointer text-gray-400 transition hover:text-indigo-700 focus:outline-none'
         data-tooltip='Edit Subject'
       >
         <PencilAltIcon className='h-5 w-5' />

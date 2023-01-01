@@ -230,7 +230,7 @@
   }
 
   .tooltip {
-    @apply relative;
+    @apply relative cursor-help;
   }
 
   .tooltip::before,
