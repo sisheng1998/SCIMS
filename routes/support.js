@@ -8,6 +8,7 @@ const {
   getTicketDetails,
   updateTicket,
   addMessage,
+  updateMessage,
   deleteMessage,
 } = require('../controllers/support')
 
@@ -21,6 +22,7 @@ router.route('/ticket/:ticketId').patch(updateTicket)
 router
   .route('/ticket/:ticketId/new-message')
   .post(uploadTicketAttachments.array('attachments'), addMessage)
+router.route('/ticket/:ticketId/message/:messageId').patch(updateMessage)
 router.route('/ticket/:ticketId/message/:messageId').delete(deleteMessage)
 
 module.exports = router

@@ -1,7 +1,6 @@
 const { startSession } = require('mongoose')
 const Lab = require('../models/Lab')
 const Ticket = require('../models/Ticket')
-const User = require('../models/User')
 const ErrorResponse = require('../utils/errorResponse')
 const sendEmail = require('../utils/sendEmail')
 const ROLES_LIST = require('../config/roles_list')
@@ -294,6 +293,53 @@ exports.addMessage = async (req, res, next) => {
     res.status(201).json({
       success: true,
       data: 'Message added.',
+    })
+  } catch (error) {
+    await session.abortTransaction()
+    session.endSession()
+
+    next(error)
+  }
+}
+
+exports.updateMessage = async (req, res, next) => {
+  const ticketId = ObjectId(req.params.ticketId)
+  const messageId = ObjectId(req.params.messageId)
+
+  const { message } = req.body
+
+  if (!message) {
+    return next(new ErrorResponse('Missing value for required field.', 400))
+  }
+
+  const session = await startSession()
+
+  try {
+    session.startTransaction()
+
+    const foundTicket = await Ticket.findById(ticketId)
+    if (!foundTicket) {
+      return next(new ErrorResponse('Ticket not found.', 404))
+    }
+
+    await Ticket.updateOne(
+      { _id: foundTicket._id, 'messages._id': messageId },
+      {
+        $set: {
+          'messages.$.message': message,
+          'messages.$.lastUpdated': Date.now(),
+          lastUpdated: Date.now(),
+        },
+      },
+      { session }
+    )
+
+    await session.commitTransaction()
+    session.endSession()
+
+    res.status(204).json({
+      success: true,
+      data: 'Message updated.',
     })
   } catch (error) {
     await session.abortTransaction()

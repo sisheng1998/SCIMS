@@ -15,15 +15,22 @@ import useMobile from '../../../../hooks/useMobile'
 import useAuth from '../../../../hooks/useAuth'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import ROLES_LIST from '../../../../config/roles_list'
+import TICKET_STATUS from '../../../../config/ticket_status'
+
+import MessageField from './MessageField'
+import LoadingButtonText from '../../components/LoadingButtonText'
 
 const MessageCard = ({
   ticketId,
+  status,
   message,
   viewImage,
   attachmentPath,
   setRefresh,
 }) => {
   const isMobile = useMobile()
+
+  const [isEdit, setIsEdit] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -38,16 +45,31 @@ const MessageCard = ({
       <div className='flex-1 space-y-2 rounded-lg bg-gray-50 p-4'>
         <div className='flex items-start justify-between space-x-2'>
           <Name user={message.user} />
-          <MessageMenu
+
+          {!isEdit && status !== TICKET_STATUS.resolved && (
+            <MessageMenu
+              ticketId={ticketId}
+              message={message}
+              setIsEdit={setIsEdit}
+              setIsLoading={setIsLoading}
+              setRefresh={setRefresh}
+              setErrorMessage={setErrorMessage}
+            />
+          )}
+        </div>
+
+        {isEdit ? (
+          <EditMessage
             ticketId={ticketId}
-            message={message}
-            setIsLoading={setIsLoading}
+            messageId={message._id}
+            originalMessage={message.message}
+            setIsEdit={setIsEdit}
             setRefresh={setRefresh}
             setErrorMessage={setErrorMessage}
           />
-        </div>
-
-        <Message message={message.message} />
+        ) : (
+          <Message message={message.message} />
+        )}
 
         {message.attachments.length !== 0 && (
           <Attachments
@@ -106,13 +128,13 @@ const Name = ({ user }) => {
 const MessageMenu = ({
   ticketId,
   message,
+  setIsEdit,
   setIsLoading,
   setRefresh,
   setErrorMessage,
 }) => {
   const { auth } = useAuth()
   const axiosPrivate = useAxiosPrivate()
-
   const [isDelete, setIsDelete] = useState(false)
 
   const deleteMessage = async () => {
@@ -158,7 +180,7 @@ const MessageMenu = ({
           <Menu.Items className='absolute right-0 top-full min-w-[120px] rounded-lg bg-white py-2 shadow-md outline-gray-300 ring-1 ring-gray-300'>
             <Menu.Item>
               <button
-                onClick={() => {}}
+                onClick={() => setIsEdit(true)}
                 className='group flex w-full items-center px-3 py-1 text-sm font-medium leading-6 hover:bg-indigo-50 hover:text-indigo-600'
               >
                 <PencilIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
@@ -196,6 +218,73 @@ const MessageMenu = ({
   ) : null
 }
 
+const EditMessage = ({
+  ticketId,
+  messageId,
+  originalMessage,
+  setIsEdit,
+  setRefresh,
+  setErrorMessage,
+}) => {
+  const axiosPrivate = useAxiosPrivate()
+  const [message, setMessage] = useState(originalMessage)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const editMessage = async () => {
+    setErrorMessage('')
+    setIsLoading(true)
+
+    try {
+      await axiosPrivate.patch(
+        `/api/support/ticket/${ticketId}/message/${messageId}`,
+        { message }
+      )
+
+      setIsLoading(false)
+      setRefresh(true)
+    } catch (error) {
+      if (error.response?.status === 500) {
+        setErrorMessage('Server not responding. Please try again later.')
+      } else {
+        setErrorMessage('Oops. Something went wrong. Please try again later.')
+      }
+
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div>
+      <MessageField
+        placeholder='Enter your message here'
+        message={message}
+        setMessage={setMessage}
+        required={true}
+      />
+
+      <div className='mt-2 mb-4 flex items-center text-sm'>
+        <button
+          onClick={editMessage}
+          className='button button-outline mr-6 flex w-32 items-center justify-center'
+          disabled={message === '' || message === originalMessage || isLoading}
+        >
+          {isLoading ? <LoadingButtonText /> : 'Update'}
+        </button>
+
+        <span
+          onClick={() => {
+            setErrorMessage('')
+            setIsEdit(false)
+          }}
+          className='cursor-pointer font-medium text-gray-500 transition hover:text-indigo-600'
+        >
+          Cancel
+        </span>
+      </div>
+    </div>
+  )
+}
+
 const Message = ({ message }) => (
   <p className='whitespace-pre-wrap'>{message}</p>
 )
@@ -225,15 +314,7 @@ const Attachments = ({ attachments, attachmentPath }) => {
 }
 
 const Time = ({ createdAt, lastUpdated }) => {
-  const RemoveSecs = (value) => {
-    const time = new Date(value)
-    time.setMilliseconds(0)
-    time.setSeconds(0)
-
-    return time
-  }
-
-  const isEdited = !dayjs(RemoveSecs(createdAt)).isSame(RemoveSecs(lastUpdated))
+  const isEdited = !dayjs(createdAt).isSame(lastUpdated)
 
   return (
     <p className='flex items-center text-xs italic text-gray-400'>

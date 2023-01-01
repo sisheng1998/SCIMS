@@ -37,7 +37,11 @@ const TicketDetails = ({ ticket, setRefresh }) => {
         </div>
 
         <div className='max-w-4xl flex-1 rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:max-w-none'>
-          <Subject ticket={ticket} setRefresh={setRefresh} />
+          <Subject
+            ticket={ticket}
+            status={ticket.status}
+            setRefresh={setRefresh}
+          />
 
           <Status
             status={ticket.status}
@@ -45,12 +49,13 @@ const TicketDetails = ({ ticket, setRefresh }) => {
             lastUpdated={ticket.lastUpdated}
           />
 
-          {ticket.messages.length !== 0 && (
+          {ticket.messages.length !== 0 ? (
             <div className='space-y-4'>
               {ticket.messages.map((message) => (
                 <MessageCard
                   key={message._id}
                   ticketId={ticket._id}
+                  status={ticket.status}
                   message={message}
                   viewImage={viewImage}
                   attachmentPath={ticket.attachmentPath}
@@ -58,6 +63,8 @@ const TicketDetails = ({ ticket, setRefresh }) => {
                 />
               ))}
             </div>
+          ) : (
+            <p>No message yet.</p>
           )}
 
           {ticket.status !== TICKET_STATUS.resolved && (
