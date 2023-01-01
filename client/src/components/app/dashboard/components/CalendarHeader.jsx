@@ -19,17 +19,17 @@ const CalendarHeader = ({ monthIndex, setMonthIndex, dayBeforeExp }) => {
         Today
       </button>
 
-      <div className='tooltip' data-tooltip='Previous Month'>
+      <div className='tooltip cursor-pointer' data-tooltip='Previous Month'>
         <ChevronLeftIcon
           onClick={handlePrevMonth}
-          className='h-8 w-8 cursor-pointer rounded-full stroke-2 p-1.5 text-gray-400 transition hover:bg-indigo-50 hover:text-indigo-600'
+          className='h-8 w-8 rounded-full stroke-2 p-1.5 text-gray-400 transition hover:bg-indigo-50 hover:text-indigo-600'
         />
       </div>
 
-      <div className='tooltip' data-tooltip='Next Month'>
+      <div className='tooltip cursor-pointer' data-tooltip='Next Month'>
         <ChevronRightIcon
           onClick={handleNextMonth}
-          className='h-8 w-8 cursor-pointer rounded-full stroke-2 p-1.5 text-gray-400 transition hover:bg-indigo-50 hover:text-indigo-600'
+          className='h-8 w-8 rounded-full stroke-2 p-1.5 text-gray-400 transition hover:bg-indigo-50 hover:text-indigo-600'
         />
       </div>
 

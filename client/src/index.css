@@ -217,12 +217,20 @@
     @apply border border-green-500 bg-green-50 py-2 px-3 text-sm font-semibold text-green-600 shadow-green-50 hover:border-green-600 hover:bg-green-50 hover:text-green-700 hover:shadow-green-100 focus:ring-green-500 focus:ring-offset-gray-100;
   }
 
+  .button-blue-outline {
+    @apply border border-blue-500 bg-blue-50 py-2 px-3 text-sm font-semibold text-blue-600 shadow-blue-50 hover:border-blue-600 hover:bg-blue-50 hover:text-blue-700 hover:shadow-blue-100 focus:ring-blue-500 focus:ring-offset-gray-100 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .button-yellow-outline {
+    @apply border border-yellow-500 bg-yellow-50 py-2 px-3 text-sm font-semibold text-yellow-600 shadow-yellow-50 hover:border-yellow-600 hover:bg-yellow-50 hover:text-yellow-700 hover:shadow-yellow-100 focus:ring-yellow-500 focus:ring-offset-gray-100 disabled:pointer-events-none disabled:opacity-50;
+  }
+
   .read-only {
     @apply bg-gray-50 text-gray-500 !shadow-none focus:!ring-0;
   }
 
   .tooltip {
-    @apply relative;
+    @apply relative cursor-help;
   }
 
   .tooltip::before,

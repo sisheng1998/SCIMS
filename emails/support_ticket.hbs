@@ -1,0 +1,42 @@
+<p>
+  {{#if newTicket}}
+    A new support ticket have been opened. Kindly resolve it as soon as
+    possible.
+  {{else}}
+    You have a new reply to your support ticket.
+  {{/if}}
+</p>
+<p class='last'>Ticket Reference</p>
+<p><a clicktracking='off' href={{url}} target='_blank'>#{{ticketId}}</a></p>
+<p class='last'>Subject</p>
+<p><strong>{{subject}}</strong></p>
+<table
+  role='presentation'
+  border='0'
+  cellpadding='0'
+  cellspacing='0'
+  class='btn btn-primary'
+>
+  <tbody>
+    <tr>
+      <td align='left'>
+        <table role='presentation' border='0' cellpadding='0' cellspacing='0'>
+          <tbody>
+            <tr>
+              <td>
+                <a clicktracking='off' href={{url}} target='_blank'>View Ticket</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class='last' style='font-size: 12px;'>Click the link below if the button not
+  working:</p>
+<p style='font-size: 12px;'><a
+    clicktracking='off'
+    href={{url}}
+    target='_blank'
+  >{{url}}</a></p>

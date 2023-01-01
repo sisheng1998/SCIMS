@@ -20,7 +20,7 @@ const QuickAccessCard = () => {
           menu.text !== 'Scan' ? (
             <div
               key={index}
-              className='group flex cursor-pointer flex-col items-center space-y-2 rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm transition hover:border-indigo-600 hover:bg-indigo-50 hover:shadow'
+              className='group flex cursor-pointer flex-col items-center justify-center space-y-2 rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm transition hover:border-indigo-600 hover:bg-indigo-50 hover:shadow'
               onClick={() => menuHandler(menu.link)}
             >
               <div className='relative h-8 w-8 text-gray-400 transition group-hover:text-indigo-600'>

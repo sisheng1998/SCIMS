@@ -219,7 +219,7 @@ const ListTable = ({ chemicals, disposedChemicals }) => {
                             {chemical.CASNo}
                             {chemical.COCs.length !== 0 && (
                               <span
-                                className='tooltip ml-1.5'
+                                className='tooltip ml-1.5 cursor-pointer'
                                 data-tooltip='Chemical of Concerns'
                               >
                                 <ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
