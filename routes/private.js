@@ -20,6 +20,7 @@ const {
   getChemicals,
   addChemical,
   updateChemical,
+  updateCASNo,
   getChemicalInfo,
   getChemicalList,
   updateAmount,
@@ -27,6 +28,7 @@ const {
   cancelDisposal,
   deleteChemical,
   getCASInfo,
+  getAllCASNo,
 } = require('../controllers/chemical')
 
 const {
@@ -86,6 +88,9 @@ router
   .route('/chemical')
   .put(verifyRoles(ROLES_LIST.postgraduate), updateChemical)
 router
+  .route('/chemical/:chemicalId/cas')
+  .patch(verifyRoles(ROLES_LIST.postgraduate), updateCASNo)
+router
   .route('/chemical/:chemicalId')
   .put(verifyRoles(ROLES_LIST.guest), getChemicalInfo)
 router
@@ -103,6 +108,7 @@ router
 router
   .route('/chemical/delete')
   .post(verifyRoles(ROLES_LIST.labOwner), deleteChemical)
+router.route('/cas').get(getAllCASNo)
 router.route('/cas').put(getCASInfo)
 
 // Profile

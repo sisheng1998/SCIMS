@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { PencilAltIcon } from '@heroicons/react/outline'
 import CASField from '../../../validations/CASField'
 import NameField from '../../../validations/NameField'
 import NumberWithUnitField from '../../../validations/NumberWithUnitField'
@@ -6,6 +7,7 @@ import ImageLightBox from '../../../utils/ImageLightBox'
 import ConvertUnit from '../../../utils/ConvertUnit'
 import useAuth from '../../../../hooks/useAuth'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
+import EditCASNoModal from './EditCASNoModal'
 
 const ChemicalInfoSection = ({
   chemical,
@@ -14,6 +16,7 @@ const ChemicalInfoSection = ({
   setCOCs,
   setChemicalData,
   setValidated,
+  setEditSuccess,
 }) => {
   const { auth } = useAuth()
   const axiosPrivate = useAxiosPrivate()
@@ -36,6 +39,8 @@ const ChemicalInfoSection = ({
 
   const [QRCodeInfo, setQRCodeInfo] = useState('')
   const [openViewImageModal, setOpenViewImageModal] = useState(false)
+
+  const [openEditCASNoModal, setOpenEditCASNoModal] = useState(false)
 
   let classes = ''
 
@@ -178,7 +183,16 @@ const ChemicalInfoSection = ({
               <label htmlFor='CAS' className='mb-1'>
                 CAS No.
               </label>
-              <p className='text-lg'>{chemical.CASId.CASNo}</p>
+              <p className='flex items-center'>
+                {chemical.CASId.CASNo}
+                <span
+                  onClick={() => setOpenEditCASNoModal(true)}
+                  className='tooltip ml-1.5 cursor-pointer text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+                  data-tooltip='Edit CAS No.'
+                >
+                  <PencilAltIcon className='h-5 w-5' />
+                </span>
+              </p>
             </div>
 
             <div className='flex-1'>
@@ -219,6 +233,15 @@ const ChemicalInfoSection = ({
               showValidated={chemical ? false : true}
             />
           </div>
+
+          {openEditCASNoModal && (
+            <EditCASNoModal
+              chemical={chemical}
+              openModal={openEditCASNoModal}
+              setOpenModal={setOpenEditCASNoModal}
+              setRefresh={setEditSuccess}
+            />
+          )}
         </>
       ) : (
         <div className='flex space-x-6'>

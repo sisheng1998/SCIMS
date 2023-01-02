@@ -92,6 +92,7 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
                 chemical={chemicalData}
                 setChemicalData={setChemicalData}
                 setValidated={setValidated}
+                setEditSuccess={setEditSuccess}
               />
             </div>
 

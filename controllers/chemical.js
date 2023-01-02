@@ -579,6 +579,87 @@ exports.updateChemical = async (req, res, next) => {
   }
 }
 
+exports.updateCASNo = async (req, res, next) => {
+  const chemicalId = ObjectId(req.params.chemicalId)
+
+  const { labId, CASId } = req.body
+
+  if (!labId || !CASId) {
+    return next(new ErrorResponse('Missing value for required field.', 400))
+  }
+
+  const foundChemical = await Chemical.findById(chemicalId).populate(
+    'CASId',
+    'CASNo'
+  )
+  if (!foundChemical) {
+    return next(new ErrorResponse('Chemical not found.', 404))
+  }
+
+  const foundLab = await Lab.findById(labId)
+  if (!foundLab) {
+    return next(new ErrorResponse('Lab not found.', 404))
+  }
+
+  const foundCAS = await CAS.findById(CASId)
+  if (!foundCAS) {
+    return next(new ErrorResponse('CAS not found.', 404))
+  }
+
+  const session = await startSession()
+
+  try {
+    session.startTransaction()
+
+    const updateQuery = {}
+    let changes = ''
+
+    if (foundChemical.CASId.CASNo !== foundCAS.CASNo) {
+      updateQuery.CASId = CASId
+
+      changes = `CAS No.:\n${foundChemical.CASId.CASNo} → ${foundCAS.CASNo}`
+    }
+
+    if (changes !== '') {
+      updateQuery.lastUpdated = Date.now()
+
+      await Chemical.updateOne(
+        { _id: foundChemical._id },
+        {
+          $set: updateQuery,
+        },
+        { session }
+      )
+
+      await Activity.create(
+        [
+          {
+            lab: foundLab._id,
+            user: req.user._id,
+            chemical: foundChemical._id,
+            description: 'Chemical info updated.',
+            changes,
+          },
+        ],
+        { session }
+      )
+    }
+
+    await session.commitTransaction()
+    session.endSession()
+
+    res.status(204).json({
+      success: true,
+      data: 'CAS No. updated.',
+    })
+  } catch (error) {
+    await session.abortTransaction()
+    session.endSession()
+
+    next(error)
+  }
+}
+
 exports.getChemicalInfo = async (req, res, next) => {
   const chemicalId = ObjectId(req.params.chemicalId)
 
@@ -666,6 +747,7 @@ exports.getChemicalList = async (req, res, next) => {
         },
       },
     },
+    { $sort: { CASNo: 1 } },
   ]
 
   try {
@@ -1208,5 +1290,18 @@ exports.getCASInfo = async (req, res, next) => {
     }
   } catch (error) {
     return next(error)
+  }
+}
+
+exports.getAllCASNo = async (req, res, next) => {
+  try {
+    const allCASNo = await CAS.find({}, 'CASNo chemicalName').sort({ CASNo: 1 })
+
+    res.status(200).json({
+      success: true,
+      allCASNo,
+    })
+  } catch (error) {
+    next(error)
   }
 }

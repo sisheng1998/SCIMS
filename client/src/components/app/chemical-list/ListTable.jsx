@@ -43,7 +43,7 @@ const ListTable = ({ chemicals, disposedChemicals }) => {
     },
   ]
 
-  const [sortKey, setSortKey] = useState('_id')
+  const [sortKey, setSortKey] = useState('index')
   const [sortOrder, setSortOrder] = useState('asc')
   const [searchTerm, setSearchTerm] = useState('')
   const [filterTerms, setFilterTerms] = useState({
@@ -51,7 +51,7 @@ const ListTable = ({ chemicals, disposedChemicals }) => {
   })
 
   useEffect(() => {
-    setSortKey('_id')
+    setSortKey('index')
     setSortOrder('asc')
   }, [auth])
 
@@ -81,7 +81,7 @@ const ListTable = ({ chemicals, disposedChemicals }) => {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
 
       if (sortOrder === 'desc') {
-        return setSortKey('_id')
+        return setSortKey('index')
       }
     }
     setSortKey(key)
