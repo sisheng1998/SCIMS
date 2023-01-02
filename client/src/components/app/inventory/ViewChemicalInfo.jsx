@@ -225,7 +225,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
                   !isMobile && (
                     <button
                       onClick={() => setOpenChemicalUsageModal(true)}
-                      className='tooltip ml-1.5 text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+                      className='tooltip ml-1.5 cursor-pointer text-gray-400 transition hover:text-indigo-700 focus:outline-none'
                       data-tooltip='Chemical Usage'
                     >
                       <PencilAltIcon className='h-5 w-5' />

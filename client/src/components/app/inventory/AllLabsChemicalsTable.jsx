@@ -298,7 +298,7 @@ const ChemicalsTable = (props) => {
                     {chemical.CASId.CASNo}
                     {chemical.CASId.COCs.length !== 0 && (
                       <span
-                        className='tooltip ml-1.5 inline-block -translate-y-0.5'
+                        className='tooltip ml-1.5 inline-block -translate-y-0.5 cursor-pointer'
                         data-tooltip='Chemical of Concerns'
                       >
                         <ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
@@ -420,7 +420,7 @@ const ChemicalsTable = (props) => {
                               {chemical.CASId.CASNo}
                               {chemical.CASId.COCs.length !== 0 && (
                                 <span
-                                  className='tooltip ml-1.5'
+                                  className='tooltip ml-1.5 cursor-pointer'
                                   data-tooltip='Chemical of Concerns'
                                 >
                                   <ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
@@ -431,7 +431,10 @@ const ChemicalsTable = (props) => {
 
                           <td className='px-6 py-4'>
                             <div className='flex items-center space-x-2'>
-                              <div className='tooltip' data-tooltip='QR Code'>
+                              <div
+                                className='tooltip cursor-pointer'
+                                data-tooltip='QR Code'
+                              >
                                 <QrcodeIcon
                                   className='h-6 w-6 cursor-pointer text-gray-400 transition hover:text-indigo-700 focus:outline-none'
                                   onClick={() =>
@@ -475,7 +478,7 @@ const ChemicalsTable = (props) => {
                                     onClick={() =>
                                       updateAmountHandler(chemical)
                                     }
-                                    className='tooltip text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+                                    className='tooltip cursor-pointer text-gray-400 transition hover:text-indigo-700 focus:outline-none'
                                     data-tooltip='Chemical Usage'
                                   >
                                     <PencilAltIcon className='h-5 w-5' />
