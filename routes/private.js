@@ -138,7 +138,7 @@ router
 
 // SDS
 router.route('/sds').get(getSDS)
-router.route('/sds').post(uploadSDS.single('SDS'), updateSDS)
+router.route('/sds/:CASId').patch(uploadSDS.single('SDS'), updateSDS)
 router.route('/sds/new-sds').post(uploadSDS.single('SDS'), addSDS)
 
 // Notifications

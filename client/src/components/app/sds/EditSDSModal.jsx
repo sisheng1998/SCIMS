@@ -15,10 +15,18 @@ import {
 import SafetySecurityField from '../../validations/SafetySecurityField'
 import FormatDate from '../../utils/FormatDate'
 import NameField from '../../validations/NameField'
+import CASField from '../../validations/CASField'
+import useAuth from '../../../hooks/useAuth'
+import ROLE_LIST from '../../../config/roles_list'
 
 const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
+  const { auth } = useAuth()
+
   const axiosPrivate = useAxiosPrivate()
   const divRef = useRef(null)
+
+  const [CASNo, setCASNo] = useState(CAS.CASNo)
+  const [CASNoValidated, setCASNoValidated] = useState(true)
 
   const [chemicalName, setChemicalName] = useState(CAS.chemicalName)
   const [chemicalNameValidated, setChemicalNameValidated] = useState(false)
@@ -36,13 +44,24 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
     setAllowed(
       SDS !== '' &&
         chemicalNameValidated &&
+        CASNoValidated &&
         (SDS !== CAS.SDS ||
           chemicalName !== CAS.chemicalName ||
+          CASNo !== CAS.CASNo ||
           [...classifications].sort().toString() !==
             [...CAS.classifications].sort().toString() ||
           [...COCs].sort().toString() !== [...CAS.COCs].sort().toString())
     )
-  }, [CAS, SDS, classifications, COCs, chemicalName, chemicalNameValidated])
+  }, [
+    CAS,
+    SDS,
+    classifications,
+    COCs,
+    chemicalName,
+    chemicalNameValidated,
+    CASNo,
+    CASNoValidated,
+  ])
 
   const submitHandler = async (e) => {
     e.preventDefault()
@@ -53,7 +72,7 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
       formData.append(
         'chemicalInfo',
         JSON.stringify({
-          CASNo: CAS.CASNo,
+          CASNo,
           chemicalName,
           classifications,
           COCs,
@@ -61,12 +80,14 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
       )
       SDS !== CAS.SDS && formData.append('SDS', SDS)
 
-      await axiosPrivate.post('/api/private/sds', formData)
+      await axiosPrivate.patch(`/api/private/sds/${CAS._id}`, formData)
 
       setSuccess(true)
     } catch (error) {
       if (error.response?.status === 500) {
         setErrorMessage('Server not responding. Please try again later.')
+      } else if (error.response?.status === 409) {
+        setErrorMessage('This CAS No. is already existed.')
       } else {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
@@ -75,6 +96,8 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
 
   const closeHandler = () => {
     setErrorMessage('')
+    setCASNo('')
+    setChemicalName('')
     setSDS('')
     setClassifications([])
     setCOCs([])
@@ -138,18 +161,35 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
                 spellCheck='false'
                 autoComplete='off'
               >
-                <label htmlFor='CAS'>CAS No.</label>
-                <input
-                  className='w-full'
-                  type='text'
-                  name='CAS'
-                  id='CAS'
-                  readOnly
-                  value={CAS.CASNo}
-                />
-                <p className='mt-2 mb-6 text-xs text-gray-400'>
-                  CAS Number cannot be changed.
-                </p>
+                {auth.currentRole >= ROLE_LIST.labOwner ? (
+                  <>
+                    <label htmlFor='CAS' className='required-input-label'>
+                      CAS No.
+                    </label>
+                    <CASField
+                      value={CASNo}
+                      setValue={setCASNo}
+                      validated={CASNoValidated}
+                      setValidated={setCASNoValidated}
+                      showValidated={false}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <label htmlFor='CAS'>CAS No.</label>
+                    <input
+                      className='w-full'
+                      type='text'
+                      name='CAS'
+                      id='CAS'
+                      readOnly
+                      value={CAS.CASNo}
+                    />
+                    <p className='mt-2 mb-6 text-xs text-gray-400'>
+                      CAS Number cannot be changed.
+                    </p>
+                  </>
+                )}
 
                 <label htmlFor='name' className='required-input-label'>
                   Name of Chemical
