@@ -54,7 +54,10 @@ const ViewSDSModal = ({ CAS, fromInventory, openModal, setOpenModal }) => {
           <label htmlFor='SDS' className='mb-1'>
             Safety Data Sheet (SDS)
           </label>
-          <RenderPDF PDF={CAS.SDS} />
+          <div className='space-y-1'>
+            <RenderPDF PDF={CAS.SDSs.en} language='en' />
+            <RenderPDF PDF={CAS.SDSs.bm} language='bm' />
+          </div>
 
           <div className='mb-4 mt-6'>
             <label htmlFor='classification'>GHS Classifications</label>

@@ -1,7 +1,8 @@
 const FILE_PATH = {
   avatar: '/public/avatars/',
-  sds: {
-    en: '/public/SDSs/',
+  SDSs: {
+    en: '/public/SDSs/en/',
+    bm: '/public/SDSs/bm/',
   },
   ticket: '/public/tickets/',
 }
