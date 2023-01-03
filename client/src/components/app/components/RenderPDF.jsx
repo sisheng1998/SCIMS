@@ -5,11 +5,9 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/outline'
 import { PaperClipIcon } from '@heroicons/react/solid'
-import useAuth from '../../../hooks/useAuth'
+import FILE_PATH from '../../../config/file_path'
 
 const RenderPDF = ({ PDF, setPDF, extractionResult }) => {
-  const { auth } = useAuth()
-
   return (
     <>
       {PDF.toString().toLowerCase().endsWith('.pdf') ? (
@@ -18,7 +16,7 @@ const RenderPDF = ({ PDF, setPDF, extractionResult }) => {
             <PaperClipIcon className='mr-2 h-5 w-5 text-gray-400' />
             {PDF}
           </p>
-          <a href={auth.SDSPath + PDF} target='_blank' rel='noreferrer'>
+          <a href={FILE_PATH.sds.en + PDF} target='_blank' rel='noreferrer'>
             View
           </a>
         </div>

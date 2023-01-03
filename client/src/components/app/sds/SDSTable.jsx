@@ -9,12 +9,12 @@ import {
   COC_LIST,
   COC_DESCRIPTION,
 } from '../../../config/safety_security_list'
-import useAuth from '../../../hooks/useAuth'
 import EditSDSModal from './EditSDSModal'
 import ViewSDSModal from './ViewSDSModal'
 import { FromNow, DateTime } from '../../utils/FormatDate'
 import useMobile from '../../../hooks/useMobile'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
+import FILE_PATH from '../../../config/file_path'
 
 const tableHeaders = [
   {
@@ -50,7 +50,6 @@ const tableHeaders = [
 ]
 
 const SDSTable = ({ SDS, setRefresh }) => {
-  const { auth } = useAuth()
   const isMobile = useMobile()
 
   const [openEditSDSModal, setOpenEditSDSModal] = useState(false)
@@ -206,7 +205,7 @@ const SDSTable = ({ SDS, setRefresh }) => {
 
                   {CAS.SDS !== 'No SDS' && (
                     <a
-                      href={auth.SDSPath + CAS.SDS}
+                      href={FILE_PATH.sds.en + CAS.SDS}
                       target='_blank'
                       rel='noreferrer'
                       className='inline-flex items-center font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'

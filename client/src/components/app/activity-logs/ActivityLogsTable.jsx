@@ -11,6 +11,7 @@ import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
 import { useNavigate } from 'react-router-dom'
 import ChangelogModal from './ChangelogModal'
 import ImportLogModal from './ImportLogModal'
+import FILE_PATH from '../../../config/file_path'
 
 const tableHeaders = [
   {
@@ -242,7 +243,7 @@ const ActivityLogsTable = (props) => {
                 ) : (
                   currentItems.map((log) => {
                     const imageSrc = log.user.avatar
-                      ? auth.avatarPath + log.user.avatar
+                      ? FILE_PATH.avatar + log.user.avatar
                       : GetLetterPicture(log.userName)
 
                     return (

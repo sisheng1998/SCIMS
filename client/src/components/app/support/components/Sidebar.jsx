@@ -10,6 +10,7 @@ import useAuth from '../../../../hooks/useAuth'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import ROLES_LIST from '../../../../config/roles_list'
 import TICKET_STATUS from '../../../../config/ticket_status'
+import FILE_PATH from '../../../../config/file_path'
 
 import LoadingButtonText from '../../components/LoadingButtonText'
 
@@ -146,7 +147,7 @@ const User = ({ user, viewImage }) => {
   const { auth } = useAuth()
 
   const imageSrc = user.avatar
-    ? auth.avatarPath + user.avatar
+    ? FILE_PATH.avatar + user.avatar
     : GetLetterPicture(user.name)
 
   return (

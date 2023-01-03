@@ -2,16 +2,14 @@ import React, { useState } from 'react'
 import GetLetterPicture from '../../utils/GetLetterPicture'
 import UpdateAvatarModal from './UpdateAvatarModal'
 import EditPersonalInfoModal from './EditPersonalInfoModal'
-import useAuth from '../../../hooks/useAuth'
+import FILE_PATH from '../../../config/file_path'
 
 const TabLabels = ['Profile Picture', 'Personal Info']
 
 const PersonalSection = ({ user, setRefresh }) => {
-  const { auth } = useAuth()
-
   const [activeTab, setActiveTab] = useState('Tab0')
   const imageSrc = user.avatar
-    ? auth.avatarPath + user.avatar
+    ? FILE_PATH.avatar + user.avatar
     : GetLetterPicture(user.name)
   const [openUpdateAvatarModal, setOpenUpdateAvatarModal] = useState(false)
   const [openEditPersonalInfoModal, setOpenEditPersonalInfoModal] =

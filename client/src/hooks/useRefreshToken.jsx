@@ -19,8 +19,6 @@ const useRefreshToken = () => {
     const name = data.name
     const avatar = data.avatar
     const notification = data.notification
-    const avatarPath = data.avatarPath
-    const SDSPath = data.SDSPath
     const subscriber = data.subscriber
     const isUnsubscribed = data.isUnsubscribed ? true : false
     const isProfileNotCompleted = data.isProfileNotCompleted ? true : false
@@ -35,8 +33,6 @@ const useRefreshToken = () => {
       name,
       avatar,
       notification,
-      avatarPath,
-      SDSPath,
       subscriber,
       isUnsubscribed,
       isProfileNotCompleted,
