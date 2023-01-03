@@ -22,7 +22,7 @@ const uploadAvatar = multer({ storage: avatarStorage })
 
 const SDSStorage = multer.diskStorage({
   destination: (req, file, callback) => {
-    callback(null, './public/SDSs')
+    callback(null, `./public/SDSs/${file.fieldname === 'SDS_EN' ? 'en' : 'bm'}`)
   },
   filename: (req, file, callback) => {
     let extension

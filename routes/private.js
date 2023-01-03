@@ -83,7 +83,19 @@ router.route('/user').delete(verifyRoles(ROLES_LIST.labOwner), removeUser)
 
 // Inventory
 router.route('/chemicals').post(verifyRoles(ROLES_LIST.guest), getChemicals)
-router.route('/chemical').post(uploadSDS.single('SDS'), addChemical)
+router.route('/chemical').post(
+  uploadSDS.fields([
+    {
+      name: 'SDS_EN',
+      maxCount: 1,
+    },
+    {
+      name: 'SDS_BM',
+      maxCount: 1,
+    },
+  ]),
+  addChemical
+)
 router
   .route('/chemical')
   .put(verifyRoles(ROLES_LIST.postgraduate), updateChemical)
@@ -144,8 +156,32 @@ router
 
 // SDS
 router.route('/sds').get(getSDS)
-router.route('/sds/:CASId').patch(uploadSDS.single('SDS'), updateSDS)
-router.route('/sds/new-sds').post(uploadSDS.single('SDS'), addSDS)
+router.route('/sds/:CASId').patch(
+  uploadSDS.fields([
+    {
+      name: 'SDS_EN',
+      maxCount: 1,
+    },
+    {
+      name: 'SDS_BM',
+      maxCount: 1,
+    },
+  ]),
+  updateSDS
+)
+router.route('/sds/new-sds').post(
+  uploadSDS.fields([
+    {
+      name: 'SDS_EN',
+      maxCount: 1,
+    },
+    {
+      name: 'SDS_BM',
+      maxCount: 1,
+    },
+  ]),
+  addSDS
+)
 
 // Notifications
 router.route('/notifications').get(getNotifications)

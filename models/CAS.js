@@ -9,7 +9,6 @@ const CASSchema = new Schema(
       unique: true,
     },
     chemicalName: String,
-    SDS: String,
     classifications: [String],
     COCs: [String],
     createdAt: {
