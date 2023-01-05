@@ -2,9 +2,7 @@ const ErrorResponse = require('../utils/errorResponse')
 const CAS = require('../models/CAS')
 const { startSession } = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId
-const fs = require('fs')
-const path = require('path')
-const getSDS = require('../utils/getSDS')
+const { getSDSs, checkSDSExists, renameSDS } = require('../utils/sds')
 
 exports.getSDS = async (req, res, next) => {
   try {
@@ -12,16 +10,11 @@ exports.getSDS = async (req, res, next) => {
 
     const allSDSs = SDSs.map((SDS) => {
       const CASNo = SDS.CASNo
-
-      const enSDS = getSDS('en', CASNo)
-      const bmSDS = getSDS('bm', CASNo)
+      const SDSs = getSDSs(CASNo)
 
       return {
         ...SDS._doc,
-        SDSs: {
-          en: enSDS,
-          bm: bmSDS,
-        },
+        SDSs,
       }
     })
 
@@ -116,26 +109,14 @@ exports.updateSDS = async (req, res, next) => {
       } else {
         updateQuery.CASNo = CASNo
 
-        const isEnSDSExisted = fs.existsSync(
-          path.resolve(__dirname, `../public/SDSs/en/${foundCAS.CASNo}.pdf`)
-        )
-
+        const isEnSDSExisted = checkSDSExists('en', foundCAS.CASNo)
         if (isEnSDSExisted) {
-          fs.renameSync(
-            path.resolve(__dirname, `../public/SDSs/en/${foundCAS.CASNo}.pdf`),
-            path.resolve(__dirname, `../public/SDSs/en/${CASNo}.pdf`)
-          )
+          renameSDS('en', foundCAS.CASNo, CASNo)
         }
 
-        const isBmSDSExisted = fs.existsSync(
-          path.resolve(__dirname, `../public/SDSs/bm/${foundCAS.CASNo}.pdf`)
-        )
-
+        const isBmSDSExisted = checkSDSExists('bm', foundCAS.CASNo)
         if (isBmSDSExisted) {
-          fs.renameSync(
-            path.resolve(__dirname, `../public/SDSs/bm/${foundCAS.CASNo}.pdf`),
-            path.resolve(__dirname, `../public/SDSs/bm/${CASNo}.pdf`)
-          )
+          renameSDS('bm', foundCAS.CASNo, CASNo)
         }
       }
     }
