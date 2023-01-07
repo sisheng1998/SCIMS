@@ -31,14 +31,16 @@ const AddSDSModal = ({
   const [chemicalName, setChemicalName] = useState('')
   const [chemicalNameValidated, setChemicalNameValidated] = useState(false)
 
-  const [SDS, setSDS] = useState('')
+  const [enSDS, setEnSDS] = useState('')
+  const [bmSDS, setBmSDS] = useState('')
   const [classifications, setClassifications] = useState([])
   const [COCs, setCOCs] = useState([])
 
   const [allowNextStep, setAllowNextStep] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [extractionResult, setExtractionResult] = useState('')
+  const [enExtractionResult, setEnExtractionResult] = useState('')
+  const [bmExtractionResult, setBmExtractionResult] = useState('')
   const [allowed, setAllowed] = useState(false)
 
   useEffect(() => {
@@ -87,8 +89,10 @@ const AddSDSModal = ({
   }, [axiosPrivate, CASNo, CASNoValidated, existedSDS])
 
   useEffect(() => {
-    setAllowed(SDS !== '' && CASNoValidated && chemicalNameValidated)
-  }, [SDS, CASNoValidated, chemicalNameValidated])
+    setAllowed(
+      enSDS !== '' && bmSDS !== '' && CASNoValidated && chemicalNameValidated
+    )
+  }, [enSDS, bmSDS, CASNoValidated, chemicalNameValidated])
 
   const submitHandler = async (e) => {
     e.preventDefault()
@@ -100,7 +104,9 @@ const AddSDSModal = ({
         'chemicalInfo',
         JSON.stringify({ CASNo, chemicalName, classifications, COCs })
       )
-      formData.append('SDS', SDS)
+
+      formData.append('SDS_EN', enSDS)
+      formData.append('SDS_BM', bmSDS)
 
       await axiosPrivate.post('/api/private/sds/new-sds', formData)
 
@@ -127,7 +133,8 @@ const AddSDSModal = ({
 
   const resetField = () => {
     setErrorMessage('')
-    setSDS('')
+    setEnSDS('')
+    setBmSDS('')
     setClassifications([])
     setCOCs([])
     setAllowNextStep(false)
@@ -215,16 +222,16 @@ const AddSDSModal = ({
                     showValidated={true}
                   />
 
-                  <label htmlFor='SDS' className='required-input-label'>
-                    Safety Data Sheet (SDS)
+                  <label htmlFor='enSDS' className='required-input-label'>
+                    Safety Data Sheet (SDS) - EN
                   </label>
-                  {!SDS ? (
+                  {!enSDS ? (
                     <>
                       <PDFDropZone
-                        setPDF={setSDS}
+                        setPDF={setEnSDS}
                         classifications={classifications}
                         setClassifications={setClassifications}
-                        setExtractionResult={setExtractionResult}
+                        setExtractionResult={setEnExtractionResult}
                         setErrorMessage={setErrorMessage}
                       />
                       <p className='mt-2 text-xs text-gray-400'>
@@ -233,9 +240,33 @@ const AddSDSModal = ({
                     </>
                   ) : (
                     <RenderPDF
-                      PDF={SDS}
-                      setPDF={setSDS}
-                      extractionResult={extractionResult}
+                      PDF={enSDS}
+                      setPDF={setEnSDS}
+                      extractionResult={enExtractionResult}
+                    />
+                  )}
+
+                  <label htmlFor='bmSDS' className='required-input-label mt-6'>
+                    Safety Data Sheet (SDS) - BM
+                  </label>
+                  {!bmSDS ? (
+                    <>
+                      <PDFDropZone
+                        setPDF={setBmSDS}
+                        classifications={classifications}
+                        setClassifications={setClassifications}
+                        setExtractionResult={setBmExtractionResult}
+                        setErrorMessage={setErrorMessage}
+                      />
+                      <p className='mt-2 text-xs text-gray-400'>
+                        Only PDF is supported. Max file size: 10 MB.
+                      </p>
+                    </>
+                  ) : (
+                    <RenderPDF
+                      PDF={bmSDS}
+                      setPDF={setBmSDS}
+                      extractionResult={bmExtractionResult}
                     />
                   )}
 

@@ -31,21 +31,27 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
   const [chemicalName, setChemicalName] = useState(CAS.chemicalName)
   const [chemicalNameValidated, setChemicalNameValidated] = useState(false)
 
-  const [SDS, setSDS] = useState(CAS.SDS)
+  const [enSDS, setEnSDS] = useState(CAS.SDSs.en)
+  const [bmSDS, setBmSDS] = useState(CAS.SDSs.bm)
   const [classifications, setClassifications] = useState(CAS.classifications)
   const [COCs, setCOCs] = useState(CAS.COCs)
 
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [extractionResult, setExtractionResult] = useState('')
+  const [enExtractionResult, setEnExtractionResult] = useState('')
+  const [bmExtractionResult, setBmExtractionResult] = useState('')
   const [allowed, setAllowed] = useState(false)
 
   useEffect(() => {
     setAllowed(
-      SDS !== '' &&
+      enSDS !== '' &&
+        bmSDS !== '' &&
+        enSDS !== 'No SDS' &&
+        bmSDS !== 'No SDS' &&
         chemicalNameValidated &&
         CASNoValidated &&
-        (SDS !== CAS.SDS ||
+        (enSDS !== CAS.SDSs.en ||
+          bmSDS !== CAS.SDSs.bm ||
           chemicalName !== CAS.chemicalName ||
           CASNo !== CAS.CASNo ||
           [...classifications].sort().toString() !==
@@ -54,7 +60,8 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
     )
   }, [
     CAS,
-    SDS,
+    enSDS,
+    bmSDS,
     classifications,
     COCs,
     chemicalName,
@@ -78,7 +85,8 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
           COCs,
         })
       )
-      SDS !== CAS.SDS && formData.append('SDS', SDS)
+      enSDS !== CAS.SDSs.en && formData.append('SDS_EN', enSDS)
+      bmSDS !== CAS.SDSs.bm && formData.append('SDS_BM', bmSDS)
 
       await axiosPrivate.patch(`/api/private/sds/${CAS._id}`, formData)
 
@@ -98,7 +106,8 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
     setErrorMessage('')
     setCASNo('')
     setChemicalName('')
-    setSDS('')
+    setEnSDS('')
+    setBmSDS('')
     setClassifications([])
     setCOCs([])
 
@@ -206,16 +215,16 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
                   showValidated={false}
                 />
 
-                {!SDS ? (
+                {!enSDS ? (
                   <>
-                    <label htmlFor='SDS' className='required-input-label'>
-                      Safety Data Sheet (SDS)
+                    <label htmlFor='enSDS' className='required-input-label'>
+                      Safety Data Sheet (SDS) - EN
                     </label>
                     <PDFDropZone
-                      setPDF={setSDS}
+                      setPDF={setEnSDS}
                       classifications={classifications}
                       setClassifications={setClassifications}
-                      setExtractionResult={setExtractionResult}
+                      setExtractionResult={setEnExtractionResult}
                       setErrorMessage={setErrorMessage}
                     />
                     <p className='mt-2 text-xs text-gray-400'>
@@ -224,32 +233,85 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
                   </>
                 ) : (
                   <>
-                    <div className='flex items-baseline justify-between'>
+                    <div className='mb-2 flex items-baseline justify-between'>
                       <label
-                        htmlFor='SDS'
+                        htmlFor='enSDS'
                         className={
-                          SDS.toString().toLowerCase().endsWith('.pdf')
-                            ? ''
-                            : 'required-input-label'
+                          enSDS.toString().toLowerCase().endsWith('.pdf')
+                            ? 'mb-0'
+                            : 'required-input-label mb-0'
                         }
                       >
-                        Safety Data Sheet (SDS)
+                        Safety Data Sheet (SDS) - EN
                       </label>
 
-                      {(SDS.toString().toLowerCase().endsWith('.pdf') ||
-                        SDS === 'No SDS') && (
+                      {(enSDS.toString().toLowerCase().endsWith('.pdf') ||
+                        enSDS === 'No SDS') && (
                         <span
-                          onClick={() => setSDS('')}
-                          className='mb-2 cursor-pointer text-xs font-medium text-indigo-600 transition hover:text-indigo-700'
+                          onClick={() => setEnSDS('')}
+                          className='cursor-pointer text-xs font-medium text-indigo-600 transition hover:text-indigo-700'
                         >
-                          {SDS === 'No SDS' ? 'Upload SDS' : 'Upload New SDS'}
+                          {enSDS === 'No SDS' ? 'Upload SDS' : 'Upload New SDS'}
                         </span>
                       )}
                     </div>
                     <RenderPDF
-                      PDF={SDS}
-                      setPDF={setSDS}
-                      extractionResult={extractionResult}
+                      language='en'
+                      PDF={enSDS}
+                      setPDF={setEnSDS}
+                      extractionResult={enExtractionResult}
+                    />
+                  </>
+                )}
+
+                {!bmSDS ? (
+                  <>
+                    <label
+                      htmlFor='bmSDS'
+                      className='required-input-label mt-6'
+                    >
+                      Safety Data Sheet (SDS) - BM
+                    </label>
+                    <PDFDropZone
+                      setPDF={setBmSDS}
+                      classifications={classifications}
+                      setClassifications={setClassifications}
+                      setExtractionResult={setBmExtractionResult}
+                      setErrorMessage={setErrorMessage}
+                    />
+                    <p className='mt-2 text-xs text-gray-400'>
+                      Only PDF is supported. Max file size: 10 MB.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div className='mt-6 mb-2 flex items-baseline justify-between '>
+                      <label
+                        htmlFor='bmSDS'
+                        className={
+                          bmSDS.toString().toLowerCase().endsWith('.pdf')
+                            ? 'mb-0'
+                            : 'required-input-label mb-0'
+                        }
+                      >
+                        Safety Data Sheet (SDS) - BM
+                      </label>
+
+                      {(bmSDS.toString().toLowerCase().endsWith('.pdf') ||
+                        bmSDS === 'No SDS') && (
+                        <span
+                          onClick={() => setBmSDS('')}
+                          className='cursor-pointer text-xs font-medium text-indigo-600 transition hover:text-indigo-700'
+                        >
+                          {bmSDS === 'No SDS' ? 'Upload SDS' : 'Upload New SDS'}
+                        </span>
+                      )}
+                    </div>
+                    <RenderPDF
+                      language='bm'
+                      PDF={bmSDS}
+                      setPDF={setBmSDS}
+                      extractionResult={bmExtractionResult}
                     />
                   </>
                 )}

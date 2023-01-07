@@ -22,24 +22,26 @@ const RenderPDF = ({ language, PDF, setPDF, extractionResult }) => {
       </a>
     </div>
   ) : PDF === 'No SDS' ? (
-    <p className='!mt-2 flex items-center text-sm font-medium text-red-600'>
+    <p className='mt-2 flex items-center text-sm font-medium text-red-600'>
       <ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' /> SDS -{' '}
       {language.toUpperCase()} not found, kindly upload one for this chemical.
     </p>
   ) : (
     <>
-      <div className='mt-3'>
-        <div className='flex items-center'>
-          <DocumentTextIcon className='mr-2 h-12 w-12 shrink-0 stroke-1 text-gray-400' />
+      <div className='mt-3 flex items-center'>
+        <DocumentTextIcon className='mr-2 h-12 w-12 shrink-0 stroke-1 text-gray-400' />
 
-          <div className='overflow-hidden'>
-            <p className='truncate text-sm font-medium'>{PDF.name}</p>
-            <p className='text-xs'>{FormatBytes(PDF.size)}</p>
-          </div>
+        <div className='overflow-auto'>
+          <p className='max-w-full overflow-hidden text-ellipsis text-sm font-medium'>
+            {PDF.name}
+          </p>
+
+          <p className='text-xs'>{FormatBytes(PDF.size)}</p>
         </div>
 
-        <div className='mt-2'>
+        <div className='ml-6 max-w-sm border-l border-l-gray-200 pl-6'>
           <p className='text-xs text-gray-500'>Detected GHS Classifications</p>
+
           <p className='text-sm font-medium'>
             {extractionResult ? extractionResult : '-'}
           </p>
