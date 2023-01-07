@@ -137,7 +137,8 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 
           <div className='w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:max-w-full'>
             <SafetyAndSecuritySection
-              SDS={chemical.CASId.SDS}
+              enSDS={chemical.CASId.SDSs.en}
+              bmSDS={chemical.CASId.SDSs.bm}
               classifications={chemical.CASId.classifications}
               COCs={chemical.CASId.COCs}
             />

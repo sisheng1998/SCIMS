@@ -8,13 +8,12 @@ import {
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import CASField from '../../validations/CASField'
 import NameField from '../../validations/NameField'
-import PDFDropZone from '../components/PDFDropZone'
-import RenderPDF from '../components/RenderPDF'
 import {
   CLASSIFICATION_LIST,
   COC_LIST,
 } from '../../../config/safety_security_list'
 import SafetySecurityField from '../../validations/SafetySecurityField'
+import SDSsField from '../components/SDSsField'
 
 const AddSDSModal = ({
   existedSDS,
@@ -222,53 +221,19 @@ const AddSDSModal = ({
                     showValidated={true}
                   />
 
-                  <label htmlFor='enSDS' className='required-input-label'>
-                    Safety Data Sheet (SDS) - EN
-                  </label>
-                  {!enSDS ? (
-                    <>
-                      <PDFDropZone
-                        setPDF={setEnSDS}
-                        classifications={classifications}
-                        setClassifications={setClassifications}
-                        setExtractionResult={setEnExtractionResult}
-                        setErrorMessage={setErrorMessage}
-                      />
-                      <p className='mt-2 text-xs text-gray-400'>
-                        Only PDF is supported. Max file size: 10 MB.
-                      </p>
-                    </>
-                  ) : (
-                    <RenderPDF
-                      PDF={enSDS}
-                      setPDF={setEnSDS}
-                      extractionResult={enExtractionResult}
-                    />
-                  )}
-
-                  <label htmlFor='bmSDS' className='required-input-label mt-6'>
-                    Safety Data Sheet (SDS) - BM
-                  </label>
-                  {!bmSDS ? (
-                    <>
-                      <PDFDropZone
-                        setPDF={setBmSDS}
-                        classifications={classifications}
-                        setClassifications={setClassifications}
-                        setExtractionResult={setBmExtractionResult}
-                        setErrorMessage={setErrorMessage}
-                      />
-                      <p className='mt-2 text-xs text-gray-400'>
-                        Only PDF is supported. Max file size: 10 MB.
-                      </p>
-                    </>
-                  ) : (
-                    <RenderPDF
-                      PDF={bmSDS}
-                      setPDF={setBmSDS}
-                      extractionResult={bmExtractionResult}
-                    />
-                  )}
+                  <SDSsField
+                    enSDS={enSDS}
+                    setEnSDS={setEnSDS}
+                    enExtractionResult={enExtractionResult}
+                    setEnExtractionResult={setEnExtractionResult}
+                    bmSDS={bmSDS}
+                    setBmSDS={setBmSDS}
+                    bmExtractionResult={bmExtractionResult}
+                    setBmExtractionResult={setBmExtractionResult}
+                    classifications={classifications}
+                    setClassifications={setClassifications}
+                    setErrorMessage={setErrorMessage}
+                  />
 
                   <label htmlFor='classification' className='mt-6'>
                     GHS Classifications

@@ -22,7 +22,7 @@ const RenderPDF = ({ language, PDF, setPDF, extractionResult }) => {
       </a>
     </div>
   ) : PDF === 'No SDS' ? (
-    <p className='mt-2 flex items-center text-sm font-medium text-red-600'>
+    <p className='mt-2 flex items-start text-sm font-medium text-red-600'>
       <ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' /> SDS -{' '}
       {language.toUpperCase()} not found, kindly upload one for this chemical.
     </p>

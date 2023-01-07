@@ -17,6 +17,7 @@ const GHSLists = require('../chemical_data/ghs.json')
 const pictograms = require('../chemical_data/pictograms.json')
 const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
+const { getSDSs } = require('../utils/sds')
 
 const getKeysByValue = (object, value) =>
   Object.keys(object).filter((key) => object[key] === value)
@@ -680,9 +681,19 @@ exports.getChemicalInfo = async (req, res, next) => {
       return next(new ErrorResponse('Chemical not found.', 404))
     }
 
+    const SDSs = getSDSs(foundChemical.CASId.CASNo)
+
+    const result = {
+      ...foundChemical._doc,
+      CASId: {
+        ...foundChemical.CASId._doc,
+        SDSs,
+      },
+    }
+
     res.status(201).json({
       success: true,
-      data: foundChemical,
+      data: result,
     })
   } catch (error) {
     next(error)
@@ -1259,7 +1270,14 @@ exports.getCASInfo = async (req, res, next) => {
     const foundCAS = await CAS.findOne({ CASNo })
 
     if (!foundCAS) {
-      let CASInfo = { SDS: '', classifications: [], COCs: [] }
+      let CASInfo = {
+        SDSs: {
+          en: '',
+          bm: '',
+        },
+        classifications: [],
+        COCs: [],
+      }
 
       const foundGHSs = GHSLists.find((list) => list.CASNumber.includes(CASNo))
 
@@ -1282,9 +1300,14 @@ exports.getCASInfo = async (req, res, next) => {
         data: CASInfo,
       })
     } else {
+      const SDSs = getSDSs(foundCAS.CASNo)
+
       res.status(200).json({
         success: true,
-        data: foundCAS,
+        data: {
+          ...foundCAS._doc,
+          SDSs,
+        },
       })
     }
   } catch (error) {

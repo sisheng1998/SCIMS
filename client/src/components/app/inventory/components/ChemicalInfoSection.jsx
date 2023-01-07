@@ -11,7 +11,8 @@ import EditCASNoModal from './EditCASNoModal'
 
 const ChemicalInfoSection = ({
   chemical,
-  setSDS,
+  setEnSDS,
+  setBmSDS,
   setClassifications,
   setCOCs,
   setChemicalData,
@@ -103,13 +104,14 @@ const ChemicalInfoSection = ({
 
   useEffect(() => {
     if (!chemical) {
-      setChemicalData((prev) => {
-        return {
-          ...prev,
-          SDSLink: '',
-        }
-      })
-      setSDS('')
+      setChemicalData((prev) => ({
+        ...prev,
+        enSDSLink: '',
+        bmSDSLink: '',
+      }))
+
+      setEnSDS('')
+      setBmSDS('')
       setClassifications([])
       setCOCs([])
 
@@ -130,13 +132,16 @@ const ChemicalInfoSection = ({
               }
             )
             if (isMounted) {
-              setChemicalData((prev) => {
-                return {
-                  ...prev,
-                  SDSLink: data.data.SDS,
-                }
-              })
-              setSDS(data.data.SDS)
+              const SDSs = data.data.SDSs
+
+              setChemicalData((prev) => ({
+                ...prev,
+                enSDSLink: SDSs.en,
+                bmSDSLink: SDSs.bm,
+              }))
+
+              setEnSDS(SDSs.en)
+              setBmSDS(SDSs.bm)
               setClassifications(data.data.classifications)
               setCOCs(data.data.COCs)
             }

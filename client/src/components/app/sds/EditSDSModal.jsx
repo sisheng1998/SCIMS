@@ -6,8 +6,6 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/outline'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
-import PDFDropZone from '../components/PDFDropZone'
-import RenderPDF from '../components/RenderPDF'
 import {
   CLASSIFICATION_LIST,
   COC_LIST,
@@ -18,6 +16,7 @@ import NameField from '../../validations/NameField'
 import CASField from '../../validations/CASField'
 import useAuth from '../../../hooks/useAuth'
 import ROLE_LIST from '../../../config/roles_list'
+import SDSsField from '../components/SDSsField'
 
 const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
   const { auth } = useAuth()
@@ -215,106 +214,20 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
                   showValidated={false}
                 />
 
-                {!enSDS ? (
-                  <>
-                    <label htmlFor='enSDS' className='required-input-label'>
-                      Safety Data Sheet (SDS) - EN
-                    </label>
-                    <PDFDropZone
-                      setPDF={setEnSDS}
-                      classifications={classifications}
-                      setClassifications={setClassifications}
-                      setExtractionResult={setEnExtractionResult}
-                      setErrorMessage={setErrorMessage}
-                    />
-                    <p className='mt-2 text-xs text-gray-400'>
-                      Only PDF is supported. Max file size: 10 MB.
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <div className='mb-2 flex items-baseline justify-between'>
-                      <label
-                        htmlFor='enSDS'
-                        className={
-                          enSDS.toString().toLowerCase().endsWith('.pdf')
-                            ? 'mb-0'
-                            : 'required-input-label mb-0'
-                        }
-                      >
-                        Safety Data Sheet (SDS) - EN
-                      </label>
-
-                      {(enSDS.toString().toLowerCase().endsWith('.pdf') ||
-                        enSDS === 'No SDS') && (
-                        <span
-                          onClick={() => setEnSDS('')}
-                          className='cursor-pointer text-xs font-medium text-indigo-600 transition hover:text-indigo-700'
-                        >
-                          {enSDS === 'No SDS' ? 'Upload SDS' : 'Upload New SDS'}
-                        </span>
-                      )}
-                    </div>
-                    <RenderPDF
-                      language='en'
-                      PDF={enSDS}
-                      setPDF={setEnSDS}
-                      extractionResult={enExtractionResult}
-                    />
-                  </>
-                )}
-
-                {!bmSDS ? (
-                  <>
-                    <label
-                      htmlFor='bmSDS'
-                      className='required-input-label mt-6'
-                    >
-                      Safety Data Sheet (SDS) - BM
-                    </label>
-                    <PDFDropZone
-                      setPDF={setBmSDS}
-                      classifications={classifications}
-                      setClassifications={setClassifications}
-                      setExtractionResult={setBmExtractionResult}
-                      setErrorMessage={setErrorMessage}
-                    />
-                    <p className='mt-2 text-xs text-gray-400'>
-                      Only PDF is supported. Max file size: 10 MB.
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <div className='mt-6 mb-2 flex items-baseline justify-between '>
-                      <label
-                        htmlFor='bmSDS'
-                        className={
-                          bmSDS.toString().toLowerCase().endsWith('.pdf')
-                            ? 'mb-0'
-                            : 'required-input-label mb-0'
-                        }
-                      >
-                        Safety Data Sheet (SDS) - BM
-                      </label>
-
-                      {(bmSDS.toString().toLowerCase().endsWith('.pdf') ||
-                        bmSDS === 'No SDS') && (
-                        <span
-                          onClick={() => setBmSDS('')}
-                          className='cursor-pointer text-xs font-medium text-indigo-600 transition hover:text-indigo-700'
-                        >
-                          {bmSDS === 'No SDS' ? 'Upload SDS' : 'Upload New SDS'}
-                        </span>
-                      )}
-                    </div>
-                    <RenderPDF
-                      language='bm'
-                      PDF={bmSDS}
-                      setPDF={setBmSDS}
-                      extractionResult={bmExtractionResult}
-                    />
-                  </>
-                )}
+                <SDSsField
+                  enSDS={enSDS}
+                  setEnSDS={setEnSDS}
+                  enExtractionResult={enExtractionResult}
+                  setEnExtractionResult={setEnExtractionResult}
+                  bmSDS={bmSDS}
+                  setBmSDS={setBmSDS}
+                  bmExtractionResult={bmExtractionResult}
+                  setBmExtractionResult={setBmExtractionResult}
+                  classifications={classifications}
+                  setClassifications={setClassifications}
+                  setErrorMessage={setErrorMessage}
+                  isEdit={true}
+                />
 
                 <label htmlFor='classification' className='mt-6'>
                   GHS Classifications
