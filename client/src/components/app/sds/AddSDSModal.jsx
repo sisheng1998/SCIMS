@@ -8,13 +8,12 @@ import {
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import CASField from '../../validations/CASField'
 import NameField from '../../validations/NameField'
-import PDFDropZone from '../components/PDFDropZone'
-import RenderPDF from '../components/RenderPDF'
 import {
   CLASSIFICATION_LIST,
   COC_LIST,
 } from '../../../config/safety_security_list'
 import SafetySecurityField from '../../validations/SafetySecurityField'
+import SDSsField from '../components/SDSsField'
 
 const AddSDSModal = ({
   existedSDS,
@@ -31,14 +30,16 @@ const AddSDSModal = ({
   const [chemicalName, setChemicalName] = useState('')
   const [chemicalNameValidated, setChemicalNameValidated] = useState(false)
 
-  const [SDS, setSDS] = useState('')
+  const [enSDS, setEnSDS] = useState('')
+  const [bmSDS, setBmSDS] = useState('')
   const [classifications, setClassifications] = useState([])
   const [COCs, setCOCs] = useState([])
 
   const [allowNextStep, setAllowNextStep] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [extractionResult, setExtractionResult] = useState('')
+  const [enExtractionResult, setEnExtractionResult] = useState('')
+  const [bmExtractionResult, setBmExtractionResult] = useState('')
   const [allowed, setAllowed] = useState(false)
 
   useEffect(() => {
@@ -87,8 +88,10 @@ const AddSDSModal = ({
   }, [axiosPrivate, CASNo, CASNoValidated, existedSDS])
 
   useEffect(() => {
-    setAllowed(SDS !== '' && CASNoValidated && chemicalNameValidated)
-  }, [SDS, CASNoValidated, chemicalNameValidated])
+    setAllowed(
+      enSDS !== '' && bmSDS !== '' && CASNoValidated && chemicalNameValidated
+    )
+  }, [enSDS, bmSDS, CASNoValidated, chemicalNameValidated])
 
   const submitHandler = async (e) => {
     e.preventDefault()
@@ -100,7 +103,9 @@ const AddSDSModal = ({
         'chemicalInfo',
         JSON.stringify({ CASNo, chemicalName, classifications, COCs })
       )
-      formData.append('SDS', SDS)
+
+      formData.append('SDS_EN', enSDS)
+      formData.append('SDS_BM', bmSDS)
 
       await axiosPrivate.post('/api/private/sds/new-sds', formData)
 
@@ -127,7 +132,8 @@ const AddSDSModal = ({
 
   const resetField = () => {
     setErrorMessage('')
-    setSDS('')
+    setEnSDS('')
+    setBmSDS('')
     setClassifications([])
     setCOCs([])
     setAllowNextStep(false)
@@ -215,29 +221,19 @@ const AddSDSModal = ({
                     showValidated={true}
                   />
 
-                  <label htmlFor='SDS' className='required-input-label'>
-                    Safety Data Sheet (SDS)
-                  </label>
-                  {!SDS ? (
-                    <>
-                      <PDFDropZone
-                        setPDF={setSDS}
-                        classifications={classifications}
-                        setClassifications={setClassifications}
-                        setExtractionResult={setExtractionResult}
-                        setErrorMessage={setErrorMessage}
-                      />
-                      <p className='mt-2 text-xs text-gray-400'>
-                        Only PDF is supported. Max file size: 10 MB.
-                      </p>
-                    </>
-                  ) : (
-                    <RenderPDF
-                      PDF={SDS}
-                      setPDF={setSDS}
-                      extractionResult={extractionResult}
-                    />
-                  )}
+                  <SDSsField
+                    enSDS={enSDS}
+                    setEnSDS={setEnSDS}
+                    enExtractionResult={enExtractionResult}
+                    setEnExtractionResult={setEnExtractionResult}
+                    bmSDS={bmSDS}
+                    setBmSDS={setBmSDS}
+                    bmExtractionResult={bmExtractionResult}
+                    setBmExtractionResult={setBmExtractionResult}
+                    classifications={classifications}
+                    setClassifications={setClassifications}
+                    setErrorMessage={setErrorMessage}
+                  />
 
                   <label htmlFor='classification' className='mt-6'>
                     GHS Classifications

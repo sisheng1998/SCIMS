@@ -356,7 +356,8 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
           <hr className='mb-6 mt-4 border-gray-200' />
 
           <SafetyAndSecuritySection
-            SDS={chemical.CASId.SDS}
+            enSDS={chemical.CASId.SDSs.en}
+            bmSDS={chemical.CASId.SDSs.bm}
             classifications={chemical.CASId.classifications}
             COCs={chemical.CASId.COCs}
           />

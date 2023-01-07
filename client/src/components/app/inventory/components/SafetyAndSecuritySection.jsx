@@ -5,13 +5,14 @@ import {
   COC_LIST,
 } from '../../../../config/safety_security_list'
 import SafetySecurityField from '../../../validations/SafetySecurityField'
-import PDFDropZone from '../../components/PDFDropZone'
-import RenderPDF from '../../components/RenderPDF'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
+import SDSsField from '../../components/SDSsField'
 
 const SafetyAndSecuritySection = ({
-  SDS,
-  setSDS,
+  enSDS,
+  setEnSDS,
+  bmSDS,
+  setBmSDS,
   classifications,
   setClassifications,
   COCs,
@@ -20,44 +21,49 @@ const SafetyAndSecuritySection = ({
   validated,
   setValidated,
 }) => {
+  const isViewOnly =
+    enSDS.toString().toLowerCase().endsWith('.pdf') ||
+    enSDS === 'No SDS' ||
+    bmSDS.toString().toLowerCase().endsWith('.pdf') ||
+    bmSDS === 'No SDS'
+
   const [errorMessage, setErrorMessage] = useState('')
-  const [extractionResult, setExtractionResult] = useState('')
+  const [enExtractionResult, setEnExtractionResult] = useState('')
+  const [bmExtractionResult, setBmExtractionResult] = useState('')
 
   useEffect(() => {
-    if (SDS.toString().toLowerCase().endsWith('.pdf') || SDS === 'No SDS') {
+    if (
+      enSDS.toString().toLowerCase().endsWith('.pdf') ||
+      enSDS === 'No SDS' ||
+      bmSDS.toString().toLowerCase().endsWith('.pdf') ||
+      bmSDS === 'No SDS'
+    ) {
       setValidated &&
-        setValidated((prev) => {
-          return {
-            ...prev,
-            SDSValidated: true,
-          }
-        })
+        setValidated((prev) => ({
+          ...prev,
+          enSDSValidated: true,
+          bmSDSValidated: true,
+        }))
 
       return
     }
 
-    setChemicalData((prev) => {
-      return {
-        ...prev,
-        classifications,
-        COCs,
-      }
-    })
+    setChemicalData((prev) => ({
+      ...prev,
+      classifications,
+      COCs,
+    }))
 
-    setValidated((prev) => {
-      return {
-        ...prev,
-        SDSValidated: SDS ? true : false,
-      }
-    })
-  }, [classifications, COCs, setChemicalData, setValidated, SDS])
+    setValidated((prev) => ({
+      ...prev,
+      enSDSValidated: enSDS ? true : false,
+      bmSDSValidated: bmSDS ? true : false,
+    }))
+  }, [classifications, COCs, setChemicalData, setValidated, enSDS, bmSDS])
 
-  return SDS.toString().toLowerCase().endsWith('.pdf') || SDS === 'No SDS' ? (
+  return isViewOnly ? (
     <>
-      <label htmlFor='SDS' className='mb-1'>
-        Safety Data Sheet (SDS)
-      </label>
-      <RenderPDF PDF={SDS} setPDF={setSDS} />
+      <SDSsField enSDS={enSDS} bmSDS={bmSDS} viewOnly={true} />
 
       <div className='mb-4 mt-6'>
         <label htmlFor='classification'>GHS Classifications</label>
@@ -110,29 +116,19 @@ const SafetyAndSecuritySection = ({
         </p>
       )}
 
-      <label htmlFor='SDS' className='required-input-label'>
-        Safety Data Sheet (SDS)
-      </label>
-      {!SDS ? (
-        <>
-          <PDFDropZone
-            setPDF={setSDS}
-            classifications={classifications}
-            setClassifications={setClassifications}
-            setExtractionResult={setExtractionResult}
-            setErrorMessage={setErrorMessage}
-          />
-          <p className='mt-2 text-xs text-gray-400'>
-            Only PDF is supported. Max file size: 10 MB.
-          </p>
-        </>
-      ) : (
-        <RenderPDF
-          PDF={SDS}
-          setPDF={setSDS}
-          extractionResult={extractionResult}
-        />
-      )}
+      <SDSsField
+        enSDS={enSDS}
+        setEnSDS={setEnSDS}
+        enExtractionResult={enExtractionResult}
+        setEnExtractionResult={setEnExtractionResult}
+        bmSDS={bmSDS}
+        setBmSDS={setBmSDS}
+        bmExtractionResult={bmExtractionResult}
+        setBmExtractionResult={setBmExtractionResult}
+        classifications={classifications}
+        setClassifications={setClassifications}
+        setErrorMessage={setErrorMessage}
+      />
 
       <label htmlFor='classification' className='mt-6'>
         GHS Classifications

@@ -7,8 +7,8 @@ import {
   COC_LIST,
   COC_DESCRIPTION,
 } from '../../../config/safety_security_list'
-import RenderPDF from '../components/RenderPDF'
 import FormatDate from '../../utils/FormatDate'
+import SDSsField from '../components/SDSsField'
 
 const ViewSDSModal = ({ CAS, fromInventory, openModal, setOpenModal }) => {
   const divRef = useRef(null)
@@ -51,10 +51,7 @@ const ViewSDSModal = ({ CAS, fromInventory, openModal, setOpenModal }) => {
             </div>
           </div>
 
-          <label htmlFor='SDS' className='mb-1'>
-            Safety Data Sheet (SDS)
-          </label>
-          <RenderPDF PDF={CAS.SDS} />
+          <SDSsField enSDS={CAS.SDSs.en} bmSDS={CAS.SDSs.bm} viewOnly={true} />
 
           <div className='mb-4 mt-6'>
             <label htmlFor='classification'>GHS Classifications</label>

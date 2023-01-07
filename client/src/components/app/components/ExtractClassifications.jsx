@@ -55,7 +55,9 @@ const ExtractClassifications = (pdf) =>
               if (
                 lowercaseText.includes('hazard identification') ||
                 lowercaseText.includes('ghs classification') ||
-                lowercaseText.includes('hazard statement')
+                lowercaseText.includes('hazard statement') ||
+                lowercaseText.includes('pengenalan bahaya') ||
+                lowercaseText.includes('pengelasan ghs')
               ) {
                 HAZARD_CODES.forEach((codeList, index) =>
                   getClassifications(

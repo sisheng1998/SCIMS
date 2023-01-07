@@ -8,6 +8,7 @@ import FormatDate from '../../../utils/FormatDate'
 import ImageLightBox from '../../../utils/ImageLightBox'
 import useAuth from '../../../../hooks/useAuth'
 import GetLetterPicture from '../../../utils/GetLetterPicture'
+import FILE_PATH from '../../../../config/file_path'
 
 const tableHeaders = [
   {
@@ -147,7 +148,7 @@ const UsageTable = ({ data }) => {
                 ) : (
                   currentItems.map((log) => {
                     const imageSrc = log.user.avatar
-                      ? auth.avatarPath + log.user.avatar
+                      ? FILE_PATH.avatar + log.user.avatar
                       : GetLetterPicture(log.userName)
 
                     return (

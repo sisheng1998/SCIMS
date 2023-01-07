@@ -9,8 +9,6 @@ const generateQRCode = require('../utils/generateQRCode')
 const COCLists = require('../chemical_data/coc.json')
 const GHSLists = require('../chemical_data/ghs.json')
 const pictograms = require('../chemical_data/pictograms.json')
-const fs = require('fs')
-const path = require('path')
 const STORAGE_CLASSES = require('../config/storage_classes')
 
 exports.importChemicals = async (req, res, next) => {
@@ -392,10 +390,6 @@ const addChemical = async (
 
     const foundCAS = CASs.find((CAS) => CAS.CASNo === CASNo)
     if (!foundCAS) {
-      const isSDSExisted = fs.existsSync(
-        path.resolve(__dirname, `../public/SDSs/${CASNo}.pdf`)
-      )
-
       let classifications = []
       let COCs = []
 
@@ -420,7 +414,6 @@ const addChemical = async (
           {
             CASNo,
             chemicalName: chemical.name,
-            SDS: isSDSExisted ? `${CASNo}.pdf` : 'No SDS',
             classifications,
             COCs,
           },

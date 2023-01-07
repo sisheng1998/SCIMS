@@ -11,6 +11,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import useAuth from '../../../hooks/useAuth'
 import GetRoleName from '../../utils/GetRoleName'
 import GetLetterPicture from '../../utils/GetLetterPicture'
+import FILE_PATH from '../../../config/file_path'
 
 const USER_MENU = ['Profile', 'My Labs', 'Support', 'Logout']
 const PATH = ['/profile', '/labs', '/support']
@@ -30,7 +31,7 @@ const UserOption = () => {
   }
 
   const imageSrc = auth.avatar
-    ? auth.avatarPath + auth.avatar
+    ? FILE_PATH.avatar + auth.avatar
     : GetLetterPicture(auth.name)
 
   return (

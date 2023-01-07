@@ -7,6 +7,7 @@ import EditLabModal from './EditLabModal'
 import useAuth from '../../../../hooks/useAuth'
 import GetLetterPicture from '../../../utils/GetLetterPicture'
 import ImageLightBox from '../../../utils/ImageLightBox'
+import FILE_PATH from '../../../../config/file_path'
 
 const tableHeaders = [
   {
@@ -187,7 +188,7 @@ const LabsTable = (props) => {
                 ) : (
                   currentItems.map((lab) => {
                     const imageSrc = lab.labOwner.avatar
-                      ? auth.avatarPath + lab.labOwner.avatar
+                      ? FILE_PATH.avatar + lab.labOwner.avatar
                       : GetLetterPicture(lab.labOwner.name)
 
                     const chemicalsNo =

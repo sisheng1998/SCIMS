@@ -12,6 +12,7 @@ import GetLetterPicture from '../../../utils/GetLetterPicture'
 import ImageLightBox from '../../../utils/ImageLightBox'
 import ROLES_LIST from '../../../../config/roles_list'
 import TICKET_STATUS from '../../../../config/ticket_status'
+import FILE_PATH from '../../../../config/file_path'
 
 const tableHeaders = [
   {
@@ -221,7 +222,7 @@ const TicketsTable = ({ tickets, isResolved }) => {
                   ) : (
                     currentItems.map((ticket) => {
                       const imageSrc = ticket.user.avatar
-                        ? auth.avatarPath + ticket.user.avatar
+                        ? FILE_PATH.avatar + ticket.user.avatar
                         : GetLetterPicture(ticket.userName)
 
                       let classes

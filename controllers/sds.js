@@ -2,16 +2,25 @@ const ErrorResponse = require('../utils/errorResponse')
 const CAS = require('../models/CAS')
 const { startSession } = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId
-const fs = require('fs')
-const path = require('path')
+const { getSDSs, checkSDSExists, renameSDS } = require('../utils/sds')
 
 exports.getSDS = async (req, res, next) => {
   try {
-    const SDS = await CAS.find({}).sort({ CASNo: 1 })
+    const SDSs = await CAS.find({}).sort({ CASNo: 1 })
+
+    const allSDSs = SDSs.map((SDS) => {
+      const CASNo = SDS.CASNo
+      const SDSs = getSDSs(CASNo)
+
+      return {
+        ...SDS._doc,
+        SDSs,
+      }
+    })
 
     res.status(200).json({
       success: true,
-      data: SDS,
+      data: allSDSs,
     })
   } catch (error) {
     next(error)
@@ -42,7 +51,6 @@ exports.addSDS = async (req, res, next) => {
         {
           CASNo,
           chemicalName,
-          SDS: req.file.filename,
           classifications,
           COCs,
         },
@@ -101,23 +109,16 @@ exports.updateSDS = async (req, res, next) => {
       } else {
         updateQuery.CASNo = CASNo
 
-        const isSDSExisted = fs.existsSync(
-          path.resolve(__dirname, `../public/SDSs/${foundCAS.CASNo}.pdf`)
-        )
+        const isEnSDSExisted = checkSDSExists('en', foundCAS.CASNo)
+        if (isEnSDSExisted) {
+          renameSDS('en', foundCAS.CASNo, CASNo)
+        }
 
-        if (isSDSExisted) {
-          updateQuery.SDS = CASNo + '.pdf'
-
-          fs.renameSync(
-            path.resolve(__dirname, `../public/SDSs/${foundCAS.CASNo}.pdf`),
-            path.resolve(__dirname, `../public/SDSs/${CASNo}.pdf`)
-          )
+        const isBmSDSExisted = checkSDSExists('bm', foundCAS.CASNo)
+        if (isBmSDSExisted) {
+          renameSDS('bm', foundCAS.CASNo, CASNo)
         }
       }
-    }
-
-    if (req.file !== undefined) {
-      updateQuery.SDS = req.file.filename
     }
 
     await CAS.updateOne(

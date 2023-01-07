@@ -61,7 +61,8 @@ const AddChemical = () => {
   }, [axiosPrivate, auth.currentLabId, navigate, isMobile])
 
   const [chemicalId, setChemicalId] = useState('')
-  const [SDS, setSDS] = useState('')
+  const [enSDS, setEnSDS] = useState('')
+  const [bmSDS, setBmSDS] = useState('')
   const [classifications, setClassifications] = useState([])
   const [COCs, setCOCs] = useState([])
   const [chemicalData, setChemicalData] = useState({
@@ -83,7 +84,8 @@ const AddChemical = () => {
     try {
       const formData = new FormData()
       formData.append('chemicalInfo', JSON.stringify(chemicalData))
-      !chemicalData.SDSLink && formData.append('SDS', SDS)
+      !chemicalData.enSDSLink && formData.append('SDS_EN', enSDS)
+      !chemicalData.bmSDSLink && formData.append('SDS_BM', bmSDS)
 
       const { data } = await axiosPrivate.post(
         '/api/private/chemical',
@@ -121,7 +123,8 @@ const AddChemical = () => {
 
           <div className='w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:max-w-full'>
             <ChemicalInfoSection
-              setSDS={setSDS}
+              setEnSDS={setEnSDS}
+              setBmSDS={setBmSDS}
               setClassifications={setClassifications}
               setCOCs={setCOCs}
               setChemicalData={setChemicalData}
@@ -161,8 +164,10 @@ const AddChemical = () => {
 
           <div className='w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm xl:max-w-full'>
             <SafetyAndSecuritySection
-              SDS={SDS}
-              setSDS={setSDS}
+              enSDS={enSDS}
+              setEnSDS={setEnSDS}
+              bmSDS={bmSDS}
+              setBmSDS={setBmSDS}
               classifications={classifications}
               setClassifications={setClassifications}
               COCs={COCs}

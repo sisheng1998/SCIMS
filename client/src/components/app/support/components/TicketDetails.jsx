@@ -59,7 +59,6 @@ const TicketDetails = ({ ticket, setRefresh }) => {
                   status={ticket.status}
                   message={message}
                   viewImage={viewImage}
-                  attachmentPath={ticket.attachmentPath}
                   setRefresh={setRefresh}
                 />
               ))}

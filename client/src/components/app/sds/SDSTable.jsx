@@ -9,12 +9,12 @@ import {
   COC_LIST,
   COC_DESCRIPTION,
 } from '../../../config/safety_security_list'
-import useAuth from '../../../hooks/useAuth'
 import EditSDSModal from './EditSDSModal'
 import ViewSDSModal from './ViewSDSModal'
 import { FromNow, DateTime } from '../../utils/FormatDate'
 import useMobile from '../../../hooks/useMobile'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
+import FILE_PATH from '../../../config/file_path'
 
 const tableHeaders = [
   {
@@ -50,7 +50,6 @@ const tableHeaders = [
 ]
 
 const SDSTable = ({ SDS, setRefresh }) => {
-  const { auth } = useAuth()
   const isMobile = useMobile()
 
   const [openEditSDSModal, setOpenEditSDSModal] = useState(false)
@@ -189,10 +188,14 @@ const SDSTable = ({ SDS, setRefresh }) => {
                 key={CAS._id}
                 className='mb-4 rounded-lg bg-white p-4 text-sm shadow'
               >
-                {CAS.SDS === 'No SDS' && (
+                {(CAS.SDSs.en === 'No SDS' || CAS.SDSs.bm === 'No SDS') && (
                   <p className='mb-2 flex items-center text-xs font-medium text-red-600'>
                     <ExclamationCircleIcon className='mr-1.5 inline-block h-4 w-4 shrink-0 stroke-2' />{' '}
-                    No SDS found, kindly upload one for this chemical.
+                    {CAS.SDSs.en === 'No SDS' && CAS.SDSs.bm === 'No SDS'
+                      ? 'SDS - EN / BM not found'
+                      : CAS.SDSs.en === 'No SDS'
+                      ? 'SDS - EN not found'
+                      : 'SDS - BM not found'}
                   </p>
                 )}
 
@@ -204,16 +207,33 @@ const SDSTable = ({ SDS, setRefresh }) => {
                     <p className='text-gray-500'>{CAS.chemicalName}</p>
                   </div>
 
-                  {CAS.SDS !== 'No SDS' && (
-                    <a
-                      href={auth.SDSPath + CAS.SDS}
-                      target='_blank'
-                      rel='noreferrer'
-                      className='inline-flex items-center font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
-                    >
-                      View
-                    </a>
-                  )}
+                  <div className='shrink-0 space-x-1.5'>
+                    {CAS.SDSs.en !== 'No SDS' && (
+                      <a
+                        href={FILE_PATH.SDSs.en + CAS.SDSs.en}
+                        target='_blank'
+                        rel='noreferrer'
+                        className='inline-flex items-center font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+                      >
+                        EN
+                      </a>
+                    )}
+
+                    {CAS.SDSs.en !== 'No SDS' && CAS.SDSs.bm !== 'No SDS' && (
+                      <span>|</span>
+                    )}
+
+                    {CAS.SDSs.bm !== 'No SDS' && (
+                      <a
+                        href={FILE_PATH.SDSs.bm + CAS.SDSs.bm}
+                        target='_blank'
+                        rel='noreferrer'
+                        className='inline-flex items-center font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+                      >
+                        BM
+                      </a>
+                    )}
+                  </div>
                 </div>
 
                 {CAS.classifications.length === 0 &&
@@ -311,10 +331,18 @@ const SDSTable = ({ SDS, setRefresh }) => {
                       <tr className='hover:bg-indigo-50/30' key={CAS._id}>
                         <td className='px-6 py-4'>
                           {CAS.CASNo}
-                          {CAS.SDS === 'No SDS' && (
+                          {(CAS.SDSs.en === 'No SDS' ||
+                            CAS.SDSs.bm === 'No SDS') && (
                             <span
                               className='tooltip ml-1.5'
-                              data-tooltip='No SDS found, kindly upload one for this chemical.'
+                              data-tooltip={
+                                CAS.SDSs.en === 'No SDS' &&
+                                CAS.SDSs.bm === 'No SDS'
+                                  ? 'SDS - EN / BM not found'
+                                  : CAS.SDSs.en === 'No SDS'
+                                  ? 'SDS - EN not found'
+                                  : 'SDS - BM not found'
+                              }
                             >
                               <ExclamationCircleIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
                             </span>

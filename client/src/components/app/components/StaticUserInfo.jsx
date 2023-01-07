@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import GetLetterPicture from '../../utils/GetLetterPicture'
 import ImageLightBox from '../../utils/ImageLightBox'
-import useAuth from '../../../hooks/useAuth'
+import FILE_PATH from '../../../config/file_path'
 
 const StaticUserInfo = ({ user }) => {
-  const { auth } = useAuth()
-
   const name = user.name
   const imageSrc = user.avatar
-    ? auth.avatarPath + user.avatar
+    ? FILE_PATH.avatar + user.avatar
     : GetLetterPicture(name)
   const avatarInfo = { name, imageSrc }
 

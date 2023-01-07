@@ -6,8 +6,6 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/outline'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
-import PDFDropZone from '../components/PDFDropZone'
-import RenderPDF from '../components/RenderPDF'
 import {
   CLASSIFICATION_LIST,
   COC_LIST,
@@ -18,6 +16,7 @@ import NameField from '../../validations/NameField'
 import CASField from '../../validations/CASField'
 import useAuth from '../../../hooks/useAuth'
 import ROLE_LIST from '../../../config/roles_list'
+import SDSsField from '../components/SDSsField'
 
 const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
   const { auth } = useAuth()
@@ -31,21 +30,27 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
   const [chemicalName, setChemicalName] = useState(CAS.chemicalName)
   const [chemicalNameValidated, setChemicalNameValidated] = useState(false)
 
-  const [SDS, setSDS] = useState(CAS.SDS)
+  const [enSDS, setEnSDS] = useState(CAS.SDSs.en)
+  const [bmSDS, setBmSDS] = useState(CAS.SDSs.bm)
   const [classifications, setClassifications] = useState(CAS.classifications)
   const [COCs, setCOCs] = useState(CAS.COCs)
 
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [extractionResult, setExtractionResult] = useState('')
+  const [enExtractionResult, setEnExtractionResult] = useState('')
+  const [bmExtractionResult, setBmExtractionResult] = useState('')
   const [allowed, setAllowed] = useState(false)
 
   useEffect(() => {
     setAllowed(
-      SDS !== '' &&
+      enSDS !== '' &&
+        bmSDS !== '' &&
+        enSDS !== 'No SDS' &&
+        bmSDS !== 'No SDS' &&
         chemicalNameValidated &&
         CASNoValidated &&
-        (SDS !== CAS.SDS ||
+        (enSDS !== CAS.SDSs.en ||
+          bmSDS !== CAS.SDSs.bm ||
           chemicalName !== CAS.chemicalName ||
           CASNo !== CAS.CASNo ||
           [...classifications].sort().toString() !==
@@ -54,7 +59,8 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
     )
   }, [
     CAS,
-    SDS,
+    enSDS,
+    bmSDS,
     classifications,
     COCs,
     chemicalName,
@@ -78,7 +84,8 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
           COCs,
         })
       )
-      SDS !== CAS.SDS && formData.append('SDS', SDS)
+      enSDS !== CAS.SDSs.en && formData.append('SDS_EN', enSDS)
+      bmSDS !== CAS.SDSs.bm && formData.append('SDS_BM', bmSDS)
 
       await axiosPrivate.patch(`/api/private/sds/${CAS._id}`, formData)
 
@@ -98,7 +105,8 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
     setErrorMessage('')
     setCASNo('')
     setChemicalName('')
-    setSDS('')
+    setEnSDS('')
+    setBmSDS('')
     setClassifications([])
     setCOCs([])
 
@@ -206,53 +214,20 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
                   showValidated={false}
                 />
 
-                {!SDS ? (
-                  <>
-                    <label htmlFor='SDS' className='required-input-label'>
-                      Safety Data Sheet (SDS)
-                    </label>
-                    <PDFDropZone
-                      setPDF={setSDS}
-                      classifications={classifications}
-                      setClassifications={setClassifications}
-                      setExtractionResult={setExtractionResult}
-                      setErrorMessage={setErrorMessage}
-                    />
-                    <p className='mt-2 text-xs text-gray-400'>
-                      Only PDF is supported. Max file size: 10 MB.
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <div className='flex items-baseline justify-between'>
-                      <label
-                        htmlFor='SDS'
-                        className={
-                          SDS.toString().toLowerCase().endsWith('.pdf')
-                            ? ''
-                            : 'required-input-label'
-                        }
-                      >
-                        Safety Data Sheet (SDS)
-                      </label>
-
-                      {(SDS.toString().toLowerCase().endsWith('.pdf') ||
-                        SDS === 'No SDS') && (
-                        <span
-                          onClick={() => setSDS('')}
-                          className='mb-2 cursor-pointer text-xs font-medium text-indigo-600 transition hover:text-indigo-700'
-                        >
-                          {SDS === 'No SDS' ? 'Upload SDS' : 'Upload New SDS'}
-                        </span>
-                      )}
-                    </div>
-                    <RenderPDF
-                      PDF={SDS}
-                      setPDF={setSDS}
-                      extractionResult={extractionResult}
-                    />
-                  </>
-                )}
+                <SDSsField
+                  enSDS={enSDS}
+                  setEnSDS={setEnSDS}
+                  enExtractionResult={enExtractionResult}
+                  setEnExtractionResult={setEnExtractionResult}
+                  bmSDS={bmSDS}
+                  setBmSDS={setBmSDS}
+                  bmExtractionResult={bmExtractionResult}
+                  setBmExtractionResult={setBmExtractionResult}
+                  classifications={classifications}
+                  setClassifications={setClassifications}
+                  setErrorMessage={setErrorMessage}
+                  isEdit={true}
+                />
 
                 <label htmlFor='classification' className='mt-6'>
                   GHS Classifications

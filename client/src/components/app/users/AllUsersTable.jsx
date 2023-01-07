@@ -7,6 +7,7 @@ import Pagination from '../components/Pagination'
 import ViewUserModal from '../admin/users/ViewUserModal'
 import GetLetterPicture from '../../utils/GetLetterPicture'
 import ImageLightBox from '../../utils/ImageLightBox'
+import FILE_PATH from '../../../config/file_path'
 
 const tableHeaders = [
   {
@@ -205,7 +206,7 @@ const AllUsersTable = (props) => {
                 ) : (
                   currentItems.map((user) => {
                     const imageSrc = user.avatar
-                      ? auth.avatarPath + user.avatar
+                      ? FILE_PATH.avatar + user.avatar
                       : GetLetterPicture(user.name)
 
                     return (

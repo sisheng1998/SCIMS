@@ -62,42 +62,6 @@ exports.getInfo = async (req, res, next) => {
   }
 }
 
-// Chemicals
-exports.getChemicals = async (req, res, next) => {
-  try {
-    const labs = await Lab.find({}, 'labName locations')
-
-    const chemicals = await Chemical.find(
-      {
-        status: {
-          $ne: 'Disposed',
-        },
-      },
-      'CASId QRCode amount minAmount containerSize expirationDate locationId lab name status unit lastUpdated'
-    )
-      .populate('CASId', '-_id')
-      .populate('lab', 'labName')
-      .sort({ createdAt: -1 })
-
-    const disposedChemicals = await Chemical.find(
-      { status: 'Disposed' },
-      'CASId QRCode amount minAmount expirationDate disposedDate locationId lab name status unit'
-    )
-      .populate('CASId', '-_id')
-      .populate('lab', 'labName')
-      .sort({ disposedDate: -1 })
-
-    res.status(200).json({
-      success: true,
-      labs,
-      chemicals,
-      disposedChemicals,
-    })
-  } catch (error) {
-    next(error)
-  }
-}
-
 // Labs
 exports.getLabs = async (req, res, next) => {
   try {

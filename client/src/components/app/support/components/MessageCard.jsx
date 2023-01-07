@@ -16,18 +16,12 @@ import useAuth from '../../../../hooks/useAuth'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import ROLES_LIST from '../../../../config/roles_list'
 import TICKET_STATUS from '../../../../config/ticket_status'
+import FILE_PATH from '../../../../config/file_path'
 
 import MessageField from './MessageField'
 import LoadingButtonText from '../../components/LoadingButtonText'
 
-const MessageCard = ({
-  ticketId,
-  status,
-  message,
-  viewImage,
-  attachmentPath,
-  setRefresh,
-}) => {
+const MessageCard = ({ ticketId, status, message, viewImage, setRefresh }) => {
   const isMobile = useMobile()
 
   const [isEdit, setIsEdit] = useState(false)
@@ -72,10 +66,7 @@ const MessageCard = ({
         )}
 
         {message.attachments.length !== 0 && (
-          <Attachments
-            attachments={message.attachments}
-            attachmentPath={attachmentPath}
-          />
+          <Attachments attachments={message.attachments} />
         )}
 
         <Time createdAt={message.createdAt} lastUpdated={message.lastUpdated} />
@@ -92,10 +83,8 @@ const MessageCard = ({
 }
 
 const Avatar = ({ user, viewImage }) => {
-  const { auth } = useAuth()
-
   const imageSrc = user.avatar
-    ? auth.avatarPath + user.avatar
+    ? FILE_PATH.avatar + user.avatar
     : GetLetterPicture(user.name)
 
   return (
@@ -289,7 +278,7 @@ const Message = ({ message }) => (
   <p className='whitespace-pre-wrap'>{message}</p>
 )
 
-const Attachments = ({ attachments, attachmentPath }) => {
+const Attachments = ({ attachments }) => {
   const FormatFileName = (value) => value.substring(value.indexOf('-') + 1)
 
   return (
@@ -299,7 +288,7 @@ const Attachments = ({ attachments, attachmentPath }) => {
           {index ? <span>, </span> : ''}
 
           <a
-            href={attachmentPath + attachment}
+            href={FILE_PATH.ticket + attachment}
             download={FormatFileName(attachment)}
             target='_blank'
             rel='noreferrer'

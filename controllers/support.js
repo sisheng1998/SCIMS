@@ -197,7 +197,6 @@ exports.getTicketDetails = async (req, res, next) => {
       ticket: {
         ...foundTicket._doc,
         labName,
-        attachmentPath: '/public/tickets/',
       },
     })
   } catch (error) {

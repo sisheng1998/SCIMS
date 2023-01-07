@@ -17,6 +17,7 @@ const GHSLists = require('../chemical_data/ghs.json')
 const pictograms = require('../chemical_data/pictograms.json')
 const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
+const { getSDSs } = require('../utils/sds')
 
 const getKeysByValue = (object, value) =>
   Object.keys(object).filter((key) => object[key] === value)
@@ -84,6 +85,19 @@ exports.getChemicals = async (req, res, next) => {
         .populate('lab', 'labName')
         .sort({ createdAt: -1 })
 
+      const allChemicals = chemicals.map((chemical) => {
+        const CASNo = chemical.CASId.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          ...chemical._doc,
+          CASId: {
+            ...chemical.CASId._doc,
+            SDSs,
+          },
+        }
+      })
+
       const disposedChemicals = await Chemical.find(
         {
           lab: {
@@ -97,10 +111,23 @@ exports.getChemicals = async (req, res, next) => {
         .populate('lab', 'labName')
         .sort({ disposedDate: -1 })
 
+      const allDisposedChemicals = disposedChemicals.map((chemical) => {
+        const CASNo = chemical.CASId.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          ...chemical._doc,
+          CASId: {
+            ...chemical.CASId._doc,
+            SDSs,
+          },
+        }
+      })
+
       data = {
         labs: foundLabs,
-        chemicals,
-        disposedChemicals,
+        chemicals: allChemicals,
+        disposedChemicals: allDisposedChemicals,
         admins,
       }
     } else {
@@ -138,7 +165,33 @@ exports.getChemicals = async (req, res, next) => {
         return next(new ErrorResponse('Lab not found.', 404))
       }
 
-      data = { ...foundLab._doc, admins }
+      const chemicals = foundLab.chemicals.map((chemical) => {
+        const CASNo = chemical.CASId.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          ...chemical._doc,
+          CASId: {
+            ...chemical.CASId._doc,
+            SDSs,
+          },
+        }
+      })
+
+      const disposedChemicals = foundLab.disposedChemicals.map((chemical) => {
+        const CASNo = chemical.CASId.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          ...chemical._doc,
+          CASId: {
+            ...chemical.CASId._doc,
+            SDSs,
+          },
+        }
+      })
+
+      data = { ...foundLab._doc, chemicals, disposedChemicals, admins }
     }
 
     res.status(200).json({
@@ -252,7 +305,6 @@ exports.addChemical = async (req, res, next) => {
           {
             CASNo,
             chemicalName: name,
-            SDS: req.file.filename,
             classifications,
             COCs,
           },
@@ -681,9 +733,19 @@ exports.getChemicalInfo = async (req, res, next) => {
       return next(new ErrorResponse('Chemical not found.', 404))
     }
 
+    const SDSs = getSDSs(foundChemical.CASId.CASNo)
+
+    const result = {
+      ...foundChemical._doc,
+      CASId: {
+        ...foundChemical.CASId._doc,
+        SDSs,
+      },
+    }
+
     res.status(201).json({
       success: true,
-      data: foundChemical,
+      data: result,
     })
   } catch (error) {
     next(error)
@@ -785,6 +847,20 @@ exports.getChemicalList = async (req, res, next) => {
         ...pipeline,
       ])
 
+      const allChemicals = chemicals.map((chemical, index) => {
+        const CASNo = chemical.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          index,
+          ...chemical,
+          CASInfo: {
+            ...chemical.CASInfo,
+            SDSs,
+          },
+        }
+      })
+
       const disposedChemicals = await Chemical.aggregate([
         {
           $match: {
@@ -797,10 +873,24 @@ exports.getChemicalList = async (req, res, next) => {
         ...pipeline,
       ])
 
+      const allDisposedChemicals = disposedChemicals.map((chemical, index) => {
+        const CASNo = chemical.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          index,
+          ...chemical,
+          CASInfo: {
+            ...chemical.CASInfo,
+            SDSs,
+          },
+        }
+      })
+
       res.status(200).json({
         success: true,
-        chemicals,
-        disposedChemicals,
+        chemicals: allChemicals,
+        disposedChemicals: allDisposedChemicals,
       })
     } else {
       const foundLab = await Lab.findById(labId)
@@ -820,6 +910,20 @@ exports.getChemicalList = async (req, res, next) => {
         ...pipeline,
       ])
 
+      const allChemicals = chemicals.map((chemical, index) => {
+        const CASNo = chemical.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          index,
+          ...chemical,
+          CASInfo: {
+            ...chemical.CASInfo,
+            SDSs,
+          },
+        }
+      })
+
       const disposedChemicals = await Chemical.aggregate([
         {
           $match: {
@@ -830,10 +934,24 @@ exports.getChemicalList = async (req, res, next) => {
         ...pipeline,
       ])
 
+      const allDisposedChemicals = disposedChemicals.map((chemical, index) => {
+        const CASNo = chemical.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          index,
+          ...chemical,
+          CASInfo: {
+            ...chemical.CASInfo,
+            SDSs,
+          },
+        }
+      })
+
       res.status(200).json({
         success: true,
-        chemicals,
-        disposedChemicals,
+        chemicals: allChemicals,
+        disposedChemicals: allDisposedChemicals,
       })
     }
   } catch (error) {
@@ -1260,7 +1378,14 @@ exports.getCASInfo = async (req, res, next) => {
     const foundCAS = await CAS.findOne({ CASNo })
 
     if (!foundCAS) {
-      let CASInfo = { SDS: '', classifications: [], COCs: [] }
+      let CASInfo = {
+        SDSs: {
+          en: '',
+          bm: '',
+        },
+        classifications: [],
+        COCs: [],
+      }
 
       const foundGHSs = GHSLists.find((list) => list.CASNumber.includes(CASNo))
 
@@ -1283,9 +1408,14 @@ exports.getCASInfo = async (req, res, next) => {
         data: CASInfo,
       })
     } else {
+      const SDSs = getSDSs(foundCAS.CASNo)
+
       res.status(200).json({
         success: true,
-        data: foundCAS,
+        data: {
+          ...foundCAS._doc,
+          SDSs,
+        },
       })
     }
   } catch (error) {
