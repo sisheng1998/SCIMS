@@ -85,6 +85,19 @@ exports.getChemicals = async (req, res, next) => {
         .populate('lab', 'labName')
         .sort({ createdAt: -1 })
 
+      const allChemicals = chemicals.map((chemical) => {
+        const CASNo = chemical.CASId.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          ...chemical._doc,
+          CASId: {
+            ...chemical.CASId._doc,
+            SDSs,
+          },
+        }
+      })
+
       const disposedChemicals = await Chemical.find(
         {
           lab: {
@@ -98,10 +111,23 @@ exports.getChemicals = async (req, res, next) => {
         .populate('lab', 'labName')
         .sort({ disposedDate: -1 })
 
+      const allDisposedChemicals = disposedChemicals.map((chemical) => {
+        const CASNo = chemical.CASId.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          ...chemical._doc,
+          CASId: {
+            ...chemical.CASId._doc,
+            SDSs,
+          },
+        }
+      })
+
       data = {
         labs: foundLabs,
-        chemicals,
-        disposedChemicals,
+        chemicals: allChemicals,
+        disposedChemicals: allDisposedChemicals,
         admins,
       }
     } else {
@@ -139,7 +165,33 @@ exports.getChemicals = async (req, res, next) => {
         return next(new ErrorResponse('Lab not found.', 404))
       }
 
-      data = { ...foundLab._doc, admins }
+      const chemicals = foundLab.chemicals.map((chemical) => {
+        const CASNo = chemical.CASId.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          ...chemical._doc,
+          CASId: {
+            ...chemical.CASId._doc,
+            SDSs,
+          },
+        }
+      })
+
+      const disposedChemicals = foundLab.disposedChemicals.map((chemical) => {
+        const CASNo = chemical.CASId.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          ...chemical._doc,
+          CASId: {
+            ...chemical.CASId._doc,
+            SDSs,
+          },
+        }
+      })
+
+      data = { ...foundLab._doc, chemicals, disposedChemicals, admins }
     }
 
     res.status(200).json({
@@ -795,6 +847,20 @@ exports.getChemicalList = async (req, res, next) => {
         ...pipeline,
       ])
 
+      const allChemicals = chemicals.map((chemical, index) => {
+        const CASNo = chemical.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          index,
+          ...chemical,
+          CASInfo: {
+            ...chemical.CASInfo,
+            SDSs,
+          },
+        }
+      })
+
       const disposedChemicals = await Chemical.aggregate([
         {
           $match: {
@@ -807,10 +873,24 @@ exports.getChemicalList = async (req, res, next) => {
         ...pipeline,
       ])
 
+      const allDisposedChemicals = disposedChemicals.map((chemical, index) => {
+        const CASNo = chemical.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          index,
+          ...chemical,
+          CASInfo: {
+            ...chemical.CASInfo,
+            SDSs,
+          },
+        }
+      })
+
       res.status(200).json({
         success: true,
-        chemicals,
-        disposedChemicals,
+        chemicals: allChemicals,
+        disposedChemicals: allDisposedChemicals,
       })
     } else {
       const foundLab = await Lab.findById(labId)
@@ -830,6 +910,20 @@ exports.getChemicalList = async (req, res, next) => {
         ...pipeline,
       ])
 
+      const allChemicals = chemicals.map((chemical, index) => {
+        const CASNo = chemical.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          index,
+          ...chemical,
+          CASInfo: {
+            ...chemical.CASInfo,
+            SDSs,
+          },
+        }
+      })
+
       const disposedChemicals = await Chemical.aggregate([
         {
           $match: {
@@ -840,10 +934,24 @@ exports.getChemicalList = async (req, res, next) => {
         ...pipeline,
       ])
 
+      const allDisposedChemicals = disposedChemicals.map((chemical, index) => {
+        const CASNo = chemical.CASNo
+        const SDSs = getSDSs(CASNo)
+
+        return {
+          index,
+          ...chemical,
+          CASInfo: {
+            ...chemical.CASInfo,
+            SDSs,
+          },
+        }
+      })
+
       res.status(200).json({
         success: true,
-        chemicals,
-        disposedChemicals,
+        chemicals: allChemicals,
+        disposedChemicals: allDisposedChemicals,
       })
     }
   } catch (error) {

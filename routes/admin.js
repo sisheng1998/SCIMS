@@ -6,7 +6,6 @@ const verifyRoles = require('../middleware/verifyRoles')
 
 const {
   getInfo,
-  getChemicals,
   getLabs,
   addLab,
   addLabWithExistingUser,
@@ -20,9 +19,6 @@ const {
 
 // Dashboard
 router.route('/dashboard').get(verifyRoles(ROLES_LIST.admin), getInfo)
-
-// Chemicals
-router.route('/chemicals').get(verifyRoles(ROLES_LIST.admin), getChemicals)
 
 // Labs
 router.route('/labs').get(verifyRoles(ROLES_LIST.admin), getLabs)

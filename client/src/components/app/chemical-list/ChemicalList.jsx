@@ -34,15 +34,8 @@ const ChemicalList = () => {
           }
         )
         if (isMounted) {
-          setChemicals(
-            data.chemicals.map((chemical, index) => ({ ...chemical, index }))
-          )
-          setDisposedChemicals(
-            data.disposedChemicals.map((chemical, index) => ({
-              ...chemical,
-              index,
-            }))
-          )
+          setChemicals(data.chemicals)
+          setDisposedChemicals(data.disposedChemicals)
           setIsLoading(false)
         }
       } catch (error) {
