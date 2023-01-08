@@ -218,7 +218,7 @@ const UsersTable = (props) => {
                 ) : (
                   currentItems.map((user) => {
                     const imageSrc = user.avatar
-                      ? FILE_PATH.avatar + user.avatar
+                      ? FILE_PATH.avatars + user.avatar
                       : GetLetterPicture(user.name)
 
                     return (

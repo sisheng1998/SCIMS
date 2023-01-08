@@ -84,7 +84,7 @@ const MessageCard = ({ ticketId, status, message, viewImage, setRefresh }) => {
 
 const Avatar = ({ user, viewImage }) => {
   const imageSrc = user.avatar
-    ? FILE_PATH.avatar + user.avatar
+    ? FILE_PATH.avatars + user.avatar
     : GetLetterPicture(user.name)
 
   return (
@@ -288,7 +288,7 @@ const Attachments = ({ attachments }) => {
           {index ? <span>, </span> : ''}
 
           <a
-            href={FILE_PATH.ticket + attachment}
+            href={FILE_PATH.tickets + attachment}
             download={FormatFileName(attachment)}
             target='_blank'
             rel='noreferrer'

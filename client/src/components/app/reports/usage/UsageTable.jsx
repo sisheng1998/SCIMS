@@ -148,7 +148,7 @@ const UsageTable = ({ data }) => {
                 ) : (
                   currentItems.map((log) => {
                     const imageSrc = log.user.avatar
-                      ? FILE_PATH.avatar + log.user.avatar
+                      ? FILE_PATH.avatars + log.user.avatar
                       : GetLetterPicture(log.userName)
 
                     return (

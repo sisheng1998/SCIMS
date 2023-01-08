@@ -9,7 +9,7 @@ const TabLabels = ['Profile Picture', 'Personal Info']
 const PersonalSection = ({ user, setRefresh }) => {
   const [activeTab, setActiveTab] = useState('Tab0')
   const imageSrc = user.avatar
-    ? FILE_PATH.avatar + user.avatar
+    ? FILE_PATH.avatars + user.avatar
     : GetLetterPicture(user.name)
   const [openUpdateAvatarModal, setOpenUpdateAvatarModal] = useState(false)
   const [openEditPersonalInfoModal, setOpenEditPersonalInfoModal] =

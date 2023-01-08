@@ -1,10 +1,14 @@
 const FILE_PATH = {
-  avatar: '/public/avatars/',
+  avatars: '/public/avatars/',
   SDSs: {
     en: '/public/SDSs/en/',
     bm: '/public/SDSs/bm/',
   },
-  ticket: '/public/tickets/',
+  tickets: '/public/tickets/',
+  backups: {
+    auto: '/public/backups/auto/',
+    manual: '/public/backups/manual/',
+  },
 }
 
 export default FILE_PATH

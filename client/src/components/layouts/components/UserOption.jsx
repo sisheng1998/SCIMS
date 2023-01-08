@@ -31,7 +31,7 @@ const UserOption = () => {
   }
 
   const imageSrc = auth.avatar
-    ? FILE_PATH.avatar + auth.avatar
+    ? FILE_PATH.avatars + auth.avatar
     : GetLetterPicture(auth.name)
 
   return (
