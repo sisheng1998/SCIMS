@@ -3,6 +3,7 @@ import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import LoadingScreen from '../../../utils/LoadingScreen'
 import Title from '../../components/Title'
 import ActionButtons from './components/ActionButtons'
+import BackupsTable from './components/BackupsTable'
 
 const BackupRestore = () => {
   const axiosPrivate = useAxiosPrivate()
@@ -56,6 +57,8 @@ const BackupRestore = () => {
       >
         <ActionButtons setRefresh={setRefresh} />
       </Title>
+
+      <BackupsTable backups={backups} />
     </>
   )
 }

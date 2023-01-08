@@ -4,7 +4,7 @@ const path = require('path')
 const logEvents = require('../middleware/logEvents')
 const isLiveSite = false // Change this for live site or dev site
 
-// mongodump --uri="mongodb+srv://sisheng:Sheng980721@cluster0.7eibp.mongodb.net/dev?retryWrites=true&w=majority" --db="dev" --archive="./dev.gzip" --gzip
+// mongodump --uri="" --db="dev" --archive="./dev.gzip" --gzip
 // mongorestore --nsInclude="dev.*" --archive="./dev.gzip" --gzip
 
 const backupDatabase = (type = 'auto') =>
@@ -60,7 +60,7 @@ const backupDatabase = (type = 'auto') =>
         if (fs.existsSync(ARCHIVE_PATH)) {
           const stats = fs.statSync(ARCHIVE_PATH)
           backup.size = stats.size
-          backup.time = stats.birthtime
+          backup.date = stats.birthtime
         }
 
         resolve(backup)

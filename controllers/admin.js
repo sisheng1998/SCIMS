@@ -574,16 +574,56 @@ exports.getUsers = async (req, res, next) => {
 // Backup / Restore
 exports.getBackups = async (req, res, next) => {
   try {
+    const autoBackups = []
+    const manualBackups = []
+
     const autoBackupPath = path.resolve(__dirname, '../public/backups/auto/')
 
     fs.readdirSync(autoBackupPath).forEach((file) => {
       if (!file.endsWith('.gzip')) return
-      console.log(file)
+
+      const stats = fs.statSync(`${autoBackupPath}/${file}`)
+
+      const backup = {
+        name: file,
+        size: stats.size,
+        date: stats.birthtime,
+        type: 'Auto',
+      }
+
+      autoBackups.push(backup)
     })
+
+    const manualBackupPath = path.resolve(
+      __dirname,
+      '../public/backups/manual/'
+    )
+
+    fs.readdirSync(manualBackupPath).forEach((file) => {
+      if (!file.endsWith('.gzip')) return
+
+      const stats = fs.statSync(`${manualBackupPath}/${file}`)
+
+      const backup = {
+        name: file,
+        size: stats.size,
+        date: stats.birthtime,
+        type: 'Manual',
+      }
+
+      manualBackups.push(backup)
+    })
+
+    const backups = [...autoBackups, ...manualBackups]
+      .sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
+      .map((backup, index) => ({
+        index,
+        ...backup,
+      }))
 
     res.status(200).json({
       success: true,
-      data: 'Test email sent.',
+      backups,
     })
   } catch (error) {
     next(error)

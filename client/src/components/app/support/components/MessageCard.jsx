@@ -162,11 +162,15 @@ const MessageMenu = ({
     <Menu as='div' className='relative flex items-center'>
       {({ open }) => (
         <FunctionOnClose open={open}>
-          <Menu.Button className='text-gray-400 outline-gray-300 transition hover:text-indigo-600'>
+          <Menu.Button
+            className={`outline-gray-300 transition hover:text-indigo-600 ${
+              open ? 'text-indigo-600' : 'text-gray-400'
+            }`}
+          >
             <DotsHorizontalIcon className='h-4 w-4 shrink-0 stroke-2' />
           </Menu.Button>
 
-          <Menu.Items className='absolute right-0 top-full min-w-[120px] rounded-lg bg-white py-2 shadow-md outline-gray-300 ring-1 ring-gray-300'>
+          <Menu.Items className='absolute right-0 top-full z-[1] min-w-[120px] rounded-lg bg-white py-2 shadow-md outline-gray-300 ring-1 ring-gray-300'>
             <Menu.Item>
               <button
                 onClick={() => setIsEdit(true)}

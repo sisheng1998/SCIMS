@@ -108,10 +108,10 @@ const CreateBackupModal = ({ openModal, setOpenModal, setRefresh }) => {
                       ? FormatBytes(backup.size)
                       : ''}
                     {backup.hasOwnProperty('size') &&
-                      backup.hasOwnProperty('time') &&
+                      backup.hasOwnProperty('date') &&
                       ` - `}
-                    {backup.hasOwnProperty('time')
-                      ? FormatDate(new Date(backup.time))
+                    {backup.hasOwnProperty('date')
+                      ? FormatDate(new Date(backup.date))
                       : ''}
                   </p>
                 </div>
