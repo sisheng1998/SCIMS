@@ -9,6 +9,9 @@ const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
 const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
+const fs = require('fs')
+const path = require('path')
+const { backupDatabase } = require('../utils/backup')
 
 const UserInfo =
   'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status isAdmin isProfileNotCompleted'
@@ -563,6 +566,42 @@ exports.getUsers = async (req, res, next) => {
       users,
       labs,
     })
+  } catch (error) {
+    next(error)
+  }
+}
+
+// Backup / Restore
+exports.getBackups = async (req, res, next) => {
+  try {
+    const autoBackupPath = path.resolve(__dirname, '../public/backups/auto/')
+
+    fs.readdirSync(autoBackupPath).forEach((file) => {
+      if (!file.endsWith('.gzip')) return
+      console.log(file)
+    })
+
+    res.status(200).json({
+      success: true,
+      data: 'Test email sent.',
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+exports.createBackup = async (req, res, next) => {
+  try {
+    const backup = await backupDatabase('manual')
+
+    if (backup !== 'error') {
+      res.status(201).json({
+        success: true,
+        backup,
+      })
+    } else {
+      return next(new ErrorResponse('Manual backup failed', 400))
+    }
   } catch (error) {
     next(error)
   }

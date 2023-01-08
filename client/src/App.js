@@ -49,6 +49,7 @@ import Ticket from './components/app/support/Ticket'
 import AdminDashboard from './components/app/admin/dashboard/Dashboard'
 import AdminLabs from './components/app/admin/labs/Labs'
 import AdminUsers from './components/app/admin/users/Users'
+import AdminBackupRestore from './components/app/admin/backup-restore/BackupRestore'
 import AdminSettings from './components/app/admin/settings/Settings'
 
 // Layouts
@@ -135,6 +136,11 @@ const App = () => {
                   <Route exact path='/admin' element={<AdminDashboard />} />
                   <Route exact path='/admin/labs' element={<AdminLabs />} />
                   <Route exact path='/admin/users' element={<AdminUsers />} />
+                  <Route
+                    exact
+                    path='/admin/backup-restore'
+                    element={<AdminBackupRestore />}
+                  />
                   <Route
                     exact
                     path='/admin/settings'
