@@ -2,7 +2,9 @@ const { spawn } = require('child_process')
 const fs = require('fs')
 const path = require('path')
 const logEvents = require('../middleware/logEvents')
+const { getDateString, duration } = require('./time')
 const isLiveSite = false // Change this for live site or dev site
+const MAX_DAYS = 30
 
 // Backup command: mongodump --uri="MONGO_URI" --db="DB_NAME" --archive="BACKUP_PATH.gzip" --gzip
 // Restore command: mongorestore --uri="MONGO_URI" --nsInclude="DB_NAME.*" --archive="BACKUP_PATH.gzip" --gzip
@@ -10,7 +12,7 @@ const isLiveSite = false // Change this for live site or dev site
 const backupDatabase = (type = 'auto', isSync = false, resolve) => {
   const DB_NAME = isLiveSite ? 'app' : 'dev'
   const URI = process.env.MONGO_URI
-  const DATE = getDate()
+  const DATE = getDateString()
   const FILE_NAME = `${DATE}_scims-backup.gzip`
   const ARCHIVE_PATH = path.resolve(
     __dirname,
@@ -67,9 +69,7 @@ const backupDatabase = (type = 'auto', isSync = false, resolve) => {
         resolve(backup)
       }
     } else {
-      if (fs.existsSync(ARCHIVE_PATH)) {
-        fs.unlinkSync(ARCHIVE_PATH)
-      }
+      deleteFile(ARCHIVE_PATH)
 
       if (isSync) {
         resolve('error')
@@ -83,18 +83,39 @@ const backupDatabaseSync = (type = 'auto') =>
     backupDatabase(type, true, resolve)
   })
 
-const getDate = () => {
-  const today = new Date()
+const deleteOldAutoBackups = () => {
+  const autoBackupPath = path.resolve(__dirname, '../public/backups/auto/')
+  const maxDuration = new Date().getTime() - duration.minutes(5 - 1)
 
-  const year = today.getFullYear()
-  const month = String(today.getMonth() + 1).padStart(2, '0')
-  const day = String(today.getDate()).padStart(2, '0')
-  const hours = String(today.getHours()).padStart(2, '0')
-  const minutes = String(today.getMinutes()).padStart(2, '0')
-  const seconds = String(today.getSeconds()).padStart(2, '0')
+  fs.readdirSync(autoBackupPath).forEach((file) => {
+    const filePath = `${autoBackupPath}/${file}`
 
-  const date = `${year}${month}${day}-${hours}${minutes}${seconds}`
-  return date
+    if (path.extname(file) !== '.gzip') {
+      deleteFile(filePath)
+      return
+    }
+
+    const backupCreationTime = new Date(
+      fs.statSync(filePath).birthtime
+    ).getTime()
+
+    const isOldBackup = backupCreationTime < maxDuration
+
+    console.log('time diff:', backupCreationTime - maxDuration)
+
+    if (isOldBackup) {
+      deleteFile(filePath)
+      logEvents(`Backup (${file}) deleted.\n`, 'backupLogs.txt')
+    }
+  })
+
+  console.log('-------------------------------------------------------')
 }
 
-module.exports = { backupDatabase, backupDatabaseSync }
+const deleteFile = (filePath) => {
+  if (fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath)
+  }
+}
+
+module.exports = { backupDatabase, backupDatabaseSync, deleteOldAutoBackups }

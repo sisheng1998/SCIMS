@@ -10,6 +10,7 @@ const ROLES_LIST = require('../config/roles_list')
 const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
 const logEvents = require('../middleware/logEvents')
+const { backupDatabase, deleteOldAutoBackups } = require('../utils/backup')
 
 const notifyUsers = (chemicals, type) => {
   chemicals.forEach(async (chemical) => {
@@ -91,7 +92,7 @@ const notifyUsers = (chemicals, type) => {
 }
 
 module.exports = async () => {
-  // At 00:15 (UTC) everyday - Update all chemical status
+  // At 00:15 (UTC) Everyday - Update all chemical status
   schedule.scheduleJob('Daily Status Update', '15 8 * * *', async () => {
     const today = new Date()
     today.setUTCHours(0, 0, 0, 0)
@@ -293,6 +294,16 @@ module.exports = async () => {
           sendEmail(emailOptions)
         }
       })
+    } catch (error) {
+      logEvents(`${error.name}: ${error.message}`, 'scheduleErrorLogs.txt')
+    }
+  })
+
+  // At 00:15 (UTC) Everyday - Backup database
+  schedule.scheduleJob('Daily Backup', '* * * * *', () => {
+    try {
+      backupDatabase()
+      deleteOldAutoBackups()
     } catch (error) {
       logEvents(`${error.name}: ${error.message}`, 'scheduleErrorLogs.txt')
     }

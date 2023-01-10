@@ -580,7 +580,7 @@ exports.getBackups = async (req, res, next) => {
     const autoBackupPath = path.resolve(__dirname, '../public/backups/auto/')
 
     fs.readdirSync(autoBackupPath).forEach((file) => {
-      if (!file.endsWith('.gzip')) return
+      if (path.extname(file) !== '.gzip') return
 
       const stats = fs.statSync(`${autoBackupPath}/${file}`)
 
@@ -600,7 +600,7 @@ exports.getBackups = async (req, res, next) => {
     )
 
     fs.readdirSync(manualBackupPath).forEach((file) => {
-      if (!file.endsWith('.gzip')) return
+      if (path.extname(file) !== '.gzip') return
 
       const stats = fs.statSync(`${manualBackupPath}/${file}`)
 
