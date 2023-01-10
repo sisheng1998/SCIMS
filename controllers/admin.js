@@ -11,7 +11,7 @@ const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
 const fs = require('fs')
 const path = require('path')
-const { backupDatabase } = require('../utils/backup')
+const { backupDatabaseSync } = require('../utils/backup')
 
 const UserInfo =
   'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status isAdmin isProfileNotCompleted'
@@ -632,9 +632,9 @@ exports.getBackups = async (req, res, next) => {
 
 exports.createBackup = async (req, res, next) => {
   try {
-    const backup = await backupDatabase('manual')
+    const backup = await backupDatabaseSync('manual')
 
-    if (backup !== 'error') {
+    if (backup !== undefined && backup !== 'error') {
       res.status(201).json({
         success: true,
         backup,
