@@ -4,11 +4,17 @@ import LoadingScreen from '../../../utils/LoadingScreen'
 import Title from '../../components/Title'
 import ActionButtons from './components/ActionButtons'
 import BackupsTable from './components/BackupsTable'
+import DeleteBackupModal from './components/DeleteBackupModal'
 
 const BackupRestore = () => {
   const axiosPrivate = useAxiosPrivate()
 
   const [backups, setBackups] = useState([])
+  const [backup, setBackup] = useState({
+    name: '',
+    type: '',
+  })
+  const [openDeleteBackupModal, setOpenDeleteBackupModal] = useState(false)
 
   const [isLoading, setIsLoading] = useState(true)
   const [refresh, setRefresh] = useState(false)
@@ -58,7 +64,21 @@ const BackupRestore = () => {
         <ActionButtons setRefresh={setRefresh} />
       </Title>
 
-      <BackupsTable backups={backups} />
+      <BackupsTable
+        backups={backups}
+        setBackup={setBackup}
+        setOpenDeleteBackupModal={setOpenDeleteBackupModal}
+      />
+
+      {openDeleteBackupModal && backup.name !== '' && backup.type !== '' && (
+        <DeleteBackupModal
+          backup={backup}
+          setBackup={setBackup}
+          openModal={openDeleteBackupModal}
+          setOpenModal={setOpenDeleteBackupModal}
+          setRefresh={setRefresh}
+        />
+      )}
     </>
   )
 }

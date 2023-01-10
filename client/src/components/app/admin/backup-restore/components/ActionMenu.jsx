@@ -7,35 +7,11 @@ import {
   DotsVerticalIcon,
 } from '@heroicons/react/outline'
 
-import useAxiosPrivate from '../../../../../hooks/useAxiosPrivate'
 import FILE_PATH from '../../../../../config/file_path'
 
-const ActionMenu = ({ name }) => {
-  const axiosPrivate = useAxiosPrivate()
+const ActionMenu = ({ name, type, setBackup, setOpenDeleteBackupModal }) => {
   const [isDelete, setIsDelete] = useState(false)
   const [isRestore, setIsRestore] = useState(false)
-
-  // const deleteMessage = async () => {
-  //   setErrorMessage('')
-  //   setIsLoading(true)
-
-  //   try {
-  //     await axiosPrivate.delete(
-  //       `/api/support/ticket/${ticketId}/message/${message._id}`
-  //     )
-
-  //     setIsLoading(false)
-  //     setRefresh(true)
-  //   } catch (error) {
-  //     if (error.response?.status === 500) {
-  //       setErrorMessage('Server not responding. Please try again later.')
-  //     } else {
-  //       setErrorMessage('Oops. Something went wrong. Please try again later.')
-  //     }
-
-  //     setIsLoading(false)
-  //   }
-  // }
 
   const FunctionOnClose = ({ open, children }) => {
     useEffect(() => {
@@ -45,6 +21,14 @@ const ActionMenu = ({ name }) => {
     }, [open])
 
     return <>{children}</>
+  }
+
+  const deleteBackup = () => {
+    setBackup({
+      name,
+      type,
+    })
+    setOpenDeleteBackupModal(true)
   }
 
   return (
@@ -114,7 +98,7 @@ const ActionMenu = ({ name }) => {
 
                       setIsDelete(true)
                     } else {
-                      // deleteMessage()
+                      deleteBackup()
                       close()
                     }
                   }}

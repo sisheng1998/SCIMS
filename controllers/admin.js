@@ -647,6 +647,39 @@ exports.createBackup = async (req, res, next) => {
   }
 }
 
+exports.deleteBackup = async (req, res, next) => {
+  const { backup } = req.body
+
+  if (
+    !backup.hasOwnProperty('name') ||
+    !backup.hasOwnProperty('type') ||
+    !backup.name ||
+    !backup.type
+  ) {
+    return next(new ErrorResponse('Missing required value.', 400))
+  }
+
+  try {
+    const backupPath = path.resolve(
+      __dirname,
+      `../public/backups/${backup.type.toLowerCase()}/${backup.name}`
+    )
+
+    if (!fs.existsSync(backupPath)) {
+      return next(new ErrorResponse('Backup not found', 404))
+    }
+
+    fs.unlinkSync(backupPath)
+
+    res.status(200).json({
+      success: true,
+      data: 'Backup deleted.',
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 // Settings
 exports.getSettings = async (req, res, next) => {
   try {

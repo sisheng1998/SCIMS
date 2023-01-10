@@ -36,7 +36,7 @@ const tableHeaders = [
   },
 ]
 
-const BackupsTable = ({ backups }) => {
+const BackupsTable = ({ backups, setBackup, setOpenDeleteBackupModal }) => {
   const [sortKey, setSortKey] = useState('index')
   const [sortOrder, setSortOrder] = useState('asc')
   const [searchTerm, setSearchTerm] = useState('')
@@ -192,7 +192,12 @@ const BackupsTable = ({ backups }) => {
                       <td className='px-6 py-4'>{FormatBytes(backup.size)}</td>
 
                       <td className='px-6 py-4 text-center align-middle'>
-                        <ActionMenu name={backup.name} />
+                        <ActionMenu
+                          name={backup.name}
+                          type={backup.type}
+                          setBackup={setBackup}
+                          setOpenDeleteBackupModal={setOpenDeleteBackupModal}
+                        />
                       </td>
                     </tr>
                   )
