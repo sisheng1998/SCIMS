@@ -283,7 +283,7 @@ const Message = ({ message }) => (
 )
 
 const Attachments = ({ attachments }) => {
-  const FormatFileName = (value) => value.substring(value.indexOf('-') + 1)
+  const FormatFilename = (value) => value.substring(value.indexOf('-') + 1)
 
   return (
     <p className='text-sm'>
@@ -293,12 +293,12 @@ const Attachments = ({ attachments }) => {
 
           <a
             href={FILE_PATH.tickets + attachment}
-            download={FormatFileName(attachment)}
+            download={FormatFilename(attachment)}
             target='_blank'
             rel='noreferrer'
             className='inline-flex items-center font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
           >
-            {FormatFileName(attachment)}
+            {FormatFilename(attachment)}
           </a>
         </Fragment>
       ))}

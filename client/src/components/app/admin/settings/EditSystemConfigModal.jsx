@@ -146,7 +146,7 @@ const EditSystemConfigModal = ({
 
                 <div className='mt-6'>
                   <label htmlFor='backup-ttl' className='required-input-label'>
-                    Auto Backup Duration
+                    Auto Backup Retention Period
                   </label>
                   <div className='flex items-stretch'>
                     <input
@@ -155,7 +155,7 @@ const EditSystemConfigModal = ({
                       min='7'
                       step='1'
                       id='backup-ttl'
-                      placeholder='Enter duration'
+                      placeholder='Enter retention period'
                       required
                       value={backupTTL}
                       onChange={(e) => setBackupTTL(Number(e.target.value))}
@@ -166,8 +166,8 @@ const EditSystemConfigModal = ({
                     </p>
                   </div>
                   <p className='mt-2 text-xs text-gray-400'>
-                    The maximum days for auto backup to be stored before
-                    deletion. Minimum: 7 days.
+                    The maximum days for auto backups to be kept. Minimum: 7
+                    days.
                   </p>
                 </div>
 

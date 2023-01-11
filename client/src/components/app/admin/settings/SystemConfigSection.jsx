@@ -25,7 +25,7 @@ const SystemConfigSection = ({ settings, setEditSuccess }) => {
         </div>
 
         <div className='flex-1'>
-          <label htmlFor='backup-ttl'>Auto Backup Duration</label>
+          <label htmlFor='backup-ttl'>Auto Backup Retention Period</label>
           <input
             className='w-full'
             type='text'
@@ -35,7 +35,7 @@ const SystemConfigSection = ({ settings, setEditSuccess }) => {
             value={settings.BACKUP_TTL + ' Days'}
           />
           <p className='mt-2 text-xs text-gray-400'>
-            The maximum days for auto backup to be stored before deletion.
+            The maximum days for auto backups to be kept.
           </p>
         </div>
       </div>

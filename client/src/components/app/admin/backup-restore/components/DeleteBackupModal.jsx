@@ -25,7 +25,7 @@ const DeleteBackupModal = ({
     const deleteBackup = async () => {
       try {
         await axiosPrivate.delete(
-          '/api/admin/backup',
+          '/api/admin/backup/delete',
           {
             data: {
               backup,
@@ -79,7 +79,7 @@ const DeleteBackupModal = ({
         <Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
         <div className='relative m-4 w-full max-w-sm rounded-lg bg-white p-6 text-center shadow'>
           {isLoading ? (
-            <Loading text='Deleting Backup...' />
+            <Loading text='Deleting Backup...' closeHandler={closeHandler} />
           ) : success ? (
             <Success
               title='Backup Deleted!'

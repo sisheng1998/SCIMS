@@ -24,7 +24,7 @@ const CreateBackupModal = ({ openModal, setOpenModal, setRefresh }) => {
     const getBackups = async () => {
       try {
         const { data } = await axiosPrivate.post(
-          '/api/admin/backup',
+          '/api/admin/backup/create',
           {},
           {
             signal: controller.signal,
@@ -72,7 +72,7 @@ const CreateBackupModal = ({ openModal, setOpenModal, setRefresh }) => {
         <Dialog.Overlay className='fixed inset-0 bg-black opacity-50' />
         <div className='relative m-4 w-full max-w-sm rounded-lg bg-white p-6 text-center shadow'>
           {isLoading ? (
-            <Loading text='Creating Backup...' />
+            <Loading text='Creating Backup...' closeHandler={closeHandler} />
           ) : success && backup !== '' ? (
             <>
               <div className='mb-6 flex justify-between border-b border-gray-200 pb-3'>

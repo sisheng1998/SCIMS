@@ -1,9 +1,5 @@
 import React, { useState } from 'react'
-import {
-  RefreshIcon,
-  PlusIcon,
-  CloudUploadIcon,
-} from '@heroicons/react/outline'
+import { RefreshIcon, PlusIcon, UploadIcon } from '@heroicons/react/outline'
 import CreateBackupModal from './CreateBackupModal'
 
 const ActionButtons = ({ setRefresh }) => {
@@ -24,7 +20,7 @@ const ActionButtons = ({ setRefresh }) => {
         onClick={() => setOpenRestoreModal(true)}
         className='button button-outline'
       >
-        <CloudUploadIcon className='-ml-0.5 mr-1 h-3.5 w-3.5 stroke-2' />
+        <UploadIcon className='-ml-0.5 mr-1 h-3.5 w-3.5 stroke-2' />
         Restore Data
       </button>
 
