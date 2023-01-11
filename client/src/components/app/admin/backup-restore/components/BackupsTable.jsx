@@ -36,7 +36,12 @@ const tableHeaders = [
   },
 ]
 
-const BackupsTable = ({ backups, setBackup, setOpenDeleteBackupModal }) => {
+const BackupsTable = ({
+  backups,
+  setBackup,
+  setOpenDeleteBackupModal,
+  setOpenRestoreBackupModal,
+}) => {
   const [sortKey, setSortKey] = useState('index')
   const [sortOrder, setSortOrder] = useState('asc')
   const [searchTerm, setSearchTerm] = useState('')
@@ -197,6 +202,7 @@ const BackupsTable = ({ backups, setBackup, setOpenDeleteBackupModal }) => {
                           type={backup.type}
                           setBackup={setBackup}
                           setOpenDeleteBackupModal={setOpenDeleteBackupModal}
+                          setOpenRestoreBackupModal={setOpenRestoreBackupModal}
                         />
                       </td>
                     </tr>

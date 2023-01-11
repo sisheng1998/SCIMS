@@ -11,7 +11,7 @@ const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
 const fs = require('fs')
 const path = require('path')
-const { backupDatabaseSync } = require('../utils/backup')
+const { backupDatabaseSync, restoreDatabaseSync } = require('../utils/backup')
 
 const UserInfo =
   'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status isAdmin isProfileNotCompleted'
@@ -678,6 +678,46 @@ exports.deleteBackup = async (req, res, next) => {
       success: true,
       data: 'Backup deleted.',
     })
+  } catch (error) {
+    next(error)
+  }
+}
+
+exports.restoreBackup = async (req, res, next) => {
+  const { backup } = req.body
+
+  if (
+    !backup.hasOwnProperty('name') ||
+    !backup.hasOwnProperty('type') ||
+    !backup.name ||
+    !backup.type
+  ) {
+    return next(new ErrorResponse('Missing required value.', 400))
+  }
+
+  try {
+    const backupPath = path.resolve(
+      __dirname,
+      `../public/backups/${backup.type.toLowerCase()}/${backup.name}`
+    )
+
+    if (!fs.existsSync(backupPath)) {
+      return next(new ErrorResponse('Backup not found.', 404))
+    }
+
+    const result = await restoreDatabaseSync(
+      backup.type.toLowerCase(),
+      backup.name
+    )
+
+    if (result !== undefined && result !== 'error') {
+      res.status(200).json({
+        success: true,
+        data: 'Restore completed.',
+      })
+    } else {
+      return next(new ErrorResponse('Restoration failed', 400))
+    }
   } catch (error) {
     next(error)
   }

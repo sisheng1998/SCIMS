@@ -26,7 +26,7 @@ const backupDatabase = (type = 'auto', isSync = false, resolve) => {
   ])
 
   let success = false
-  let output = `Backup (${type}) start:\n`
+  let output = `Backup process started (${type}):\n`
 
   child.stdout.on('data', (data) => {
     output += `${data.toString()}`
@@ -46,7 +46,7 @@ const backupDatabase = (type = 'auto', isSync = false, resolve) => {
     } else if (signal) {
       output += `Backup process was killed with signal ${signal}\n`
     } else {
-      output += 'Backup successfully.\n'
+      output += 'Backup process successfully.\n'
       success = true
     }
 
@@ -79,6 +79,57 @@ const backupDatabaseSync = (type = 'auto') =>
     backupDatabase(type, true, resolve)
   })
 
+const restoreDatabaseSync = (type, filename) =>
+  new Promise((resolve, reject) => {
+    const DB_NAME = isLiveSite ? 'app' : 'dev'
+    const URI = process.env.MONGO_URI
+    const ARCHIVE_PATH = path.resolve(
+      __dirname,
+      `../public/backups/${type}/${filename}`
+    )
+
+    const child = spawn('mongorestore', [
+      `--uri=${URI}`,
+      `--nsInclude=${DB_NAME}.*`,
+      `--archive=${ARCHIVE_PATH}`,
+      '--gzip',
+    ])
+
+    let success = false
+    let output = `Restoration process started (${filename}):\n`
+
+    child.stdout.on('data', (data) => {
+      output += `${data.toString()}`
+    })
+
+    child.stderr.on('data', (data) => {
+      output += `${Buffer.from(data).toString()}`
+    })
+
+    child.on('error', (error) => {
+      output += `${error.name}: ${error.message}`
+    })
+
+    child.on('exit', (code, signal) => {
+      if (code) {
+        output += `Restoration process exited with code ${code}\n`
+      } else if (signal) {
+        output += `Restoration process was killed with signal ${signal}\n`
+      } else {
+        output += 'Restoration process successfully.\n'
+        success = true
+      }
+
+      logEvents(output, 'restorationLogs.txt')
+
+      if (type.toLowerCase() !== 'auto' && type.toLowerCase() !== 'manual') {
+        deleteFile(ARCHIVE_PATH, filename, false)
+      }
+
+      resolve(success ? 'success' : 'error')
+    })
+  })
+
 const deleteOldAutoBackups = (maxDays = 30) => {
   const autoBackupPath = path.resolve(__dirname, '../public/backups/auto/')
   const now = new Date().getTime()
@@ -101,20 +152,25 @@ const deleteOldAutoBackups = (maxDays = 30) => {
   })
 }
 
-const deleteFile = (filePath, fileName, writeToLog) => {
+const deleteFile = (filePath, filename, writeToLog) => {
   if (fs.existsSync(filePath)) {
     fs.unlinkSync(filePath, (error) => {
       if (error) {
         writeToLog &&
-          logEvents(`Backup deletion failed. (${fileName})\n`, 'backupLogs.txt')
+          logEvents(`Backup deletion failed. (${filename})\n`, 'backupLogs.txt')
       }
     })
 
-    writeToLog && logEvents(`Backup deleted. (${fileName})\n`, 'backupLogs.txt')
+    writeToLog && logEvents(`Backup deleted. (${filename})\n`, 'backupLogs.txt')
   } else {
     writeToLog &&
-      logEvents(`Backup not found. (${fileName})\n`, 'backupLogs.txt')
+      logEvents(`Backup not found. (${filename})\n`, 'backupLogs.txt')
   }
 }
 
-module.exports = { backupDatabase, backupDatabaseSync, deleteOldAutoBackups }
+module.exports = {
+  backupDatabase,
+  backupDatabaseSync,
+  restoreDatabaseSync,
+  deleteOldAutoBackups,
+}

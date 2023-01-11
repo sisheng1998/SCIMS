@@ -5,6 +5,7 @@ import Title from '../../components/Title'
 import ActionButtons from './components/ActionButtons'
 import BackupsTable from './components/BackupsTable'
 import DeleteBackupModal from './components/DeleteBackupModal'
+import RestoreBackupModal from './components/RestoreBackupModal'
 
 const BackupRestore = () => {
   const axiosPrivate = useAxiosPrivate()
@@ -15,6 +16,7 @@ const BackupRestore = () => {
     type: '',
   })
   const [openDeleteBackupModal, setOpenDeleteBackupModal] = useState(false)
+  const [openRestoreBackupModal, setOpenRestoreBackupModal] = useState(false)
 
   const [isLoading, setIsLoading] = useState(true)
   const [refresh, setRefresh] = useState(false)
@@ -68,6 +70,7 @@ const BackupRestore = () => {
         backups={backups}
         setBackup={setBackup}
         setOpenDeleteBackupModal={setOpenDeleteBackupModal}
+        setOpenRestoreBackupModal={setOpenRestoreBackupModal}
       />
 
       {openDeleteBackupModal && backup.name !== '' && backup.type !== '' && (
@@ -76,6 +79,16 @@ const BackupRestore = () => {
           setBackup={setBackup}
           openModal={openDeleteBackupModal}
           setOpenModal={setOpenDeleteBackupModal}
+          setRefresh={setRefresh}
+        />
+      )}
+
+      {openRestoreBackupModal && backup.name !== '' && backup.type !== '' && (
+        <RestoreBackupModal
+          backup={backup}
+          setBackup={setBackup}
+          openModal={openRestoreBackupModal}
+          setOpenModal={setOpenRestoreBackupModal}
           setRefresh={setRefresh}
         />
       )}

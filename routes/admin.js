@@ -14,6 +14,7 @@ const {
   getUsers,
   getBackups,
   createBackup,
+  restoreBackup,
   deleteBackup,
   getSettings,
   updateSettings,
@@ -37,8 +38,13 @@ router.route('/users').get(verifyRoles(ROLES_LIST.admin), getUsers)
 
 // Backup / Restore
 router.route('/backups').get(verifyRoles(ROLES_LIST.admin), getBackups)
-router.route('/backup').post(verifyRoles(ROLES_LIST.admin), createBackup)
-router.route('/backup').delete(verifyRoles(ROLES_LIST.admin), deleteBackup)
+router.route('/backup/create').post(verifyRoles(ROLES_LIST.admin), createBackup)
+router
+  .route('/backup/restore')
+  .post(verifyRoles(ROLES_LIST.admin), restoreBackup)
+router
+  .route('/backup/delete')
+  .delete(verifyRoles(ROLES_LIST.admin), deleteBackup)
 
 // Setting
 router.route('/settings').get(verifyRoles(ROLES_LIST.admin), getSettings)

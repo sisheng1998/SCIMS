@@ -9,13 +9,20 @@ import {
 
 import FILE_PATH from '../../../../../config/file_path'
 
-const ActionMenu = ({ name, type, setBackup, setOpenDeleteBackupModal }) => {
+const ActionMenu = ({
+  name,
+  type,
+  setBackup,
+  setOpenDeleteBackupModal,
+  setOpenRestoreBackupModal,
+}) => {
   const [isDelete, setIsDelete] = useState(false)
   const [isRestore, setIsRestore] = useState(false)
 
   const FunctionOnClose = ({ open, children }) => {
     useEffect(() => {
       if ((!isDelete && !isRestore) || open) return
+
       setIsDelete(false)
       setIsRestore(false)
     }, [open])
@@ -29,6 +36,14 @@ const ActionMenu = ({ name, type, setBackup, setOpenDeleteBackupModal }) => {
       type,
     })
     setOpenDeleteBackupModal(true)
+  }
+
+  const restoreBackup = () => {
+    setBackup({
+      name,
+      type,
+    })
+    setOpenRestoreBackupModal(true)
   }
 
   return (
@@ -72,7 +87,7 @@ const ActionMenu = ({ name, type, setBackup, setOpenDeleteBackupModal }) => {
 
                       setIsRestore(true)
                     } else {
-                      // deleteMessage()
+                      restoreBackup()
                       close()
                     }
                   }}
