@@ -23,7 +23,7 @@ const ConfigSchema = new Schema(
       type: Number,
       default: 30,
     },
-    MAX_DAYS_FOR_BACKUP: {
+    BACKUP_TTL: {
       type: Number,
       default: 30,
     },

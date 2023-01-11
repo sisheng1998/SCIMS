@@ -303,7 +303,7 @@ module.exports = async () => {
   schedule.scheduleJob('Daily Backup', '0 0 * * *', async () => {
     try {
       const config = await Config.findOne({}, '-_id')
-      const maxDays = config.MAX_DAYS_FOR_BACKUP
+      const maxDays = config.BACKUP_TTL
 
       backupDatabase()
       deleteOldAutoBackups(maxDays)
