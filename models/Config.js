@@ -23,6 +23,10 @@ const ConfigSchema = new Schema(
       type: Number,
       default: 30,
     },
+    MAX_DAYS_FOR_BACKUP: {
+      type: Number,
+      default: 30,
+    },
   },
   { collection: 'config', capped: { size: 1024, max: 1 } }
 )

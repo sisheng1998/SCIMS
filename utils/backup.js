@@ -4,7 +4,6 @@ const path = require('path')
 const logEvents = require('../middleware/logEvents')
 const { getDateString, duration } = require('./time')
 const isLiveSite = false // Change this for live site or dev site
-const MAX_DAYS = 30
 
 // Backup command: mongodump --uri="MONGO_URI" --db="DB_NAME" --archive="BACKUP_PATH.gzip" --gzip
 // Restore command: mongorestore --uri="MONGO_URI" --nsInclude="DB_NAME.*" --archive="BACKUP_PATH.gzip" --gzip
@@ -69,11 +68,8 @@ const backupDatabase = (type = 'auto', isSync = false, resolve) => {
         resolve(backup)
       }
     } else {
-      deleteFile(ARCHIVE_PATH)
-
-      if (isSync) {
-        resolve('error')
-      }
+      deleteFile(ARCHIVE_PATH, FILE_NAME, false)
+      isSync && resolve('error')
     }
   })
 }
@@ -83,38 +79,41 @@ const backupDatabaseSync = (type = 'auto') =>
     backupDatabase(type, true, resolve)
   })
 
-const deleteOldAutoBackups = () => {
+const deleteOldAutoBackups = (maxDays = 30) => {
   const autoBackupPath = path.resolve(__dirname, '../public/backups/auto/')
-  const maxDuration = new Date().getTime() - duration.minutes(5 - 1)
+  const now = new Date().getTime()
 
   fs.readdirSync(autoBackupPath).forEach((file) => {
     const filePath = `${autoBackupPath}/${file}`
 
     if (path.extname(file) !== '.gzip') {
-      deleteFile(filePath)
+      deleteFile(filePath, file, true)
       return
     }
 
-    const backupCreationTime = new Date(
-      fs.statSync(filePath).birthtime
-    ).getTime()
+    const stats = fs.statSync(filePath)
+    const endTime =
+      new Date(stats.birthtime).getTime() + duration.days(maxDays - 1)
 
-    const isOldBackup = backupCreationTime < maxDuration
-
-    console.log('time diff:', backupCreationTime - maxDuration)
-
-    if (isOldBackup) {
-      deleteFile(filePath)
-      logEvents(`Backup (${file}) deleted.\n`, 'backupLogs.txt')
+    if (now > endTime) {
+      deleteFile(filePath, file, true)
     }
   })
-
-  console.log('-------------------------------------------------------')
 }
 
-const deleteFile = (filePath) => {
+const deleteFile = (filePath, fileName, writeToLog) => {
   if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath)
+    fs.unlinkSync(filePath, (error) => {
+      if (error) {
+        writeToLog &&
+          logEvents(`Backup deletion failed. (${fileName})\n`, 'backupLogs.txt')
+      }
+    })
+
+    writeToLog && logEvents(`Backup deleted. (${fileName})\n`, 'backupLogs.txt')
+  } else {
+    writeToLog &&
+      logEvents(`Backup not found. (${fileName})\n`, 'backupLogs.txt')
   }
 }
 

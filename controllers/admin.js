@@ -666,10 +666,13 @@ exports.deleteBackup = async (req, res, next) => {
     )
 
     if (!fs.existsSync(backupPath)) {
-      return next(new ErrorResponse('Backup not found', 404))
+      return next(new ErrorResponse('Backup not found.', 404))
     }
 
-    fs.unlinkSync(backupPath)
+    fs.unlinkSync(backupPath, (error) => {
+      if (error)
+        return next(new ErrorResponse('Not able to delete backup.', 400))
+    })
 
     res.status(200).json({
       success: true,

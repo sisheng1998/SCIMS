@@ -92,7 +92,7 @@ const notifyUsers = (chemicals, type) => {
 }
 
 module.exports = async () => {
-  // At 00:15 (UTC) Everyday - Update all chemical status
+  // At 00:15 (UTC) / 08:15 (MYT) Everyday - Update all chemical status
   schedule.scheduleJob('Daily Status Update', '15 8 * * *', async () => {
     const today = new Date()
     today.setUTCHours(0, 0, 0, 0)
@@ -180,7 +180,7 @@ module.exports = async () => {
     }
   })
 
-  // At 00:30 (UTC) on Monday - Send weekly report to lab owner
+  // At 00:30 (UTC) / 08:30 (MYT) on Monday - Send weekly report to lab owner
   schedule.scheduleJob('Weekly Report', '30 8 * * 1', async () => {
     const today = new Date()
     const past = new Date(new Date().setDate(today.getDate() - 7))
@@ -299,11 +299,14 @@ module.exports = async () => {
     }
   })
 
-  // At 00:15 (UTC) Everyday - Backup database
-  schedule.scheduleJob('Daily Backup', '* * * * *', () => {
+  // At 16:00 (UTC) / 00:00 (MYT) Everyday - Backup database & delete old backups
+  schedule.scheduleJob('Daily Backup', '0 0 * * *', async () => {
     try {
+      const config = await Config.findOne({}, '-_id')
+      const maxDays = config.MAX_DAYS_FOR_BACKUP
+
       backupDatabase()
-      deleteOldAutoBackups()
+      deleteOldAutoBackups(maxDays)
     } catch (error) {
       logEvents(`${error.name}: ${error.message}`, 'scheduleErrorLogs.txt')
     }
