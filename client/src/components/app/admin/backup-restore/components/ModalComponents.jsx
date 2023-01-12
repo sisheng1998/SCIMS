@@ -11,7 +11,7 @@ const Loading = ({ text, closeHandler }) => {
   }, [])
 
   return (
-    <div className='relative flex flex-col items-center p-6'>
+    <div className='relative flex flex-col items-center py-6'>
       {isXIconVisible && (
         <button
           className='absolute top-0 right-0 cursor-pointer hover:text-indigo-600 focus:outline-none'
@@ -38,6 +38,9 @@ const Loading = ({ text, closeHandler }) => {
         ></path>
       </svg>
       <p className='mt-4 text-xl font-medium lg:text-lg'>{text}</p>
+      <p className='mt-1 text-sm text-gray-500'>
+        This might take a while to be completed.
+      </p>
     </div>
   )
 }

@@ -76,7 +76,7 @@ const CreateBackupModal = ({ openModal, setOpenModal, setRefresh }) => {
           ) : success && backup !== '' ? (
             <>
               <div className='mb-6 flex justify-between border-b border-gray-200 pb-3'>
-                <h5>Backup</h5>
+                <h5>Download Backup</h5>
                 <button
                   className='cursor-pointer hover:text-indigo-600 focus:outline-none'
                   onClick={closeHandler}

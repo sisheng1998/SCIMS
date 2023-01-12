@@ -5,8 +5,8 @@ const logEvents = require('../middleware/logEvents')
 const { getDateString, duration } = require('./time')
 const isLiveSite = false // Change this for live site or dev site
 
-// Backup command: mongodump --uri="MONGO_URI" --db="DB_NAME" --archive="BACKUP_PATH.gzip" --gzip
-// Restore command: mongorestore --uri="MONGO_URI" --nsInclude="DB_NAME.*" --archive="BACKUP_PATH.gzip" --gzip
+// Backup command: mongodump --uri="MONGO_URI" --db="DB_NAME" --archive="BACKUP_PATH.gzip" --gzip --verbose
+// Restore command: mongorestore --uri="MONGO_URI" --nsInclude="DB_NAME.*" --archive="BACKUP_PATH.gzip" --gzip --objcheck --drop --verbose
 
 const backupDatabase = (type = 'auto', isSync = false, resolve) => {
   const DB_NAME = isLiveSite ? 'app' : 'dev'
@@ -23,6 +23,7 @@ const backupDatabase = (type = 'auto', isSync = false, resolve) => {
     `--db=${DB_NAME}`,
     `--archive=${ARCHIVE_PATH}`,
     '--gzip',
+    '--verbose',
   ])
 
   let success = false
@@ -93,6 +94,9 @@ const restoreDatabaseSync = (type, filename) =>
       `--nsInclude=${DB_NAME}.*`,
       `--archive=${ARCHIVE_PATH}`,
       '--gzip',
+      '--objcheck',
+      '--drop',
+      '--verbose',
     ])
 
     let success = false
