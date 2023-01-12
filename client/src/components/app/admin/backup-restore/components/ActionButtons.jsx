@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { RefreshIcon, PlusIcon, UploadIcon } from '@heroicons/react/outline'
 import CreateBackupModal from './CreateBackupModal'
+import UploadAndRestoreModal from './UploadAndRestoreModal'
 
 const ActionButtons = ({ setRefresh }) => {
   const [openBackupModal, setOpenBackupModal] = useState(false)
-  const [openRestoreModal, setOpenRestoreModal] = useState(false)
+  const [openUploadAndRestoreModal, setOpenUploadAndRestoreModal] =
+    useState(false)
 
   return (
     <div className='flex items-center space-x-4'>
@@ -17,11 +19,11 @@ const ActionButtons = ({ setRefresh }) => {
       </button>
 
       <button
-        onClick={() => setOpenRestoreModal(true)}
+        onClick={() => setOpenUploadAndRestoreModal(true)}
         className='button button-outline'
       >
         <UploadIcon className='-ml-0.5 mr-1 h-3.5 w-3.5 stroke-2' />
-        Restore Data
+        Upload & Restore
       </button>
 
       <button
@@ -36,6 +38,14 @@ const ActionButtons = ({ setRefresh }) => {
         <CreateBackupModal
           openModal={openBackupModal}
           setOpenModal={setOpenBackupModal}
+          setRefresh={setRefresh}
+        />
+      )}
+
+      {openUploadAndRestoreModal && (
+        <UploadAndRestoreModal
+          openModal={openUploadAndRestoreModal}
+          setOpenModal={setOpenUploadAndRestoreModal}
           setRefresh={setRefresh}
         />
       )}

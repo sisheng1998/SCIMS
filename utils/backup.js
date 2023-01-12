@@ -5,14 +5,14 @@ const logEvents = require('../middleware/logEvents')
 const { getDateString, duration } = require('./time')
 const isLiveSite = false // Change this for live site or dev site
 
-// Backup command: mongodump --uri="MONGO_URI" --db="DB_NAME" --archive="BACKUP_PATH.gzip" --gzip --verbose
-// Restore command: mongorestore --uri="MONGO_URI" --nsInclude="DB_NAME.*" --archive="BACKUP_PATH.gzip" --gzip --objcheck --drop --verbose
+// Backup command: mongodump --uri="MONGO_URI" --db="DB_NAME" --archive="BACKUP_PATH.gz" --gzip --verbose
+// Restore command: mongorestore --uri="MONGO_URI" --nsInclude="DB_NAME.*" --archive="BACKUP_PATH.gz" --gzip --objcheck --drop --verbose
 
 const backupDatabase = (type = 'auto', isSync = false, resolve) => {
   const DB_NAME = isLiveSite ? 'app' : 'dev'
   const URI = process.env.MONGO_URI
   const DATE = getDateString()
-  const FILE_NAME = `${DATE}_scims-backup.gzip`
+  const FILE_NAME = `${DATE}_scims-backup.gz`
   const ARCHIVE_PATH = path.resolve(
     __dirname,
     `../public/backups/${type}/${FILE_NAME}`
@@ -27,7 +27,7 @@ const backupDatabase = (type = 'auto', isSync = false, resolve) => {
   ])
 
   let success = false
-  let output = `Backup process started (${type}):\n`
+  let output = `Backup process (${type}) started:\n`
 
   child.stdout.on('data', (data) => {
     output += `${data.toString()}`
@@ -82,12 +82,13 @@ const backupDatabaseSync = (type = 'auto') =>
 
 const restoreDatabaseSync = (type, filename) =>
   new Promise((resolve, reject) => {
+    const isUploadedBackup = type === ''
+
     const DB_NAME = isLiveSite ? 'app' : 'dev'
     const URI = process.env.MONGO_URI
-    const ARCHIVE_PATH = path.resolve(
-      __dirname,
-      `../public/backups/${type}/${filename}`
-    )
+    const ARCHIVE_PATH = isUploadedBackup
+      ? path.resolve(__dirname, `../public/backups/${filename}`)
+      : path.resolve(__dirname, `../public/backups/${type}/${filename}`)
 
     const child = spawn('mongorestore', [
       `--uri=${URI}`,
@@ -126,7 +127,7 @@ const restoreDatabaseSync = (type, filename) =>
 
       logEvents(output, 'restorationLogs.txt')
 
-      if (type.toLowerCase() !== 'auto' && type.toLowerCase() !== 'manual') {
+      if (isUploadedBackup) {
         deleteFile(ARCHIVE_PATH, filename, false)
       }
 
@@ -141,7 +142,7 @@ const deleteOldAutoBackups = (maxDays = 30) => {
   fs.readdirSync(autoBackupPath).forEach((file) => {
     const filePath = `${autoBackupPath}/${file}`
 
-    if (path.extname(file) !== '.gzip') {
+    if (path.extname(file) !== '.gz') {
       deleteFile(filePath, file, true)
       return
     }
