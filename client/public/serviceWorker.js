@@ -1,4 +1,4 @@
-const CACHE_NAME = 'v1.3.2'
+const CACHE_NAME = 'v1.4.0'
 const urlsToCache = ['index.html', 'offline.html']
 
 const self = this
