@@ -4,6 +4,12 @@ const path = require('path')
 const logEvents = require('../middleware/logEvents')
 const { getDateString, duration } = require('./time')
 const isLiveSite = false // Change this for live site or dev site
+/*
+  For live site only
+  const MONGODB_TOOLS_PATH = 'C:\\Program Files\\MongoDB\\database-tools\\bin\\'
+  'mongodump' -> MONGODB_TOOLS_PATH + 'mongodump'
+  'mongorestore' -> MONGODB_TOOLS_PATH + 'mongorestore'
+*/
 
 // Backup command: mongodump --uri="MONGO_URI" --db="DB_NAME" --archive="BACKUP_PATH.gz" --gzip --verbose
 // Restore command: mongorestore --uri="MONGO_URI" --nsInclude="DB_NAME.*" --archive="BACKUP_PATH.gz" --gzip --objcheck --drop --verbose
@@ -38,7 +44,8 @@ const backupDatabase = (type = 'auto', isSync = false, resolve) => {
   })
 
   child.on('error', (error) => {
-    output += `${error.name}: ${error.message}`
+    logEvents(`${error.name}: ${error.message}`, 'backupLogs.txt')
+    isSync && resolve('error')
   })
 
   child.on('exit', (code, signal) => {
@@ -112,7 +119,8 @@ const restoreDatabaseSync = (type, filename) =>
     })
 
     child.on('error', (error) => {
-      output += `${error.name}: ${error.message}`
+      logEvents(`${error.name}: ${error.message}`, 'restorationLogs.txt')
+      resolve('error')
     })
 
     child.on('exit', (code, signal) => {
