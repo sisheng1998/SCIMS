@@ -9,6 +9,9 @@ const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
 const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
+const fs = require('fs')
+const path = require('path')
+const { backupDatabaseSync, restoreDatabaseSync } = require('../utils/backup')
 
 const UserInfo =
   'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status isAdmin isProfileNotCompleted'
@@ -562,6 +565,187 @@ exports.getUsers = async (req, res, next) => {
       success: true,
       users,
       labs,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+// Backup / Restore
+exports.getBackups = async (req, res, next) => {
+  try {
+    const autoBackups = []
+    const manualBackups = []
+
+    const autoBackupPath = path.resolve(__dirname, '../public/backups/auto/')
+
+    fs.readdirSync(autoBackupPath).forEach((file) => {
+      if (path.extname(file) !== '.gz') return
+
+      const stats = fs.statSync(`${autoBackupPath}/${file}`)
+
+      const backup = {
+        name: file,
+        size: stats.size,
+        date: stats.birthtime,
+        type: 'Auto',
+      }
+
+      autoBackups.push(backup)
+    })
+
+    const manualBackupPath = path.resolve(
+      __dirname,
+      '../public/backups/manual/'
+    )
+
+    fs.readdirSync(manualBackupPath).forEach((file) => {
+      if (path.extname(file) !== '.gz') return
+
+      const stats = fs.statSync(`${manualBackupPath}/${file}`)
+
+      const backup = {
+        name: file,
+        size: stats.size,
+        date: stats.birthtime,
+        type: 'Manual',
+      }
+
+      manualBackups.push(backup)
+    })
+
+    const backups = [...autoBackups, ...manualBackups]
+      .sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
+      .map((backup, index) => ({
+        index,
+        ...backup,
+      }))
+
+    res.status(200).json({
+      success: true,
+      backups,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+exports.createBackup = async (req, res, next) => {
+  try {
+    const backup = await backupDatabaseSync('manual')
+
+    if (backup !== undefined && backup !== 'error') {
+      res.status(201).json({
+        success: true,
+        backup,
+      })
+    } else {
+      return next(new ErrorResponse('Manual backup failed', 400))
+    }
+  } catch (error) {
+    next(error)
+  }
+}
+
+exports.restoreBackup = async (req, res, next) => {
+  const { backup } = req.body
+
+  if (
+    !backup.hasOwnProperty('name') ||
+    !backup.hasOwnProperty('type') ||
+    !backup.name ||
+    !backup.type
+  ) {
+    return next(new ErrorResponse('Missing required value.', 400))
+  }
+
+  try {
+    const backupPath = path.resolve(
+      __dirname,
+      `../public/backups/${backup.type.toLowerCase()}/${backup.name}`
+    )
+
+    if (!fs.existsSync(backupPath)) {
+      return next(new ErrorResponse('Backup not found.', 404))
+    }
+
+    const result = await restoreDatabaseSync(
+      backup.type.toLowerCase(),
+      backup.name
+    )
+
+    if (result !== undefined && result !== 'error') {
+      res.status(200).json({
+        success: true,
+        data: 'Restore completed.',
+      })
+    } else {
+      return next(new ErrorResponse('Restoration failed', 400))
+    }
+  } catch (error) {
+    next(error)
+  }
+}
+
+exports.uploadAndRestoreBackup = async (req, res, next) => {
+  const backup = req.file.filename
+
+  if (path.extname(backup) !== '.gz') {
+    return next(new ErrorResponse('Incorrect file type.', 400))
+  }
+
+  try {
+    const backupPath = path.resolve(__dirname, `../public/backups/${backup}`)
+
+    if (!fs.existsSync(backupPath)) {
+      return next(new ErrorResponse('Backup not found.', 404))
+    }
+
+    const result = await restoreDatabaseSync('', backup)
+
+    if (result !== undefined && result !== 'error') {
+      res.status(200).json({
+        success: true,
+        data: 'Restore completed.',
+      })
+    } else {
+      return next(new ErrorResponse('Restoration failed', 400))
+    }
+  } catch (error) {
+    next(error)
+  }
+}
+
+exports.deleteBackup = async (req, res, next) => {
+  const { backup } = req.body
+
+  if (
+    !backup.hasOwnProperty('name') ||
+    !backup.hasOwnProperty('type') ||
+    !backup.name ||
+    !backup.type
+  ) {
+    return next(new ErrorResponse('Missing required value.', 400))
+  }
+
+  try {
+    const backupPath = path.resolve(
+      __dirname,
+      `../public/backups/${backup.type.toLowerCase()}/${backup.name}`
+    )
+
+    if (!fs.existsSync(backupPath)) {
+      return next(new ErrorResponse('Backup not found.', 404))
+    }
+
+    fs.unlinkSync(backupPath, (error) => {
+      if (error)
+        return next(new ErrorResponse('Not able to delete backup.', 400))
+    })
+
+    res.status(200).json({
+      success: true,
+      data: 'Backup deleted.',
     })
   } catch (error) {
     next(error)

@@ -23,6 +23,10 @@ const ConfigSchema = new Schema(
       type: Number,
       default: 30,
     },
+    BACKUP_TTL: {
+      type: Number,
+      default: 30,
+    },
   },
   { collection: 'config', capped: { size: 1024, max: 1 } }
 )

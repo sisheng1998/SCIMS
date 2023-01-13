@@ -15,6 +15,7 @@ import {
   ClipboardListIcon,
   DocumentTextIcon,
   SupportIcon,
+  DatabaseIcon,
 } from '@heroicons/react/outline'
 
 const ListIcon = () => (
@@ -110,6 +111,12 @@ const ADMIN_MENU_LIST = [
     text: 'Users',
     link: '/admin/users',
     icon: <UsersIcon />,
+    minRole: ROLES_LIST.admin,
+  },
+  {
+    text: 'Backup / Restore',
+    link: '/admin/backup-restore',
+    icon: <DatabaseIcon />,
     minRole: ROLES_LIST.admin,
   },
   {

@@ -147,7 +147,7 @@ const User = ({ user, viewImage }) => {
   const { auth } = useAuth()
 
   const imageSrc = user.avatar
-    ? FILE_PATH.avatar + user.avatar
+    ? FILE_PATH.avatars + user.avatar
     : GetLetterPicture(user.name)
 
   return (

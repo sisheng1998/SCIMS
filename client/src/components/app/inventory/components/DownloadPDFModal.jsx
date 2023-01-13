@@ -12,7 +12,7 @@ const DownloadPDFModal = ({ chemicals, selected, openModal, setOpenModal }) => {
 
   const closeHandler = () => setOpenModal(false)
 
-  const fileName = 'chemical_qr_codes'
+  const filename = 'chemical_qr_codes'
   const labName = auth.currentLabName
 
   return (
@@ -41,7 +41,7 @@ const DownloadPDFModal = ({ chemicals, selected, openModal, setOpenModal }) => {
           <div className='flex items-center space-x-2'>
             <DocumentTextIcon className='h-12 w-12 text-gray-400' />
             <div className='text-left'>
-              <p className='font-medium text-gray-900'>{fileName}.pdf</p>
+              <p className='font-medium text-gray-900'>{filename}.pdf</p>
               <p className='text-xs text-gray-500'>
                 {FormatChemicalDate(new Date())}
               </p>
@@ -70,7 +70,7 @@ const DownloadPDFModal = ({ chemicals, selected, openModal, setOpenModal }) => {
                   href={url}
                   target='_blank'
                   rel='noreferrer'
-                  download={fileName}
+                  download={filename}
                 >
                   <button className='button button-solid mt-6 w-full justify-center'>
                     <DownloadIcon className='mr-2 h-5 w-5 stroke-2' />

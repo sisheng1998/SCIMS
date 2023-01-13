@@ -17,6 +17,7 @@ const EditSystemConfigModal = ({
   const divRef = useRef(null)
 
   const [duration, setDuration] = useState(settings.DAY_BEFORE_EXP)
+  const [backupTTL, setBackupTTL] = useState(settings.BACKUP_TTL)
 
   const [allowed, setAllowed] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -29,6 +30,7 @@ const EditSystemConfigModal = ({
       const newSettings = {
         ...settings,
         DAY_BEFORE_EXP: duration,
+        BACKUP_TTL: backupTTL,
       }
       await axiosPrivate.put('/api/admin/settings', newSettings)
       setSuccess(true)
@@ -43,8 +45,13 @@ const EditSystemConfigModal = ({
 
   useEffect(() => {
     setErrorMessage('')
-    setAllowed(duration >= 5 && duration !== settings.DAY_BEFORE_EXP)
-  }, [duration, settings.DAY_BEFORE_EXP])
+    setAllowed(
+      duration >= 5 &&
+        backupTTL >= 7 &&
+        (duration !== settings.DAY_BEFORE_EXP ||
+          backupTTL !== settings.BACKUP_TTL)
+    )
+  }, [duration, settings.DAY_BEFORE_EXP, backupTTL, settings.BACKUP_TTL])
 
   const closeHandler = () => {
     setErrorMessage('')
@@ -110,30 +117,59 @@ const EditSystemConfigModal = ({
                 spellCheck='false'
                 autoComplete='off'
               >
-                <label htmlFor='duration' className='required-input-label'>
-                  Duration Before Chemical Expired
-                </label>
-                <div className='flex items-stretch'>
-                  <input
-                    className='z-[1] w-full rounded-r-none'
-                    type='number'
-                    min='5'
-                    step='1'
-                    id='duration'
-                    placeholder='Enter duration'
-                    required
-                    value={duration}
-                    onChange={(e) => setDuration(Number(e.target.value))}
-                    onWheel={(e) => e.target.blur()}
-                  />
-                  <p className='flex w-20 flex-shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-gray-300 bg-gray-50 text-gray-500 shadow-sm'>
-                    Days
+                <div>
+                  <label htmlFor='duration' className='required-input-label'>
+                    Duration Before Chemical Expired
+                  </label>
+                  <div className='flex items-stretch'>
+                    <input
+                      className='z-[1] w-full rounded-r-none'
+                      type='number'
+                      min='5'
+                      step='1'
+                      id='duration'
+                      placeholder='Enter duration'
+                      required
+                      value={duration}
+                      onChange={(e) => setDuration(Number(e.target.value))}
+                      onWheel={(e) => e.target.blur()}
+                    />
+                    <p className='flex w-20 flex-shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-gray-300 bg-gray-50 text-gray-500 shadow-sm'>
+                      Days
+                    </p>
+                  </div>
+                  <p className='mt-2 text-xs text-gray-400'>
+                    To get notified and change the status of the chemical to
+                    "Expiring Soon". Minimum: 5 days.
                   </p>
                 </div>
-                <p className='mt-2 text-xs text-gray-400'>
-                  To get notified and change the status of the chemical to
-                  "Expiring Soon".
-                </p>
+
+                <div className='mt-6'>
+                  <label htmlFor='backup-ttl' className='required-input-label'>
+                    Auto Backup Retention Period
+                  </label>
+                  <div className='flex items-stretch'>
+                    <input
+                      className='z-[1] w-full rounded-r-none'
+                      type='number'
+                      min='7'
+                      step='1'
+                      id='backup-ttl'
+                      placeholder='Enter retention period'
+                      required
+                      value={backupTTL}
+                      onChange={(e) => setBackupTTL(Number(e.target.value))}
+                      onWheel={(e) => e.target.blur()}
+                    />
+                    <p className='flex w-20 flex-shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-gray-300 bg-gray-50 text-gray-500 shadow-sm'>
+                      Days
+                    </p>
+                  </div>
+                  <p className='mt-2 text-xs text-gray-400'>
+                    The maximum days for auto backups to be kept. Minimum: 7
+                    days.
+                  </p>
+                </div>
 
                 <div className='mt-9 flex items-center justify-end'>
                   <span

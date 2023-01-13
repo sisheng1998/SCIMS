@@ -6,7 +6,7 @@ import FILE_PATH from '../../../config/file_path'
 const StaticUserInfo = ({ user }) => {
   const name = user.name
   const imageSrc = user.avatar
-    ? FILE_PATH.avatar + user.avatar
+    ? FILE_PATH.avatars + user.avatar
     : GetLetterPicture(name)
   const avatarInfo = { name, imageSrc }
 

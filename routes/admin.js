@@ -3,6 +3,7 @@ const router = express.Router()
 
 const ROLES_LIST = require('../config/roles_list')
 const verifyRoles = require('../middleware/verifyRoles')
+const { uploadBackup } = require('../middleware/uploadFile')
 
 const {
   getInfo,
@@ -12,6 +13,11 @@ const {
   updateLab,
   removeLab,
   getUsers,
+  getBackups,
+  createBackup,
+  restoreBackup,
+  uploadAndRestoreBackup,
+  deleteBackup,
   getSettings,
   updateSettings,
   sendTestEmail,
@@ -31,6 +37,23 @@ router.route('/lab').delete(verifyRoles(ROLES_LIST.admin), removeLab)
 
 // Users
 router.route('/users').get(verifyRoles(ROLES_LIST.admin), getUsers)
+
+// Backup / Restore
+router.route('/backups').get(verifyRoles(ROLES_LIST.admin), getBackups)
+router.route('/backup/create').post(verifyRoles(ROLES_LIST.admin), createBackup)
+router
+  .route('/backup/restore')
+  .post(verifyRoles(ROLES_LIST.admin), restoreBackup)
+router
+  .route('/backup/upload-and-restore')
+  .post(
+    verifyRoles(ROLES_LIST.admin),
+    uploadBackup.single('backup'),
+    uploadAndRestoreBackup
+  )
+router
+  .route('/backup/delete')
+  .delete(verifyRoles(ROLES_LIST.admin), deleteBackup)
 
 // Setting
 router.route('/settings').get(verifyRoles(ROLES_LIST.admin), getSettings)

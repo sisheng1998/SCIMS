@@ -222,7 +222,7 @@ const TicketsTable = ({ tickets, isResolved }) => {
                   ) : (
                     currentItems.map((ticket) => {
                       const imageSrc = ticket.user.avatar
-                        ? FILE_PATH.avatar + ticket.user.avatar
+                        ? FILE_PATH.avatars + ticket.user.avatar
                         : GetLetterPicture(ticket.userName)
 
                       let classes
