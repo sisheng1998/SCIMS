@@ -7,6 +7,7 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/outline'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
+import LoadingButtonText from '../../components/LoadingButtonText'
 
 const SendTestEmailModal = ({ emailConfig, openModal, setOpenModal }) => {
   const { auth } = useAuth()
@@ -14,12 +15,15 @@ const SendTestEmailModal = ({ emailConfig, openModal, setOpenModal }) => {
   const divRef = useRef(null)
 
   const [testEmail, setTestEmail] = useState(auth.email)
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const sendTestEmailHandler = async (e) => {
     e.preventDefault()
+
     setErrorMessage('')
+    setIsLoading(true)
 
     try {
       await axiosPrivate.put('/api/admin/settings/test-email', {
@@ -34,6 +38,8 @@ const SendTestEmailModal = ({ emailConfig, openModal, setOpenModal }) => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   const closeHandler = () => {
@@ -128,8 +134,12 @@ const SendTestEmailModal = ({ emailConfig, openModal, setOpenModal }) => {
                   >
                     Cancel
                   </span>
-                  <button className='ml-6 w-40' type='submit'>
-                    Send
+                  <button
+                    className='ml-6 flex w-40 items-center justify-center'
+                    type='submit'
+                    disabled={testEmail === '' || isLoading}
+                  >
+                    {isLoading ? <LoadingButtonText /> : 'Send'}
                   </button>
                 </div>
               </form>

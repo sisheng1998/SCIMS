@@ -10,6 +10,7 @@ import UserSearchableSelect from '../../../utils/SearchableSelect'
 import LabNameField from '../../../validations/LabNameField'
 import FormatDate from '../../../utils/FormatDate'
 import StaticLabInfo from '../../components/StaticLabInfo'
+import LoadingButtonText from '../../components/LoadingButtonText'
 
 const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
   const axiosPrivate = useAxiosPrivate()
@@ -24,6 +25,7 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
   const [allowed, setAllowed] = useState(false)
   const [success, setSuccess] = useState(false)
   const [isRemove, setIsRemove] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const chemicalsNo = lab.chemicals.length + lab.disposedChemicals.length
@@ -34,6 +36,9 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
   const editLabHandler = async (e) => {
     e.preventDefault()
 
+    setErrorMessage('')
+    setIsLoading(true)
+
     if (isRemove) {
       try {
         await axiosPrivate.delete('/api/admin/lab', {
@@ -41,6 +46,7 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
             labId,
           },
         })
+
         setSuccess(true)
       } catch (error) {
         if (error.response?.status === 500) {
@@ -57,6 +63,7 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
           labName,
           status,
         })
+
         setSuccess(true)
       } catch (error) {
         if (error.response?.status === 409) {
@@ -68,6 +75,8 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
         }
       }
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -283,8 +292,12 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
                     >
                       Cancel
                     </span>
-                    <button className='button-red ml-6 w-40' type='submit'>
-                      Remove
+                    <button
+                      className='button-red ml-6 flex w-40 items-center justify-center'
+                      type='submit'
+                      disabled={isLoading}
+                    >
+                      {isLoading ? <LoadingButtonText /> : 'Remove'}
                     </button>
                   </div>
                 ) : (
@@ -305,11 +318,11 @@ const EditLabModal = ({ lab, isEdit, openModal, setOpenModal, users }) => {
                     </span>
                     {isEdit && (
                       <button
-                        className='ml-6 w-40'
+                        className='ml-6 flex w-40 items-center justify-center'
                         type='submit'
-                        disabled={!allowed}
+                        disabled={!allowed || isLoading}
                       >
-                        Update
+                        {isLoading ? <LoadingButtonText /> : 'Update'}
                       </button>
                     )}
                   </div>

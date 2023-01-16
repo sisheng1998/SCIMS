@@ -9,6 +9,7 @@ import {
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import LabNameField from '../../../validations/LabNameField'
 import RegisterNewUser from '../../components/RegisterNewUser'
+import LoadingButtonText from '../../components/LoadingButtonText'
 
 const AddLabModal = ({ users, openModal, setOpenModal }) => {
   const axiosPrivate = useAxiosPrivate()
@@ -27,11 +28,15 @@ const AddLabModal = ({ users, openModal, setOpenModal }) => {
 
   const [allowed, setAllowed] = useState(false)
   const [selectUser, setSelectUser] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const addLabHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     try {
       if (selectUser) {
@@ -46,6 +51,7 @@ const AddLabModal = ({ users, openModal, setOpenModal }) => {
           labName,
         })
       }
+
       setSuccess(true)
     } catch (error) {
       if (error.response?.status === 409) {
@@ -60,6 +66,8 @@ const AddLabModal = ({ users, openModal, setOpenModal }) => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -241,8 +249,12 @@ const AddLabModal = ({ users, openModal, setOpenModal }) => {
                   >
                     Cancel
                   </span>
-                  <button className='w-40' type='submit' disabled={!allowed}>
-                    Add Lab
+                  <button
+                    className='flex w-40 items-center justify-center'
+                    type='submit'
+                    disabled={!allowed || isLoading}
+                  >
+                    {isLoading ? <LoadingButtonText /> : 'Add Lab'}
                   </button>
                 </div>
               </form>

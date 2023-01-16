@@ -6,6 +6,7 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/outline'
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
+import LoadingButtonText from '../../components/LoadingButtonText'
 
 const EditSystemConfigModal = ({
   settings,
@@ -21,10 +22,14 @@ const EditSystemConfigModal = ({
 
   const [allowed, setAllowed] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const editEmailConfigHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     try {
       const newSettings = {
@@ -41,6 +46,8 @@ const EditSystemConfigModal = ({
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -179,11 +186,11 @@ const EditSystemConfigModal = ({
                     Cancel
                   </span>
                   <button
-                    className='ml-6 w-40'
+                    className='ml-6 flex w-40 items-center justify-center'
                     type='submit'
-                    disabled={!allowed}
+                    disabled={!allowed || isLoading}
                   >
-                    Update
+                    {isLoading ? <LoadingButtonText /> : 'Update'}
                   </button>
                 </div>
               </form>

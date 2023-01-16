@@ -8,6 +8,7 @@ import {
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
 import ViewPasswordToggle from '../../../utils/ViewPasswordToggle'
 import SendTestEmailModal from './SendTestEmailModal'
+import LoadingButtonText from '../../components/LoadingButtonText'
 
 const EditEmailConfigModal = ({
   settings,
@@ -25,11 +26,15 @@ const EditEmailConfigModal = ({
 
   const [allowed, setAllowed] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [openSendTestEmailModal, setOpenSendTestEmailModal] = useState(false)
 
   const editEmailConfigHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     try {
       const newSettings = {
@@ -48,6 +53,8 @@ const EditEmailConfigModal = ({
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -235,11 +242,11 @@ const EditEmailConfigModal = ({
                     Cancel
                   </span>
                   <button
-                    className='ml-6 w-40'
+                    className='ml-6 flex w-40 items-center justify-center'
                     type='submit'
-                    disabled={!allowed}
+                    disabled={!allowed || isLoading}
                   >
-                    Update
+                    {isLoading ? <LoadingButtonText /> : 'Update'}
                   </button>
                 </div>
               </form>
