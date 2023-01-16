@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import USMEmailField from '../validations/USMEmailField'
 import LoginPasswordField from '../validations/LoginPasswordField'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
+import LoadingButtonText from '../app/components/LoadingButtonText'
 
 const Login = () => {
   const { setAuth } = useAuth()
@@ -18,11 +19,14 @@ const Login = () => {
   const [passwordValidated, setPasswordValidated] = useState(false)
 
   const [errorMessage, setErrorMessage] = useState('')
-
+  const [isLoading, setIsLoading] = useState(false)
   const [allowed, setAllowed] = useState(false)
 
   const loginHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     const config = {
       headers: {
@@ -75,6 +79,8 @@ const Login = () => {
       } else {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
+
+      setIsLoading(false)
     }
   }
 
@@ -141,8 +147,12 @@ const Login = () => {
             </Link>
           </div>
 
-          <button className='mt-6 w-full' type='submit' disabled={!allowed}>
-            Login
+          <button
+            className='mt-6 flex w-full items-center justify-center'
+            type='submit'
+            disabled={!allowed || isLoading}
+          >
+            {isLoading ? <LoadingButtonText /> : 'Login'}
           </button>
         </form>
       </div>

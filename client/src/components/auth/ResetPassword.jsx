@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useParams, Link } from 'react-router-dom'
 import StrongPasswordField from '../validations/StrongPasswordField'
 import { ExclamationCircleIcon, CheckIcon } from '@heroicons/react/outline'
+import LoadingButtonText from '../app/components/LoadingButtonText'
 
 const ResetPassword = () => {
   const params = useParams()
@@ -12,10 +13,14 @@ const ResetPassword = () => {
   const [passwordValidated, setPasswordValidated] = useState(false)
 
   const [errorMessage, setErrorMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
 
   const resetPasswordHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     const config = {
       headers: {
@@ -34,6 +39,8 @@ const ResetPassword = () => {
     } catch (error) {
       setErrorMessage('Reset password link expired. Kindly request again.')
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -75,11 +82,11 @@ const ResetPassword = () => {
               />
 
               <button
-                className='mt-3 w-full'
+                className='mt-9 flex w-full items-center justify-center'
                 type='submit'
-                disabled={!passwordValidated}
+                disabled={!passwordValidated || isLoading}
               >
-                Reset Password
+                {isLoading ? <LoadingButtonText /> : 'Reset Password'}
               </button>
             </form>
           </div>

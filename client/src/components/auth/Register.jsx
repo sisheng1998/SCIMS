@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import USMEmailField from '../validations/USMEmailField'
 import StrongPasswordField from '../validations/StrongPasswordField'
 import { ExclamationCircleIcon, CheckIcon } from '@heroicons/react/outline'
+import LoadingButtonText from '../app/components/LoadingButtonText'
 
 const Register = () => {
   const [email, setEmail] = useState('')
@@ -14,11 +15,15 @@ const Register = () => {
   const [passwordValidated, setPasswordValidated] = useState(false)
 
   const [allowed, setAllowed] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const registerHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     const config = {
       headers: {
@@ -38,6 +43,8 @@ const Register = () => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -101,8 +108,12 @@ const Register = () => {
               setValidated={setPasswordValidated}
             />
 
-            <button className='mt-3 w-full' type='submit' disabled={!allowed}>
-              Register
+            <button
+              className='mt-9 flex w-full items-center justify-center'
+              type='submit'
+              disabled={!allowed || isLoading}
+            >
+              {isLoading ? <LoadingButtonText /> : 'Register'}
             </button>
             <p className='mt-4 text-center text-sm'>
               Click 'Register' to proceed and verify your email.

@@ -7,6 +7,7 @@ import {
   ArrowLeftIcon,
 } from '@heroicons/react/outline'
 import USMEmailField from '../../components/validations/USMEmailField'
+import LoadingButtonText from '../app/components/LoadingButtonText'
 
 const ChangeEmail = () => {
   const navigate = useNavigate()
@@ -24,6 +25,7 @@ const ChangeEmail = () => {
   const [USMEmailValidated, setUSMEmailValidated] = useState(false)
 
   const [allowed, setAllowed] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -34,6 +36,9 @@ const ChangeEmail = () => {
 
   const changeEmailHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     const config = {
       headers: {
@@ -53,6 +58,8 @@ const ChangeEmail = () => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   return (
@@ -111,8 +118,12 @@ const ChangeEmail = () => {
                 setValidated={setUSMEmailValidated}
               />
 
-              <button className='mt-3 w-full' type='submit' disabled={!allowed}>
-                Change
+              <button
+                className='mt-9 flex w-full items-center justify-center'
+                type='submit'
+                disabled={!allowed || isLoading}
+              >
+                {isLoading ? <LoadingButtonText /> : 'Change'}
               </button>
             </form>
           </div>

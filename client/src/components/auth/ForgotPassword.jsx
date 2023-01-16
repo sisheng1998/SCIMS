@@ -4,16 +4,21 @@ import axios from 'axios'
 import { Link } from 'react-router-dom'
 import USMEmailField from '../validations/USMEmailField'
 import { ExclamationCircleIcon, CheckIcon } from '@heroicons/react/outline'
+import LoadingButtonText from '../app/components/LoadingButtonText'
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('')
   const [emailValidated, setEmailValidated] = useState(false)
 
   const [errorMessage, setErrorMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
 
   const forgotPasswordHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     const config = {
       headers: {
@@ -23,7 +28,6 @@ const ForgotPassword = () => {
 
     try {
       await axios.post('/api/auth/forgot-password', { email }, config)
-
       setSuccess(true)
     } catch (error) {
       if (error.response?.status === 404) {
@@ -32,6 +36,8 @@ const ForgotPassword = () => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -90,11 +96,11 @@ const ForgotPassword = () => {
               />
 
               <button
-                className='mt-3 w-full'
+                className='mt-9 flex w-full items-center justify-center'
                 type='submit'
-                disabled={!emailValidated}
+                disabled={!emailValidated || isLoading}
               >
-                Send
+                {isLoading ? <LoadingButtonText /> : 'Send'}
               </button>
             </form>
           </div>
