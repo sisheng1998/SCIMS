@@ -8,6 +8,7 @@ import {
 } from '@heroicons/react/outline'
 import useAuth from '../../../hooks/useAuth'
 import LabSelectionField from '../../validations/LabSelectionField'
+import LoadingButtonText from '../components/LoadingButtonText'
 
 const ApplyNewLabModal = ({ openModal, setOpenModal }) => {
   const { auth } = useAuth()
@@ -18,6 +19,7 @@ const ApplyNewLabModal = ({ openModal, setOpenModal }) => {
   const [labValidated, setLabValidated] = useState(false)
 
   const [allowed, setAllowed] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -27,6 +29,9 @@ const ApplyNewLabModal = ({ openModal, setOpenModal }) => {
 
   const applyNewLabHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     const config = {
       headers: {
@@ -46,6 +51,8 @@ const ApplyNewLabModal = ({ openModal, setOpenModal }) => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   const closeHandler = () => {
@@ -129,11 +136,11 @@ const ApplyNewLabModal = ({ openModal, setOpenModal }) => {
                     Cancel
                   </span>
                   <button
-                    className='w-40 lg:w-32'
+                    className='flex w-40 items-center justify-center lg:w-32'
                     type='submit'
-                    disabled={!allowed}
+                    disabled={!allowed || isLoading}
                   >
-                    Apply
+                    {isLoading ? <LoadingButtonText /> : 'Apply'}
                   </button>
                 </div>
               </form>
