@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
 import useLogout from '../../hooks/useLogout'
 import { LogoutIcon, ExclamationIcon } from '@heroicons/react/outline'
+import LoadingScreen from '../utils/LoadingScreen'
 
 const PendingApproval = () => {
   const navigate = useNavigate()
@@ -23,7 +24,11 @@ const PendingApproval = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  return isLoading ? null : (
+  return isLoading ? (
+    <div className='auth-card mt-8'>
+      <LoadingScreen />
+    </div>
+  ) : (
     <>
       <div className='auth-card mt-8 text-center'>
         <ExclamationIcon className='mx-auto mb-6 h-16 w-16 rounded-full bg-yellow-100 p-2 text-yellow-600' />

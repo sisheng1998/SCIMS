@@ -9,6 +9,7 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/outline'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
+import LoadingButtonText from '../components/LoadingButtonText'
 
 const EditPersonalInfoModal = ({
   user,
@@ -28,11 +29,15 @@ const EditPersonalInfoModal = ({
   const [altEmailValidated, setAltEmailValidated] = useState(false)
 
   const [allowed, setAllowed] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const submitHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     try {
       await axiosPrivate.post('/api/private/profile', {
@@ -52,6 +57,8 @@ const EditPersonalInfoModal = ({
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -178,11 +185,11 @@ const EditPersonalInfoModal = ({
                     Cancel
                   </span>
                   <button
-                    className='ml-6 w-40 lg:w-32'
+                    className='ml-6 flex w-40 items-center justify-center lg:w-32'
                     type='submit'
-                    disabled={!allowed}
+                    disabled={!allowed || isLoading}
                   >
-                    Update
+                    {isLoading ? <LoadingButtonText /> : 'Update'}
                   </button>
                 </div>
               </form>

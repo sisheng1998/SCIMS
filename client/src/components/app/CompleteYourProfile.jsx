@@ -14,6 +14,7 @@ import AltEmailField from '../validations/AltEmailField'
 import ImageDropZone from './components/ImageDropZone'
 import RenderImage from './components/RenderImage'
 import SampleImages from './components/SampleImages'
+import LoadingButtonText from './components/LoadingButtonText'
 
 const CompleteYourProfile = () => {
   const { auth } = useAuth()
@@ -35,12 +36,15 @@ const CompleteYourProfile = () => {
 
   const [allowed, setAllowed] = useState(false)
 
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const completeProfileHandler = async (e) => {
     e.preventDefault()
+
     setErrorMessage('')
+    setIsLoading(true)
 
     const profileData = {
       matricNo,
@@ -70,6 +74,8 @@ const CompleteYourProfile = () => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -198,8 +204,12 @@ const CompleteYourProfile = () => {
               showValidated={true}
             />
 
-            <button className='mt-3 w-full' type='submit' disabled={!allowed}>
-              Submit
+            <button
+              className='mt-9 flex w-full items-center justify-center'
+              type='submit'
+              disabled={!allowed || isLoading}
+            >
+              {isLoading ? <LoadingButtonText /> : 'Submit'}
             </button>
 
             {errorMessage && (

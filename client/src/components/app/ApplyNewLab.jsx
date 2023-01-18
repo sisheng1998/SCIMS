@@ -11,6 +11,7 @@ import {
 } from '@heroicons/react/outline'
 import LabSelectionField from '../validations/LabSelectionField'
 import LoadingScreen from '../utils/LoadingScreen'
+import LoadingButtonText from './components/LoadingButtonText'
 
 const PendingApproval = () => {
   const navigate = useNavigate()
@@ -23,6 +24,7 @@ const PendingApproval = () => {
   const [labValidated, setLabValidated] = useState(false)
 
   const [allowed, setAllowed] = useState(false)
+  const [isButtonLoading, setIsButtonLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -46,6 +48,9 @@ const PendingApproval = () => {
   const applyNewLabHandler = async (e) => {
     e.preventDefault()
 
+    setErrorMessage('')
+    setIsButtonLoading(true)
+
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -62,6 +67,8 @@ const PendingApproval = () => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsButtonLoading(false)
   }
 
   return isLoading ? (
@@ -127,8 +134,12 @@ const PendingApproval = () => {
                 setValidated={setLabValidated}
               />
 
-              <button className='mt-3 w-full' type='submit' disabled={!allowed}>
-                Send Request
+              <button
+                className='mt-9 flex w-full items-center justify-center'
+                type='submit'
+                disabled={!allowed || isButtonLoading}
+              >
+                {isButtonLoading ? <LoadingButtonText /> : 'Send Request'}
               </button>
             </form>
           </>

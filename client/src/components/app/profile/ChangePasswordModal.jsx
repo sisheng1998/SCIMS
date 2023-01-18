@@ -9,6 +9,7 @@ import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import LoginPasswordField from '../../validations/LoginPasswordField'
 import StrongPasswordField from '../../validations/StrongPasswordField'
 import useLogout from '../../../hooks/useLogout'
+import LoadingButtonText from '../components/LoadingButtonText'
 
 const ChangePasswordModal = ({ openModal, setOpenModal }) => {
   const axiosPrivate = useAxiosPrivate()
@@ -23,11 +24,15 @@ const ChangePasswordModal = ({ openModal, setOpenModal }) => {
   const [newPasswordValidated, setNewPasswordValidated] = useState(false)
 
   const [allowed, setAllowed] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const submitHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     try {
       await axiosPrivate.post('/api/private/profile/password', {
@@ -44,6 +49,8 @@ const ChangePasswordModal = ({ openModal, setOpenModal }) => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -160,11 +167,11 @@ const ChangePasswordModal = ({ openModal, setOpenModal }) => {
                     Cancel
                   </span>
                   <button
-                    className='ml-6 w-40 lg:w-32'
+                    className='ml-6 flex w-40 items-center justify-center lg:w-32'
                     type='submit'
-                    disabled={!allowed}
+                    disabled={!allowed || isLoading}
                   >
-                    Change
+                    {isLoading ? <LoadingButtonText /> : 'Change'}
                   </button>
                 </div>
               </form>

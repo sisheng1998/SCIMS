@@ -9,17 +9,23 @@ import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import ImageDropZone from '../components/ImageDropZone'
 import RenderImage from '../components/RenderImage'
 import SampleImages from '../components/SampleImages'
+import LoadingButtonText from '../components/LoadingButtonText'
 
 const UpdateAvatarModal = ({ openModal, setOpenModal }) => {
   const axiosPrivate = useAxiosPrivate()
   const divRef = useRef(null)
 
   const [image, setImage] = useState('')
+
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const submitHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     const formData = new FormData()
     formData.append('avatar', image)
@@ -34,6 +40,8 @@ const UpdateAvatarModal = ({ openModal, setOpenModal }) => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   const closeHandler = () => {
@@ -127,11 +135,11 @@ const UpdateAvatarModal = ({ openModal, setOpenModal }) => {
                     Cancel
                   </span>
                   <button
-                    className='ml-6 w-40 lg:w-32'
+                    className='ml-6 flex w-40 items-center justify-center lg:w-32'
                     type='submit'
-                    disabled={!image}
+                    disabled={!image || isLoading}
                   >
-                    Update
+                    {isLoading ? <LoadingButtonText /> : 'Update'}
                   </button>
                 </div>
               </form>

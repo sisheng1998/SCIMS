@@ -8,8 +8,9 @@ import {
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import USMEmailField from '../../validations/USMEmailField'
 import useLogout from '../../../hooks/useLogout'
+import LoadingButtonText from '../components/LoadingButtonText'
 
-const ChangePasswordModal = ({ user, openModal, setOpenModal }) => {
+const ChangeEmailModal = ({ user, openModal, setOpenModal }) => {
   const axiosPrivate = useAxiosPrivate()
   const logout = useLogout()
   const divRef = useRef(null)
@@ -18,11 +19,15 @@ const ChangePasswordModal = ({ user, openModal, setOpenModal }) => {
   const [USMEmailValidated, setUSMEmailValidated] = useState(false)
 
   const [allowed, setAllowed] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const submitHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     try {
       await axiosPrivate.post('/api/private/profile/email', {
@@ -38,6 +43,8 @@ const ChangePasswordModal = ({ user, openModal, setOpenModal }) => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -136,11 +143,11 @@ const ChangePasswordModal = ({ user, openModal, setOpenModal }) => {
                     Cancel
                   </span>
                   <button
-                    className='ml-6 w-40 lg:w-32'
+                    className='ml-6 flex w-40 items-center justify-center lg:w-32'
                     type='submit'
-                    disabled={!allowed}
+                    disabled={!allowed || isLoading}
                   >
-                    Change
+                    {isLoading ? <LoadingButtonText /> : 'Change'}
                   </button>
                 </div>
               </form>
@@ -152,4 +159,4 @@ const ChangePasswordModal = ({ user, openModal, setOpenModal }) => {
   )
 }
 
-export default ChangePasswordModal
+export default ChangeEmailModal
