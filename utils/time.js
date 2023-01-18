@@ -1,4 +1,4 @@
-const getDateString = () => {
+const getDateString = (dateOnly = false) => {
   const today = new Date()
 
   const year = today.getFullYear()
@@ -8,8 +8,11 @@ const getDateString = () => {
   const minutes = String(today.getMinutes()).padStart(2, '0')
   const seconds = String(today.getSeconds()).padStart(2, '0')
 
-  const date = `${year}${month}${day}-${hours}${minutes}${seconds}`
-  return date
+  const date = `${year}${month}${day}`
+  const time = `${hours}${minutes}${seconds}`
+
+  const dateString = dateOnly ? date : `${date}-${time}`
+  return dateString
 }
 
 const duration = {

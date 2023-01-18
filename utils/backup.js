@@ -17,7 +17,7 @@ const isLiveSite = false // Change this for live site or dev site
 const backupDatabase = (type = 'auto', isSync = false, resolve) => {
   const DB_NAME = isLiveSite ? 'app' : 'dev'
   const URI = process.env.MONGO_URI
-  const DATE = getDateString()
+  const DATE = getDateString(type.toLowerCase() === 'auto')
   const FILE_NAME = `${DATE}_scims-backup.gz`
   const ARCHIVE_PATH = path.resolve(
     __dirname,
