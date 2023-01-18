@@ -6,6 +6,7 @@ import {
 } from '@heroicons/react/outline'
 import useAxiosPrivate from '../../../../../hooks/useAxiosPrivate'
 import useAuth from '../../../../../hooks/useAuth'
+import LoadingButtonText from '../../../components/LoadingButtonText'
 
 const ImportChemicals = ({
   CSV,
@@ -80,25 +81,7 @@ const ImportChemicals = ({
         disabled={isLoading || !allValidated}
       >
         {isLoading ? (
-          <>
-            Loading
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-              aria-hidden='true'
-              className='ml-2 h-4 w-4 animate-spin stroke-2'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
-                className='origin-center -scale-x-100'
-              ></path>
-            </svg>
-          </>
+          <LoadingButtonText />
         ) : (
           <>
             Import {processedData.length} Chemical

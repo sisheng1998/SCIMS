@@ -16,11 +16,11 @@ const CSVTable = ({ data }) => {
       <div className='max-h-96 overflow-x-auto'>
         <div className='border-b border-gray-200'>
           <table className='min-w-full whitespace-nowrap'>
-            <thead className='sticky top-0 bg-gray-50'>
+            <thead className='sticky top-0 z-[2] bg-gray-50'>
               <tr className='sticky-border-b'>
                 <th
                   scope='col'
-                  className='px-3 py-2 text-left font-medium text-gray-500'
+                  className='sticky-border-br sticky left-0 bg-gray-50 px-3 py-2 text-left font-medium text-gray-500'
                 >
                   No.
                 </th>
@@ -38,8 +38,10 @@ const CSVTable = ({ data }) => {
 
             <tbody className='divide-y divide-gray-200 bg-white'>
               {data.map((chemical, index) => (
-                <tr key={index} className='hover:bg-indigo-50/30'>
-                  <td className='px-3 py-2'>{index + 1}</td>
+                <tr key={index} className='group hover:bg-indigo-50/30'>
+                  <td className='sticky-border-r sticky left-0 z-[1] bg-white px-3 py-2 group-hover:bg-[#fafbff]'>
+                    {index + 1}
+                  </td>
 
                   {tableHeaders.map((key, index) => (
                     <td key={index} className='px-3 py-2'>
