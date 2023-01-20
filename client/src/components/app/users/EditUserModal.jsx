@@ -10,6 +10,7 @@ import ROLES_LIST from '../../../config/roles_list'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import FormatDate from '../../utils/FormatDate'
 import StaticUserInfo from '../components/StaticUserInfo'
+import LoadingButtonText from '../components/LoadingButtonText'
 
 const getKeyByValue = (value) =>
   Object.keys(ROLES_LIST).find((key) => ROLES_LIST[key] === value)
@@ -31,12 +32,16 @@ const EditUserModal = ({
   const [role, setRole] = useState(getKeyByValue(user.roleValue))
 
   const [allowed, setAllowed] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [isRemove, setIsRemove] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const editUserHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     if (isRemove) {
       try {
@@ -71,6 +76,8 @@ const EditUserModal = ({
         }
       }
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -280,8 +287,12 @@ const EditUserModal = ({
                     >
                       Cancel
                     </span>
-                    <button className='button-red ml-6 w-40' type='submit'>
-                      Remove
+                    <button
+                      className='button-red ml-6 flex w-40 items-center justify-center'
+                      type='submit'
+                      disabled={isLoading}
+                    >
+                      {isLoading ? <LoadingButtonText /> : 'Remove'}
                     </button>
                   </div>
                 ) : (
@@ -302,11 +313,11 @@ const EditUserModal = ({
                     </span>
                     {isEdit && (
                       <button
-                        className='ml-6 w-40'
+                        className='ml-6 flex w-40 items-center justify-center'
                         type='submit'
-                        disabled={!allowed}
+                        disabled={!allowed || isLoading}
                       >
-                        Update
+                        {isLoading ? <LoadingButtonText /> : 'Update'}
                       </button>
                     )}
                   </div>

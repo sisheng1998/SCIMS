@@ -10,6 +10,7 @@ import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import RegisterNewUser from '../components/RegisterNewUser'
+import LoadingButtonText from '../components/LoadingButtonText'
 
 const AddUserModal = ({
   otherUsers,
@@ -34,12 +35,16 @@ const AddUserModal = ({
   const [passwordValidated, setPasswordValidated] = useState(false)
 
   const [allowed, setAllowed] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [selectUser, setSelectUser] = useState(true)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const addUserHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     try {
       if (selectUser) {
@@ -70,6 +75,8 @@ const AddUserModal = ({
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -250,8 +257,12 @@ const AddUserModal = ({
                   >
                     Cancel
                   </span>
-                  <button className='w-40' type='submit' disabled={!allowed}>
-                    Add User
+                  <button
+                    className='flex w-40 items-center justify-center'
+                    type='submit'
+                    disabled={!allowed || isLoading}
+                  >
+                    {isLoading ? <LoadingButtonText /> : 'Add User'}
                   </button>
                 </div>
               </form>

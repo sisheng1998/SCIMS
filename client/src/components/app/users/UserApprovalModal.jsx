@@ -10,6 +10,7 @@ import ROLES_LIST from '../../../config/roles_list'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import FormatDate from '../../utils/FormatDate'
 import StaticUserInfo from '../components/StaticUserInfo'
+import LoadingButtonText from '../components/LoadingButtonText'
 
 const getKeyByValue = (value) =>
   Object.keys(ROLES_LIST).find((key) => ROLES_LIST[key] === value)
@@ -30,11 +31,21 @@ const UserApprovalModal = ({
   const [message, setMessage] = useState('')
   const [approve, setApprove] = useState(false)
 
+  const [isAcceptLoading, setIsAcceptLoading] = useState(false)
+  const [isDeclineLoading, setIsDeclineLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const userApprovalHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+
+    if (approve) {
+      setIsAcceptLoading(true)
+    } else {
+      setIsDeclineLoading(true)
+    }
 
     try {
       await axiosPrivate.post('/api/private/user/approval', {
@@ -52,6 +63,9 @@ const UserApprovalModal = ({
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsAcceptLoading(false)
+    setIsDeclineLoading(false)
   }
 
   const closeHandler = () => {
@@ -207,18 +221,20 @@ const UserApprovalModal = ({
 
                 <div className='flex items-center justify-end space-x-4'>
                   <button
-                    className='button-green-outline h-11 w-32'
+                    className='button-green-outline flex h-11 w-32 items-center justify-center'
                     type='submit'
                     onClick={() => setApprove(true)}
+                    disabled={isAcceptLoading || isDeclineLoading}
                   >
-                    Approve
+                    {isAcceptLoading ? <LoadingButtonText /> : 'Approve'}
                   </button>
                   <button
-                    className='button-red-outline h-11 w-32'
+                    className='button-red-outline flex h-11 w-32 items-center justify-center'
                     type='submit'
                     onClick={() => setApprove(false)}
+                    disabled={isAcceptLoading || isDeclineLoading}
                   >
-                    Decline
+                    {isDeclineLoading ? <LoadingButtonText /> : 'Decline'}
                   </button>
                 </div>
               </form>
