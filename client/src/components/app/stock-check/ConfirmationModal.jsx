@@ -3,6 +3,7 @@ import { Dialog } from '@headlessui/react'
 import { CheckIcon, ExclamationCircleIcon } from '@heroicons/react/outline'
 import useAuth from '../../../hooks/useAuth'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
+import LoadingButtonText from '../components/LoadingButtonText'
 
 const ConfirmationModal = ({
   action,
@@ -18,6 +19,8 @@ const ConfirmationModal = ({
 
   const labId = auth.currentLabId
   const storageName = labId + '_chemicals'
+
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -25,6 +28,8 @@ const ConfirmationModal = ({
     setErrorMessage('')
 
     if (action === 'complete') {
+      setIsLoading(true)
+
       const missingChemicals = auth.stockCheck.chemicals
         .filter(
           (chemicalItem) =>
@@ -67,6 +72,8 @@ const ConfirmationModal = ({
           setErrorMessage('Oops. Something went wrong. Please try again later.')
         }
       }
+
+      setIsLoading(false)
     } else {
       setSuccess(true)
     }
@@ -168,9 +175,10 @@ const ConfirmationModal = ({
                 </span>
                 <button
                   onClick={actionHandler}
-                  className='button button-solid ml-6 w-32 justify-center'
+                  className='button button-solid ml-6 flex w-32 items-center justify-center'
+                  disabled={isLoading}
                 >
-                  Yes
+                  {isLoading ? <LoadingButtonText /> : 'Yes'}
                 </button>
               </div>
             </>
