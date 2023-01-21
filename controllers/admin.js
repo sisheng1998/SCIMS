@@ -13,6 +13,8 @@ const fs = require('fs')
 const path = require('path')
 const { backupDatabaseSync, restoreDatabaseSync } = require('../utils/backup')
 
+const autoBackupPath = path.resolve(__dirname, '../public/backups/auto/')
+const manualBackupPath = path.resolve(__dirname, '../public/backups/manual/')
 const UserInfo =
   'name email altEmail avatar matricNo isEmailVerified createdAt lastUpdated roles.lab roles.role roles.status isAdmin isProfileNotCompleted'
 
@@ -55,6 +57,10 @@ exports.getInfo = async (req, res, next) => {
 
     const config = await Config.findOne({}, '-_id')
     data.dayBeforeExp = config.DAY_BEFORE_EXP
+
+    const autoBackups = fs.readdirSync(autoBackupPath).length
+    const manualBackups = fs.readdirSync(manualBackupPath).length
+    data.totalBackups = autoBackups + manualBackups
 
     res.status(200).json({
       success: true,
@@ -577,8 +583,6 @@ exports.getBackups = async (req, res, next) => {
     const autoBackups = []
     const manualBackups = []
 
-    const autoBackupPath = path.resolve(__dirname, '../public/backups/auto/')
-
     fs.readdirSync(autoBackupPath).forEach((file) => {
       if (path.extname(file) !== '.gz') return
 
@@ -593,11 +597,6 @@ exports.getBackups = async (req, res, next) => {
 
       autoBackups.push(backup)
     })
-
-    const manualBackupPath = path.resolve(
-      __dirname,
-      '../public/backups/manual/'
-    )
 
     fs.readdirSync(manualBackupPath).forEach((file) => {
       if (path.extname(file) !== '.gz') return

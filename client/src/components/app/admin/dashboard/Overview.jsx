@@ -1,6 +1,11 @@
 import React from 'react'
 import InfoCard from '../../components/InfoCard'
-import { UsersIcon, BeakerIcon, CubeIcon } from '@heroicons/react/outline'
+import {
+  UsersIcon,
+  BeakerIcon,
+  CubeIcon,
+  DatabaseIcon,
+} from '@heroicons/react/outline'
 
 const Overview = ({ info }) => {
   return (
@@ -37,6 +42,16 @@ const Overview = ({ info }) => {
           }
           text='Total Chemical'
           increment={info.newChemicals === 0 ? false : info.newChemicals}
+          haveLetterS={true}
+        />
+
+        <InfoCard
+          info={info.totalBackups}
+          icon={
+            <DatabaseIcon className='h-14 w-14 rounded-full bg-green-50 p-3 text-green-500' />
+          }
+          text='Total Backup'
+          increment={false}
           haveLetterS={true}
         />
       </div>
