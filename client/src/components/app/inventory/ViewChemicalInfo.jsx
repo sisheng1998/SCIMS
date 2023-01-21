@@ -17,6 +17,7 @@ import SuccessMessageModal from './components/SuccessMessageModal'
 import useMobile from '../../../hooks/useMobile'
 import SafetyAndSecuritySection from './components/SafetyAndSecuritySection'
 import { useNavigate } from 'react-router-dom'
+import LoadingButtonText from '../components/LoadingButtonText'
 
 const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
   const isMounted = useRef(true)
@@ -37,6 +38,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
   const [isDelete, setIsDelete] = useState(false)
 
   const [success, setSuccess] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [openModal, setOpenModal] = useState(false)
 
@@ -80,6 +82,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 
   const cancelDisposalHandler = async () => {
     setErrorMessage('')
+    setIsLoading(true)
 
     try {
       await axiosPrivate.post('/api/private/chemical/cancel-disposal', {
@@ -98,10 +101,13 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   const deleteHandler = async () => {
     setErrorMessage('')
+    setIsLoading(true)
 
     try {
       await axiosPrivate.post('/api/private/chemical/delete', {
@@ -120,6 +126,8 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   return (
@@ -432,10 +440,11 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
                         Cancel
                       </span>
                       <button
-                        className='button button-solid button-red ml-6 w-40 justify-center font-semibold'
+                        className='button button-solid button-red ml-6 flex w-40 items-center justify-center font-semibold'
                         onClick={deleteHandler}
+                        disabled={isLoading}
                       >
-                        Delete
+                        {isLoading ? <LoadingButtonText /> : 'Delete'}
                       </button>
                     </>
                   ) : (
@@ -448,10 +457,11 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
                       </span>
 
                       <button
-                        className='button button-outline w-60 justify-center px-4 py-[0.8125rem]'
+                        className='button button-outline flex w-60 items-center justify-center px-4 py-[0.8125rem]'
                         onClick={cancelDisposalHandler}
+                        disabled={isLoading}
                       >
-                        Cancel Disposal
+                        {isLoading ? <LoadingButtonText /> : 'Cancel Disposal'}
                       </button>
                     </>
                   )}

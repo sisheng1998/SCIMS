@@ -9,6 +9,7 @@ import SafetyAndSecuritySection from './components/SafetyAndSecuritySection'
 import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import SuccessMessageModal from './components/SuccessMessageModal'
+import LoadingButtonText from '../components/LoadingButtonText'
 
 const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
   useEffect(() => {
@@ -30,6 +31,7 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 
   const [errorMessage, setErrorMessage] = useState('')
   const [isDispose, setIsDispose] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [openModal, setOpenModal] = useState(false)
 
@@ -37,7 +39,9 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
 
   const submitHandler = async (e) => {
     e.preventDefault()
+
     setErrorMessage('')
+    setIsLoading(true)
 
     if (isDispose) {
       try {
@@ -73,6 +77,8 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
         }
       }
     }
+
+    setIsLoading(false)
   }
 
   return (
@@ -187,10 +193,11 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
                   Cancel
                 </span>
                 <button
-                  className='button button-solid button-red ml-6 w-40 justify-center text-lg font-semibold'
+                  className='button button-solid button-red ml-6 flex w-40 items-center justify-center text-lg font-semibold'
                   onClick={submitHandler}
+                  disabled={isLoading}
                 >
-                  Dispose
+                  {isLoading ? <LoadingButtonText /> : 'Dispose'}
                 </button>
               </div>
             ) : (
@@ -214,8 +221,12 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
                   Cancel
                 </span>
 
-                <button className='ml-6 w-40' type='submit' disabled={disabled}>
-                  Update
+                <button
+                  className='ml-6 flex w-40 items-center justify-center'
+                  type='submit'
+                  disabled={disabled || isLoading}
+                >
+                  {isLoading ? <LoadingButtonText /> : 'Update'}
                 </button>
               </div>
             )}

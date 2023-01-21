@@ -11,6 +11,7 @@ import FormatAmountWithUnit from '../../../utils/FormatAmountWithUnit'
 import NumberWithUnitField from '../../../validations/NumberWithUnitField'
 import FormatDate from '../../../utils/FormatDate'
 import useMobile from '../../../../hooks/useMobile'
+import LoadingButtonText from '../../components/LoadingButtonText'
 
 const ChemicalUsageModal = ({
   chemical,
@@ -40,11 +41,15 @@ const ChemicalUsageModal = ({
   const [usageValidated, setUsageValidated] = useState(false)
 
   const [allowed, setAllowed] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const submitHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     try {
       await axiosPrivate.post('/api/private/chemical/usage', {
@@ -53,6 +58,7 @@ const ChemicalUsageModal = ({
         usage,
         remark: ownUse ? '' : remark,
       })
+
       if (isMounted.current) {
         setSuccess(true)
       }
@@ -63,6 +69,8 @@ const ChemicalUsageModal = ({
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -329,11 +337,11 @@ const ChemicalUsageModal = ({
                     Cancel
                   </span>
                   <button
-                    className='ml-6 w-40 lg:w-32'
+                    className='ml-6 flex w-40 items-center justify-center lg:w-32'
                     type='submit'
-                    disabled={!allowed}
+                    disabled={!allowed || isLoading}
                   >
-                    Record
+                    {isLoading ? <LoadingButtonText /> : 'Record'}
                   </button>
                 </div>
               </form>

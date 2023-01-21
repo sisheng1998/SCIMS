@@ -11,6 +11,7 @@ import LoadingScreen from '../../utils/LoadingScreen'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
 import SuccessMessageModal from './components/SuccessMessageModal'
 import useMobile from '../../../hooks/useMobile'
+import LoadingButtonText from '../components/LoadingButtonText'
 
 const AddChemical = () => {
   const isMobile = useMobile()
@@ -20,6 +21,7 @@ const AddChemical = () => {
 
   const [labData, setLabData] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [isButtonLoading, setIsButtonLoading] = useState(false)
 
   useEffect(() => {
     if (isMobile) {
@@ -79,7 +81,9 @@ const AddChemical = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault()
+
     setErrorMessage('')
+    setIsButtonLoading(true)
 
     try {
       const formData = new FormData()
@@ -100,6 +104,8 @@ const AddChemical = () => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsButtonLoading(false)
   }
 
   return isLoading ? (
@@ -209,8 +215,12 @@ const AddChemical = () => {
                 Cancel
               </span>
 
-              <button className='ml-6 w-40' type='submit' disabled={disabled}>
-                Add Chemical
+              <button
+                className='ml-6 flex w-40 items-center justify-center'
+                type='submit'
+                disabled={disabled || isButtonLoading}
+              >
+                {isButtonLoading ? <LoadingButtonText /> : 'Add Chemical'}
               </button>
             </div>
           </div>
