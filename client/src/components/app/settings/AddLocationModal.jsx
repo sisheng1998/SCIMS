@@ -10,6 +10,7 @@ import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import NameField from '../../validations/NameField'
 import StorageClassesField from '../../validations/StorageClassesField'
 import STORAGE_CLASSES from '../../../config/storage_classes'
+import LoadingButtonText from '../components/LoadingButtonText'
 
 const AddLocationModal = ({
   openModal,
@@ -26,11 +27,15 @@ const AddLocationModal = ({
   const [nameValidated, setNameValidated] = useState(false)
 
   const [allowed, setAllowed] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const addLocationHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     try {
       const sortedStorageClasses =
@@ -55,6 +60,8 @@ const AddLocationModal = ({
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -159,8 +166,12 @@ const AddLocationModal = ({
                   >
                     Cancel
                   </span>
-                  <button className='w-40' type='submit' disabled={!allowed}>
-                    Add Location
+                  <button
+                    className='flex w-40 items-center justify-center'
+                    type='submit'
+                    disabled={!allowed || isLoading}
+                  >
+                    {isLoading ? <LoadingButtonText /> : 'Add Location'}
                   </button>
                 </div>
               </form>

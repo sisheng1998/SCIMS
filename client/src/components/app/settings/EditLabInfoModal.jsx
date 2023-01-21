@@ -9,6 +9,7 @@ import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import LabNameField from '../../validations/LabNameField'
 import FormatDate from '../../utils/FormatDate'
 import StaticLabInfo from '../components/StaticLabInfo'
+import LoadingButtonText from '../components/LoadingButtonText'
 
 const EditLabInfoModal = ({ lab, openModal, setOpenModal }) => {
   const axiosPrivate = useAxiosPrivate()
@@ -19,6 +20,7 @@ const EditLabInfoModal = ({ lab, openModal, setOpenModal }) => {
   const [labNameValidated, setLabNameValidated] = useState(false)
 
   const [allowed, setAllowed] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -28,6 +30,9 @@ const EditLabInfoModal = ({ lab, openModal, setOpenModal }) => {
 
   const editLabInfoHandler = async (e) => {
     e.preventDefault()
+
+    setErrorMessage('')
+    setIsLoading(true)
 
     try {
       await axiosPrivate.put('/api/private/lab', {
@@ -44,6 +49,8 @@ const EditLabInfoModal = ({ lab, openModal, setOpenModal }) => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -161,11 +168,11 @@ const EditLabInfoModal = ({ lab, openModal, setOpenModal }) => {
                     Cancel
                   </span>
                   <button
-                    className='ml-6 w-40'
+                    className='ml-6 flex w-40 items-center justify-center'
                     type='submit'
-                    disabled={!allowed}
+                    disabled={!allowed || isLoading}
                   >
-                    Update
+                    {isLoading ? <LoadingButtonText /> : 'Update'}
                   </button>
                 </div>
               </form>
