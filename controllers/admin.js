@@ -751,6 +751,93 @@ exports.deleteBackup = async (req, res, next) => {
   }
 }
 
+// Server Logs
+exports.getServerLogs = async (req, res, next) => {
+  try {
+    const logPath = path.resolve(__dirname, '../server_logs')
+    const allLogs = []
+
+    fs.readdirSync(logPath).forEach((file) => {
+      const stats = fs.statSync(`${logPath}/${file}`)
+
+      const log = {
+        name: file,
+        size: stats.size,
+        lastUpdated: stats.mtime,
+      }
+
+      allLogs.push(log)
+    })
+
+    const serverLogs = allLogs
+      .sort((a, b) => Date.parse(b.lastUpdated) - Date.parse(a.lastUpdated))
+      .map((log, index) => ({
+        index,
+        ...log,
+      }))
+
+    res.status(200).json({
+      success: true,
+      serverLogs,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+exports.getServerLog = async (req, res, next) => {
+  const filename = req.params.filename
+
+  if (!filename) {
+    return next(new ErrorResponse('Missing required value.', 400))
+  }
+
+  try {
+    const logPath = path.resolve(__dirname, `../server_logs/${filename}`)
+
+    if (!fs.existsSync(logPath)) {
+      return next(new ErrorResponse('Server log not found.', 404))
+    }
+
+    const content = fs.readFileSync(logPath, 'utf8')
+
+    res.status(200).json({
+      success: true,
+      content,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+exports.deleteServerLog = async (req, res, next) => {
+  const { filename } = req.body
+
+  if (!filename) {
+    return next(new ErrorResponse('Missing required value.', 400))
+  }
+
+  try {
+    const logPath = path.resolve(__dirname, `../server_logs/${filename}`)
+
+    if (!fs.existsSync(logPath)) {
+      return next(new ErrorResponse('Server log not found.', 404))
+    }
+
+    fs.unlinkSync(logPath, (error) => {
+      if (error)
+        return next(new ErrorResponse('Not able to delete server log.', 400))
+    })
+
+    res.status(200).json({
+      success: true,
+      data: 'Server log deleted.',
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 // Settings
 exports.getSettings = async (req, res, next) => {
   try {

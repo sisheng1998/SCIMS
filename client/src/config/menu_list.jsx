@@ -120,6 +120,12 @@ const ADMIN_MENU_LIST = [
     minRole: ROLES_LIST.admin,
   },
   {
+    text: 'Server Logs',
+    link: '/admin/server-logs',
+    icon: <ClipboardListIcon />,
+    minRole: ROLES_LIST.admin,
+  },
+  {
     text: 'Settings',
     link: '/admin/settings',
     icon: <CogIcon />,

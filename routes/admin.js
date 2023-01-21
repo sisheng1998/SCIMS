@@ -18,6 +18,9 @@ const {
   restoreBackup,
   uploadAndRestoreBackup,
   deleteBackup,
+  getServerLogs,
+  getServerLog,
+  deleteServerLog,
   getSettings,
   updateSettings,
   sendTestEmail,
@@ -54,6 +57,15 @@ router
 router
   .route('/backup/delete')
   .delete(verifyRoles(ROLES_LIST.admin), deleteBackup)
+
+// Server Logs
+router.route('/server-logs').get(verifyRoles(ROLES_LIST.admin), getServerLogs)
+router
+  .route('/server-log/:filename')
+  .get(verifyRoles(ROLES_LIST.admin), getServerLog)
+router
+  .route('/server-log/delete')
+  .delete(verifyRoles(ROLES_LIST.admin), deleteServerLog)
 
 // Setting
 router.route('/settings').get(verifyRoles(ROLES_LIST.admin), getSettings)

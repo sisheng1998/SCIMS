@@ -8,19 +8,14 @@ const logEvents = async (message, logName) => {
     .replace('T', ' ')
     .substring(11, 19)} (UTC) - ${message}\n`
 
-  if (!fs.existsSync(path.join(__dirname, '..', 'server_logs'))) {
-    await fsPromises.mkdir(path.join(__dirname, '..', 'server_logs'))
+  const filename = today.slice(0, 10) + '_' + logName
+  const logPath = path.resolve(__dirname, '../server_logs')
+
+  if (!fs.existsSync(logPath)) {
+    await fsPromises.mkdir(logPath)
   }
 
-  await fsPromises.appendFile(
-    path.join(
-      __dirname,
-      '..',
-      'server_logs',
-      today.slice(0, 10) + '_' + logName
-    ),
-    logItem
-  )
+  await fsPromises.appendFile(`${logPath}/${filename}`, logItem)
 }
 
 module.exports = logEvents

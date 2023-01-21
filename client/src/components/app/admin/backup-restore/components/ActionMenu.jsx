@@ -66,7 +66,7 @@ const ActionMenu = ({
                 rel='noreferrer'
                 download={name}
               >
-                <button className='group flex w-full items-center px-3 py-1 text-sm font-medium leading-6 text-gray-500 hover:bg-indigo-50 hover:text-indigo-600'>
+                <button className='group flex w-full items-center px-3 py-1 text-sm font-medium leading-6 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600'>
                   <DownloadIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
                   Download
                 </button>
