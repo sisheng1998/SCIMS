@@ -14,6 +14,7 @@ import {
 } from '../../../config/safety_security_list'
 import SafetySecurityField from '../../validations/SafetySecurityField'
 import SDSsField from '../components/SDSsField'
+import LoadingButtonText from '../components/LoadingButtonText'
 
 const AddSDSModal = ({
   existedSDS,
@@ -36,6 +37,7 @@ const AddSDSModal = ({
   const [COCs, setCOCs] = useState([])
 
   const [allowNextStep, setAllowNextStep] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [enExtractionResult, setEnExtractionResult] = useState('')
@@ -95,7 +97,9 @@ const AddSDSModal = ({
 
   const submitHandler = async (e) => {
     e.preventDefault()
+
     setErrorMessage('')
+    setIsLoading(true)
 
     try {
       const formData = new FormData()
@@ -108,7 +112,6 @@ const AddSDSModal = ({
       formData.append('SDS_BM', bmSDS)
 
       await axiosPrivate.post('/api/private/sds/new-sds', formData)
-
       setSuccess(true)
     } catch (error) {
       if (error.response?.status === 500) {
@@ -117,6 +120,8 @@ const AddSDSModal = ({
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   const closeHandler = () => {
@@ -262,8 +267,12 @@ const AddSDSModal = ({
                   >
                     Cancel
                   </span>
-                  <button className='w-40' type='submit' disabled={!allowed}>
-                    Add SDS
+                  <button
+                    className='flex w-40 items-center justify-center'
+                    type='submit'
+                    disabled={!allowed || isLoading}
+                  >
+                    {isLoading ? <LoadingButtonText /> : 'Add SDS'}
                   </button>
                 </div>
               </form>

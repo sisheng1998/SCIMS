@@ -17,6 +17,7 @@ import CASField from '../../validations/CASField'
 import useAuth from '../../../hooks/useAuth'
 import ROLE_LIST from '../../../config/roles_list'
 import SDSsField from '../components/SDSsField'
+import LoadingButtonText from '../components/LoadingButtonText'
 
 const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
   const { auth } = useAuth()
@@ -35,6 +36,7 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
   const [classifications, setClassifications] = useState(CAS.classifications)
   const [COCs, setCOCs] = useState(CAS.COCs)
 
+  const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [enExtractionResult, setEnExtractionResult] = useState('')
@@ -71,7 +73,9 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
 
   const submitHandler = async (e) => {
     e.preventDefault()
+
     setErrorMessage('')
+    setIsLoading(true)
 
     try {
       const formData = new FormData()
@@ -88,7 +92,6 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
       bmSDS !== CAS.SDSs.bm && formData.append('SDS_BM', bmSDS)
 
       await axiosPrivate.patch(`/api/private/sds/${CAS._id}`, formData)
-
       setSuccess(true)
     } catch (error) {
       if (error.response?.status === 500) {
@@ -99,6 +102,8 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
         setErrorMessage('Oops. Something went wrong. Please try again later.')
       }
     }
+
+    setIsLoading(false)
   }
 
   const closeHandler = () => {
@@ -270,8 +275,12 @@ const EditSDSModal = ({ CAS, openModal, setOpenModal, setEditSDSSuccess }) => {
                   >
                     Cancel
                   </span>
-                  <button className='w-40' type='submit' disabled={!allowed}>
-                    Update
+                  <button
+                    className='flex w-40 items-center justify-center'
+                    type='submit'
+                    disabled={!allowed || isLoading}
+                  >
+                    {isLoading ? <LoadingButtonText /> : 'Update'}
                   </button>
                 </div>
               </form>
