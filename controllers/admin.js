@@ -763,6 +763,7 @@ exports.getServerLogs = async (req, res, next) => {
       const log = {
         name: file,
         size: stats.size,
+        createdAt: stats.birthtime,
         lastUpdated: stats.mtime,
       }
 
@@ -770,7 +771,7 @@ exports.getServerLogs = async (req, res, next) => {
     })
 
     const serverLogs = allLogs
-      .sort((a, b) => Date.parse(b.lastUpdated) - Date.parse(a.lastUpdated))
+      .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
       .map((log, index) => ({
         index,
         ...log,

@@ -3,7 +3,7 @@ import SortData from '../../../components/SortData'
 import SortButton from '../../../components/SortButton'
 import Filters from '../../../components/Filters'
 import Pagination from '../../../components/Pagination'
-import { FromNow, DateTime } from '../../../../utils/FormatDate'
+import FormatDate, { FromNow, DateTime } from '../../../../utils/FormatDate'
 import FormatBytes from '../../../../utils/FormatBytes'
 import ActionMenu from './ActionMenu'
 
@@ -11,6 +11,11 @@ const tableHeaders = [
   {
     key: 'name',
     label: 'Name',
+    sortable: true,
+  },
+  {
+    key: 'createdAt',
+    label: 'Created At',
     sortable: true,
   },
   {
@@ -136,6 +141,8 @@ const ServerLogsTable = ({
                 currentItems.map((log, index) => (
                   <tr key={index} className='hover:bg-indigo-50/30'>
                     <td className='px-6 py-4'>{log.name}</td>
+
+                    <td className='px-6 py-4'>{FormatDate(log.createdAt)}</td>
 
                     <td className='px-6 py-4'>
                       <span

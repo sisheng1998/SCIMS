@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Menu } from '@headlessui/react'
 import {
-  DocumentTextIcon,
+  DocumentSearchIcon,
   TrashIcon,
   DotsVerticalIcon,
 } from '@heroicons/react/outline'
@@ -52,7 +52,7 @@ const ActionMenu = ({
                 onClick={readServerLog}
                 className='group flex w-full items-center px-3 py-1 text-sm font-medium leading-6 hover:bg-indigo-50 hover:text-indigo-600'
               >
-                <DocumentTextIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
+                <DocumentSearchIcon className='mr-2 h-5 w-5 text-gray-500 group-hover:text-indigo-600' />
                 View
               </button>
             </Menu.Item>
