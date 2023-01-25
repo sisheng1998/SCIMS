@@ -1,4 +1,4 @@
-const getDateString = (dateOnly = false) => {
+const getDate = () => {
   const today = new Date()
 
   const year = today.getFullYear()
@@ -11,8 +11,15 @@ const getDateString = (dateOnly = false) => {
   const date = `${year}${month}${day}`
   const time = `${hours}${minutes}${seconds}`
 
-  const dateString = dateOnly ? date : `${date}-${time}`
-  return dateString
+  const formattedDate = `${year}-${month}-${day}`
+  const formattedTime = `${hours}:${minutes}:${seconds}`
+
+  return {
+    date,
+    time,
+    formattedDate,
+    formattedTime,
+  }
 }
 
 const duration = {
@@ -23,4 +30,4 @@ const duration = {
   days: (value) => value * duration.hours(24),
 }
 
-module.exports = { getDateString, duration }
+module.exports = { getDate, duration }

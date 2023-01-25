@@ -1,21 +1,19 @@
 const fs = require('fs')
 const fsPromises = require('fs').promises
 const path = require('path')
+const { getDate } = require('../utils/time')
+const LOG_PATH = path.resolve(__dirname, '../server_logs')
 
 const logEvents = async (message, logName) => {
-  const today = new Date().toISOString()
-  const logItem = `${today
-    .replace('T', ' ')
-    .substring(11, 19)} (UTC) - ${message}\n`
+  const DATE = getDate()
+  const FILE_NAME = `${DATE.date}_${logName}`
+  const LOG_ITEM = `${DATE.formattedTime} - ${message}\n`
 
-  const filename = today.slice(0, 10) + '_' + logName
-  const logPath = path.resolve(__dirname, '../server_logs')
-
-  if (!fs.existsSync(logPath)) {
-    await fsPromises.mkdir(logPath)
+  if (!fs.existsSync(LOG_PATH)) {
+    await fsPromises.mkdir(LOG_PATH)
   }
 
-  await fsPromises.appendFile(`${logPath}/${filename}`, logItem)
+  await fsPromises.appendFile(`${LOG_PATH}/${FILE_NAME}`, LOG_ITEM)
 }
 
 module.exports = logEvents

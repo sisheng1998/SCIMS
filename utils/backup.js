@@ -2,7 +2,7 @@ const { spawn } = require('child_process')
 const fs = require('fs')
 const path = require('path')
 const logEvents = require('../middleware/logEvents')
-const { getDateString, duration } = require('./time')
+const { getDate, duration } = require('./time')
 const isLiveSite = false // Change this for live site or dev site
 /*
   For live site only
@@ -17,8 +17,12 @@ const isLiveSite = false // Change this for live site or dev site
 const backupDatabase = (type = 'auto', isSync = false, resolve) => {
   const DB_NAME = isLiveSite ? 'app' : 'dev'
   const URI = process.env.MONGO_URI
-  const DATE = getDateString(type.toLowerCase() === 'auto')
-  const FILE_NAME = `${DATE}_scims-backup.gz`
+  const DATE = getDate()
+  const BACKUP_NAME = 'scims-backup.gz'
+  const FILE_NAME =
+    type.toLowerCase() === 'auto'
+      ? `${DATE.date}_${BACKUP_NAME}`
+      : `${DATE.date}-${DATE.time}_${BACKUP_NAME}`
   const ARCHIVE_PATH = path.resolve(
     __dirname,
     `../public/backups/${type}/${FILE_NAME}`
