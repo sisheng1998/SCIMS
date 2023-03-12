@@ -65,7 +65,7 @@ const AccountSection = ({ user, subscriber }) => {
         Logout On All Devices
       </button>
       <p className='mt-2 text-xs text-gray-400'>
-        Force logout your account on all devices that is currently logged in.
+        Force logout your account on all devices that are currently logged in.
       </p>
 
       {isMobile && <NotificationSection subscriber={subscriber} />}

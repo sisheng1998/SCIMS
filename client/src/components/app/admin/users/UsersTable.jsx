@@ -297,9 +297,14 @@ const UsersTable = (props) => {
                                           onClick={() =>
                                             editUserHandler(user, role)
                                           }
-                                          className='ml-2 text-gray-400 transition hover:text-indigo-700 focus:outline-none'
+                                          className='ml-2 flex items-center justify-center text-gray-400 transition hover:text-indigo-700 focus:outline-none'
                                         >
-                                          <PencilAltIcon className='h-5 w-5' />
+                                          <span
+                                            className='tooltip inline-block cursor-pointer'
+                                            data-tooltip='Edit'
+                                          >
+                                            <PencilAltIcon className='h-5 w-5' />
+                                          </span>
                                         </button>
                                       )}
                                     </div>

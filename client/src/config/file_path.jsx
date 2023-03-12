@@ -9,6 +9,7 @@ const FILE_PATH = {
     auto: '/public/backups/auto/',
     manual: '/public/backups/manual/',
   },
+  userManual: '/public/scims_user_manual.pdf',
 }
 
 export default FILE_PATH

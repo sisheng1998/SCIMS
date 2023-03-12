@@ -24,7 +24,7 @@ const LabCard = ({ role }) => {
     classes = 'bg-red-100 text-red-600'
   }
 
-  const switchLabHandler = () => {
+  const handleSwitchLab = () => {
     localStorage.setItem('currentLab', role.lab._id)
     setAuth((prev) => {
       return {
@@ -54,10 +54,15 @@ const LabCard = ({ role }) => {
           {enableSwitch && (
             <p
               className='flex cursor-pointer items-center text-sm font-medium text-gray-500 hover:text-indigo-600'
-              onClick={() => switchLabHandler()}
+              onClick={handleSwitchLab}
             >
-              Switch
-              <SwitchHorizontalIcon className='ml-1 h-3.5 w-3.5' />
+              <span
+                className='tooltip inline-flex cursor-pointer items-center justify-center'
+                data-tooltip={`Switch to Lab ${role.lab.labName}`}
+              >
+                Switch
+                <SwitchHorizontalIcon className='ml-1 h-3.5 w-3.5' />
+              </span>
             </p>
           )}
 
