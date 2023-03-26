@@ -27,6 +27,7 @@
     "react-qr-reader": "^3.0.0-beta-1",
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.0",
+    "rewire": "^6.0.0",
     "stream-browserify": "^3.0.0",
     "ua-parser-js": "^1.0.32",
     "util": "^0.12.4",
@@ -34,8 +35,8 @@
     "worker-loader": "^3.0.8"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "node scripts/start.js",
+    "build": "node scripts/build.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -64,5 +65,5 @@
     "prettier-plugin-tailwindcss": "^0.1.5",
     "tailwindcss": "^3.0.18"
   },
-  "proxy": "http://localhost:5000"
+  "proxy": "http://localhost:5050"
 }
