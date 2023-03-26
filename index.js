@@ -11,7 +11,7 @@ const { verifyUser } = require('./middleware/verifyUser')
 const logEvents = require('./middleware/logEvents')
 const scheduleJobs = require('./controllers/schedule')
 const path = require('path')
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5050
 const isLiveSite = false // Change this for live site or dev site
 
 const app = express()
