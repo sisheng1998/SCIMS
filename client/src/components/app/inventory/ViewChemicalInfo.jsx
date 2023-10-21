@@ -36,6 +36,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
   const [openViewImageModal, setOpenViewImageModal] = useState(false)
   const [openChemicalUsageModal, setOpenChemicalUsageModal] = useState(false)
   const [isDelete, setIsDelete] = useState(false)
+  const [isDispose, setIsDispose] = useState(false)
 
   const [success, setSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -78,6 +79,30 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
   const viewImageHandler = (name, imageSrc) => {
     setQRCodeInfo({ name, imageSrc })
     setOpenViewImageModal(true)
+  }
+
+  const disposeHandler = async () => {
+    setErrorMessage('')
+    setIsLoading(true)
+
+    try {
+      await axiosPrivate.post('/api/private/chemical/dispose', {
+        chemicalId: chemical._id,
+        labId: lab._id,
+      })
+      if (isMounted.current) {
+        setOpenModal(true)
+        setSuccess(true)
+      }
+    } catch (error) {
+      if (error.response?.status === 500) {
+        setErrorMessage('Server not responding. Please try again later.')
+      } else {
+        setErrorMessage('Oops. Something went wrong. Please try again later.')
+      }
+    }
+
+    setIsLoading(false)
   }
 
   const cancelDisposalHandler = async () => {
@@ -480,6 +505,57 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
                 </button>
               </div>
             ))}
+
+          {isMobile &&
+            auth.currentLabId === lab._id &&
+            auth.currentRole >= ROLES_LIST.labOwner && (
+              <div className='mt-6'>
+                {isDisposed ? (
+                  <button
+                    className='button button-outline justify-center px-4 py-2'
+                    onClick={cancelDisposalHandler}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? <LoadingButtonText /> : 'Cancel Disposal'}
+                  </button>
+                ) : !isDispose ? (
+                  <button
+                    className='button button-red-outline justify-center px-4 py-2'
+                    onClick={() => setIsDispose(true)}
+                  >
+                    Dispose Chemical
+                  </button>
+                ) : (
+                  <>
+                    <div className='mb-3'>
+                      <p className='font-medium text-gray-900'>
+                        Confirm dispose chemical for the current lab?
+                      </p>
+                      <p className='mt-0.5 flex items-center text-sm font-medium text-indigo-600'>
+                        <ExclamationCircleIcon className='mr-2 h-5 w-5 shrink-0' />{' '}
+                        The disposal action can be reverted.
+                      </p>
+                    </div>
+
+                    <button
+                      className='button button-red-outline justify-center px-4 py-2'
+                      onClick={disposeHandler}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? <LoadingButtonText /> : 'Dispose'}
+                    </button>
+
+                    <button
+                      className='button button-outline ml-3 justify-center px-4 py-2'
+                      onClick={() => setIsDispose(false)}
+                      disabled={isLoading}
+                    >
+                      Cancel
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
         </div>
       </div>
 
@@ -513,9 +589,10 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 
       {success && openModal && (
         <SuccessMessageModal
-          type={isDelete ? 'Delete' : 'Cancel Disposal'}
+          type={isDispose ? 'Dispose' : isDelete ? 'Delete' : 'Cancel Disposal'}
           openModal={openModal}
           setOpenModal={setOpenModal}
+          setEdit={setEdit}
           setEditSuccess={setUpdateSuccess}
         />
       )}
