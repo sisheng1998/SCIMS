@@ -7,8 +7,16 @@ import { useNavigate } from 'react-router-dom'
 import SortChemicals, { NormalSorting } from './SortChemicals'
 import { ExclamationIcon } from '@heroicons/react/outline'
 import FormatAmountWithUnit from '../../../utils/FormatAmountWithUnit'
+import FILE_PATH from '../../../../config/file_path'
+import GetLetterPicture from '../../../utils/GetLetterPicture'
+import useAuth from '../../../../hooks/useAuth'
+import ImageLightBox from '../../../utils/ImageLightBox'
 
 const ReportTable = ({ chemicals, locations, type }) => {
+  const { auth } = useAuth()
+  const [avatarInfo, setAvatarInfo] = useState('')
+  const [openViewImageModal, setOpenViewImageModal] = useState(false)
+
   let processedData
 
   if (type === 'Recorded') {
@@ -57,6 +65,12 @@ const ReportTable = ({ chemicals, locations, type }) => {
       label: type === 'Recorded' ? 'Actual Amount' : 'Amount',
       sortable: false,
       hide: false,
+    },
+    {
+      key: 'recordedBy',
+      label: 'Recorded By',
+      sortable: false,
+      hide: type !== 'Recorded',
     },
     {
       key: 'action',
@@ -109,6 +123,11 @@ const ReportTable = ({ chemicals, locations, type }) => {
   const currentItems = results.slice(indexOfFirstItem, indexOfLastItem)
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber)
+
+  const viewImageHandler = (name, imageSrc) => {
+    setAvatarInfo({ name, imageSrc })
+    setOpenViewImageModal(true)
+  }
 
   return (
     <>
@@ -210,50 +229,103 @@ const ReportTable = ({ chemicals, locations, type }) => {
                     </td>
                   </tr>
                 ) : (
-                  currentItems.map((chemical) => (
-                    <tr
-                      className='hover:bg-indigo-50/30'
-                      key={chemical.chemicalId}
-                    >
-                      <td className='px-6 py-4'>{chemical.CASNo}</td>
-                      <td className='px-6 py-4'>{chemical.name}</td>
-                      <td className='px-6 py-4'>{chemical.location}</td>
-                      {type === 'Recorded' && (
-                        <td className='px-6 py-4'>
-                          {FormatAmountWithUnit(chemical.amount, chemical.unit)}
+                  currentItems.map((chemical) => {
+                    const imageSrc =
+                      type === 'Recorded'
+                        ? chemical.recordedBy.avatar
+                          ? FILE_PATH.avatars + chemical.recordedBy.avatar
+                          : GetLetterPicture(chemical.recordedBy.name)
+                        : ''
 
-                          {chemical.amount !== chemical.amountInDB && (
-                            <span
-                              className='tooltip ml-1.5'
-                              data-tooltip={`The actual amount is ${FormatAmountWithUnit(
-                                chemical.amountInDB,
-                                chemical.unit
-                              )}`}
-                            >
-                              <ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
-                            </span>
+                    return (
+                      <tr
+                        className='hover:bg-indigo-50/30'
+                        key={chemical.chemicalId}
+                      >
+                        <td className='px-6 py-4'>{chemical.CASNo}</td>
+                        <td className='px-6 py-4'>{chemical.name}</td>
+                        <td className='px-6 py-4'>{chemical.location}</td>
+                        {type === 'Recorded' && (
+                          <td className='px-6 py-4'>
+                            {FormatAmountWithUnit(
+                              chemical.amount,
+                              chemical.unit
+                            )}
+
+                            {chemical.amount !== chemical.amountInDB && (
+                              <span
+                                className='tooltip ml-1.5'
+                                data-tooltip={`The actual amount is ${FormatAmountWithUnit(
+                                  chemical.amountInDB,
+                                  chemical.unit
+                                )}`}
+                              >
+                                <ExclamationIcon className='inline-block h-4 w-4 stroke-2 text-red-600' />
+                              </span>
+                            )}
+                          </td>
+                        )}
+                        <td className='px-6 py-4'>
+                          {FormatAmountWithUnit(
+                            chemical.amountInDB,
+                            chemical.unit
                           )}
                         </td>
-                      )}
-                      <td className='px-6 py-4'>
-                        {FormatAmountWithUnit(
-                          chemical.amountInDB,
-                          chemical.unit
-                        )}
-                      </td>
 
-                      <td className='px-6 py-4'>
-                        <button
-                          onClick={() =>
-                            navigate(`/inventory/${chemical.chemicalId}`)
-                          }
-                          className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
-                        >
-                          View
-                        </button>
-                      </td>
-                    </tr>
-                  ))
+                        {type === 'Recorded' && (
+                          <td className='px-6 py-4'>
+                            <div className='flex w-max items-center space-x-3'>
+                              <img
+                                onError={(event) =>
+                                  (event.target.src = GetLetterPicture(
+                                    chemical.recordedBy.name
+                                  ))
+                                }
+                                src={imageSrc}
+                                alt='Avatar'
+                                className='h-12 w-12 cursor-pointer rounded-full object-cover'
+                                height='64'
+                                width='64'
+                                draggable={false}
+                                onClick={() =>
+                                  viewImageHandler(
+                                    chemical.recordedBy.name,
+                                    imageSrc
+                                  )
+                                }
+                              />
+
+                              <div>
+                                <p className='font-medium leading-5'>
+                                  {chemical.recordedBy.name}
+                                  {auth.email.toLowerCase() ===
+                                    chemical.recordedBy.email.toLowerCase() && (
+                                    <span className='ml-1.5 text-sm text-indigo-600'>
+                                      (You)
+                                    </span>
+                                  )}
+                                </p>
+                                <p className='text-sm leading-4 text-gray-400'>
+                                  {chemical.recordedBy.email}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+                        )}
+
+                        <td className='px-6 py-4'>
+                          <button
+                            onClick={() =>
+                              navigate(`/inventory/${chemical.chemicalId}`)
+                            }
+                            className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+                          >
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })
                 )}
               </tbody>
             </table>
@@ -271,6 +343,15 @@ const ReportTable = ({ chemicals, locations, type }) => {
         totalItems={results.length}
         paginate={paginate}
       />
+
+      {openViewImageModal && avatarInfo && (
+        <ImageLightBox
+          object={avatarInfo}
+          type='Avatar'
+          openModal={openViewImageModal}
+          setOpenModal={setOpenViewImageModal}
+        />
+      )}
     </>
   )
 }

@@ -7,9 +7,14 @@ import {
   CheckCircleIcon,
   QuestionMarkCircleIcon,
   XCircleIcon,
+  UsersIcon,
 } from '@heroicons/react/outline'
 
 const ReportDetails = ({ report }) => {
+  const involvedUserCount = new Set(
+    report.recordedChemicals.map((item) => item.recordedBy._id)
+  ).size
+
   const total =
     report.recordedChemicals.length +
     report.missingChemicals.length +
@@ -23,6 +28,15 @@ const ReportDetails = ({ report }) => {
         }
         value={`Lab ${report.lab.labName}`}
         text={FormatDate(report.date)}
+      />
+
+      <InfoCard
+        icon={
+          <UsersIcon className='h-14 w-14 rounded-full bg-blue-50 p-3 text-blue-500' />
+        }
+        value={involvedUserCount}
+        text='Involved User'
+        haveLetterS={true}
       />
 
       <InfoCard

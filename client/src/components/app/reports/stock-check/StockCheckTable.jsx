@@ -19,6 +19,11 @@ const tableHeaders = [
     sortable: false,
   },
   {
+    key: 'status',
+    label: 'Status',
+    sortable: true,
+  },
+  {
     key: 'action',
     label: 'Action',
     sortable: false,
@@ -34,6 +39,7 @@ const StockCheckTable = (props) => {
   const [sortKey, setSortKey] = useState('index')
   const [sortOrder, setSortOrder] = useState('asc')
   const [filterTerms, setFilterTerms] = useState({
+    status: '',
     period: {
       option: '',
       startDate: past.toLocaleDateString('en-CA'),
@@ -96,7 +102,6 @@ const StockCheckTable = (props) => {
       >
         <div className='mx-6 flex items-center'>
           <p>Period</p>
-
           <select
             className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
             name='periodFilter'
@@ -149,6 +154,21 @@ const StockCheckTable = (props) => {
               />
             </>
           )}
+
+          <p className='ml-6'>Status</p>
+          <select
+            className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
+            name='statusFilter'
+            id='statusFilter'
+            value={filterTerms.status}
+            onChange={(e) =>
+              setFilterTerms((prev) => ({ ...prev, status: e.target.value }))
+            }
+          >
+            <option value=''>Any</option>
+            <option value='In Progress'>In Progress</option>
+            <option value='Completed'>Completed</option>
+          </select>
         </div>
       </Filters>
 
@@ -191,24 +211,43 @@ const StockCheckTable = (props) => {
                     </td>
                   </tr>
                 ) : (
-                  currentItems.map((report) => (
-                    <tr className='hover:bg-indigo-50/30' key={report._id}>
-                      <td className='px-6 py-4'>{FormatDate(report.date)}</td>
+                  currentItems.map((report) => {
+                    let classes
 
-                      <td className='px-6 py-4'>
-                        <StockCheckOverview report={report} />
-                      </td>
+                    if (report.status === 'Completed') {
+                      classes = 'bg-green-100 text-green-600'
+                    } else {
+                      // In Progress
+                      classes = 'bg-yellow-100 text-yellow-600'
+                    }
 
-                      <td className='px-6 py-4'>
-                        <button
-                          onClick={() => navigate(`/reports/${report._id}`)}
-                          className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
-                        >
-                          View
-                        </button>
-                      </td>
-                    </tr>
-                  ))
+                    return (
+                      <tr className='hover:bg-indigo-50/30' key={report._id}>
+                        <td className='px-6 py-4'>{FormatDate(report.date)}</td>
+
+                        <td className='px-6 py-4'>
+                          <StockCheckOverview report={report} />
+                        </td>
+
+                        <td className='px-6 py-4'>
+                          <span
+                            className={`inline-flex rounded-full px-3 py-1 font-medium ${classes}`}
+                          >
+                            {report.status}
+                          </span>
+                        </td>
+
+                        <td className='px-6 py-4'>
+                          <button
+                            onClick={() => navigate(`/reports/${report._id}`)}
+                            className='inline font-medium text-indigo-600 transition hover:text-indigo-700 focus:outline-none'
+                          >
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })
                 )}
               </tbody>
             </table>
