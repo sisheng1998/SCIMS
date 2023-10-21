@@ -10,7 +10,7 @@ const InfoCard = ({ icon, value, text, haveLetterS }) => {
 
         <p className='text-sm font-medium text-gray-500'>
           {text}
-          {haveLetterS && value > 1 ? 's' : ''}
+          {haveLetterS && value !== 1 ? 's' : ''}
         </p>
       </div>
     </div>
