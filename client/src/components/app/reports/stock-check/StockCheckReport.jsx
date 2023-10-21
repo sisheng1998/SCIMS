@@ -13,6 +13,7 @@ import {
 import ReportDetails from './ReportDetails'
 import ReportTable from './ReportTable'
 import ConfirmationModal from './ConfirmationModal'
+import ROLES_LIST from '../../../../config/roles_list'
 
 const ID_REGEX = /^[a-f\d]{24}$/i
 
@@ -128,13 +129,15 @@ const StockCheckReport = () => {
           >
             {report.status !== 'Completed' && (
               <div className='flex items-center space-x-4'>
-                <button
-                  onClick={() => setOpenConfirmationModal(true)}
-                  className='button button-green-outline'
-                >
-                  <CheckIcon className='-ml-0.5 mr-1 h-4 w-4 stroke-2' />
-                  Mark as Completed
-                </button>
+                {auth.currentRole >= ROLES_LIST.labOwner && (
+                  <button
+                    onClick={() => setOpenConfirmationModal(true)}
+                    className='button button-green-outline'
+                  >
+                    <CheckIcon className='-ml-0.5 mr-1 h-4 w-4 stroke-2' />
+                    Mark as Completed
+                  </button>
+                )}
 
                 <button
                   onClick={() => setRefresh(true)}
