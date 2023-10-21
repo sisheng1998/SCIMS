@@ -64,7 +64,7 @@ const MENU_LIST = [
     text: 'Reports',
     link: '/reports',
     icon: <ChartBarIcon />,
-    minRole: ROLES_LIST.labOwner,
+    minRole: ROLES_LIST.postgraduate,
   },
   {
     text: 'Import / Export',
@@ -156,7 +156,7 @@ const MOBILE_MENU_LIST = [
     text: 'Stock Check',
     link: '/stock-check',
     icon: <ClipboardCheckIcon />,
-    minRole: ROLES_LIST.labOwner,
+    minRole: ROLES_LIST.postgraduate,
   },
   {
     text: 'Profile',

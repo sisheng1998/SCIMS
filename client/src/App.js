@@ -102,10 +102,6 @@ const App = () => {
                   path='/inventory/new-chemical'
                   element={<AddChemical />}
                 />
-              </Route>
-
-              {/* Accessible by Lab Owner and above only */}
-              <Route element={<Authorization minRole={ROLES_LIST.labOwner} />}>
                 {!isMobile ? (
                   <>
                     <Route exact path='/reports' element={<Reports />} />
@@ -114,22 +110,30 @@ const App = () => {
                       path='/reports/:reportId'
                       element={<StockCheckReport />}
                     />
-                    <Route
-                      exact
-                      path='/import-export'
-                      element={<ImportExport />}
-                    />
-                    <Route
-                      exact
-                      path='/activity-logs'
-                      element={<ActivityLogs />}
-                    />
-                    <Route exact path='/settings' element={<Settings />} />
                   </>
                 ) : (
                   <Route exact path='/stock-check' element={<StockCheck />} />
                 )}
               </Route>
+
+              {/* Accessible by Lab Owner and above only */}
+              {!isMobile && (
+                <Route
+                  element={<Authorization minRole={ROLES_LIST.labOwner} />}
+                >
+                  <Route
+                    exact
+                    path='/import-export'
+                    element={<ImportExport />}
+                  />
+                  <Route
+                    exact
+                    path='/activity-logs'
+                    element={<ActivityLogs />}
+                  />
+                  <Route exact path='/settings' element={<Settings />} />
+                </Route>
+              )}
 
               {/* Accessible by Admin only */}
               {!isMobile && (

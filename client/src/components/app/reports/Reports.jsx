@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from 'react'
+import dayjs from 'dayjs'
 import useAuth from '../../../hooks/useAuth'
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import LoadingScreen from '../../utils/LoadingScreen'
 import Title from '../components/Title'
 import Usage from './usage/Usage'
 import StockCheckTable from './stock-check/StockCheckTable'
-import dayjs from 'dayjs'
+import ROLES_LIST from '../../../config/roles_list'
 
 const Reports = () => {
   const { auth } = useAuth()
+  const isPostgraduate = auth.currentRole === ROLES_LIST.postgraduate
+
   const axiosPrivate = useAxiosPrivate()
 
   const [isLoading, setIsLoading] = useState(true)
 
-  const [reportType, setReportType] = useState('Chemical Usage')
+  const [reportType, setReportType] = useState(
+    isPostgraduate ? 'Stock Check' : 'Chemical Usage'
+  )
   const [dateRanges, setDateRanges] = useState({
     start: dayjs().startOf('month').format('YYYY-MM-DD'),
     end: dayjs().format('YYYY-MM-DD'),
@@ -62,22 +67,7 @@ const Reports = () => {
             }
           )
           if (isMounted) {
-            const processedData = data.data
-              .sort((a, b) => (a.date < b.date ? 1 : -1))
-              .map((report, index) => ({
-                index,
-                _id: report._id,
-                recordedNo: report.recordedChemicals.length,
-                missingNo: report.missingChemicals.length,
-                disposedNo: report.disposedChemicals.length,
-                totalNo:
-                  report.recordedChemicals.length +
-                  report.missingChemicals.length +
-                  report.disposedChemicals.length,
-                date: report.date,
-              }))
-
-            setStockCheck(processedData)
+            setStockCheck(data.data)
             setIsLoading(false)
           }
         }
@@ -103,19 +93,21 @@ const Reports = () => {
         hasButton={false}
         hasRefreshButton={false}
       >
-        <div className='flex items-baseline self-end text-sm text-gray-500'>
-          <select
-            className='cursor-pointer border-none bg-transparent py-0 pr-8 pl-2 font-medium text-gray-700 shadow-none outline-none focus:border-none focus:ring-0'
-            name='type'
-            id='type'
-            style={{ textAlignLast: 'right' }}
-            value={reportType}
-            onChange={(e) => setReportType(e.target.value)}
-          >
-            <option value='Chemical Usage'>Chemical Usage</option>
-            <option value='Stock Check'>Stock Check</option>
-          </select>
-        </div>
+        {!isPostgraduate && (
+          <div className='flex items-baseline self-end text-sm text-gray-500'>
+            <select
+              className='cursor-pointer border-none bg-transparent py-0 pr-8 pl-2 font-medium text-gray-700 shadow-none outline-none focus:border-none focus:ring-0'
+              name='type'
+              id='type'
+              style={{ textAlignLast: 'right' }}
+              value={reportType}
+              onChange={(e) => setReportType(e.target.value)}
+            >
+              <option value='Chemical Usage'>Chemical Usage</option>
+              <option value='Stock Check'>Stock Check</option>
+            </select>
+          </div>
+        )}
       </Title>
 
       {reportType === 'Chemical Usage' ? (
