@@ -7,6 +7,10 @@ const StockCheckSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'Lab',
     },
+    status: {
+      type: String,
+      default: 'In Progress',
+    },
     recordedChemicals: [
       {
         chemicalId: {
@@ -19,6 +23,11 @@ const StockCheckSchema = new Schema(
         amount: Number,
         unit: String,
         amountInDB: Number,
+        recordedBy: {
+          type: Schema.Types.ObjectId,
+          ref: 'User',
+        },
+        recordedAt: Date,
       },
     ],
     missingChemicals: [

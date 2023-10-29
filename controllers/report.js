@@ -63,11 +63,25 @@ exports.stockCheckReports = async (req, res, next) => {
       return next(new ErrorResponse('Lab not found.', 404))
     }
 
-    const records = await StockCheck.find({ lab: labId })
+    const records = await StockCheck.find({ lab: labId }).sort({ date: -1 })
+
+    const transformedRecords = records.map((report, index) => ({
+      index,
+      _id: report._id,
+      status: report.status,
+      recordedNo: report.recordedChemicals.length,
+      missingNo: report.missingChemicals.length,
+      disposedNo: report.disposedChemicals.length,
+      totalNo:
+        report.recordedChemicals.length +
+        report.missingChemicals.length +
+        report.disposedChemicals.length,
+      date: report.date,
+    }))
 
     res.status(200).json({
       success: true,
-      data: records,
+      data: transformedRecords,
     })
   } catch (error) {
     next(error)
@@ -91,7 +105,15 @@ exports.stockCheckReport = async (req, res, next) => {
     const foundReport = await StockCheck.findOne({
       _id: reportId,
       lab: foundLab._id,
-    }).populate('lab', 'labName')
+    })
+      .populate('lab', 'labName')
+      .populate({
+        path: 'recordedChemicals',
+        populate: {
+          path: 'recordedBy',
+          select: UserOption,
+        },
+      })
 
     if (!foundReport) {
       return next(new ErrorResponse('Report not found.', 404))

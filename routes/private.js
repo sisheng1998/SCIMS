@@ -42,7 +42,12 @@ const {
 
 const { userActivity } = require('../controllers/activity_log')
 
-const { stockCheck } = require('../controllers/stock_check')
+const {
+  getActiveStockCheck,
+  startStockCheck,
+  stockCheck,
+  endStockCheck,
+} = require('../controllers/stock_check')
 
 const {
   usageReports,
@@ -141,7 +146,18 @@ router
   .put(verifyRoles(ROLES_LIST.labOwner), userActivity)
 
 // Stock Check
-router.route('/stock-check').post(verifyRoles(ROLES_LIST.labOwner), stockCheck)
+router
+  .route('/stock-check/active')
+  .post(verifyRoles(ROLES_LIST.postgraduate), getActiveStockCheck)
+router
+  .route('/stock-check/start')
+  .post(verifyRoles(ROLES_LIST.labOwner), startStockCheck)
+router
+  .route('/stock-check')
+  .post(verifyRoles(ROLES_LIST.postgraduate), stockCheck)
+router
+  .route('/stock-check/end')
+  .patch(verifyRoles(ROLES_LIST.labOwner), endStockCheck)
 
 // Reports
 router
@@ -149,10 +165,10 @@ router
   .put(verifyRoles(ROLES_LIST.labOwner), usageReports)
 router
   .route('/stock-check-reports')
-  .put(verifyRoles(ROLES_LIST.labOwner), stockCheckReports)
+  .put(verifyRoles(ROLES_LIST.postgraduate), stockCheckReports)
 router
   .route('/reports/:reportId')
-  .put(verifyRoles(ROLES_LIST.labOwner), stockCheckReport)
+  .put(verifyRoles(ROLES_LIST.postgraduate), stockCheckReport)
 
 // SDS
 router.route('/sds').get(getSDS)
