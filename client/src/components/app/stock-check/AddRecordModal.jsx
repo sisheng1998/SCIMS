@@ -41,7 +41,7 @@ const AddRecordModal = ({
     }
 
     const disposed = auth.stockCheck.disposedChemicals.some(
-      (chemical) => chemical._id === scannedChemicalId
+      (chemical) => chemical.chemicalId === scannedChemicalId
     )
     if (disposed) {
       setDisposed(true)
@@ -49,7 +49,7 @@ const AddRecordModal = ({
     }
 
     const foundChemical = auth.stockCheck.chemicals.find(
-      (chemical) => chemical._id === scannedChemicalId
+      (chemical) => chemical.chemicalId === scannedChemicalId
     )
     if (!foundChemical) {
       setNotFound(true)
@@ -67,13 +67,12 @@ const AddRecordModal = ({
     const updatedRecords = [
       ...chemicals,
       {
-        chemicalId: chemical._id,
-        CASNo: chemical.CASId.CASNo,
+        chemicalId: chemical.chemicalId,
+        CASNo: chemical.CASNo,
         name: chemical.name,
         location: chemical.location,
         amount: Number(amount),
         unit: chemical.unit,
-        amountInDB: chemical.amount,
       },
     ]
 
@@ -209,7 +208,7 @@ const AddRecordModal = ({
                       <label htmlFor='CAS' className='mb-0.5 text-gray-400'>
                         CAS No.
                       </label>
-                      <p className='mb-2 font-medium'>{chemical.CASId.CASNo}</p>
+                      <p className='mb-2 font-medium'>{chemical.CASNo}</p>
 
                       <label htmlFor='name' className='mb-0.5 text-gray-400'>
                         Name of Chemical

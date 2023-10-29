@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import Title from '../components/Title'
-import { PlusIcon, QuestionMarkCircleIcon } from '@heroicons/react/outline'
+import {
+  ExclamationIcon,
+  PlusIcon,
+  QuestionMarkCircleIcon,
+} from '@heroicons/react/outline'
 import Procedure from './Procedure'
 import ProcedureModal from './ProcedureModal'
 import useAuth from '../../../hooks/useAuth'
@@ -10,91 +14,20 @@ import ActionCard from './ActionCard'
 import ScanQRCodeModal from '../components/ScanQRCodeModal'
 import AddRecordModal from './AddRecordModal'
 import ChemicalsLoop from './ChemicalsLoop'
+import ROLES_LIST from '../../../config/roles_list'
+import ConfirmationModal from '../reports/stock-check/ConfirmationModal'
+import StartStockCheckButton from './StartStockCheckButton'
 
 const StockCheck = () => {
   const { auth, setAuth } = useAuth()
+  const isPostgraduate = auth.currentRole === ROLES_LIST.postgraduate
   const axiosPrivate = useAxiosPrivate()
 
   const [isLoading, setIsLoading] = useState(true)
+  const [reportId, setReportId] = useState('')
+  const [refresh, setRefresh] = useState(false)
 
-  useEffect(() => {
-    let isMounted = true
-    const controller = new AbortController()
-
-    setIsLoading(true)
-
-    const getChemicals = async () => {
-      try {
-        const { data } = await axiosPrivate.post(
-          '/api/private/chemicals',
-          {
-            labId: auth.currentLabId,
-          },
-          {
-            signal: controller.signal,
-          }
-        )
-        if (isMounted) {
-          let processedChemicals = []
-          let processedDisposedChemicals = []
-
-          if (
-            data.data.locations.length !== 0 &&
-            data.data.chemicals.length !== 0
-          ) {
-            processedChemicals = data.data.chemicals.map((chemical) => {
-              const location = data.data.locations.find(
-                (location) => location._id === chemical.locationId
-              )
-
-              return {
-                ...chemical,
-                location: location ? location.name : '-',
-              }
-            })
-          }
-
-          if (
-            data.data.locations.length !== 0 &&
-            data.data.disposedChemicals.length !== 0
-          ) {
-            processedDisposedChemicals = data.data.disposedChemicals.map(
-              (chemical) => {
-                const location = data.data.locations.find(
-                  (location) => location._id === chemical.locationId
-                )
-
-                return {
-                  ...chemical,
-                  location: location ? location.name : '-',
-                }
-              }
-            )
-          }
-
-          setAuth((prev) => {
-            return {
-              ...prev,
-              stockCheck: {
-                chemicals: processedChemicals,
-                disposedChemicals: processedDisposedChemicals,
-              },
-            }
-          })
-          setIsLoading(false)
-        }
-      } catch (error) {
-        return
-      }
-    }
-
-    getChemicals()
-
-    return () => {
-      isMounted = false
-      controller.abort()
-    }
-  }, [axiosPrivate, auth.currentLabId, setAuth])
+  const [openConfirmationModal, setOpenConfirmationModal] = useState(false)
 
   const storageName = auth.currentLabId + '_chemicals'
 
@@ -109,7 +42,70 @@ const StockCheck = () => {
   const [openScanQRCodeModal, setOpenScanQRCodeModal] = useState(false)
   const [scannedChemicalId, setScannedChemicalId] = useState('')
 
-  const startStockCheck = () => {
+  useEffect(() => {
+    if (refresh) {
+      setRefresh(false)
+      return
+    }
+
+    let isMounted = true
+    const controller = new AbortController()
+
+    setIsLoading(true)
+    setReportId('')
+
+    const getActiveStockCheck = async () => {
+      try {
+        const { data } = await axiosPrivate.post(
+          `/api/private/stock-check/active`,
+          {
+            labId: auth.currentLabId,
+          },
+          {
+            signal: controller.signal,
+          }
+        )
+
+        if (isMounted) {
+          setReportId(data.reportId)
+          setAuth((prev) => ({
+            ...prev,
+            stockCheck: {
+              chemicals: data.chemicals,
+              disposedChemicals: data.disposedChemicals,
+            },
+          }))
+          setIsLoading(false)
+        }
+      } catch (error) {
+        if (error.response.status === 404) {
+          setChemicals([])
+          localStorage.removeItem(storageName)
+          setStarted(false)
+          setReportId('')
+          setAuth((prev) => ({
+            ...prev,
+            stockCheck: {
+              chemicals: [],
+              disposedChemicals: [],
+            },
+          }))
+          setIsLoading(false)
+        }
+
+        return
+      }
+    }
+
+    getActiveStockCheck()
+
+    return () => {
+      isMounted = false
+      controller.abort()
+    }
+  }, [axiosPrivate, auth.currentLabId, setAuth, refresh, storageName])
+
+  const joinStockCheck = () => {
     localStorage.setItem(storageName, JSON.stringify([]))
     setStarted(true)
   }
@@ -119,13 +115,49 @@ const StockCheck = () => {
   ) : !started ? (
     <div className='auth-card mb-6 self-center'>
       <h4 className='mb-2'>Stock Check Procedure</h4>
-      <Procedure showFirstStep={true} />
-      <button
-        className='button button-solid mt-6 w-full justify-center'
-        onClick={startStockCheck}
-      >
-        Start Stock Check
-      </button>
+      <Procedure
+        showFirstStep={true}
+        isHavingActiveStockCheck={reportId !== ''}
+      />
+      <div className='mt-6 flex flex-col gap-3'>
+        {!isPostgraduate && !reportId ? (
+          <StartStockCheckButton setRefresh={setRefresh} />
+        ) : (
+          <button
+            className='button button-solid w-full justify-center'
+            onClick={joinStockCheck}
+            disabled={!reportId}
+          >
+            Join Stock Check
+          </button>
+        )}
+
+        {!isPostgraduate && reportId && (
+          <button
+            className='button button-green-outline w-full justify-center py-3 px-4'
+            onClick={() => setOpenConfirmationModal(true)}
+          >
+            Mark as Completed
+          </button>
+        )}
+      </div>
+
+      {isPostgraduate && !reportId && (
+        <p className='mt-3 flex items-center text-sm font-medium text-yellow-600'>
+          <ExclamationIcon className='mr-2 h-5 w-5 shrink-0' /> No ongoing stock
+          check process. Kindly contact the lab owner to start the stock check
+          process.
+        </p>
+      )}
+
+      {openConfirmationModal && reportId && (
+        <ConfirmationModal
+          reportId={reportId}
+          openModal={openConfirmationModal}
+          setOpenModal={setOpenConfirmationModal}
+          setRefresh={setRefresh}
+        />
+      )}
     </div>
   ) : (
     <>
@@ -140,9 +172,11 @@ const StockCheck = () => {
 
       <p className='mb-2 text-sm font-medium text-gray-500'>Stock Check Info</p>
       <ActionCard
+        reportId={reportId}
         chemicals={chemicals}
         setChemicals={setChemicals}
         setStarted={setStarted}
+        setRefresh={setRefresh}
       />
 
       <p className='mb-2 text-sm font-medium text-gray-500'>

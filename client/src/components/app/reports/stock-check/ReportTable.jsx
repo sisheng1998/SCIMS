@@ -156,6 +156,7 @@ const ReportTable = ({ chemicals, locations, type }) => {
           >
             <option value=''>Any Location</option>
             {locations
+              .filter((location) => location !== '-')
               .sort((a, b) => (a.toLowerCase() > b.toLowerCase() ? 1 : -1))
               .map((location, index) => (
                 <option key={index} value={location}>

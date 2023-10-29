@@ -1,11 +1,20 @@
 import React from 'react'
+import useAuth from '../../../hooks/useAuth'
+import ROLES_LIST from '../../../config/roles_list'
 
-const Procedure = ({ showFirstStep }) => {
+const Procedure = ({ showFirstStep, isHavingActiveStockCheck }) => {
+  const { auth } = useAuth()
+  const isPostgraduate = auth.currentRole === ROLES_LIST.postgraduate
+
   return (
     <ol className='ml-4 list-decimal space-y-1.5 text-sm'>
       {showFirstStep && (
         <li>
-          To start the stock check process, kindly press the button below.
+          Press the "
+          {isPostgraduate || isHavingActiveStockCheck ? 'Join' : 'Start'} Stock
+          Check" button to{' '}
+          {isPostgraduate || isHavingActiveStockCheck ? 'join' : 'start'} the
+          stock check process.
         </li>
       )}
       <li>
@@ -17,14 +26,23 @@ const Procedure = ({ showFirstStep }) => {
         chemical.
       </li>
       <li>Fill in the remaining amount of the scanned chemical.</li>
-      <li>Repeat Step 2 ~ 4 to add more records.</li>
       <li>
-        Press the "Complete" button under Stock Check Action to complete the
-        stock check process.
+        Repeat Step {showFirstStep ? '2 ~ 4' : '1 ~ 3'} to add more records.
       </li>
       <li>
-        The generated stock check report will be shown under Reports (desktop
-        version).
+        Press the "Complete" button under "My Stock Check Action" to save the
+        records.
+      </li>
+      {isPostgraduate && (
+        <li>Wait for the lab owner to end the stock check process.</li>
+      )}
+      {showFirstStep && !isPostgraduate && (
+        <li>
+          Press the "Mark as Completed" button to end the stock check process.
+        </li>
+      )}
+      <li>
+        The stock check report will be finalized once the process is ended.
       </li>
     </ol>
   )

@@ -3,7 +3,13 @@ import { CheckIcon, XIcon } from '@heroicons/react/outline'
 import useAuth from '../../../hooks/useAuth'
 import ConfirmationModal from './ConfirmationModal'
 
-const ActionCard = ({ chemicals, setChemicals, setStarted }) => {
+const ActionCard = ({
+  reportId,
+  chemicals,
+  setChemicals,
+  setStarted,
+  setRefresh,
+}) => {
   const { auth } = useAuth()
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false)
   const [action, setAction] = useState('')
@@ -41,7 +47,7 @@ const ActionCard = ({ chemicals, setChemicals, setStarted }) => {
           htmlFor='action'
           className='mt-4 text-xs font-normal text-gray-400'
         >
-          Stock Check Action
+          My Stock Check Action
         </label>
         <div className='flex items-center space-x-4'>
           <button
@@ -67,12 +73,14 @@ const ActionCard = ({ chemicals, setChemicals, setStarted }) => {
 
       {openConfirmationModal && action && (
         <ConfirmationModal
+          reportId={reportId}
           action={action}
           chemicals={chemicals}
           setChemicals={setChemicals}
           setStarted={setStarted}
           openModal={openConfirmationModal}
           setOpenModal={setOpenConfirmationModal}
+          setRefresh={setRefresh}
         />
       )}
     </>

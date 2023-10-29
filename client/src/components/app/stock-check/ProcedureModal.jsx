@@ -28,7 +28,7 @@ const ProcedureModal = ({ openModal, setOpenModal }) => {
             />
           </div>
 
-          <Procedure showFirstStep={false} />
+          <Procedure showFirstStep={false} isHavingActiveStockCheck={true} />
 
           <div className='mt-9 flex items-center justify-end'>
             <button

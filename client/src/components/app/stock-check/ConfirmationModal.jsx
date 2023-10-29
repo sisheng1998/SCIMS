@@ -6,12 +6,14 @@ import useAxiosPrivate from '../../../hooks/useAxiosPrivate'
 import LoadingButtonText from '../components/LoadingButtonText'
 
 const ConfirmationModal = ({
+  reportId,
   action,
   chemicals,
   setChemicals,
   setStarted,
   openModal,
   setOpenModal,
+  setRefresh,
 }) => {
   const { auth } = useAuth()
   const axiosPrivate = useAxiosPrivate()
@@ -30,39 +32,11 @@ const ConfirmationModal = ({
     if (action === 'complete') {
       setIsLoading(true)
 
-      const missingChemicals = auth.stockCheck.chemicals
-        .filter(
-          (chemicalItem) =>
-            !chemicals.some(
-              (chemical) => chemicalItem._id === chemical.chemicalId
-            )
-        )
-        .map((chemical) => ({
-          chemicalId: chemical._id,
-          CASNo: chemical.CASId.CASNo,
-          name: chemical.name,
-          location: chemical.location,
-          unit: chemical.unit,
-          amountInDB: chemical.amount,
-        }))
-
-      const disposedChemicals = auth.stockCheck.disposedChemicals.map(
-        (chemical) => ({
-          chemicalId: chemical._id,
-          CASNo: chemical.CASId.CASNo,
-          name: chemical.name,
-          location: chemical.location,
-          unit: chemical.unit,
-          amountInDB: chemical.amount,
-        })
-      )
-
       try {
         await axiosPrivate.post('/api/private/stock-check', {
           labId,
+          reportId,
           chemicals,
-          missingChemicals,
-          disposedChemicals,
         })
         setSuccess(true)
       } catch (error) {
@@ -87,6 +61,7 @@ const ConfirmationModal = ({
       setChemicals([])
       localStorage.removeItem(storageName)
       setStarted(false)
+      setRefresh(true)
     }
 
     setOpenModal(false)
@@ -119,11 +94,11 @@ const ConfirmationModal = ({
               </h2>
               {action === 'complete' ? (
                 <p>
-                  The records have been saved and the stock check report have
-                  been generated.
+                  The records have been saved and the stock check report has
+                  been updated.
                 </p>
               ) : (
-                <p>The stock check process has been cancelled.</p>
+                <p>Your stock check process has been cancelled.</p>
               )}
               <button
                 className='button button-solid mt-6 w-32 justify-center'
@@ -136,21 +111,21 @@ const ConfirmationModal = ({
             <>
               <h4 className='mb-2'>
                 {action === 'complete'
-                  ? 'Complete Stock Check'
-                  : 'Cancel Stock Check'}
+                  ? 'Complete My Stock Check Process'
+                  : 'Cancel My Stock Check Process'}
               </h4>
               {action === 'complete' ? (
                 <>
-                  <p>Are you sure the stock check process is completed?</p>
+                  <p>Are you sure your stock check process is completed?</p>
                   <p className='mt-2 text-sm text-gray-500'>
-                    The records will be saved and a stock check report will be
-                    generated.
+                    The records will be saved and the stock check report will be
+                    updated.
                   </p>
                 </>
               ) : (
                 <>
                   <p>
-                    Are you sure you want to cancel the stock check process?
+                    Are you sure you want to cancel your stock check process?
                   </p>
                   <p className='mt-2 text-sm text-gray-500'>
                     All of the records will be permanently removed. This action
