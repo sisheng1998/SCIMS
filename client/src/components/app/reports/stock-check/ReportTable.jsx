@@ -4,8 +4,8 @@ import SortButton from '../../components/SortButton'
 import Filters from '../../components/Filters'
 import Pagination from '../../components/Pagination'
 import { useNavigate } from 'react-router-dom'
-import SortChemicals, { NormalSorting } from './SortChemicals'
-import { ExclamationIcon } from '@heroicons/react/outline'
+import { NormalSorting } from './SortChemicals'
+// import { ExclamationIcon } from '@heroicons/react/outline'
 import FormatAmountWithUnit from '../../../utils/FormatAmountWithUnit'
 import FILE_PATH from '../../../../config/file_path'
 import GetLetterPicture from '../../../utils/GetLetterPicture'
@@ -17,13 +17,15 @@ const ReportTable = ({ chemicals, locations, type }) => {
   const [avatarInfo, setAvatarInfo] = useState('')
   const [openViewImageModal, setOpenViewImageModal] = useState(false)
 
-  let processedData
+  // let processedData
 
-  if (type === 'Recorded') {
-    processedData = SortChemicals(chemicals)
-  } else {
-    processedData = NormalSorting(chemicals)
-  }
+  // if (type === 'Recorded') {
+  //   processedData = SortChemicals(chemicals)
+  // } else {
+  //   processedData = NormalSorting(chemicals)
+  // }
+
+  const processedData = NormalSorting(chemicals)
 
   const navigate = useNavigate()
 
@@ -54,15 +56,16 @@ const ReportTable = ({ chemicals, locations, type }) => {
       sortable: true,
       hide: false,
     },
-    {
-      key: 'amount',
-      label: 'Recorded Amount',
-      sortable: false,
-      hide: type !== 'Recorded',
-    },
+    // {
+    //   key: 'amount',
+    //   label: 'Recorded Amount',
+    //   sortable: false,
+    //   hide: type !== 'Recorded',
+    // },
     {
       key: 'amountInDB',
-      label: type === 'Recorded' ? 'Actual Amount' : 'Amount',
+      // label: type === 'Recorded' ? 'Actual Amount' : 'Amount',
+      label: 'Amount',
       sortable: false,
       hide: false,
     },
@@ -166,7 +169,7 @@ const ReportTable = ({ chemicals, locations, type }) => {
             <option value='-'>No Location</option>
           </select>
 
-          {type === 'Recorded' && (
+          {/* {type === 'Recorded' && (
             <select
               className='ml-2 p-1 pl-2 pr-8 text-sm text-gray-700'
               name='amountFilter'
@@ -180,7 +183,7 @@ const ReportTable = ({ chemicals, locations, type }) => {
               <option value='=='>Amount Matched</option>
               <option value='!='>Amount Mismatched</option>
             </select>
-          )}
+          )} */}
         </div>
       </Filters>
 
@@ -246,7 +249,7 @@ const ReportTable = ({ chemicals, locations, type }) => {
                         <td className='px-6 py-4'>{chemical.CASNo}</td>
                         <td className='px-6 py-4'>{chemical.name}</td>
                         <td className='px-6 py-4'>{chemical.location}</td>
-                        {type === 'Recorded' && (
+                        {/* {type === 'Recorded' && (
                           <td className='px-6 py-4'>
                             {FormatAmountWithUnit(
                               chemical.amount,
@@ -265,7 +268,7 @@ const ReportTable = ({ chemicals, locations, type }) => {
                               </span>
                             )}
                           </td>
-                        )}
+                        )} */}
                         <td className='px-6 py-4'>
                           {FormatAmountWithUnit(
                             chemical.amountInDB,

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Dialog } from '@headlessui/react'
 import { CheckIcon, XIcon, ExclamationIcon } from '@heroicons/react/outline'
-import NumberWithUnitField from '../../validations/NumberWithUnitField'
+// import NumberWithUnitField from '../../validations/NumberWithUnitField'
 import useAuth from '../../../hooks/useAuth'
+import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
 
 const AddRecordModal = ({
   scannedChemicalId,
@@ -17,8 +18,8 @@ const AddRecordModal = ({
   const [openModal, setOpenModal] = useState(true)
 
   const [chemical, setChemical] = useState('')
-  const [amount, setAmount] = useState('')
-  const [amountValidated, setAmountValidated] = useState(false)
+  // const [amount, setAmount] = useState('')
+  // const [amountValidated, setAmountValidated] = useState(false)
 
   const [success, setSuccess] = useState(false)
   const [notFound, setNotFound] = useState(false)
@@ -71,7 +72,8 @@ const AddRecordModal = ({
         CASNo: chemical.CASNo,
         name: chemical.name,
         location: chemical.location,
-        amount: Number(amount),
+        // amount: Number(amount),
+        amount: chemical.amountInDB,
         unit: chemical.unit,
       },
     ]
@@ -84,7 +86,7 @@ const AddRecordModal = ({
 
   const closeHandler = () => {
     setScannedChemicalId('')
-    setAmount('')
+    // setAmount('')
 
     if (success) {
       setSuccess(false)
@@ -221,10 +223,20 @@ const AddRecordModal = ({
                       >
                         Location
                       </label>
-                      <p className='font-medium'>{chemical.location}</p>
+                      <p className='mb-2 font-medium'>{chemical.location}</p>
+
+                      <label htmlFor='amount' className='mb-0.5 text-gray-400'>
+                        Amount
+                      </label>
+                      <p className='font-medium'>
+                        {FormatAmountWithUnit(
+                          chemical.amountInDB,
+                          chemical.unit
+                        )}
+                      </p>
                     </div>
 
-                    <label htmlFor='amount' className='required-input-label'>
+                    {/* <label htmlFor='amount' className='required-input-label'>
                       Amount of Chemical
                     </label>
                     <NumberWithUnitField
@@ -236,7 +248,7 @@ const AddRecordModal = ({
                       validated={amountValidated}
                       setValidated={setAmountValidated}
                       unit={chemical.unit}
-                    />
+                    /> */}
 
                     <div className='mt-9 flex items-center justify-end'>
                       <span
@@ -248,7 +260,7 @@ const AddRecordModal = ({
                       <button
                         className='ml-6 w-32'
                         type='submit'
-                        disabled={!amountValidated}
+                        // disabled={!amountValidated}
                       >
                         Add
                       </button>

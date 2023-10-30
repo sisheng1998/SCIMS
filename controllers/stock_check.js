@@ -25,6 +25,7 @@ exports.getActiveStockCheck = async (req, res, next) => {
         name: 1,
         location: 1,
         unit: 1,
+        amountInDB: 1,
       },
       missingChemicals: {
         chemicalId: 1,
@@ -32,6 +33,7 @@ exports.getActiveStockCheck = async (req, res, next) => {
         name: 1,
         location: 1,
         unit: 1,
+        amountInDB: 1,
       },
       disposedChemicals: {
         chemicalId: 1,

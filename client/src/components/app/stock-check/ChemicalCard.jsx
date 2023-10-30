@@ -2,15 +2,15 @@ import React, { useState } from 'react'
 import {
   LocationMarkerIcon,
   BeakerIcon,
-  PencilAltIcon,
+  // PencilAltIcon,
   TrashIcon,
 } from '@heroicons/react/outline'
 import FormatAmountWithUnit from '../../utils/FormatAmountWithUnit'
-import EditRecordModal from './EditRecordModal'
+// import EditRecordModal from './EditRecordModal'
 import RemoveRecordModal from './RemoveRecordModal'
 
 const ChemicalCard = ({ chemical, chemicals, setChemicals }) => {
-  const [openEditRecordModal, setOpenEditRecordModal] = useState(false)
+  // const [openEditRecordModal, setOpenEditRecordModal] = useState(false)
   const [openRemoveRecordModal, setOpenRemoveRecordModal] = useState(false)
 
   return (
@@ -25,14 +25,14 @@ const ChemicalCard = ({ chemical, chemicals, setChemicals }) => {
           </div>
 
           <div className='flex items-center space-x-2'>
-            <button
+            {/* <button
               onClick={() => setOpenEditRecordModal(true)}
               className='text-indigo-600 focus:outline-none'
             >
               <PencilAltIcon className='h-5 w-5' />
             </button>
 
-            <span className='text-gray-200'>|</span>
+            <span className='text-gray-200'>|</span> */}
 
             <button
               onClick={() => setOpenRemoveRecordModal(true)}
@@ -56,7 +56,7 @@ const ChemicalCard = ({ chemical, chemicals, setChemicals }) => {
         </div>
       </div>
 
-      {openEditRecordModal && (
+      {/* {openEditRecordModal && (
         <EditRecordModal
           chemical={chemical}
           chemicals={chemicals}
@@ -64,7 +64,7 @@ const ChemicalCard = ({ chemical, chemicals, setChemicals }) => {
           openModal={openEditRecordModal}
           setOpenModal={setOpenEditRecordModal}
         />
-      )}
+      )} */}
 
       {openRemoveRecordModal && (
         <RemoveRecordModal
