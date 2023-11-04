@@ -172,6 +172,7 @@ const CHEMICAL_STATUS = [
   'expiring soon',
   'expired',
   'disposed',
+  'keep in view',
 ]
 const DATE_REGEX = /^(0?[1-9]|[12][0-9]|3[01])[/](0?[1-9]|1[012])[/]\d{4}$/
 
@@ -294,7 +295,9 @@ const addChemical = async (
 
     let status = 'Normal'
 
-    if (disposedDate) {
+    if (chemical.status === 'Keep In View') {
+      status = 'Keep In View'
+    } else if (disposedDate) {
       status = 'Disposed'
     } else {
       if (Number(chemical.amount) <= Number(chemical.minAmount)) {
@@ -478,7 +481,7 @@ const addChemical = async (
   } catch (error) {
     results.failed.push({
       index,
-      CASNo,
+      CASNo: chemical.CASNo,
       name: chemical.name,
       reason: error.message,
     })
@@ -510,7 +513,9 @@ const updateChemical = async (
 
     let status = 'Normal'
 
-    if (disposedDate) {
+    if (chemical.status === 'Keep In View') {
+      status = 'Keep In View'
+    } else if (disposedDate) {
       status = 'Disposed'
     } else {
       if (Number(chemical.amount) <= Number(chemical.minAmount)) {
@@ -808,7 +813,7 @@ const updateChemical = async (
   } catch (error) {
     results.failed.push({
       index,
-      CASNo,
+      CASNo: chemical.CASNo,
       name: chemical.name,
       reason: error.message,
     })

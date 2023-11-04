@@ -27,6 +27,8 @@ const {
   disposeChemical,
   cancelDisposal,
   deleteChemical,
+  markAsKIV,
+  removeFromKIV,
   getCASInfo,
   getAllCASNo,
 } = require('../controllers/chemical')
@@ -55,7 +57,13 @@ const {
   stockCheckReport,
 } = require('../controllers/report')
 
-const { getSDS, addSDS, updateSDS } = require('../controllers/sds')
+const {
+  getSDS,
+  getSDSChemicals,
+  addSDS,
+  updateSDS,
+  deleteSDS,
+} = require('../controllers/sds')
 
 const { getNotifications } = require('../controllers/notification')
 
@@ -125,6 +133,12 @@ router
 router
   .route('/chemical/delete')
   .post(verifyRoles(ROLES_LIST.labOwner), deleteChemical)
+router
+  .route('/chemical/mark-as-kiv')
+  .post(verifyRoles(ROLES_LIST.postgraduate), markAsKIV)
+router
+  .route('/chemical/remove-from-kiv')
+  .post(verifyRoles(ROLES_LIST.postgraduate), removeFromKIV)
 router.route('/cas').get(getAllCASNo)
 router.route('/cas').put(getCASInfo)
 
@@ -198,6 +212,8 @@ router.route('/sds/new-sds').post(
   ]),
   addSDS
 )
+router.route('/sds/:CASId/chemicals').get(getSDSChemicals)
+router.route('/sds/:CASId').delete(deleteSDS)
 
 // Notifications
 router.route('/notifications').get(getNotifications)

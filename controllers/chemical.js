@@ -1368,6 +1368,167 @@ exports.deleteChemical = async (req, res, next) => {
   }
 }
 
+exports.markAsKIV = async (req, res, next) => {
+  const { chemicalId, labId } = req.body
+
+  if (!chemicalId || !labId) {
+    return next(new ErrorResponse('Missing required value.', 400))
+  }
+
+  const foundLab = await Lab.findById(labId)
+  if (!foundLab) {
+    return next(new ErrorResponse('Lab not found.', 404))
+  }
+
+  const foundChemical = await Chemical.findById(chemicalId)
+  if (!foundChemical) {
+    return next(new ErrorResponse('Chemical not found.', 404))
+  }
+
+  const session = await startSession()
+
+  try {
+    session.startTransaction()
+
+    await Lab.updateOne(
+      { _id: foundLab._id },
+      {
+        $set: {
+          lastUpdated: Date.now(),
+        },
+      },
+      { new: true, session }
+    )
+
+    await Chemical.updateOne(
+      { _id: foundChemical._id },
+      {
+        $set: {
+          status: 'Keep In View',
+          lastUpdated: Date.now(),
+        },
+      },
+      { new: true, session }
+    )
+
+    await Activity.create(
+      [
+        {
+          lab: foundLab._id,
+          user: req.user._id,
+          chemical: foundChemical._id,
+          description: 'Chemical marked as KIV.',
+        },
+      ],
+      { session }
+    )
+
+    await session.commitTransaction()
+    session.endSession()
+
+    res.status(200).json({
+      success: true,
+      data: 'Chemical marked as KIV.',
+    })
+  } catch (error) {
+    await session.abortTransaction()
+    session.endSession()
+
+    next(error)
+  }
+}
+
+exports.removeFromKIV = async (req, res, next) => {
+  const { chemicalId, labId } = req.body
+
+  if (!chemicalId || !labId) {
+    return next(new ErrorResponse('Missing required value.', 400))
+  }
+
+  const foundLab = await Lab.findById(labId)
+  if (!foundLab) {
+    return next(new ErrorResponse('Lab not found.', 404))
+  }
+
+  const foundChemical = await Chemical.findById(chemicalId)
+  if (!foundChemical) {
+    return next(new ErrorResponse('Chemical not found.', 404))
+  }
+
+  const session = await startSession()
+
+  try {
+    session.startTransaction()
+
+    let status = 'Normal'
+    if (Number(foundChemical.amount) <= Number(foundChemical.minAmount)) {
+      status = 'Low Amount'
+    }
+
+    const today = new Date()
+    today.setUTCHours(0, 0, 0, 0)
+    if (new Date(foundChemical.expirationDate) < today) {
+      status = 'Expired'
+    } else {
+      const config = await Config.findOne({}, '-_id')
+
+      const future = new Date(
+        today.setDate(today.getDate() + config.DAY_BEFORE_EXP)
+      )
+
+      if (new Date(foundChemical.expirationDate) < future) {
+        status = 'Expiring Soon'
+      }
+    }
+
+    await Lab.updateOne(
+      { _id: foundLab._id },
+      {
+        $set: {
+          lastUpdated: Date.now(),
+        },
+      },
+      { new: true, session }
+    )
+
+    await Chemical.updateOne(
+      { _id: foundChemical._id },
+      {
+        $set: {
+          status,
+          lastUpdated: Date.now(),
+        },
+      },
+      { new: true, session }
+    )
+
+    await Activity.create(
+      [
+        {
+          lab: foundLab._id,
+          user: req.user._id,
+          chemical: foundChemical._id,
+          description: 'Chemical removed from KIV.',
+        },
+      ],
+      { session }
+    )
+
+    await session.commitTransaction()
+    session.endSession()
+
+    res.status(200).json({
+      success: true,
+      data: 'Chemical removed from KIV.',
+    })
+  } catch (error) {
+    await session.abortTransaction()
+    session.endSession()
+
+    next(error)
+  }
+}
+
 exports.getCASInfo = async (req, res, next) => {
   const { CASNo } = req.body
   if (!CASNo) {

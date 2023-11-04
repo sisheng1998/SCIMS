@@ -148,6 +148,28 @@
         {{/each}}
       </td>
     </tr>
+    <tr
+      style='font-size:100%;vertical-align:baseline;margin:0;padding:0;border:0'
+    >
+      <td
+        style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+        align='left'
+        valign='baseline'
+      >
+        <p style='margin: 3px 0;'>Keep In View</p>
+      </td>
+      <td
+        style='font-size:100%;vertical-align:baseline;font-weight:normal;text-align:left;border-collapse:collapse;margin:0;padding:3px 6px;border:1px solid #e5e7eb'
+        align='left'
+        valign='baseline'
+      >
+        {{#each kivChemicals}}
+          <p style='margin: 3px 0;'>{{name}} ({{CASId.CASNo}})</p>
+        {{else}}
+          <p style='margin: 3px 0;'>-</p>
+        {{/each}}
+      </td>
+    </tr>
   </tbody>
 </table>
 <p style='font-size: 12px;'>Note: The status changes are based on the chemical's

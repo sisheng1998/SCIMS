@@ -108,7 +108,7 @@ module.exports = async () => {
       const expiredChemicals = await Chemical.find(
         {
           status: {
-            $nin: ['Disposed', 'Expired'],
+            $nin: ['Disposed', 'Expired', 'Keep In View'],
           },
           expirationDate: {
             $lt: today,
@@ -124,7 +124,7 @@ module.exports = async () => {
       await Chemical.updateMany(
         {
           status: {
-            $nin: ['Disposed', 'Expired'],
+            $nin: ['Disposed', 'Expired', 'Keep In View'],
           },
           expirationDate: {
             $lt: today,
@@ -144,7 +144,7 @@ module.exports = async () => {
       const expiringChemicals = await Chemical.find(
         {
           status: {
-            $nin: ['Expiring Soon', 'Disposed', 'Expired'],
+            $nin: ['Expiring Soon', 'Disposed', 'Expired', 'Keep In View'],
           },
           expirationDate: {
             $lt: future,
@@ -160,7 +160,7 @@ module.exports = async () => {
       await Chemical.updateMany(
         {
           status: {
-            $nin: ['Expiring Soon', 'Disposed', 'Expired'],
+            $nin: ['Expiring Soon', 'Disposed', 'Expired', 'Keep In View'],
           },
           expirationDate: {
             $lt: future,
@@ -253,6 +253,7 @@ module.exports = async () => {
         const lowAmountChemicals = lab.chemicals.filter(
           (chemical) =>
             chemical.status !== 'Expired' &&
+            chemical.status !== 'Keep In View' &&
             chemical.amount <= chemical.minAmount
         )
 
@@ -266,13 +267,18 @@ module.exports = async () => {
 
         const disposedChemicals = lab.disposedChemicals
 
+        const kivChemicals = lab.chemicals.filter(
+          (chemical) => chemical.status === 'Keep In View'
+        )
+
         if (
           usageRecords.length !== 0 ||
           newChemicals.length !== 0 ||
           lowAmountChemicals.length !== 0 ||
           expiringChemicals.length !== 0 ||
           expiredChemicals.length !== 0 ||
-          disposedChemicals.length !== 0
+          disposedChemicals.length !== 0 ||
+          kivChemicals.length !== 0
         ) {
           const emailOptions = {
             to: lab.labOwner.email,
@@ -288,6 +294,7 @@ module.exports = async () => {
               expiringChemicals,
               expiredChemicals,
               disposedChemicals,
+              kivChemicals,
             },
           }
 

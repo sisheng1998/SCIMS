@@ -27,6 +27,7 @@ exports.getInfo = async (req, res, next) => {
     expiringChemicals: 0,
     expiredChemicals: 0,
     disposedChemicals: 0,
+    kivChemicals: 0,
     chemicals: [],
     dayBeforeExp: config.DAY_BEFORE_EXP,
   }
@@ -127,6 +128,12 @@ exports.getInfo = async (req, res, next) => {
         },
         status: 'Disposed',
       })
+      data.kivChemicals = await Chemical.countDocuments({
+        lab: {
+          $in: labIds,
+        },
+        status: 'Keep In View',
+      })
 
       foundLabs.forEach(
         (lab) =>
@@ -186,6 +193,10 @@ exports.getInfo = async (req, res, next) => {
       data.disposedChemicals = await Chemical.countDocuments({
         lab: foundLab._id,
         status: 'Disposed',
+      })
+      data.kivChemicals = await Chemical.countDocuments({
+        lab: foundLab._id,
+        status: 'Keep In View',
       })
 
       data.chemicals = [...foundLab.chemicals, ...foundLab.disposedChemicals]

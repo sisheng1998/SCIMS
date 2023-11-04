@@ -52,6 +52,9 @@ exports.getInfo = async (req, res, next) => {
     data.disposedChemicals = await Chemical.countDocuments({
       status: 'Disposed',
     })
+    data.kivChemicals = await Chemical.countDocuments({
+      status: 'Keep In View',
+    })
 
     data.chemicals = await Chemical.find({}, 'name expirationDate')
 
