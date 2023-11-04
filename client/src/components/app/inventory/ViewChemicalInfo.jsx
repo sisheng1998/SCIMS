@@ -18,6 +18,7 @@ import useMobile from '../../../hooks/useMobile'
 import SafetyAndSecuritySection from './components/SafetyAndSecuritySection'
 import { useNavigate } from 'react-router-dom'
 import LoadingButtonText from '../components/LoadingButtonText'
+import KIVButton from './components/KIVButton'
 
 const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
   const isMounted = useRef(true)
@@ -52,7 +53,7 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
   } else if (chemical.status === 'Expired' || isDisposed) {
     classes = 'bg-red-100 text-red-600'
   } else {
-    // Low Amount / Expiring Soon
+    // Low Amount / Expiring Soon / Keep In View
     classes = 'bg-yellow-100 text-yellow-600'
   }
 
@@ -508,9 +509,9 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
 
           {isMobile &&
             auth.currentLabId === lab._id &&
-            auth.currentRole >= ROLES_LIST.labOwner && (
+            auth.currentRole >= ROLES_LIST.postgraduate && (
               <div className='mt-6'>
-                {isDisposed ? (
+                {auth.currentRole >= ROLES_LIST.labOwner && isDisposed ? (
                   <button
                     className='button button-outline justify-center px-4 py-2'
                     onClick={cancelDisposalHandler}
@@ -519,12 +520,28 @@ const ViewChemicalInfo = ({ chemical, lab, setUpdateSuccess, setEdit }) => {
                     {isLoading ? <LoadingButtonText /> : 'Cancel Disposal'}
                   </button>
                 ) : !isDispose ? (
-                  <button
-                    className='button button-red-outline justify-center px-4 py-2'
-                    onClick={() => setIsDispose(true)}
-                  >
-                    Dispose Chemical
-                  </button>
+                  <>
+                    {!isDisposed && (
+                      <KIVButton
+                        chemical={chemical}
+                        lab={lab}
+                        setErrorMessage={setErrorMessage}
+                        setEditSuccess={setUpdateSuccess}
+                        isButton
+                      />
+                    )}
+
+                    {auth.currentRole >= ROLES_LIST.labOwner && (
+                      <div className='mt-3'>
+                        <button
+                          className='button button-red-outline justify-center px-4 py-2'
+                          onClick={() => setIsDispose(true)}
+                        >
+                          Dispose Chemical
+                        </button>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <>
                     <div className='mb-3'>

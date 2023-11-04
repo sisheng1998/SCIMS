@@ -96,6 +96,10 @@ const STATUS = [
     label: 'Disposed',
     value: 'Disposed',
   },
+  {
+    label: 'Keep In View',
+    value: 'Keep In View',
+  },
 ]
 
 const HEADERS = [
@@ -234,6 +238,7 @@ const CHEMICAL_STATUS = [
   'expiring soon',
   'expired',
   'disposed',
+  'keep in view',
 ]
 const DATE_REGEX = /^(0?[1-9]|[12][0-9]|3[01])[/](0?[1-9]|1[012])[/]\d{4}$/
 

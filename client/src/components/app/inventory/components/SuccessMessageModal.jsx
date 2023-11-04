@@ -5,7 +5,7 @@ import { CheckIcon } from '@heroicons/react/outline'
 
 const SuccessMessageModal = ({
   chemicalId,
-  type,
+  type, // Add, Edit, Dispose, Delete, Cancel Disposal, Mark as KIV, Remove from KIV
   openModal,
   setOpenModal,
   setEdit,
@@ -24,7 +24,7 @@ const SuccessMessageModal = ({
     } else if (type === 'Dispose') {
       setEdit(false)
       setEditSuccess(true)
-    } else if (type === 'Edit' || type === 'Cancel Disposal') {
+    } else {
       setEditSuccess(true)
     }
   }
@@ -76,6 +76,16 @@ const SuccessMessageModal = ({
             <>
               <h2 className='mt-6 mb-2 text-green-600'>Info Updated!</h2>
               <p>The information have been updated.</p>
+            </>
+          )}
+
+          {(type === 'Mark as KIV' || type === 'Remove from KIV') && (
+            <>
+              <h2 className='mt-6 mb-2 text-green-600'>Status Updated!</h2>
+              <p>
+                The chemical have been{' '}
+                {type === 'Mark as KIV' ? 'marked as KIV' : 'removed from KIV'}.
+              </p>
             </>
           )}
 

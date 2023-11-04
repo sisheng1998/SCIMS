@@ -188,6 +188,7 @@ const ChemicalsTable = (props) => {
               <option value='Low Amount'>Low Amount</option>
               <option value='Expiring Soon'>Expiring Soon</option>
               <option value='Expired'>Expired</option>
+              <option value='Keep In View'>Keep In View</option>
             </select>
 
             <select
@@ -261,7 +262,7 @@ const ChemicalsTable = (props) => {
               ) {
                 classes = 'bg-red-100 text-red-600'
               } else {
-                // Low Amount / Expiring Soon
+                // Low Amount / Expiring Soon / Keep In View
                 classes = 'bg-yellow-100 text-yellow-600'
               }
 
@@ -395,7 +396,7 @@ const ChemicalsTable = (props) => {
                       ) {
                         classes = 'bg-red-100 text-red-600'
                       } else {
-                        // Low Amount / Expiring Soon
+                        // Low Amount / Expiring Soon / Keep In View
                         classes = 'bg-yellow-100 text-yellow-600'
                       }
 

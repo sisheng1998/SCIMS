@@ -7,7 +7,7 @@ const getTooltip = (value) => {
     return '24 characters with a-f, A-F and 0-9 only. (Optional)'
 
   if (value === 'status')
-    return 'Normal, Low Amount, Expiring Soon, Expired or Disposed only. (Optional)'
+    return 'Normal, Low Amount, Expiring Soon, Expired, Disposed or Keep In View only. (Optional)'
 
   const header = HEADERS.find((header) => header.key === value)
   const isRequired = header.label.endsWith('*') ? ' (Required)' : ' (Optional)'

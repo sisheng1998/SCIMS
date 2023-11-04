@@ -105,7 +105,7 @@ const Search = ({ searchRef }) => {
                 ) {
                   classes = 'bg-red-400'
                 } else {
-                  // Low Amount / Expiring Soon
+                  // Low Amount / Expiring Soon / Keep In View
                   classes = 'bg-yellow-400'
                 }
 

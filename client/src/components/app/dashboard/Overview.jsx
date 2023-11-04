@@ -79,6 +79,16 @@ const Overview = ({ info }) => {
             text='Disposed'
           />
         )}
+
+        {info.kivChemicals !== 0 && (
+          <InfoCard
+            info={info.kivChemicals}
+            icon={
+              <CubeIcon className='h-14 w-14 rounded-full bg-yellow-50 p-3 text-yellow-500' />
+            }
+            text='Keep In View'
+          />
+        )}
       </div>
     </div>
   )

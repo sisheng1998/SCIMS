@@ -10,6 +10,7 @@ import useAuth from '../../../hooks/useAuth'
 import ROLES_LIST from '../../../config/roles_list'
 import SuccessMessageModal from './components/SuccessMessageModal'
 import LoadingButtonText from '../components/LoadingButtonText'
+import KIVButton from './components/KIVButton'
 
 const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
   useEffect(() => {
@@ -202,14 +203,27 @@ const EditChemicalInfo = ({ chemical, labData, setEditSuccess, setEdit }) => {
               </div>
             ) : (
               <div className='mt-9 flex items-center justify-end'>
-                {auth.currentRole >= ROLES_LIST.labOwner && (
-                  <span
-                    onClick={() => setIsDispose(true)}
-                    className='mr-auto cursor-pointer self-end text-sm font-medium text-red-600 transition hover:text-red-700'
-                  >
-                    Dispose Chemical
-                  </span>
-                )}
+                <div className='mr-auto self-end'>
+                  <KIVButton
+                    chemical={chemical}
+                    lab={labData}
+                    setErrorMessage={setErrorMessage}
+                    setEditSuccess={setEditSuccess}
+                  />
+
+                  {auth.currentRole >= ROLES_LIST.labOwner && (
+                    <>
+                      <span className='mx-1'>/</span>
+
+                      <span
+                        onClick={() => setIsDispose(true)}
+                        className='cursor-pointer text-sm font-medium text-red-600 transition hover:text-red-700'
+                      >
+                        Dispose Chemical
+                      </span>
+                    </>
+                  )}
+                </div>
 
                 <span
                   onClick={() => {

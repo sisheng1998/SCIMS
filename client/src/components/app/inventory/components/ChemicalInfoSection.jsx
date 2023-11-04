@@ -54,7 +54,7 @@ const ChemicalInfoSection = ({
     ) {
       classes = 'bg-red-100 text-red-600'
     } else {
-      // Low Amount / Expiring Soon
+      // Low Amount / Expiring Soon / Keep In View
       classes = 'bg-yellow-100 text-yellow-600'
     }
   }

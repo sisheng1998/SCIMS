@@ -25,7 +25,9 @@ const processValue = (value, key) => {
   if (key === 'state') {
     processedValue = capitalizeFirstLetter(processedValue)
   } else if (key === 'status') {
-    const isValid = STATUS.includes(processedValue.toLowerCase())
+    const isValid = STATUS.map((status) => status.value.toLowerCase()).includes(
+      processedValue.toLowerCase()
+    )
 
     processedValue = isValid
       ? capitalizeFirstLetterForEachWord(processedValue)

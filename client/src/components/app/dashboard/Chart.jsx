@@ -27,10 +27,18 @@ const Chart = ({ info }) => {
     info.lowAmountChemicals -
     info.expiringChemicals -
     info.expiredChemicals -
-    info.disposedChemicals
+    info.disposedChemicals -
+    info.kivChemicals
 
   const data = {
-    labels: ['Normal', 'Low Amount', 'Expiring Soon', 'Expired', 'Disposed'],
+    labels: [
+      'Normal',
+      'Low Amount',
+      'Expiring Soon',
+      'Expired',
+      'Disposed',
+      'Keep In View',
+    ],
     datasets: [
       {
         label: 'No. of Chemicals',
@@ -40,6 +48,7 @@ const Chart = ({ info }) => {
           info.expiringChemicals,
           info.expiredChemicals,
           info.disposedChemicals,
+          info.kivChemicals,
         ],
         backgroundColor: [
           '#dcfce7',
@@ -47,8 +56,16 @@ const Chart = ({ info }) => {
           '#fef9c3',
           '#fee2e2',
           '#f3e8ff',
+          '#e0e7ff',
         ],
-        borderColor: ['#16a34a', '#2563eb', '#ca8a04', '#dc2626', '#9333ea'],
+        borderColor: [
+          '#16a34a',
+          '#2563eb',
+          '#ca8a04',
+          '#dc2626',
+          '#9333ea',
+          '#4f46e5',
+        ],
         borderWidth: 1,
       },
     ],
