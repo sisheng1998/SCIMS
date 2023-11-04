@@ -11,10 +11,13 @@ import {
 } from '../../../config/safety_security_list'
 import EditSDSModal from './EditSDSModal'
 import ViewSDSModal from './ViewSDSModal'
+import DeleteSDSModal from './DeleteSDSModal'
 import { FromNow, DateTime } from '../../utils/FormatDate'
 import useMobile from '../../../hooks/useMobile'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
 import FILE_PATH from '../../../config/file_path'
+import useAuth from '../../../hooks/useAuth'
+import ROLES_LIST from '../../../config/roles_list'
 
 const tableHeaders = [
   {
@@ -50,10 +53,12 @@ const tableHeaders = [
 ]
 
 const SDSTable = ({ SDS, setRefresh }) => {
+  const { auth } = useAuth()
   const isMobile = useMobile()
 
   const [openEditSDSModal, setOpenEditSDSModal] = useState(false)
   const [openViewSDSModal, setOpenViewSDSModal] = useState(false)
+  const [openDeleteSDSModal, setOpenDeleteSDSModal] = useState(false)
   const [CAS, setCAS] = useState('')
 
   const [sortKey, setSortKey] = useState('index')
@@ -116,6 +121,11 @@ const SDSTable = ({ SDS, setRefresh }) => {
   const viewSDSHandler = (CAS) => {
     setCAS(CAS)
     setOpenViewSDSModal(true)
+  }
+
+  const deleteSDSHandler = (CAS) => {
+    setCAS(CAS)
+    setOpenDeleteSDSModal(true)
   }
 
   return (
@@ -416,6 +426,18 @@ const SDSTable = ({ SDS, setRefresh }) => {
                           >
                             Edit
                           </button>
+
+                          {auth.currentRole === ROLES_LIST.admin && (
+                            <>
+                              <span>/</span>
+                              <button
+                                onClick={() => deleteSDSHandler(CAS)}
+                                className='inline font-medium text-red-600 transition hover:text-red-700 focus:outline-none'
+                              >
+                                Delete
+                              </button>
+                            </>
+                          )}
                         </td>
                       </tr>
                     ))
@@ -452,6 +474,15 @@ const SDSTable = ({ SDS, setRefresh }) => {
           CAS={CAS}
           openModal={openViewSDSModal}
           setOpenModal={setOpenViewSDSModal}
+        />
+      )}
+
+      {CAS && openDeleteSDSModal && (
+        <DeleteSDSModal
+          CAS={CAS}
+          openModal={openDeleteSDSModal}
+          setOpenModal={setOpenDeleteSDSModal}
+          setDeleteSDSSuccess={setRefresh}
         />
       )}
     </>

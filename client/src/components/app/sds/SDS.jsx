@@ -33,12 +33,10 @@ const SDS = () => {
           signal: controller.signal,
         })
         if (isMounted) {
-          const processedData = data.data.map((SDS, index) => {
-            return {
-              ...SDS,
-              index,
-            }
-          })
+          const processedData = data.data.map((SDS, index) => ({
+            ...SDS,
+            index,
+          }))
 
           setSDS(processedData)
           setIsLoading(false)
