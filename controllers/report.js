@@ -71,10 +71,12 @@ exports.stockCheckReports = async (req, res, next) => {
       status: report.status,
       recordedNo: report.recordedChemicals.length,
       missingNo: report.missingChemicals.length,
+      kivNo: report.kivChemicals.length,
       disposedNo: report.disposedChemicals.length,
       totalNo:
         report.recordedChemicals.length +
         report.missingChemicals.length +
+        report.kivChemicals.length +
         report.disposedChemicals.length,
       date: report.date,
     }))

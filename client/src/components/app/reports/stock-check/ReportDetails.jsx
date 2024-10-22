@@ -6,6 +6,7 @@ import {
   BeakerIcon,
   CheckCircleIcon,
   QuestionMarkCircleIcon,
+  EyeIcon,
   XCircleIcon,
   UsersIcon,
 } from '@heroicons/react/outline'
@@ -18,6 +19,7 @@ const ReportDetails = ({ report }) => {
   const total =
     report.recordedChemicals.length +
     report.missingChemicals.length +
+    report.kivChemicals.length +
     report.disposedChemicals.length
 
   return (
@@ -63,6 +65,15 @@ const ReportDetails = ({ report }) => {
         }
         value={report.missingChemicals.length}
         text='Missing Chemical'
+        haveLetterS={true}
+      />
+
+      <InfoCard
+        icon={
+          <EyeIcon className='h-14 w-14 rounded-full bg-blue-50 p-3 text-blue-500' />
+        }
+        value={report.kivChemicals.length}
+        text='KIV Chemical'
         haveLetterS={true}
       />
 

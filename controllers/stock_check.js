@@ -35,6 +35,14 @@ exports.getActiveStockCheck = async (req, res, next) => {
         unit: 1,
         amountInDB: 1,
       },
+      kivChemicals: {
+        chemicalId: 1,
+        CASNo: 1,
+        name: 1,
+        location: 1,
+        unit: 1,
+        amountInDB: 1,
+      },
       disposedChemicals: {
         chemicalId: 1,
       },
@@ -55,6 +63,7 @@ exports.getActiveStockCheck = async (req, res, next) => {
     const chemicals = [
       ...activeStockCheck.recordedChemicals,
       ...activeStockCheck.missingChemicals,
+      ...activeStockCheck.kivChemicals,
     ]
 
     res.status(200).json({
@@ -95,6 +104,7 @@ exports.startStockCheck = async (req, res, next) => {
       locationId: 1,
       unit: 1,
       amount: 1,
+      status: 1,
     }),
     populate: [
       {
@@ -115,16 +125,31 @@ exports.startStockCheck = async (req, res, next) => {
 
     const locations = foundLab.locations
 
-    const missingChemicals = foundLab.chemicals.map((chemical) => ({
-      chemicalId: chemical._id,
-      CASNo: chemical.CASId.CASNo,
-      name: chemical.name,
-      location:
-        locations.find((location) => location._id.equals(chemical.locationId))
-          ?.name || '-',
-      unit: chemical.unit,
-      amountInDB: chemical.amount,
-    }))
+    const missingChemicals = foundLab.chemicals
+      .filter((chemical) => chemical.status !== 'Keep In View')
+      .map((chemical) => ({
+        chemicalId: chemical._id,
+        CASNo: chemical.CASId.CASNo,
+        name: chemical.name,
+        location:
+          locations.find((location) => location._id.equals(chemical.locationId))
+            ?.name || '-',
+        unit: chemical.unit,
+        amountInDB: chemical.amount,
+      }))
+
+    const kivChemicals = foundLab.chemicals
+      .filter((chemical) => chemical.status === 'Keep In View')
+      .map((chemical) => ({
+        chemicalId: chemical._id,
+        CASNo: chemical.CASId.CASNo,
+        name: chemical.name,
+        location:
+          locations.find((location) => location._id.equals(chemical.locationId))
+            ?.name || '-',
+        unit: chemical.unit,
+        amountInDB: chemical.amount,
+      }))
 
     const disposedChemicals = foundLab.disposedChemicals.map((chemical) => ({
       chemicalId: chemical._id,
@@ -143,6 +168,7 @@ exports.startStockCheck = async (req, res, next) => {
           lab: foundLab._id,
           recordedChemicals: [],
           missingChemicals,
+          kivChemicals,
           disposedChemicals,
         },
       ],
@@ -194,6 +220,11 @@ exports.stockCheck = async (req, res, next) => {
           missingChemical.chemicalId.toString() === chemical.chemicalId
       )
 
+      const indexInKiv = stockCheck.kivChemicals.findIndex(
+        (kivChemical) =>
+          kivChemical.chemicalId.toString() === chemical.chemicalId
+      )
+
       const indexInRecorded = stockCheck.recordedChemicals.findIndex(
         (recordedChemical) =>
           recordedChemical.chemicalId.toString() === chemical.chemicalId
@@ -210,6 +241,17 @@ exports.stockCheck = async (req, res, next) => {
 
         stockCheck.recordedChemicals.push(missingChemical)
         stockCheck.missingChemicals.splice(indexInMissing, 1)
+      } else if (indexInKiv !== -1) {
+        const kivChemical = {
+          ...stockCheck.kivChemicals[indexInKiv].toObject(),
+        }
+
+        kivChemical.amount = chemical.amount
+        kivChemical.recordedAt = new Date()
+        kivChemical.recordedBy = req.user._id
+
+        stockCheck.recordedChemicals.push(kivChemical)
+        stockCheck.kivChemicals.splice(indexInKiv, 1)
       } else if (indexInRecorded !== -1) {
         stockCheck.recordedChemicals[indexInRecorded].amount = chemical.amount
         stockCheck.recordedChemicals[indexInRecorded].recordedAt = new Date()

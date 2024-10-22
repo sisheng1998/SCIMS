@@ -3,6 +3,7 @@ import {
   BeakerIcon,
   CheckCircleIcon,
   QuestionMarkCircleIcon,
+  EyeIcon,
   XCircleIcon,
 } from '@heroicons/react/outline'
 
@@ -36,6 +37,16 @@ const StockCheckOverview = ({ report }) => {
           {report.missingNo}
         </span>
         Missing
+      </p>
+
+      <span className='text-gray-200'>|</span>
+
+      <p className='flex items-baseline'>
+        <EyeIcon className='mr-2 inline-block h-5 w-5 self-center stroke-2 text-blue-600' />
+        <span className='mr-1.5 text-xl font-medium text-gray-700'>
+          {report.kivNo}
+        </span>
+        KIV
       </p>
 
       <span className='text-gray-200'>|</span>

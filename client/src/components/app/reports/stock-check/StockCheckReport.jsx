@@ -20,6 +20,7 @@ const ID_REGEX = /^[a-f\d]{24}$/i
 const TabLabels = [
   'Recorded Chemicals',
   'Missing Chemicals',
+  'KIV Chemicals',
   'Disposed Chemicals',
 ]
 
@@ -74,6 +75,7 @@ const StockCheckReport = () => {
           const allChemicals = [
             ...data.data.recordedChemicals,
             ...data.data.missingChemicals,
+            ...data.data.kivChemicals,
             ...data.data.disposedChemicals,
           ]
 
@@ -188,6 +190,14 @@ const StockCheckReport = () => {
           )}
 
           {activeTab === 'Tab2' && (
+            <ReportTable
+              chemicals={report.kivChemicals}
+              locations={locations}
+              type='KIV'
+            />
+          )}
+
+          {activeTab === 'Tab3' && (
             <ReportTable
               chemicals={report.disposedChemicals}
               locations={locations}

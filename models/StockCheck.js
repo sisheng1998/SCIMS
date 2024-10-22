@@ -43,6 +43,19 @@ const StockCheckSchema = new Schema(
         amountInDB: Number,
       },
     ],
+    kivChemicals: [
+      {
+        chemicalId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Chemical',
+        },
+        CASNo: String,
+        name: String,
+        location: String,
+        unit: String,
+        amountInDB: Number,
+      },
+    ],
     disposedChemicals: [
       {
         chemicalId: {
