@@ -129,7 +129,7 @@ const StockCheckReport = () => {
               </span>
             }
           >
-            {report.status !== 'Completed' && (
+            {report.status !== 'Completed' ? (
               <div className='flex items-center space-x-4'>
                 {auth.currentRole >= ROLES_LIST.labOwner && (
                   <button
@@ -149,6 +149,16 @@ const StockCheckReport = () => {
                   Refresh
                 </button>
               </div>
+            ) : (
+              auth.currentRole >= ROLES_LIST.labOwner && (
+                <button
+                  onClick={() => setOpenConfirmationModal(true)}
+                  className='button button-yellow-outline'
+                >
+                  <RefreshIcon className='-ml-0.5 mr-1 h-3.5 w-3.5 stroke-2' />
+                  Reopen Stock Check Process
+                </button>
+              )
             )}
           </Title>
 
@@ -211,6 +221,7 @@ const StockCheckReport = () => {
               openModal={openConfirmationModal}
               setOpenModal={setOpenConfirmationModal}
               setRefresh={setRefresh}
+              isReopen={report.status === 'Completed'}
             />
           )}
         </>

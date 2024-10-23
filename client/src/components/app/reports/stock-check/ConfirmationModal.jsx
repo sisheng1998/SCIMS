@@ -10,6 +10,7 @@ const ConfirmationModal = ({
   openModal,
   setOpenModal,
   setRefresh,
+  isReopen = false,
 }) => {
   const axiosPrivate = useAxiosPrivate()
   const divRef = useRef(null)
@@ -27,10 +28,13 @@ const ConfirmationModal = ({
     setIsLoading(true)
 
     try {
-      await axiosPrivate.patch('/api/private/stock-check/end', {
-        labId,
-        reportId,
-      })
+      await axiosPrivate.patch(
+        `/api/private/stock-check/${isReopen ? 'reopen' : 'end'}`,
+        {
+          labId,
+          reportId,
+        }
+      )
       setSuccess(true)
     } catch (error) {
       if (error.response?.status === 500) {
@@ -75,12 +79,13 @@ const ConfirmationModal = ({
             <>
               <CheckIcon className='mx-auto h-16 w-16 rounded-full bg-green-100 p-2 text-green-600' />
               <h2 className='mt-6 mb-2 text-green-600'>
-                Stock Check Process Completed!
+                Stock Check Process {isReopen ? 'Reopened' : 'Completed'}!
               </h2>
 
               <p>
-                The stock check process have been completed and all records are
-                now finalized.
+                {isReopen
+                  ? 'The stock check process has been reopened and ready to accept any new changes.'
+                  : 'The stock check process has been completed and all records are now finalized.'}
               </p>
 
               <button
@@ -92,13 +97,29 @@ const ConfirmationModal = ({
             </>
           ) : (
             <>
-              <h4 className='mb-2'>Complete Stock Check Process</h4>
+              <h4 className='mb-2'>
+                {isReopen ? 'Reopen' : 'Complete'} Stock Check Process
+              </h4>
 
-              <p>Are you sure the stock check process is completed?</p>
-              <p className='mt-2 text-sm text-gray-500'>
-                Once the process is completed, all records will be finalized and
-                any new changes won't be accepted..
-              </p>
+              {isReopen ? (
+                <>
+                  <p>
+                    Are you sure you want to reopen the stock check process?
+                  </p>
+                  <p className='mt-2 text-sm text-gray-500'>
+                    Once the process is reopened, the stock check report will be
+                    set to "In Progress" and able to accept any new changes.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p>Are you sure the stock check process is completed?</p>
+                  <p className='mt-2 text-sm text-gray-500'>
+                    Once the process is completed, all records will be finalized
+                    and any new changes won't be accepted.
+                  </p>
+                </>
+              )}
 
               {errorMessage && (
                 <p className='mt-6 flex items-center text-sm font-medium text-red-600'>

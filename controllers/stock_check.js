@@ -3,6 +3,7 @@ const Lab = require('../models/Lab')
 const StockCheck = require('../models/StockCheck')
 const { startSession } = require('mongoose')
 const fieldsToString = require('../utils/fieldsToString')
+const logEvents = require('../middleware/logEvents')
 
 exports.getActiveStockCheck = async (req, res, next) => {
   const { labId } = req.body
@@ -263,6 +264,24 @@ exports.stockCheck = async (req, res, next) => {
     await session.commitTransaction()
     session.endSession()
 
+    try {
+      logEvents(
+        `"${req.user.name}" saved ${
+          chemicals.length
+        } record(s) for Stock Check "${stockCheck._id}":\n${JSON.stringify(
+          chemicals,
+          null,
+          2
+        )}`,
+        'stockCheckLogs.txt'
+      )
+    } catch (error) {
+      logEvents(
+        `Error logging stock check: ${error.message}`,
+        'stockCheckLogs.txt'
+      )
+    }
+
     res.status(200).json({
       success: true,
       data: 'Records saved.',
@@ -308,6 +327,62 @@ exports.endStockCheck = async (req, res, next) => {
     res.status(200).json({
       success: true,
       data: 'Stock check process completed.',
+    })
+  } catch (error) {
+    await session.abortTransaction()
+    session.endSession()
+
+    next(error)
+  }
+}
+
+exports.reopenStockCheck = async (req, res, next) => {
+  const { labId, reportId } = req.body
+
+  if (!labId || !reportId) {
+    return next(new ErrorResponse('Missing value for required field.', 400))
+  }
+
+  const foundLab = await Lab.findById(labId)
+  if (!foundLab) {
+    return next(new ErrorResponse('Lab not found.', 404))
+  }
+
+  const session = await startSession()
+
+  try {
+    session.startTransaction()
+
+    await StockCheck.updateMany(
+      {
+        lab: foundLab._id,
+        status: 'In Progress',
+        _id: { $ne: reportId },
+      },
+      {
+        $set: {
+          status: 'Completed',
+        },
+      },
+      { session }
+    )
+
+    await StockCheck.updateOne(
+      { _id: reportId, lab: foundLab._id },
+      {
+        $set: {
+          status: 'In Progress',
+        },
+      },
+      { session }
+    )
+
+    await session.commitTransaction()
+    session.endSession()
+
+    res.status(200).json({
+      success: true,
+      data: 'Stock check process reopened.',
     })
   } catch (error) {
     await session.abortTransaction()

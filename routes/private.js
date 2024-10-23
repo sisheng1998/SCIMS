@@ -49,6 +49,7 @@ const {
   startStockCheck,
   stockCheck,
   endStockCheck,
+  reopenStockCheck,
 } = require('../controllers/stock_check')
 
 const {
@@ -172,6 +173,9 @@ router
 router
   .route('/stock-check/end')
   .patch(verifyRoles(ROLES_LIST.labOwner), endStockCheck)
+router
+  .route('/stock-check/reopen')
+  .patch(verifyRoles(ROLES_LIST.labOwner), reopenStockCheck)
 
 // Reports
 router

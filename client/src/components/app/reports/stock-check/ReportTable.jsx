@@ -11,6 +11,7 @@ import FILE_PATH from '../../../../config/file_path'
 import GetLetterPicture from '../../../utils/GetLetterPicture'
 import useAuth from '../../../../hooks/useAuth'
 import ImageLightBox from '../../../utils/ImageLightBox'
+import { DateTime } from '../../../utils/FormatDate'
 
 const ReportTable = ({ chemicals, locations, type }) => {
   const { auth } = useAuth()
@@ -278,7 +279,10 @@ const ReportTable = ({ chemicals, locations, type }) => {
 
                         {type === 'Recorded' && (
                           <td className='px-6 py-4'>
-                            <div className='flex w-max items-center space-x-3'>
+                            <div
+                              className='tooltip flex w-max items-center space-x-3'
+                              data-tooltip={DateTime(chemical.recordedAt)}
+                            >
                               <img
                                 onError={(event) =>
                                   (event.target.src = GetLetterPicture(
