@@ -25,7 +25,6 @@ const UserSchema = new Schema(
     },
     matricNo: {
       type: String,
-      unique: true,
     },
     roles: [
       {
@@ -74,6 +73,16 @@ const UserSchema = new Schema(
     },
   },
   { collection: 'users' }
+)
+
+UserSchema.index(
+  { matricNo: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      matricNo: { $type: 'string' },
+    },
+  }
 )
 
 UserSchema.pre('save', async function (next) {
