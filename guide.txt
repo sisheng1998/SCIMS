@@ -1,0 +1,17 @@
+Installation
+1. NodeJS - https://nodejs.org/en/
+2. VS Code - https://code.visualstudio.com/
+3. MongoDB - https://www.mongodb.com/try/download/community
+4. MongoDB Shell, Compass, Database Tools (https://www.mongodb.com/try/download/database-tools)
+5. run-rs - https://github.com/vkarpov15/run-rs - npm install run-rs -g
+6. pm2 - npm install pm2 -g
+
+Starting Guide
+Start -> npm run start
+Restart -> npm run restart
+
+TODO:
+1. npm install
+2. Change config.env - domain name, mongo_uri
+3. Change /config/ini.json, if needed
+4. Change index.js -> isLiveSite to true, uncomment init code, if needed
