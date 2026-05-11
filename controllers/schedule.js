@@ -271,35 +271,25 @@ module.exports = async () => {
           (chemical) => chemical.status === 'Keep In View'
         )
 
-        if (
-          usageRecords.length !== 0 ||
-          newChemicals.length !== 0 ||
-          lowAmountChemicals.length !== 0 ||
-          expiringChemicals.length !== 0 ||
-          expiredChemicals.length !== 0 ||
-          disposedChemicals.length !== 0 ||
-          kivChemicals.length !== 0
-        ) {
-          const emailOptions = {
-            to: lab.labOwner.email,
-            subject: `SCIMS Weekly Report (${todayDate})`,
-            template: 'weekly_report',
-            context: {
-              todayDate,
-              pastDate,
-              lab: lab.labName,
-              usageRecords,
-              newChemicals,
-              lowAmountChemicals,
-              expiringChemicals,
-              expiredChemicals,
-              disposedChemicals,
-              kivChemicals,
-            },
-          }
-
-          sendEmail(emailOptions)
+        const emailOptions = {
+          to: lab.labOwner.email,
+          subject: `SCIMS Weekly Report (${todayDate})`,
+          template: 'weekly_report',
+          context: {
+            todayDate,
+            pastDate,
+            lab: lab.labName,
+            usageRecords,
+            newChemicals,
+            lowAmountChemicals,
+            expiringChemicals,
+            expiredChemicals,
+            disposedChemicals,
+            kivChemicals,
+          },
         }
+
+        sendEmail(emailOptions)
       })
     } catch (error) {
       logEvents(`${error.name}: ${error.message}`, 'scheduleErrorLogs.txt')
