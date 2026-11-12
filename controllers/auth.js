@@ -9,12 +9,25 @@ const sendEmail = require('../utils/sendEmail')
 const sendNotification = require('../utils/sendNotification')
 const ROLES_LIST = require('../config/roles_list')
 const { startSession } = require('mongoose')
+const {
+  normalizeUSMEmail,
+  normalizeEmailLookup,
+} = require('../utils/validateEmail')
 
 exports.register = async (req, res, next) => {
-  const { email, password } = req.body
+  const { password } = req.body
 
-  if (!email || !password) {
+  if (!req.body.email || !password) {
     return next(new ErrorResponse('Missing value for required field.', 400))
+  }
+
+  const email = normalizeUSMEmail(req.body.email)
+  if (!email) {
+    return next(new ErrorResponse('Only USM email addresses are allowed.', 400))
+  }
+
+  if (typeof password !== 'string') {
+    return next(new ErrorResponse('Invalid password.', 400))
   }
 
   const duplicate = await User.findOne({ email })
@@ -71,7 +84,7 @@ exports.emailVerification = async (req, res, next) => {
 }
 
 exports.sendEmailVerification = async (req, res, next) => {
-  const { email } = req.body
+  const email = normalizeEmailLookup(req.body.email)
 
   if (!email) {
     return next(new ErrorResponse('Missing value.', 400))
@@ -95,10 +108,15 @@ exports.sendEmailVerification = async (req, res, next) => {
 }
 
 exports.changeEmail = async (req, res, next) => {
-  const { email, newEmail } = req.body
+  const email = normalizeEmailLookup(req.body.email)
 
-  if (!email || !newEmail) {
+  if (!email || !req.body.newEmail) {
     return next(new ErrorResponse('Missing value.', 400))
+  }
+
+  const newEmail = normalizeUSMEmail(req.body.newEmail)
+  if (!newEmail) {
+    return next(new ErrorResponse('Only USM email addresses are allowed.', 400))
   }
 
   const duplicate = await User.findOne({ email: newEmail })
@@ -127,9 +145,10 @@ exports.changeEmail = async (req, res, next) => {
 }
 
 exports.login = async (req, res, next) => {
-  const { email, password, rememberMe } = req.body
+  const { password, rememberMe } = req.body
+  const email = normalizeEmailLookup(req.body.email)
 
-  if (!email || !password) {
+  if (!email || !password || typeof password !== 'string') {
     return next(new ErrorResponse('Missing value.', 400))
   }
 
@@ -191,7 +210,11 @@ exports.logout = async (req, res, next) => {
 }
 
 exports.forgotPassword = async (req, res, next) => {
-  const { email } = req.body
+  const email = normalizeEmailLookup(req.body.email)
+
+  if (!email) {
+    return next(new ErrorResponse('Missing value.', 400))
+  }
 
   try {
     const user = await User.findOne({ email })
@@ -363,7 +386,8 @@ exports.emails = (req, res, next) => {
 }
 
 exports.applyNewLab = async (req, res, next) => {
-  const { email, labId } = req.body
+  const { labId } = req.body
+  const email = normalizeEmailLookup(req.body.email)
 
   if (!email || !labId) {
     return next(new ErrorResponse('Missing value for required field.', 400))

@@ -1,4 +1,5 @@
 const ErrorResponse = require('../utils/errorResponse')
+const { normalizeUSMEmail } = require('../utils/validateEmail')
 const User = require('../models/User')
 const Lab = require('../models/Lab')
 const Subscriber = require('../models/Subscriber')
@@ -101,10 +102,14 @@ exports.updateProfile = async (req, res, next) => {
 
 exports.changeEmail = async (req, res, next) => {
   const userId = req.user._id
-  const { email } = req.body
 
-  if (!email) {
+  if (!req.body.email) {
     return next(new ErrorResponse('Missing value.', 400))
+  }
+
+  const email = normalizeUSMEmail(req.body.email)
+  if (!email) {
+    return next(new ErrorResponse('Only USM email addresses are allowed.', 400))
   }
 
   const duplicate = await User.findOne({ email })

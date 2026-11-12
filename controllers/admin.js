@@ -1,4 +1,5 @@
 const ErrorResponse = require('../utils/errorResponse')
+const { normalizeUSMEmail } = require('../utils/validateEmail')
 const Lab = require('../models/Lab')
 const User = require('../models/User')
 const Chemical = require('../models/Chemical')
@@ -103,10 +104,15 @@ exports.getLabs = async (req, res, next) => {
 }
 
 exports.addLab = async (req, res, next) => {
-  const { email, password, labName } = req.body
+  const { password, labName } = req.body
 
-  if (!email || !password || !labName) {
+  if (!req.body.email || !password || !labName) {
     return next(new ErrorResponse('Missing value for required field.', 400))
+  }
+
+  const email = normalizeUSMEmail(req.body.email)
+  if (!email) {
+    return next(new ErrorResponse('Only USM email addresses are allowed.', 400))
   }
 
   const duplicate = await User.findOne({ email })
